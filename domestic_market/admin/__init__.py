@@ -1,0 +1,11 @@
+from .domestic_industry_admin import DomesticIndustryAdmin
+from .domestic_commodity_type_admin import DomesticCommodityTypeAdmin
+from .domestic_commodity_admin import DomesticCommodityAdmin
+from .domestic_producer_admin import DomesticProducerAdmin
+from .domestic_trade_admin import DomesticTradeAdmin
+from .domestic_dollar_price_admin import DomesticDollarPriceAdmin
+from .domestic_trades_history_fetch_admin import DomesticTradesHistoryFetchAdmin
+from .domestic_monthly_sell_admin import DomesticMonthlySellAdmin
+from .bourse_view_cookie_admin import BourseViewCookieAdmin
+
+from .domestic_relation_admin import DomesticRelationAdmin

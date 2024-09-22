@@ -1,0 +1,48 @@
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+import pandas as pd
+from core.configs import STOCK_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
+
+from core.utils import MongodbInterface, add_index_as_id
+from stock_market.serializers import MarketROISerailizer
+from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
+@method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class StockIndustryInstrumentROIAPIView(APIView):
+    def get(self, request, industry_id):
+
+        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+        results = mongo_client.collection.find(
+            {
+                "industrial_group_id": industry_id,
+                "paper_id": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())},
+            },
+            {"_id": 0},
+        )
+        results = pd.DataFrame(results)
+
+        results = results[(results["weekly_roi"] != STOCK_NA_ROI)]
+
+        if results.empty:
+            return Response(
+                {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        results = results.sort_values(by="weekly_roi", ascending=False)
+        results = results[~results["symbol"].str.contains(r"\d")]
+        results.reset_index(drop=True, inplace=True)
+        results["id"] = results.apply(add_index_as_id, axis=1)
+
+        results = results.to_dict(orient="records")
+        results = MarketROISerailizer(results, many=True)
+
+        return Response(results.data, status=status.HTTP_200_OK)

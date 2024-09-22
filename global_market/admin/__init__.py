@@ -1,0 +1,6 @@
+from .global_industry_admin import GlobalIndustryAdmin
+from .global_commodity_type_admin import GlobalCommodityTypeAdmin
+from .global_commodity_admin import GlobalCommodityAdmin
+from .global_transit_admin import GlobalTransitAdmin
+from .global_trade_admin import GlobalTradesAdmin
+from .global_relation_admin import GlobalRelationAdmin
