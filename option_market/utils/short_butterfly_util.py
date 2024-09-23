@@ -32,10 +32,10 @@ def add_profits(coordinates, profit_factor, remained_day):
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    # if remained_day != 0:
+    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -113,16 +113,19 @@ def short_butterfly():
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "call_sell_symbol_low": low_call_sell.get("call_symbol"),
+                    "call_best_buy_price_low": low_premium,
                     "call_sell_strike_low": low_strike,
                     # "call_sell_notional_value_low": low_call_sell.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value_low": low_call_sell.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_buy_symbol_mid": mid_call_buy.get("call_symbol"),
+                    "call_best_sell_price_mid": mid_premium,
                     "call_buy_strike_mid": mid_strike,
                     # "call_buy_notional_value_mid": mid_call_buy.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_buy_value_mid": mid_call_buy.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_sell_symbol_high": high_call_sell.get("call_symbol"),
+                    "call_best_buy_price_high": high_premium,
                     "call_sell_strike_high": high_strike,
                     # "call_sell_notional_value_high": high_call_sell.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value_high": high_call_sell.get("call_value") / RIAL_TO_BILLION_TOMAN,

@@ -77,11 +77,14 @@ def covered_call():
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": asset_price,
+                "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
 
                 "call_sell_symbol": row.get("call_symbol"),
+                "call_best_buy_price": premium,
                 "strike_price": strike,
                 # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
+
                 "remained_day": row.get("remained_day"),
 
                 **add_profits(row),

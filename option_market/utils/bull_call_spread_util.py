@@ -102,11 +102,13 @@ def bull_call_spread():
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "call_buy_symbol": buy_row.get("call_symbol"),
+                    "call_best_sell_price": low_premium,
                     "call_buy_strike": low_strike,
                     # "call_buy_notional_value": buy_row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_buy_value": buy_row.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_sell_symbol": sell_row.get("call_symbol"),
+                    "call_best_buy_price": high_premium,
                     "call_sell_strike": high_strike,
                     # "call_sell_notional_value_sell": sell_row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value": sell_row.get("call_value") / RIAL_TO_BILLION_TOMAN,

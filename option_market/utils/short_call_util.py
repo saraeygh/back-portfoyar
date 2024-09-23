@@ -25,10 +25,10 @@ def add_profits(remained_day):
         "yearly_profit": 0,
     }
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    # if remained_day != 0:
+    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -67,6 +67,7 @@ def short_call():
                 "base_equity_last_price": row.get("base_equity_last_price"),
 
                 "call_sell_symbol": row.get("call_symbol"),
+                "call_best_buy_price": call_premium,
                 "strike_price": strike_price,
                 # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,

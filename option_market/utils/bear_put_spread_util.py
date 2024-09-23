@@ -31,10 +31,10 @@ def add_profits(coordinates, profit_factor, remained_day):
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    # if remained_day != 0:
+    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -101,11 +101,13 @@ def bear_put_spread():
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "put_buy_symbol": buy_row.get("put_symbol"),
+                    "put_best_sell_price": high_premium,
                     "put_buy_strike": high_strike,
                     # "put_buy_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "put_sell_symbol": sell_row.get("put_symbol"),
+                    "put_best_buy_price": low_premium,
                     "put_sell_strike": low_strike,
                     # "put_sell_notional_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
                     "put_sell_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,

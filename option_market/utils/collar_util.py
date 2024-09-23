@@ -78,11 +78,13 @@ def collar():
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "call_sell_symbol_low": low_call_sell.get("call_symbol"),
+                    "call_best_buy_price_low": low_premium,
                     "call_sell_strike_low": low_strike,
                     # "call_sell_notional_value_low": low_call_sell.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value_low": low_call_sell.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_buy_symbol_high": high_call_buy.get("call_symbol"),
+                    "call_best_sell_price_high": high_premium,
                     "call_buy_strike_high": high_strike,
                     # "call_buy_notional_value_low": high_call_buy.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_buy_value_low": high_call_buy.get("call_value") / RIAL_TO_BILLION_TOMAN,

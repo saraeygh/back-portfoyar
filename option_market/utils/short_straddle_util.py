@@ -33,10 +33,10 @@ def add_profits(coordinates, profit_factor, remained_day):
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    # if remained_day != 0:
+    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -83,10 +83,12 @@ def short_straddle():
                 "base_equity_last_price": row.get("base_equity_last_price"),
 
                 "call_sell_symbol": row.get("call_symbol"),
+                "call_best_buy_price": call_premium,
                 # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                 "put_sell_symbol": row.get("put_symbol"),
+                "put_best_buy_price": put_premium,
                 # "put_notional_value": row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
