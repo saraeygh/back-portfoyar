@@ -1,17 +1,9 @@
 from django.shortcuts import get_object_or_404
 import pandas as pd
 from core.utils import RedisInterface
-from option_market.models import OptionStrategy
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-
-
-class StrategyResultAPIView(APIView):
-    def get(self, request, strategy_key):
-        get_object_or_404(OptionStrategy, key=strategy_key)
-        strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-        return Response(strategy_result, status=status.HTTP_200_OK)
 
 
 RESULT_SORTING_COLUMN = "yearly_profit"

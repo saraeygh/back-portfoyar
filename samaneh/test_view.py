@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 
 import pandas as pd
-from core.utils import RedisInterface, populate_option_strategy
+from core.utils import RedisInterface
 from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse_loop
 

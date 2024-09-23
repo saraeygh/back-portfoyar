@@ -4,8 +4,6 @@ from core.utils import (
     create_default_recommendation_setting,
     create_default_feature_toggle,
     populate_strategy_option,
-    populate_option_strategy,
-    populate_option_strategy_old,
 )
 
 
@@ -21,6 +19,3 @@ class Command(BaseCommand):
         create_default_feature_toggle()
 
         populate_strategy_option()
-        # OLD
-        populate_option_strategy()
-        populate_option_strategy_old()

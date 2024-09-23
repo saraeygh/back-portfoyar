@@ -14,5 +14,4 @@ from .domestic_favorite_producer_report_model import DomesticFavoriteProducerRep
 from .global_favorite_price_chart_model import GlobalFavoritePriceChart
 from .global_favorite_ratio_chart_model import GlobalFavoriteRatioChart
 
-# from .options_favorite_symbol_model import OptionsFavoriteSymbol
 from .stock_favorite_roi_group_model import StockFavoriteROIGroup, ROIGroupInstrument

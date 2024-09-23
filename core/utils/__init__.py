@@ -12,8 +12,6 @@ from .replace_arabic_letters_util import (
     replace_all_arabic_letters_in_db,
 )
 from .populate_strategy_option_util import populate_strategy_option
-from .populate_option_strategy_util_old import populate_option_strategy_old
-from .populate_option_strategy_util import populate_option_strategy
 from .create_admin_user_util import create_admin_user
 from .create_default_feature_toggle_util import create_default_feature_toggle
 from .create_default_recommendation_setting_util import (
