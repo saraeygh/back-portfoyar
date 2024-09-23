@@ -105,8 +105,11 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         updated_at = instance.updated_at
-        updated_at = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%Y-%m-%d - %H:%m")
-        representation["last_update"] = updated_at
+        representation["date"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%Y/%m/%d")
+        representation["time"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%H:%m")
+
+        representation["user"] = representation.pop("user_name")
+        representation["is_staff"] = instance.user.is_staff
 
         if instance.file:
             request = self.context.get("request")
@@ -114,9 +117,6 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
             representation["appendix"] = file_url
         else:
             representation["appendix"] = None
-
-        representation["user"] = representation.pop("user_name")
-        representation["is_staff"] = instance.user.is_staff
 
         return representation
 
