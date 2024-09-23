@@ -97,16 +97,18 @@ def bear_put_spread():
                     "id": uuid4().hex,
 
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
+                    # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "put_buy_symbol": buy_row.get("put_symbol"),
                     "put_buy_strike": high_strike,
-                    "put_buy_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    # "put_buy_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "put_sell_symbol": sell_row.get("put_symbol"),
                     "put_sell_strike": low_strike,
-                    "put_sell_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    # "put_sell_notional_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
+                    "put_sell_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "remained_day": remained_day,
 

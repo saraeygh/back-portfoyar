@@ -101,16 +101,18 @@ def short_strangle():
                     "id": uuid4().hex,
 
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
+                    # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                     "base_equity_last_price": row.get("base_equity_last_price"),
 
                     "put_sell_symbol": put_sell_row.get("put_symbol"),
                     "put_sell_strike": low_strike,
-                    "put_sell_notional_value": put_sell_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    # "put_sell_notional_value": put_sell_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    "put_sell_value": put_sell_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_sell_symbol": call_sell_row.get("call_symbol"),
                     "call_sell_strike": high_strike,
-                    "call_sell_notional_value": call_sell_row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    # "call_sell_notional_value": call_sell_row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                    "call_sell_value": call_sell_row.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "remained_day": remained_day,
 

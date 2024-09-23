@@ -53,14 +53,16 @@ def long_straddle():
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
+                # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": row.get("base_equity_last_price"),
 
                 "call_buy_symbol": row.get("call_symbol"),
-                "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                 "put_buy_symbol": row.get("put_symbol"),
-                "put_notional_value": row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                # "put_notional_value": row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
+                "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                 "strike_price": strike_price,
                 "remained_day": row.get("remained_day"),

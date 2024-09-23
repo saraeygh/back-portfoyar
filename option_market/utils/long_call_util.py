@@ -17,29 +17,6 @@ from . import (
 redis_conn = RedisInterface(db=3)
 
 
-def add_profits(row):
-    profits = {
-        "final_profit": 0,
-        "monthly_profit": 0,
-        "yearly_profit": 0,
-    }
-
-    strike_price = float(row.get("strike_price"))
-    call_premium = float(row.get("call_best_sell_price"))
-    base_equity_last_price = float(row.get("base_equity_last_price"))
-
-    if base_equity_last_price != 0:
-        profits["final_profit"] = (((strike_price + call_premium) / base_equity_last_price) - 1) * 100
-
-    remained_day = row.get("remained_day")
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
-
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
-
-    return profits
-
-
 def long_call():
     distinct_end_date_options = get_options(option_types=["option_data"])
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
@@ -70,15 +47,14 @@ def long_call():
                 "id": uuid4().hex,
 
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
+                # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": row.get("base_equity_last_price"),
 
                 "call_buy_symbol": row.get("call_symbol"),
                 "strike_price": strike_price,
-                "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
+                "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
                 "remained_day": row.get("remained_day"),
-
-                # **add_profits(row),
 
                 "profit_factor": profit_factor,
 
