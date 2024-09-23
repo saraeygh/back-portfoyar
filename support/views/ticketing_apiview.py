@@ -28,7 +28,9 @@ FILE_SIZE_LIMIT = 10_000_000
 
 def get_user_tickets(request):
     user = request.user
-    user_tickets = Ticket.objects.filter(Q(sender_user=user) | Q(receiver_user=user))
+    user_tickets = Ticket.objects.filter(
+        Q(sender_user=user) | Q(receiver_user=user)
+    ).order_by("-updated_at")
     user_tickets = GetUserTicketsSerailizer(
         user_tickets, many=True, context={"request": request}
     )

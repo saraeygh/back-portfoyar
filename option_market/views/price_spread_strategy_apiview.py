@@ -1,7 +1,13 @@
+import pandas as pd
 from core.configs import FIVE_MINUTES_CACHE, TO_MILLION
 from core.utils import set_json_cache, get_cache_as_json, add_index_as_id
 from option_market.serializers import PriceSpreadStrategySerializer
-from option_market.utils import convert_int_date_to_str_date, get_options
+from option_market.utils import (
+    CALL_OLD_NEW_COLUMN_MAPPING,
+    PUT_OLD_NEW_COLUMN_MAPPING,
+    convert_int_date_to_str_date,
+    get_options,
+)
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -16,18 +22,15 @@ def calculate_strike_deviation(row):
 
     try:
         strike_deviation = ((strike - asset_price) / asset_price) * 100
-
-        return strike_deviation
-
     except ZeroDivisionError:
         strike_deviation = 0
 
-        return strike_deviation
+    return strike_deviation
 
 
 def get_premium(row):
-    option_name = row["call_name"]
-    if isinstance(option_name, str):
+    option_type = row["option_type"]
+    if option_type == "call":
         return row["best_sell_price"]
     else:
         return row["best_buy_price"]
@@ -43,13 +46,10 @@ def calculate_price_spread(row):
 
     try:
         price_spread = ((strike_premium - asset_price) / asset_price) * 100
-
-        return price_spread
-
     except ZeroDivisionError:
         price_spread = 0
 
-        return price_spread
+    return price_spread
 
 
 def calculate_monthly_price_spread(row):
@@ -58,7 +58,6 @@ def calculate_monthly_price_spread(row):
 
     try:
         monthly_price_spread = (price_spread / days_to_expire) * 30
-
     except ZeroDivisionError:
         monthly_price_spread = 0
 
@@ -72,6 +71,13 @@ def add_stock_link(row):
     return stock_link
 
 
+def add_option_link(row):
+    option_link = str(row.get("inst_id"))
+    option_link = f"https://main.tsetmc.com/InstInfo/{option_link}/"
+
+    return option_link
+
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class PriceSpreadStrategyAPIView(APIView):
@@ -79,14 +85,25 @@ class PriceSpreadStrategyAPIView(APIView):
         strike_deviation = int(request.data.get("strike_deviation"))
         cache_key = f"OPTIONS_PRICE_SPREAD_s_{strike_deviation}"
         cache_response = get_cache_as_json(cache_key)
+        cache_response = None
 
         if cache_response is None:
-            options_df = get_options(option_types=["calls", "puts"])
+            options_df = get_options(option_types=["option_data"])
+            call_options = options_df[list(CALL_OLD_NEW_COLUMN_MAPPING.keys())]
+            call_options = call_options.rename(columns=CALL_OLD_NEW_COLUMN_MAPPING)
+            call_options["option_type"] = "call"
+
+            put_options = options_df[list(PUT_OLD_NEW_COLUMN_MAPPING.keys())]
+            put_options = put_options.rename(columns=PUT_OLD_NEW_COLUMN_MAPPING)
+            put_options["option_type"] = "put"
+
+            options_df = pd.concat([call_options, put_options])
+
             options_df["strike_deviation"] = options_df.apply(
                 calculate_strike_deviation, axis=1
             )
             options_df = options_df[
-                abs(options_df["strike_deviation"]) < strike_deviation
+                abs(options_df["strike_deviation"]) <= strike_deviation
             ]
             if options_df.empty:
                 return Response(
@@ -114,7 +131,7 @@ class PriceSpreadStrategyAPIView(APIView):
                 convert_int_date_to_str_date, args=("expiration_date",), axis=1
             )
             options_df["value"] = options_df["value"] / TO_MILLION
-            options_df["option_link"] = options_df["link"]
+            options_df["option_link"] = options_df.apply(add_option_link, axis=1)
             options_df["stock_link"] = options_df.apply(add_stock_link, axis=1)
             options_df = options_df.to_dict(orient="records")
             options_df = PriceSpreadStrategySerializer(options_df, many=True)

@@ -12,10 +12,6 @@ from .dictionary_collection import (
     PUT_SELL_COLUMN_MAPPING,
 )
 from .convert_int_date_to_str_date_util import convert_int_date_to_str_date
-from .add_additional_columns_util import add_additional_columns
-from .get_option_data_from_tse_util import get_option_data_from_tse
-from .covered_call_util_old import covered_call_old
-from .long_call_util_old import long_call_old
 from .get_options_util import get_options
 from .option_strategy_class_util import (
     Strategy,
@@ -42,7 +38,6 @@ from .short_strangle_util import short_strangle
 from .long_butterfly_util import long_butterfly
 from .short_butterfly_util import short_butterfly
 from .collar_util import collar
-from .get_strategy_result_util import get_strategy_result
 from .match_strategy_for_single_symbol_util import match_strategy_for_single_symbol
 from .get_option_volume_strategy_result_util import (
     get_option_volume_strategy_result,

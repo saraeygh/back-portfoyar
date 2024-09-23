@@ -116,9 +116,9 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
             representation["appendix"] = None
 
         representation["user"] = representation.pop("user_name")
+        representation["is_staff"] = instance.user.is_staff
 
         return representation
-
 
 
 class AddTicketResponseSerailizer(serializers.ModelSerializer):

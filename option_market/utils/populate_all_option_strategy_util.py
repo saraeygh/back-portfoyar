@@ -1,7 +1,5 @@
 from core.utils import task_timing
 from . import (
-    covered_call_old,
-    long_call_old,
     covered_call,
     long_call,
     short_call,
@@ -23,12 +21,6 @@ from . import (
 
 @task_timing
 def populate_all_option_strategy():
-
-    covered_call_old()
-
-    long_call_old()
-
-    # NEW STRATEGIES
 
     # 1
     covered_call()

@@ -64,6 +64,7 @@ CALL_OLD_NEW_COLUMN_MAPPING = {
     "end_date": "expiration_date",
     "remained_day": "days_to_expire",
     "base_equity_last_price": "base_equit_price",
+    "base_equity_ins_code": "base_equity_ins_code",
 }
 
 
@@ -82,6 +83,7 @@ PUT_OLD_NEW_COLUMN_MAPPING = {
     "end_date": "expiration_date",
     "remained_day": "days_to_expire",
     "base_equity_last_price": "base_equit_price",
+    "base_equity_ins_code": "base_equity_ins_code",
 }
 
 
