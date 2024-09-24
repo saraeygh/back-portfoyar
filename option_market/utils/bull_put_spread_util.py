@@ -20,9 +20,18 @@ from . import (
 redis_conn = RedisInterface(db=3)
 
 
-def add_profits(coordinates, profit_factor, remained_day):
+def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price, high_strike):
+    if base_equity_last_price != 0 and base_equity_last_price < high_strike:
+        required_change = (
+            (high_strike - base_equity_last_price) / base_equity_last_price
+            ) * 100
+    else:
+        required_change = 0
+
     profits = {
         "final_profit": 0,
+        "required_change": required_change,
+        "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
     }
@@ -92,28 +101,24 @@ def bull_put_spread():
 
                 remained_day = row.get("remained_day")
                 profit_factor = -1 * low_premium + high_premium
+                base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
 
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
-                    "base_equity_last_price": row.get("base_equity_last_price"),
+                    "base_equity_last_price": base_equity_last_price,
 
                     "put_buy_symbol": buy_row.get("put_symbol"),
                     "put_best_sell_price": low_premium,
                     "put_buy_strike": low_strike,
-                    # "put_buy_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "put_sell_symbol": sell_row.get("put_symbol"),
                     "put_best_buy_price": high_premium,
                     "put_sell_strike": high_strike,
-                    # "put_sell_notional_value": sell_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
                     "put_sell_value": sell_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
-                    "remained_day": remained_day,
-
-                    **add_profits(coordinates, abs(profit_factor), remained_day),
+                    **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, high_strike),
 
                     "profit_factor": profit_factor,
 

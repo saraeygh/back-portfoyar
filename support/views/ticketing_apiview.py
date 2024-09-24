@@ -68,8 +68,8 @@ def get_ticket_detail(request, ticket_id):
     first_response = {
         "id": ticket_id,
         "text": ticket.text,
-        "date": jdatetime.datetime.fromgregorian(datetime=ticket.updated_at).strftime(format="%Y/%m/%d"),
-        "time": jdatetime.datetime.fromgregorian(datetime=ticket.updated_at).strftime(format="%H:%m"),
+        "date": jdatetime.datetime.fromgregorian(datetime=ticket.created_at).strftime(format="%Y/%m/%d"),
+        "time": jdatetime.datetime.fromgregorian(datetime=ticket.created_at).strftime(format="%H:%m"),
         "user": ticket.sender_user.get_full_name(),
         "is_staff": ticket.sender_user.is_staff,
     }
@@ -80,7 +80,7 @@ def get_ticket_detail(request, ticket_id):
         first_response["appendix"] = None
     first_response = OrderedDict(sorted(first_response.items()))
 
-    responses = ticket.responses
+    responses = ticket.responses.order_by("updated_at")
     ticket = GetUserTicketsSerailizer(ticket, context={"request": request})
     ticket = ticket.data
 

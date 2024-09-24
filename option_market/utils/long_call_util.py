@@ -47,13 +47,11 @@ def long_call():
                 "id": uuid4().hex,
 
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": row.get("base_equity_last_price"),
 
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
                 "strike_price": strike_price,
-                # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
                 "remained_day": row.get("remained_day"),
 

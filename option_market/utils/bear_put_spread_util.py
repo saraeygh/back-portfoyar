@@ -20,9 +20,18 @@ from . import (
 redis_conn = RedisInterface(db=3)
 
 
-def add_profits(coordinates, profit_factor, remained_day):
+def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price, low_strike):
+    if base_equity_last_price != 0 and base_equity_last_price > low_strike:
+        required_change = (
+            (low_strike - base_equity_last_price) / base_equity_last_price
+            ) * 100
+    else:
+        required_change = 0
+
     profits = {
         "final_profit": 0,
+        "required_change": required_change,
+        "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
     }
@@ -30,11 +39,6 @@ def add_profits(coordinates, profit_factor, remained_day):
     net_profit = coordinates[0]["y_1"]
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
-
-    # if remained_day != 0:
-    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
-
-    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -93,28 +97,24 @@ def bear_put_spread():
 
                 remained_day = row.get("remained_day")
                 profit_factor = -1 * high_premium + low_premium
+                base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
 
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
-                    "base_equity_last_price": row.get("base_equity_last_price"),
+                    "base_equity_last_price": base_equity_last_price,
 
                     "put_buy_symbol": buy_row.get("put_symbol"),
                     "put_best_sell_price": high_premium,
                     "put_buy_strike": high_strike,
-                    # "put_buy_notional_value": buy_row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
                     "put_sell_symbol": sell_row.get("put_symbol"),
                     "put_best_buy_price": low_premium,
                     "put_sell_strike": low_strike,
-                    # "put_sell_notional_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
                     "put_sell_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
 
-                    "remained_day": remained_day,
-
-                    **add_profits(coordinates, abs(profit_factor), remained_day),
+                    **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, low_strike),
 
                     "profit_factor": profit_factor,
 

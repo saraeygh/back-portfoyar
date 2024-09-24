@@ -19,9 +19,18 @@ from . import (
 redis_conn = RedisInterface(db=3)
 
 
-def add_profits(remained_day):
+def add_profits(remained_day, base_equity_last_price, strike_price):
+    if base_equity_last_price != 0 and base_equity_last_price < strike_price:
+        required_change = (
+            (strike_price - base_equity_last_price) / base_equity_last_price
+            ) * 100
+    else:
+        required_change = 0
+
     profits = {
         "final_profit": 100,
+        "required_change": required_change,
+        "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
     }
@@ -56,20 +65,18 @@ def short_put():
 
             remained_day = row.get("remained_day")
             profit_factor = put_premium
+            base_equity_last_price = row.get("base_equity_last_price")
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
-                "base_equity_last_price": row.get("base_equity_last_price"),
+                "base_equity_last_price": base_equity_last_price,
 
                 "put_sell_symbol": row.get("put_symbol"),
                 "put_best_buy_price": put_premium,
                 "strike_price": strike_price,
-                # "put_notional_value": row.get("put_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-                "remained_day": remained_day,
 
-                **add_profits(remained_day),
+                **add_profits(remained_day, base_equity_last_price, strike_price),
 
                 "profit_factor": profit_factor,
 

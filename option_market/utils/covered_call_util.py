@@ -19,22 +19,31 @@ redis_conn = RedisInterface(db=3)
 
 
 def add_profits(row):
-    profits = {
-        "final_profit": 0,
-        "monthly_profit": 0,
-        "yearly_profit": 0,
-    }
-
+    remained_day = row.get("remained_day")
     strike_price = float(row.get("strike_price"))
     call_premium = float(row.get("call_best_buy_price"))
     base_equity_last_price = float(row.get("base_equity_last_price"))
+
+    if base_equity_last_price != 0 and base_equity_last_price < strike_price:
+        required_change = (
+            (strike_price - base_equity_last_price) / base_equity_last_price
+            ) * 100
+    else:
+        required_change = 0
+
+    profits = {
+        "final_profit": 0,
+        "required_change": required_change,
+        "remained_day": remained_day,
+        "monthly_profit": 0,
+        "yearly_profit": 0,
+    }
 
     if base_equity_last_price != call_premium:
         profits["final_profit"] = (
             (strike_price / (base_equity_last_price - call_premium)) - 1
         ) * 100
 
-    remained_day = row.get("remained_day")
     if remained_day != 0:
         profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
 
@@ -75,17 +84,13 @@ def covered_call():
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": asset_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
 
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": premium,
                 "strike_price": strike,
-                # "call_notional_value": row.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
-                "remained_day": row.get("remained_day"),
 
                 **add_profits(row),
 

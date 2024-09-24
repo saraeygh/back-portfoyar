@@ -17,13 +17,21 @@ from . import (
 )
 
 
-
 redis_conn = RedisInterface(db=3)
 
 
-def add_profits(coordinates, profit_factor, remained_day):
+def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price, low_strike, high_strike):
+    if base_equity_last_price != 0 and base_equity_last_price < high_strike and base_equity_last_price > low_strike:
+        left_move = ((low_strike - base_equity_last_price) / base_equity_last_price) * 100
+        right_move = ((high_strike - base_equity_last_price) / base_equity_last_price) * 100
+        required_change = min([abs(left_move), abs(right_move)])
+    else:
+        required_change = 0
+
     profits = {
         "final_profit": 0,
+        "required_change": required_change,
+        "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
     }
@@ -31,11 +39,6 @@ def add_profits(coordinates, profit_factor, remained_day):
     net_profit = coordinates[0]["y_2"]
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
-
-    # if remained_day != 0:
-    #     profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
-
-    # profits["yearly_profit"] = profits["monthly_profit"] * 12
 
     return profits
 
@@ -105,34 +108,29 @@ def short_butterfly():
 
                 profit_factor = (low_premium + high_premium) + -2 * mid_premium
                 remained_day = row.get("remained_day")
+                base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
  
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    # "base_equity_value": row.get("base_equity_value") / RIAL_TO_BILLION_TOMAN,
-                    "base_equity_last_price": row.get("base_equity_last_price"),
+                    "base_equity_last_price": base_equity_last_price,
 
                     "call_sell_symbol_low": low_call_sell.get("call_symbol"),
                     "call_best_buy_price_low": low_premium,
                     "call_sell_strike_low": low_strike,
-                    # "call_sell_notional_value_low": low_call_sell.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value_low": low_call_sell.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_buy_symbol_mid": mid_call_buy.get("call_symbol"),
                     "call_best_sell_price_mid": mid_premium,
                     "call_buy_strike_mid": mid_strike,
-                    # "call_buy_notional_value_mid": mid_call_buy.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_buy_value_mid": mid_call_buy.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
                     "call_sell_symbol_high": high_call_sell.get("call_symbol"),
                     "call_best_buy_price_high": high_premium,
                     "call_sell_strike_high": high_strike,
-                    # "call_sell_notional_value_high": high_call_sell.get("call_notional_value") / RIAL_TO_BILLION_TOMAN,
                     "call_sell_value_high": high_call_sell.get("call_value") / RIAL_TO_BILLION_TOMAN,
 
-                    "remained_day": row.get("remained_day"),
-
-                    **add_profits(coordinates, abs(profit_factor), remained_day),
+                    **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, low_strike, high_strike),
 
                     "profit_factor": profit_factor,
 
