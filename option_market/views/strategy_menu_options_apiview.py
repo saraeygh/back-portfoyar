@@ -27,7 +27,9 @@ class ProfitStatusesAPIView(APIView):
 @method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
 class StrategiesAPIView(APIView):
     def get(self, request, risk_level, profit_status):
-        if profit_status == "all_profit":
+        if profit_status == "all_profit" and risk_level == "all_risk":
+            strategy_list = list(StrategyOption.objects.all().values("name", "key"))
+        elif profit_status == "all_profit":
             strategy_list = list(
                 StrategyOption.objects.filter(risk_level=risk_level).values(
                     "name", "key"

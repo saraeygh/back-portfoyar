@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = eval(os.environ.setdefault("DEBUG", "True"))
@@ -198,3 +199,28 @@ EMAIL_HOST_PASSWORD = os.environ.setdefault(
 DEFAULT_FROM_EMAIL = os.environ.setdefault(
     "DEFAULT_FROM_EMAIL", "armansmtptest@gmail.com"
 )
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+        "file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "django.log"),
+            "maxBytes": 52428800,  # 50 MB
+            "backupCount": 10,
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
