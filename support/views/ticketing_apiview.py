@@ -1,5 +1,6 @@
 import json
 import os
+from collections import OrderedDict
 from uuid import uuid4
 from django.db.models import Q
 from django.core.files.storage import default_storage
@@ -11,6 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+import jdatetime
 
 from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES
 from support.serializers import (
@@ -63,6 +65,21 @@ def save_appendix_file(file):
 
 def get_ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+    first_response = {
+        "id": ticket_id,
+        "text": ticket.text,
+        "date": jdatetime.datetime.fromgregorian(datetime=ticket.updated_at).strftime(format="%Y/%m/%d"),
+        "time": jdatetime.datetime.fromgregorian(datetime=ticket.updated_at).strftime(format="%H:%m"),
+        "user": ticket.sender_user.get_full_name(),
+        "is_staff": ticket.sender_user.is_staff,
+    }
+    if ticket.file:
+        file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}/"
+        first_response["appendix"] = file_url
+    else:
+        first_response["appendix"] = None
+    first_response = OrderedDict(sorted(first_response.items()))
+
     responses = ticket.responses
     ticket = GetUserTicketsSerailizer(ticket, context={"request": request})
     ticket = ticket.data
@@ -70,7 +87,9 @@ def get_ticket_detail(request, ticket_id):
     responses = GetTicketResponseSerailizer(
         responses, many=True, context={"request": request}
     )
-    ticket["responses"] = responses.data
+    responses = list(responses.data)
+    responses.insert(0, first_response)
+    ticket["responses"] = responses
 
     return Response(ticket, status=status.HTTP_200_OK)
 

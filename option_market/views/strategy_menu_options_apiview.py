@@ -28,7 +28,9 @@ class ProfitStatusesAPIView(APIView):
 class StrategiesAPIView(APIView):
     def get(self, request, risk_level, profit_status):
         if profit_status == "all_profit" and risk_level == "all_risk":
-            strategy_list = list(StrategyOption.objects.all().values("name", "key"))
+            strategy_list = list(
+                StrategyOption.objects.all().distinct("key").values("name", "key")
+            )
         elif profit_status == "all_profit":
             strategy_list = list(
                 StrategyOption.objects.filter(risk_level=risk_level).values(

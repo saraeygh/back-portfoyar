@@ -311,6 +311,7 @@ class OptionPositionsAPIView(APIView):
 
         if risk_level == "all_risk":
             strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
+            strategy_result = strategy_result.to_dict(orient="records")
         else:
             filter_key = f"{risk_level}_{strategy_key}"
             strategy_result = (FILTER_DICT.get(filter_key))(strategy_key)
