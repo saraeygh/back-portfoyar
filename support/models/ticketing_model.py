@@ -2,28 +2,38 @@ from django.db import models
 from django.contrib.auth.models import User
 from core.models import TimeStampMixin
 
-
+MARKETWATCH = 1
+OPTIONS = 2
+DOMESTIC = 3
+GLOBAL = 4
+ROI = 5
+OTHER = 0
 FEATURE_CHOICES = [
-    (1, "تابلوخوانی"),
-    (2, "قراردادهای اختیار معامله (آپشن‌ها)"),
-    (3, "بورس کالای داخلی"),
-    (4, "بازارهای جهانی"),
-    (5, "مقایسه سهام"),
-    (0, "سایر"),
+    (MARKETWATCH, "تابلوخوانی"),
+    (OPTIONS, "قراردادهای اختیار معامله (آپشن‌ها)"),
+    (DOMESTIC, "بورس کالای داخلی"),
+    (GLOBAL, "بازارهای جهانی"),
+    (ROI, "مقایسه سهام"),
+    (OTHER, "سایر"),
 ]
 
-
+OPEN = 0
+PENDING = 1
+ANSWERED = 2
+CLOSED = 3
 STATUS_CHOICES = [
-    (0, "open"),
-    (1, "pending"),
-    (2, "answered"),
-    (3, "closed"),
+    (OPEN, "open"),
+    (PENDING, "pending"),
+    (ANSWERED, "answered"),
+    (CLOSED, "closed"),
 ]
 
+TECHNICAL = 2
+FINANCIAL = 1
 UNIT_CHOICES = [
-    (2, "فنی"),
-    (1, "مالی"),
-    (0, "سایر"),
+    (TECHNICAL, "فنی"),
+    (FINANCIAL, "مالی"),
+    (OTHER, "سایر"),
 ]
 
 

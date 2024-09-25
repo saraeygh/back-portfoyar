@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
-from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES
+from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES, OPEN
 from support.serializers import (
     GetUserTicketsSerailizer,
     AddUserTicketsSerailizer,
@@ -47,8 +47,8 @@ def create_dir_if_not_exists():
 
 
 def decrease_filename_lenght(filename: str):
-    if len(filename) > 10:
-        diff_idx = len(filename) - 10 + 1
+    if len(filename) > 255:
+        diff_idx = len(filename) - 255 + 1
         filename = filename[diff_idx:]
 
     return filename
@@ -197,7 +197,7 @@ class GetTicketDetailAPIView(APIView):
         new_response = new_response_srz.save()
 
         ticket.updated_at = new_response.updated_at
-        ticket.status = 0
+        ticket.status = OPEN
         ticket.save()
 
         return get_ticket_detail(request=request, ticket_id=ticket_id)

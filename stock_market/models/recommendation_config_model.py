@@ -19,8 +19,12 @@ RELATED_NAMES = [
     "domestic_negative_range",
 ]
 
-
-CATEGORY_CHOICES = [("foundamental", "بنیادی"), ("marketwatch", "تابلوخوانی")]
+FOUNDAMENTAL_CATEGORY = "foundamental"
+MARKETWATCH_CATEGORY = "marketwatch"
+CATEGORY_CHOICES = [
+    (FOUNDAMENTAL_CATEGORY, "بنیادی"),
+    (MARKETWATCH_CATEGORY, "تابلوخوانی"),
+]
 
 
 class RecommendationConfig(TimeStampMixin, models.Model):
@@ -139,15 +143,23 @@ class SellRatio(TimeStampMixin, models.Model):
     )
 
 
+WEEKLY = 7
+MONTHLY = 30
+QUARTERLY = 90
+HALF_YEARLY = 180
+YEARLY = 365
+THREE_YEARLY = 1095
+ROI_DURATIONS_CHOICES = [
+    (WEEKLY, "هفتگی"),
+    (MONTHLY, "ماهانه"),
+    (QUARTERLY, "سه‌ ماهه"),
+    (HALF_YEARLY, "شش‌ ماهه"),
+    (YEARLY, "یک‌ ساله"),
+    (THREE_YEARLY, "سه‌ ساله"),
+]
+
+
 class ROI(TimeStampMixin, models.Model):
-    DURATIONS_CHOICES = [
-        (7, "هفتگی"),
-        (30, "ماهانه"),
-        (90, "سه‌ ماهه"),
-        (180, "شش‌ ماهه"),
-        (365, "یک‌ ساله"),
-        (1095, "سه‌ ساله"),
-    ]
 
     recommendation = models.OneToOneField(
         verbose_name="کانفیگ",
@@ -161,7 +173,7 @@ class ROI(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     duration = models.IntegerField(
-        verbose_name="دوره عملکرد", choices=DURATIONS_CHOICES, default=90
+        verbose_name="دوره عملکرد", choices=ROI_DURATIONS_CHOICES, default=90
     )
     category = models.CharField(
         verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
@@ -236,15 +248,16 @@ class OptionPriceSpread(TimeStampMixin, models.Model):
     )
 
 
-class GlobalPositiveRange(TimeStampMixin, models.Model):
-    DURATIONS_CHOICES = [
-        (7, "هفتگی"),
-        (30, "ماهانه"),
-        (90, "سه‌ ماهه"),
-        (180, "شش‌ ماهه"),
-        (365, "یک‌ ساله"),
-    ]
+COMMODITY_MARKETS_DURATIONS_CHOICES = [
+    (WEEKLY, "هفتگی"),
+    (MONTHLY, "ماهانه"),
+    (QUARTERLY, "سه‌ ماهه"),
+    (HALF_YEARLY, "شش‌ ماهه"),
+    (YEARLY, "یک‌ ساله"),
+]
 
+
+class GlobalPositiveRange(TimeStampMixin, models.Model):
     recommendation = models.OneToOneField(
         verbose_name="کانفیگ",
         to=RecommendationConfig,
@@ -257,7 +270,9 @@ class GlobalPositiveRange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=10)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     duration = models.IntegerField(
-        verbose_name="دوره عملکرد", choices=DURATIONS_CHOICES, default=30
+        verbose_name="دوره عملکرد",
+        choices=COMMODITY_MARKETS_DURATIONS_CHOICES,
+        default=30,
     )
     category = models.CharField(
         verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
@@ -265,14 +280,6 @@ class GlobalPositiveRange(TimeStampMixin, models.Model):
 
 
 class GlobalNegativeRange(TimeStampMixin, models.Model):
-    DURATIONS_CHOICES = [
-        (7, "هفتگی"),
-        (30, "ماهانه"),
-        (90, "سه‌ ماهه"),
-        (180, "شش‌ ماهه"),
-        (365, "یک‌ ساله"),
-    ]
-
     recommendation = models.OneToOneField(
         verbose_name="کانفیگ",
         to=RecommendationConfig,
@@ -285,7 +292,9 @@ class GlobalNegativeRange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=10)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     duration = models.IntegerField(
-        verbose_name="دوره عملکرد", choices=DURATIONS_CHOICES, default=30
+        verbose_name="دوره عملکرد",
+        choices=COMMODITY_MARKETS_DURATIONS_CHOICES,
+        default=30,
     )
     category = models.CharField(
         verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
@@ -293,14 +302,6 @@ class GlobalNegativeRange(TimeStampMixin, models.Model):
 
 
 class DomesticPositiveRange(TimeStampMixin, models.Model):
-    DURATIONS_CHOICES = [
-        (7, "هفتگی"),
-        (30, "ماهانه"),
-        (90, "سه‌ ماهه"),
-        (180, "شش‌ ماهه"),
-        (365, "یک‌ ساله"),
-    ]
-
     recommendation = models.OneToOneField(
         verbose_name="کانفیگ",
         to=RecommendationConfig,
@@ -313,7 +314,9 @@ class DomesticPositiveRange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=10)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     duration = models.IntegerField(
-        verbose_name="دوره عملکرد", choices=DURATIONS_CHOICES, default=30
+        verbose_name="دوره عملکرد",
+        choices=COMMODITY_MARKETS_DURATIONS_CHOICES,
+        default=30,
     )
     min_commodity_ratio = models.IntegerField(
         verbose_name="حداقل مقدار نسبت محصول", default=0
@@ -324,14 +327,6 @@ class DomesticPositiveRange(TimeStampMixin, models.Model):
 
 
 class DomesticNegativeRange(TimeStampMixin, models.Model):
-    DURATIONS_CHOICES = [
-        (7, "هفتگی"),
-        (30, "ماهانه"),
-        (90, "سه‌ ماهه"),
-        (180, "شش‌ ماهه"),
-        (365, "یک‌ ساله"),
-    ]
-
     recommendation = models.OneToOneField(
         verbose_name="کانفیگ",
         to=RecommendationConfig,
@@ -344,7 +339,9 @@ class DomesticNegativeRange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=10)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     duration = models.IntegerField(
-        verbose_name="دوره عمکلرد", choices=DURATIONS_CHOICES, default=30
+        verbose_name="دوره عمکلرد",
+        choices=COMMODITY_MARKETS_DURATIONS_CHOICES,
+        default=30,
     )
     min_commodity_ratio = models.IntegerField(
         verbose_name="حداقل مقدار نسبت محصول", default=0

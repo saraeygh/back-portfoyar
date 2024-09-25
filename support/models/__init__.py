@@ -4,4 +4,5 @@ from .ticketing_model import (
     FEATURE_CHOICES,
     STATUS_CHOICES,
     UNIT_CHOICES,
+    OPEN,
 )

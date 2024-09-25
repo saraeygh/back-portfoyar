@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from core.configs import SIX_HOURS_CACHE
 
 from option_market.models import StrategyOption
+from option_market.models.strategy_option_model import PROFIT_STATUS_CHOICES
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -16,7 +17,7 @@ class ProfitStatusesAPIView(APIView):
             {"name": "همه", "key": "all_profit"},
         ]
 
-        for profit_status in StrategyOption.PROFIT_STATUS_CHOICES:
+        for profit_status in PROFIT_STATUS_CHOICES:
             profit_status_list.append(
                 {"name": profit_status[1], "key": profit_status[0]}
             )

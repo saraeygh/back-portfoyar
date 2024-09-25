@@ -2,28 +2,42 @@ from core.models import TimeStampMixin
 from django.db import models
 from . import StockIndustrialGroup
 
+BOURSE_TYPE = 1
+FARABOURSE_TYPE = 2
+MARKET_TYPE_CHOICES = [(BOURSE_TYPE, "بورس"), (FARABOURSE_TYPE, "فرابورس")]
+
+
+STOCK = 1
+BASE_MARKET = 2
+ACCOMMODATION = 3
+STOCK_PRIORITY = 4
+DEBT_PAPER = 5
+OPTION = 6
+FUTURES = 7
+FUND = 8
+COMMODITY_MARKET = 9
+PAPER_TYPE_CHOICES = [
+    (STOCK, "سهام"),
+    (BASE_MARKET, "بازار پایه فرابورس"),
+    (ACCOMMODATION, "تسهیلات مسکن"),
+    (STOCK_PRIORITY, "حق تقدم"),
+    (DEBT_PAPER, "اوراق بدهی"),
+    (OPTION, "اختیار معامله"),
+    (FUTURES, "آتی"),
+    (FUND, "صندوق‌های سرمایه‌گذاری"),
+    (COMMODITY_MARKET, "بورس کالا"),
+]
+
 
 class StockInstrument(TimeStampMixin, models.Model):
     industrial_group = models.ForeignKey(
         to=StockIndustrialGroup, on_delete=models.CASCADE, related_name="instruments"
     )
 
-    MARKET_TYPE_CHOICES = [(1, "بورس"), (2, "فرابورس")]
     market_type = models.IntegerField(
         verbose_name="نوع بازار", choices=MARKET_TYPE_CHOICES
     )
 
-    PAPER_TYPE_CHOICES = [
-        (1, "سهام"),
-        (2, "بازار پایه فرابورس"),
-        (3, "تسهیلات مسکن"),
-        (4, "حق تقدم"),
-        (5, "اوراق بدهی"),
-        (6, "اختیار معامله"),
-        (7, "آتی"),
-        (8, "صندوق‌های سرمایه‌گذاری"),
-        (9, "بورس کالا"),
-    ]
     paper_type = models.IntegerField(
         verbose_name="نوع اوراق", choices=PAPER_TYPE_CHOICES
     )

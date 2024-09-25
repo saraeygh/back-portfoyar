@@ -1,16 +1,29 @@
 from django.db import models
 from core.models import TimeStampMixin
 
+LIMITED_PROFIT = "limited_profit"
+UNLIMITED_PROFIT = "unlimited_profit"
+PROFIT_STATUS_CHOICES = [
+    (LIMITED_PROFIT, "با سود محدود"),
+    (UNLIMITED_PROFIT, "با سود نامحدود"),
+]
+
+
+NO_RISK = "no_risk"
+LOW_RISK = "low_risk"
+HIGH_RISK = "high_risk"
+RISK_LEVEL_CHOICES = [
+    (NO_RISK, "استراتژی‌های بدون ریسک"),
+    (LOW_RISK, "استراتژی‌های با ریسک کم"),
+    (HIGH_RISK, "استراتژی‌های با ریسک زیاد"),
+]
+
 
 class StrategyOption(TimeStampMixin, models.Model):
     name = models.CharField(verbose_name="نام استراتژی", max_length=255)
 
     key = models.CharField(verbose_name="نام کلید", max_length=255)
 
-    PROFIT_STATUS_CHOICES = [
-        ("limited_profit", "با سود محدود"),
-        ("unlimited_profit", "با سود نامحدود"),
-    ]
     profit_status = models.CharField(
         verbose_name=("وضعیت سوددهی"),
         choices=PROFIT_STATUS_CHOICES,
@@ -18,11 +31,6 @@ class StrategyOption(TimeStampMixin, models.Model):
         default="limited_profit",
     )
 
-    RISK_LEVEL_CHOICES = [
-        ("no_risk", "استراتژی‌های بدون ریسک"),
-        ("low_risk", "استراتژی‌های با ریسک کم"),
-        ("high_risk", "استراتژی‌های با ریسک زیاد"),
-    ]
     risk_level = models.CharField(
         verbose_name=("سطح ریسک"),
         choices=RISK_LEVEL_CHOICES,
