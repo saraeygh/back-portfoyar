@@ -55,6 +55,8 @@ def long_call():
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
                 "remained_day": row.get("remained_day"),
 
+                "end_date": row.get("end_date"),
+
                 "profit_factor": profit_factor,
 
                 "coordinates": coordinates,

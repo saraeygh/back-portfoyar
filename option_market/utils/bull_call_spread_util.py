@@ -122,6 +122,8 @@ def bull_call_spread():
 
                     **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, high_strike),
 
+                    "end_date": row.get("end_date"),
+
                     "profit_factor": profit_factor,
 
                     "coordinates": coordinates,

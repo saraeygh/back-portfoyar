@@ -91,6 +91,8 @@ def long_strangle():
 
                     "remained_day": row.get("remained_day"),
 
+                    "end_date": row.get("end_date"),
+
                     "profit_factor": profit_factor,
 
                     "coordinates": coordinates,

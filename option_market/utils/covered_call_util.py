@@ -94,6 +94,8 @@ def covered_call():
 
                 **add_profits(row),
 
+                "end_date": row.get("end_date"),
+
                 "profit_factor": profit_factor,
 
                 "coordinates": coordinates,

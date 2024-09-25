@@ -1,18 +1,18 @@
+import jdatetime
 import json
 import os
-from collections import OrderedDict
-from uuid import uuid4
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
+from collections import OrderedDict
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
-from django.contrib.auth.models import User
-import jdatetime
 
 from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES
 from support.serializers import (
@@ -40,27 +40,41 @@ def get_user_tickets(request):
     return Response(user_tickets.data, status=status.HTTP_200_OK)
 
 
+def create_dir_if_not_exists():
+    is_dir = os.path.isdir(TICKET_APPENDIX_FILES_DIR)
+    if not is_dir:
+        os.makedirs(TICKET_APPENDIX_FILES_DIR)
+
+
+def decrease_filename_lenght(filename: str):
+    if len(filename) > 10:
+        diff_idx = len(filename) - 10 + 1
+        filename = filename[diff_idx:]
+
+    return filename
+
+
 def save_appendix_file(file):
+
     file_size = file.size
     if file_size > FILE_SIZE_LIMIT:
         return Response(
             {"message": "حجم فایل نباید بیشتر از ۱۰ مگابایت باشد."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    create_dir_if_not_exists()
 
-    is_dir = os.path.isdir(TICKET_APPENDIX_FILES_DIR)
-    if not is_dir:
-        os.makedirs(TICKET_APPENDIX_FILES_DIR)
+    original_filename = file.name
+    original_filename = original_filename.replace(" ", "-")
+    original_filename = original_filename.replace("/", "-")
+    new_filename = decrease_filename_lenght(original_filename)
 
-    file_name = uuid4().hex
-    if os.path.exists(TICKET_APPENDIX_FILES_DIR + file_name):
-        file_name = file_name + uuid4().hex
+    file.name = new_filename
+    FILE_PATH = TICKET_APPENDIX_FILES_DIR + new_filename
+    result = default_storage.save(FILE_PATH, file)
+    saved_filename = result.split("/")[1]
 
-    file.name = file_name
-    FILE_PATH = TICKET_APPENDIX_FILES_DIR + file_name
-    default_storage.save(FILE_PATH, file)
-
-    return file_name
+    return saved_filename
 
 
 def get_ticket_detail(request, ticket_id):
@@ -109,9 +123,9 @@ class GetTicketUnitListAPIView(APIView):
 @permission_classes([IsAuthenticated])
 class GetTicketFeatureListAPIView(APIView):
     def get(self, request):
-        features = [
-            {"id": feature[0], "name": feature[1]} for feature in FEATURE_CHOICES
-        ]
+        features = list()
+        for feature in FEATURE_CHOICES:
+            features.append({"id": feature[0], "name": feature[1]})
 
         return Response(features, status=status.HTTP_200_OK)
 
@@ -180,14 +194,27 @@ class GetTicketDetailAPIView(APIView):
 
         new_response_srz = AddTicketResponseSerailizer(data=new_response)
         new_response_srz.is_valid(raise_exception=True)
-        new_response_srz.save()
+        new_response = new_response_srz.save()
+
+        ticket.updated_at = new_response.updated_at
+        ticket.status = 0
+        ticket.save()
 
         return get_ticket_detail(request=request, ticket_id=ticket_id)
 
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+class DisableAnonThrottle(AnonRateThrottle):
+    def allow_request(self, request, view):
+        if request.user.is_anonymous and isinstance(view, GetTicketAppendixAPIView):
+            return True
+        return super().allow_request(request, view)
+
+
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 class GetTicketAppendixAPIView(APIView):
+    throttle_classes = [DisableAnonThrottle]
+
     def get(self, request, file_name):
         file_path = f"{TICKET_APPENDIX_FILES_DIR}{file_name}"
 

@@ -65,6 +65,7 @@ def long_straddle():
 
                 "strike_price": strike_price,
                 "remained_day": row.get("remained_day"),
+                "end_date": row.get("end_date"),
 
                 "profit_factor": profit_factor,
 

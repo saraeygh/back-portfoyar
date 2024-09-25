@@ -52,17 +52,10 @@ class GetUserTicketsSerailizer(serializers.ModelSerializer):
             return "ادمین سایت"
 
     def to_representation(self, instance):
-        responses = instance.responses
-
-        if responses.count() > 0:
-            last_update = responses.order_by("-updated_at").first()
-            last_update = last_update.updated_at
-        else:
-            last_update = instance.updated_at
-
         representation = super().to_representation(instance)
-        representation["response_count"] = responses.count()
-        representation["last_update"] = get_last_update(last_update)
+        representation["response_count"] = instance.responses.count()
+        representation["last_update"] = get_last_update(instance.updated_at)
+
         if instance.file:
             request = self.context.get("request")
             file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{instance.file}/"

@@ -78,6 +78,8 @@ def short_put():
 
                 **add_profits(remained_day, base_equity_last_price, strike_price),
 
+                "end_date": row.get("end_date"),
+
                 "profit_factor": profit_factor,
 
                 "coordinates": coordinates,

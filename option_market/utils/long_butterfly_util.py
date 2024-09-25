@@ -140,6 +140,8 @@ def long_butterfly():
 
                     **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, mid_strike),
 
+                    "end_date": row.get("end_date"),
+
                     "profit_factor": profit_factor,
 
                     "coordinates": coordinates,

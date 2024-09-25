@@ -54,6 +54,7 @@ def long_put():
                 "strike_price": strike_price,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
                 "remained_day": row.get("remained_day"),
+                "end_date": row.get("end_date"),
 
                 "profit_factor": profit_factor,
 
