@@ -53,6 +53,7 @@ services:
     entrypoint: ["/code/infra/entrypoints/api_test.sh"]
     volumes:
       - shared_options_excel_files_test:/code/media/uploaded_files/
+      - ticket_appendix:/code/media/tickets/
     networks:
       - test
     depends_on:
@@ -74,6 +75,7 @@ services:
     entrypoint: ["/code/infra/entrypoints/worker_test.sh"]
     volumes:
       - shared_options_excel_files_test:/code/media/uploaded_files/
+      - ticket_appendix:/code/media/tickets/
     networks:
       - test
     depends_on:
