@@ -17,7 +17,7 @@ class CustomeObtainAuthToken(views.ObtainAuthToken):
             user = get_object_or_404(User, username=username)
             full_name = user.get_full_name()
             if full_name is None or full_name == "":
-                full_name = "ناشناس"
+                full_name = username
             data["full_name"] = full_name
 
             return Response(data=data, status=status.HTTP_200_OK)

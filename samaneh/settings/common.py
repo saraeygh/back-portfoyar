@@ -57,23 +57,23 @@ MIDDLEWARE = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    # DOMAINS
-    "http://portfoyar.com",
-    "https://portfoyar.com",
-    # LOCALHOST
-    "http://127.0.0.1",
-    "https://127.0.0.1",
-    # FRONTEND
-    "http://127.0.0.1:3000",
-    "https://127.0.0.1:3000",
-    # CLOUD
-    "http://188.121.98.119",
-    "https://188.121.98.119",
-    # ARVAN
-    "http://185.143.235.200",
-    "https://185.143.235.200",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     # DOMAINS
+#     "http://portfoyar.com",
+#     "https://portfoyar.com",
+#     # LOCALHOST
+#     "http://127.0.0.1",
+#     "https://127.0.0.1",
+#     # FRONTEND
+#     "http://127.0.0.1:3000",
+#     "https://127.0.0.1:3000",
+#     # CLOUD
+#     "http://188.121.98.119",
+#     "https://188.121.98.119",
+#     # ARVAN
+#     "http://185.143.235.200",
+#     "https://185.143.235.200",
+# ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
