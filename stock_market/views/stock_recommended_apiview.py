@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class StockRecommendedAPIView(APIView):
+
     def get(self, request):
         config = get_recommendation_config(user=request.user)
         updated_at = config.updated_at.strftime("%H-%M-%S")
