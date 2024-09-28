@@ -1,4 +1,3 @@
-from core.views import CustomeObtainAuthToken
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.static import serve
@@ -16,7 +15,6 @@ else:
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
-    path("api/sign-in/", CustomeObtainAuthToken.as_view()),
     path("api/account/", include("account.urls")),
     path("api/support/", include("support.urls")),
     # APP'S URLS
