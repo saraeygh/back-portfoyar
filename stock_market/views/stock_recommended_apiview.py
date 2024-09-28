@@ -18,6 +18,9 @@ class StockRecommendedAPIView(APIView):
 
     def get(self, request):
         config = get_recommendation_config(user=request.user)
+        if config is None:
+            return Response([], status=status.HTTP_200_OK)
+
         updated_at = config.updated_at.strftime("%H-%M-%S")
         cache_key = (
             "STOCK_RECOMMENDATION_RESULT"
