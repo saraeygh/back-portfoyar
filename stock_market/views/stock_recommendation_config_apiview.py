@@ -235,6 +235,12 @@ class StockRecommendationConfigAPIView(APIView):
         config = get_object_or_404(RecommendationConfig, id=config_id)
         config.delete()
 
+        configs = request.user.configs
+        if configs.exists():
+            random_config = configs.first()
+            random_config.is_default = True
+            random_config.save()
+
         return Response(
             {"message": "تنظیمات مورد نظر حذف شد."}, status=status.HTTP_200_OK
         )
