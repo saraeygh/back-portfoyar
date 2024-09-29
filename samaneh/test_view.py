@@ -25,9 +25,13 @@ from stock_market.utils import (
 from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse
 
+from rest_framework.authtoken.models import Token
+
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
+        tokens = Token.objects.filter(user__username="admin")
+
         # populate_option_strategy()
 
         # calculate_producers_yearly_value()
@@ -37,7 +41,7 @@ class TestView(APIView):
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
         # update_instrument_roi()
-        update_option_data_from_tse()
+        # update_option_data_from_tse()
         # populate_all_option_strategy()
         # calculate_commodity_mean_domestic()
         # config = get_recommendation_config(user=request.user)

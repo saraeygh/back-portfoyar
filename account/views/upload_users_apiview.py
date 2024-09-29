@@ -72,19 +72,7 @@ class UploadUsersAPIView(APIView):
                     user_obj.last_name = last_name
 
             else:
-                if len(username) == 11:
-                    new_user = User(username=username)
-                else:
-                    not_valid_users.append(
-                        {
-                            "username": username,
-                            "password": password,
-                            "email": email,
-                            "first_name": first_name,
-                            "last_name": last_name,
-                        }
-                    )
-
+                new_user = User(username=username)
                 if is_valid_email(email):
                     new_user.email = email
                 if isinstance(first_name, str):
