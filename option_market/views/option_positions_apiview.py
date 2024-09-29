@@ -1,10 +1,11 @@
-from django.shortcuts import get_object_or_404
 import pandas as pd
 from core.utils import RedisInterface
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 RESULT_SORTING_COLUMN = "yearly_profit"
 
@@ -306,6 +307,8 @@ FILTER_DICT = {
 }
 
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class OptionPositionsAPIView(APIView):
     def get(self, request, risk_level: str, strategy_key: str):
 
