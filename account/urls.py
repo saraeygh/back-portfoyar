@@ -1,7 +1,12 @@
 from django.urls import path
 from core.views import CustomeObtainAuthToken
 
-from account.views import SignUpAPIView, UploadUsersAPIView, ProfileAPIView
+from account.views import (
+    SignUpAPIView,
+    UploadUsersAPIView,
+    ProfileAPIView,
+    EmailAPIView,
+)
 
 
 upload_users_urls = [
@@ -17,4 +22,10 @@ edit_profile_urls = [
     path("profile/", ProfileAPIView.as_view()),
 ]
 
-urlpatterns = upload_users_urls + sign_in_sign_up_urls + edit_profile_urls
+add_update_email_urls = [
+    path("email/", EmailAPIView.as_view()),
+]
+
+urlpatterns = (
+    upload_users_urls + sign_in_sign_up_urls + edit_profile_urls + add_update_email_urls
+)

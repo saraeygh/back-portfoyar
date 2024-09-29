@@ -29,7 +29,7 @@ class RedisInterface:
 
         return fields_list
 
-    def bulk_push_list_of_dicts(self, list_key: str, list_of_dicts: dict):
+    def bulk_push_list_of_dicts(self, list_key: str, list_of_dicts: list):
         self.client.delete(list_key)
         serialized_data = json.dumps(list_of_dicts, cls=Int64Encoder)
         self.client.set(list_key, serialized_data)
