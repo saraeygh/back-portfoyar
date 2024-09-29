@@ -64,13 +64,7 @@ class UploadUsersAPIView(APIView):
 
             user_obj: User = User.objects.filter(username=username)
             if user_obj.exists():
-                if is_valid_email(email):
-                    user_obj.email = email
-                if isinstance(first_name, str):
-                    user_obj.first_name = first_name
-                if isinstance(last_name, str):
-                    user_obj.last_name = last_name
-
+                continue
             else:
                 new_user = User(username=username)
                 if is_valid_email(email):
