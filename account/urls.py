@@ -7,6 +7,7 @@ from account.views import (
     ProfileAPIView,
     EmailAPIView,
     UsernameAPIView,
+    PasswordAPIView,
 )
 
 
@@ -27,10 +28,15 @@ email_urls = [
     path("email/", EmailAPIView.as_view()),
 ]
 
-username_urls = [
+credential_urls = [
     path("username/", UsernameAPIView.as_view()),
+    path("password/", PasswordAPIView.as_view()),
 ]
 
 urlpatterns = (
-    upload_users_urls + sign_in_sign_up_urls + profile_urls + email_urls + username_urls
+    upload_users_urls
+    + sign_in_sign_up_urls
+    + profile_urls
+    + email_urls
+    + credential_urls
 )
