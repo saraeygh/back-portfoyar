@@ -48,4 +48,7 @@ RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/worker_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/beat_test.sh"]
 
+ENV MELIPAYAMAK_USERNAME=09102188113
+ENV MELIPAYAMAK_PASSOWRD=TL5OC
+
 ENV DEBUG=True

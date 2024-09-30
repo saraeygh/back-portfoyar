@@ -6,6 +6,7 @@ from account.views import (
     UploadUsersAPIView,
     ProfileAPIView,
     EmailAPIView,
+    UsernameAPIView,
 )
 
 
@@ -18,14 +19,18 @@ sign_in_sign_up_urls = [
     path("sign-in/", CustomeObtainAuthToken.as_view()),
 ]
 
-edit_profile_urls = [
+profile_urls = [
     path("profile/", ProfileAPIView.as_view()),
 ]
 
-add_update_email_urls = [
+email_urls = [
     path("email/", EmailAPIView.as_view()),
 ]
 
+username_urls = [
+    path("username/", UsernameAPIView.as_view()),
+]
+
 urlpatterns = (
-    upload_users_urls + sign_in_sign_up_urls + edit_profile_urls + add_update_email_urls
+    upload_users_urls + sign_in_sign_up_urls + profile_urls + email_urls + username_urls
 )
