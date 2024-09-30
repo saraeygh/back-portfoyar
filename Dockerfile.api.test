@@ -25,7 +25,7 @@ RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/reposi
     echo "https://mirrors.gigenet.com/alpinelinux/v3.20/community/" >> /etc/apk/repositories
 RUN ["apk", "update"]
 RUN ["apk", "upgrade", "-U", "-a"]
-RUN ["apk", "add", "gcc", "python3-dev", "musl-dev", "linux-headers", "curl"]
+RUN ["apk", "add", "gcc", "python3-dev", "musl-dev", "linux-headers", "curl", "libxml2-dev", "libxslt-dev"]
 
 WORKDIR /code
 
