@@ -81,6 +81,11 @@ STRATEGIES = {
         "profit_status": "unlimited_profit",
         "risk_levels": ["low_risk", "high_risk"],
     },
+    "conversion": {
+        "name": "کانورژن",
+        "profit_status": "limited_profit",
+        "risk_levels": ["no_risk"],
+    },
 }
 
 

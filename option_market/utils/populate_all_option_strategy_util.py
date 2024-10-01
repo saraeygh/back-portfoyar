@@ -1,6 +1,7 @@
 from core.utils import task_timing
 from . import (
     covered_call,
+    conversion,
     long_call,
     short_call,
     long_put,
@@ -69,5 +70,8 @@ def populate_all_option_strategy():
 
     # 16
     collar()
+
+    # 17
+    conversion()
 
     return

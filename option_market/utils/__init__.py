@@ -18,11 +18,13 @@ from .option_strategy_class_util import (
     CartesianProduct,
     AddOption,
     CoveredCall,
+    Conversion,
     get_profit_range,
     get_distinc_end_date_options,
 )
 from .add_action_detail_util import add_action_detail, add_option_fees
 from .covered_call_util import covered_call
+from .conversion_util import conversion
 from .long_call_util import long_call
 from .short_call_util import short_call
 from .long_put_util import long_put

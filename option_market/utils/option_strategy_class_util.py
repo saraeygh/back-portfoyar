@@ -681,3 +681,65 @@ class CoveredCall:
         )
 
         return results
+
+
+class Conversion:
+    def __init__(self, strike, call_premium, put_premium, asset_price) -> None:
+        self.strike = strike
+        self.call_premium = call_premium
+        self.put_premium = put_premium
+        self.asset_price = asset_price
+        self.name = "conversion"
+        STRATEGY_NAME_LIST.append(self.name)
+        self.interval = [(-np.inf, strike), (strike, np.inf)]
+        self.net_profit = self.get_net_profit()
+
+    def get_net_profit(self):
+        return self.call_premium - self.put_premium - self.asset_price + self.strike
+
+    def get_slop(self):
+        return {str((-np.inf, self.strike)): 0, str((self.strike, np.inf)): 0}
+
+    def is_profit_unlimited(self):
+        return False
+
+    def is_loss_unlimited(self):
+        return True
+
+    def is_limited(self):
+        return False
+
+    def get_profit_loss_ranges(self):
+        if self.net_profit < 0:
+            profit_sign = "negative"
+        else:
+            profit_sign = "positive"
+
+        return [
+            ((-np.inf, self.strike), profit_sign),
+            ((self.strike, np.inf), profit_sign),
+        ]
+
+    def get_coordinate(self):
+        results = []
+        results.append(
+            {
+                "x_1": 0,
+                "y_1": self.net_profit,
+                "x_2": self.strike,
+                "y_2": self.net_profit,
+                "slope": 0,
+            }
+        )
+
+        results.append(
+            {
+                "x_1": self.strike,
+                "y_1": self.net_profit,
+                "x_2": self.strike * EXTEND_POSITIVE_RANGE_COEFFICIENT,
+                "y_2": self.net_profit,
+                "slope": 0,
+            }
+        )
+
+        return results
