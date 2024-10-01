@@ -17,8 +17,6 @@ from option_market.utils import (
     BASE_EQUITY_COLUMNS,
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
-    CALL_OLD_NEW_COLUMN_MAPPING,
-    PUT_OLD_NEW_COLUMN_MAPPING,
     populate_all_option_strategy,
 )
 
@@ -48,75 +46,9 @@ def add_link(row) -> str:
     return inst_link
 
 
-def populate_calls(option_data: pd.DataFrame, last_market_watch_data: pd.DataFrame):
-    call_option_data = option_data[
-        list(BASE_EQUITY_COLUMNS.values())
-        + list(COMMON_OPTION_COLUMN.values())
-        + list(CALL_OPTION_COLUMN.values())
-    ]
-
-    last_market_watch_data = last_market_watch_data.rename(
-        columns={"insCode": "call_ins_code", "hEven": "last_update"}
-    )
-    last_market_watch_data = last_market_watch_data[["call_ins_code", "last_update"]]
-
-    call_option_data = pd.merge(
-        left=call_option_data,
-        right=last_market_watch_data,
-        on="call_ins_code",
-        how="left",
-    )
-
-    call_option_data.dropna(inplace=True)
-
-    call_option_data = call_option_data.rename(columns=CALL_OLD_NEW_COLUMN_MAPPING)
-    call_option_data = call_option_data[call_option_data["last_update"] > 80000]
-    call_option_data["last_update"] = call_option_data.apply(edit_last_update, axis=1)
-    call_option_data["option_type"] = "call"
-    call_option_data["link"] = call_option_data.apply(add_link, axis=1)
-    call_option_data = call_option_data.to_dict(orient="records")
-
-    redis_conn.bulk_push_list_of_dicts(list_key="calls", list_of_dicts=call_option_data)
-    print(f"calls, {len(call_option_data)} records.")
-
-    return
-
-
-def populate_puts(option_data: pd.DataFrame, last_market_watch_data: pd.DataFrame):
-    put_option_data = option_data[
-        list(BASE_EQUITY_COLUMNS.values())
-        + list(COMMON_OPTION_COLUMN.values())
-        + list(PUT_OPTION_COLUMN.values())
-    ]
-
-    last_market_watch_data = last_market_watch_data.rename(
-        columns={"insCode": "put_ins_code", "hEven": "last_update"}
-    )
-    last_market_watch_data = last_market_watch_data[["put_ins_code", "last_update"]]
-
-    put_option_data = pd.merge(
-        left=put_option_data,
-        right=last_market_watch_data,
-        on="put_ins_code",
-        how="left",
-    )
-
-    put_option_data.dropna(inplace=True)
-
-    put_option_data = put_option_data.rename(columns=PUT_OLD_NEW_COLUMN_MAPPING)
-    put_option_data = put_option_data[put_option_data["last_update"] > 80000]
-    put_option_data["last_update"] = put_option_data.apply(edit_last_update, axis=1)
-    put_option_data["option_type"] = "put"
-    put_option_data["link"] = put_option_data.apply(add_link, axis=1)
-    put_option_data = put_option_data.to_dict(orient="records")
-
-    redis_conn.bulk_push_list_of_dicts(list_key="puts", list_of_dicts=put_option_data)
-    print(f"puts, {len(put_option_data)} records.")
-
-    return
-
-
-def update_option_data_from_tse_loop():
+@task_timing
+@shared_task(name="update_option_data_from_tse_task")
+def update_option_data_from_tse():
     check_market_state = FeatureToggle.objects.get(name="market_state")
     for market_type_num, _ in MAIN_MARKET_TYPE_DICT.items():
         if check_market_state.state == 1:
@@ -200,14 +132,6 @@ def update_option_data_from_tse_loop():
 
         option_data.dropna(inplace=True)
 
-        populate_calls(
-            option_data=option_data, last_market_watch_data=last_market_watch_data
-        )
-
-        populate_puts(
-            option_data=option_data, last_market_watch_data=last_market_watch_data
-        )
-
         call_data = last_market_watch_data.copy(deep=True)
         call_data = call_data.rename(
             columns={"insCode": "call_ins_code", "hEven": "call_last_update"}
@@ -239,12 +163,3 @@ def update_option_data_from_tse_loop():
         populate_all_option_strategy()
 
         return
-
-
-@task_timing
-@shared_task(name="update_option_data_from_tse_task")
-def update_option_data_from_tse():
-
-    update_option_data_from_tse_loop()
-
-    return
