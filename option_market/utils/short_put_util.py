@@ -31,8 +31,8 @@ def add_profits(remained_day, base_equity_last_price, strike_price):
         "final_profit": 100,
         "required_change": required_change,
         "remained_day": remained_day,
-        "monthly_profit": 0,
-        "yearly_profit": 0,
+        "monthly_profit": "-",
+        "yearly_profit": "-",
     }
 
     return profits

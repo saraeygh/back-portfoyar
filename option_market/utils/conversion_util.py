@@ -26,8 +26,8 @@ def add_profits(row, net_profit, profit_factor):
         "final_profit": (net_profit / profit_factor) * 100,
         "required_change": 0,
         "remained_day": remained_day,
-        "monthly_profit": 0,
-        "yearly_profit": 0,
+        "monthly_profit": "-",
+        "yearly_profit": "-",
     }
 
     return profits

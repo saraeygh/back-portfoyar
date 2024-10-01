@@ -31,8 +31,8 @@ def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price
         "final_profit": 0,
         "required_change": required_change,
         "remained_day": remained_day,
-        "monthly_profit": 0,
-        "yearly_profit": 0,
+        "monthly_profit": "-",
+        "yearly_profit": "-",
     }
 
     if len(coordinates) == 5:
