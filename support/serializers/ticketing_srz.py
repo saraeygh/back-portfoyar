@@ -3,6 +3,7 @@ import pytz
 from rest_framework import serializers
 from support.models import Ticket, TicketResponse, FEATURE_CHOICES, STATUS_CHOICES, UNIT_CHOICES
 import jdatetime
+from persiantools.jdatetime import JalaliDateTime
 
 FEATURES = {feature[0]: feature[1] for feature in FEATURE_CHOICES}
 STATUSES = {status[0]: status[1] for status in STATUS_CHOICES}
@@ -97,9 +98,9 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        updated_at = instance.updated_at
+        updated_at = JalaliDateTime(instance.updated_at, tzinfo=pytz.UTC) + jdatetime.timedelta(hours=3, minutes=30)
         representation["date"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%Y/%m/%d")
-        representation["time"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%H:%m")
+        representation["time"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%H:%M")
 
         representation["user"] = representation.pop("user_name")
         representation["is_staff"] = instance.user.is_staff

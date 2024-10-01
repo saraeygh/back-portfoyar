@@ -1,6 +1,8 @@
 import jdatetime
 import json
+import pytz
 import os
+from persiantools.jdatetime import JalaliDateTime
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.files.storage import default_storage
@@ -77,33 +79,41 @@ def save_appendix_file(file):
     return saved_filename
 
 
-def get_ticket_detail(request, ticket_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id)
+def add_ticket_as_first_response(request, ticket, responses):
+    created_at = JalaliDateTime(ticket.created_at, tzinfo=pytz.UTC) + jdatetime.timedelta(hours=3, minutes=30)
+
     first_response = {
-        "id": ticket_id,
+        "id": ticket.id,
         "text": ticket.text,
-        "date": jdatetime.datetime.fromgregorian(datetime=ticket.created_at).strftime(format="%Y/%m/%d"),
-        "time": jdatetime.datetime.fromgregorian(datetime=ticket.created_at).strftime(format="%H:%m"),
+        "date": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(format="%Y/%m/%d"),
+        "time": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(format="%H:%M"),
         "user": ticket.sender_user.get_full_name(),
         "is_staff": ticket.sender_user.is_staff,
+        "appendix": None,
     }
     if ticket.file:
         file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}/"
         first_response["appendix"] = file_url
-    else:
-        first_response["appendix"] = None
     first_response = OrderedDict(sorted(first_response.items()))
 
-    responses = ticket.responses.order_by("updated_at")
-    ticket = GetUserTicketsSerailizer(ticket, context={"request": request})
+    responses = list(responses.data)
+    responses.insert(0, first_response)
+
+    return responses
+
+
+def get_ticket_detail(request, ticket_id):
+    ticket_obj = get_object_or_404(Ticket, id=ticket_id)
+
+    ticket = GetUserTicketsSerailizer(ticket_obj, context={"request": request})
     ticket = ticket.data
 
+    responses = ticket_obj.responses.order_by("updated_at")
     responses = GetTicketResponseSerailizer(
         responses, many=True, context={"request": request}
     )
-    responses = list(responses.data)
-    responses.insert(0, first_response)
-    ticket["responses"] = responses
+
+    ticket["responses"] = add_ticket_as_first_response(request, ticket_obj, responses)
 
     return Response(ticket, status=status.HTTP_200_OK)
 
