@@ -1,43 +1,58 @@
-# import pytz
-# import jdatetime
-# from persiantools.jdatetime import JalaliDateTime
+import pytz
+import jdatetime
+from persiantools.jdatetime import JalaliDateTime
 
-# from django.contrib import admin
-# from favorite.models import StockFavoriteROIGroup, ROIGroupInstrument
-
-
-# class ROIGroupInstrumentInline(admin.StackedInline):
-#     model = ROIGroupInstrument
-#     fields = ("group", "instrument")
-#     autocomplete_fields = ("instrument",)
-#     extra = 1
+from rest_framework.authtoken.models import Token
+from django.contrib import admin
+from account.models import Profile
 
 
-# @admin.register(StockFavoriteROIGroup)
-# class StockFavoriteROIGroupAdmin(admin.ModelAdmin):
-#     autocomplete_fields = ("user",)
-#     list_display = ("id", "user", "name", "created_at_shamsi", "updated_at_shamsi")
-#     list_display_links = ("id", "name")
-#     ordering = ("-updated_at",)
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("user",)
+    list_display = (
+        "id",
+        "user",
+        "max_login",
+        "active_logins",
+        "phone",
+        "gender",
+        "birth_date",
+        "created_at_shamsi",
+        "updated_at_shamsi",
+    )
+    list_display_links = (
+        "user",
+        "max_login",
+        "phone",
+        "gender",
+        "birth_date",
+    )
+    ordering = ("-updated_at",)
 
-#     search_fields = ("id", "name", "user__username")
+    search_fields = ("id", "user__username")
 
-#     inlines = (ROIGroupInstrumentInline,)
+    list_filter = ("gender", "max_login")
 
-#     @admin.display(description="ایجاد")
-#     def created_at_shamsi(self, obj: StockFavoriteROIGroup):
-#         shamsi = (
-#             JalaliDateTime(obj.created_at, tzinfo=pytz.UTC)
-#             + jdatetime.timedelta(hours=3, minutes=30)
-#         ).strftime("%Y-%m-%d %H:%M:%S")
+    @admin.display(description="ورودهای قعال")
+    def active_logins(self, obj: Profile):
+        logins = Token.objects.filter(user=obj.user).count()
+        return logins
 
-#         return shamsi
+    @admin.display(description="ایجاد")
+    def created_at_shamsi(self, obj: Profile):
+        shamsi = (
+            JalaliDateTime(obj.created_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
 
-#     @admin.display(description="به‌روزرسانی")
-#     def updated_at_shamsi(self, obj: StockFavoriteROIGroup):
-#         shamsi = (
-#             JalaliDateTime(obj.updated_at, tzinfo=pytz.UTC)
-#             + jdatetime.timedelta(hours=3, minutes=30)
-#         ).strftime("%Y-%m-%d %H:%M:%S")
+        return shamsi
 
-#         return shamsi
+    @admin.display(description="به‌روزرسانی")
+    def updated_at_shamsi(self, obj: Profile):
+        shamsi = (
+            JalaliDateTime(obj.updated_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        return shamsi

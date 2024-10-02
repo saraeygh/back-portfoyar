@@ -46,4 +46,4 @@ class Profile(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "پروفایل"
-        verbose_name_plural = "۱)پروفایل‌ها"
+        verbose_name_plural = "۱) پروفایل‌ها"
