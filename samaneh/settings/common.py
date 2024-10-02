@@ -20,6 +20,7 @@ DEFAULT_INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 MANUALLY_INSTALLED_APPS = [
+    "account.apps.AccountConfig",
     "core.apps.CoreConfig",
     "domestic_market.apps.DomesticMarketConfig",
     "favorite.apps.FavoriteConfig",
