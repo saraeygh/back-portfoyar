@@ -17,3 +17,6 @@ from .create_default_feature_toggle_util import create_default_feature_toggle
 from .create_default_recommendation_setting_util import (
     create_default_recommendation_setting,
 )
+from .create_profile_for_users_with_no_profile_util import (
+    create_profile_for_users_with_no_profile,
+)
