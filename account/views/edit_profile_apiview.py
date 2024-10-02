@@ -37,7 +37,7 @@ class ProfileAPIView(APIView):
 
         return Response(profile, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def patch(self, request):
         response = {}
         user = request.user
 
