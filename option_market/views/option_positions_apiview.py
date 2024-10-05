@@ -266,6 +266,7 @@ def get_high_risk_collar(strategy_key):
 # CONVERSION ############################################
 def get_no_risk_conversion(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
+    strategy_result = sort_strategy_result(strategy_result, "final_profit")
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
