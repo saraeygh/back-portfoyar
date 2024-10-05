@@ -93,6 +93,46 @@ def get_dict_from_redis(username):
     return None if code_info is None else json.loads(code_info.decode("utf-8"))
 
 
+def create_email_verify_code(request):
+    email = request.data.get("email")
+    if email is None or not is_valid_email(email):
+        return Response(
+            {"message": "ایمیل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    username = request.user.username
+    code = str(random.randint(123456, 999999))
+    set_dict_in_redis({"username": username, "email": email, "code": code})
+    sent = send_email_verification_code(username, email, code)
+    if sent:
+        return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "متاسفانه ایمیل ارسال نشد، دوباره تلاش کنید"},
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
+def verify_email(request):
+    sent_code = str(request.data.get("code"))
+    user = request.user
+    code_info = get_dict_from_redis(user.username)
+    if code_info is None:
+        return Response(
+            {"message": "کد منقضی شده است، لطفا دوباره تلاش کنید"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    generated_code = code_info.get("code")
+    if sent_code == generated_code:
+        new_email = code_info.get("email")
+        user.email = new_email
+        user.save()
+        return Response({"message": "ایمیل به‌روزرسانی شد"}, status=status.HTTP_200_OK)
+
+    return Response(
+        {"message": "کد ارسالی اشتباه است"}, status=status.HTTP_400_BAD_REQUEST
+    )
+
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class EmailAPIView(APIView):
@@ -102,42 +142,13 @@ class EmailAPIView(APIView):
 
     def post(self, request):
         email = request.data.get("email")
-        if email is None or not is_valid_email(email):
-            return Response(
-                {"message": "ایمیل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        sent_code = request.data.get("code")
 
-        username = request.user.username
-        code = str(random.randint(123456, 999999))
-        set_dict_in_redis({"username": username, "email": email, "code": code})
-        sent = send_email_verification_code(username, email, code)
-        if sent:
+        if email:
+            return create_email_verify_code(request)
+        elif sent_code:
+            return verify_email(request)
+        else:
             return Response(
-                {"message": "ایمیل کد تایید ارسال شد"}, status=status.HTTP_200_OK
+                {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(
-            {"message": "متاسفانه ایمیل ارسال نشد، دوباره تلاش کنید"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    def patch(self, request):
-        sent_code = str(request.data.get("code"))
-        user = request.user
-        code_info = get_dict_from_redis(user.username)
-        if code_info is None:
-            return Response(
-                {"message": "کد منقضی شده است، لطفا دوباره تلاش کنید"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        generated_code = code_info.get("code")
-        if sent_code == generated_code:
-            new_email = code_info.get("email")
-            user.email = new_email
-            user.save()
-            return Response(
-                {"message": "ایمیل به‌روزرسانی شد"}, status=status.HTTP_200_OK
-            )
-
-        return Response(
-            {"message": "کد ارسالی اشتباه است"}, status=status.HTTP_400_BAD_REQUEST
-        )
