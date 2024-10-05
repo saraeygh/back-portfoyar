@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-
+import json
 import pandas as pd
 from core.utils import RedisInterface
 from option_market.utils import populate_all_option_strategy
@@ -26,14 +26,20 @@ from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse
 
 from rest_framework.authtoken.models import Token
+import requests
+from datetime import datetime
+
+from sseclient import SSEClient
+import time
+
+from future_market.tasks import update_future_info
 
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        tokens = Token.objects.filter(user__username="admin")
+        update_future_info()
 
         # populate_option_strategy()
-
         # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
         # stock_option_value_change()
@@ -46,8 +52,14 @@ class TestView(APIView):
         # calculate_commodity_mean_domestic()
         # config = get_recommendation_config(user=request.user)
         # stock_recommendation(config=config)
-
         # redis_conn = RedisInterface(db=3)
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
 
         pass
+
+
+# updateAllMarketData -
+# updateFutureMarketsInfo - آتی
+# updateGavahiMarketsInfo -
+# updateSandoqMarketsInfo - صندوق‌های کالایی
+# updateCDCMarketsInfo - گواهی سپرده کالایی

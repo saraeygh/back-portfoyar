@@ -61,6 +61,17 @@ DOMESTIC_MARKET_SCHEDULE = {
     },
 }
 
+
+FUTURE_MARKET_SCHEDULE = {
+    "update_future_info_task": {
+        "task": "update_future_info_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4",
+            minute="*/5",
+        ),
+    },
+}
+
 GLOBAL_MARKET_SCHEDULE = {
     "calculate_commodity_means_task_global": {
         "task": "calculate_commodity_means_task_global",

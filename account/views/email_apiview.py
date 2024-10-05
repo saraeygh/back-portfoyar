@@ -107,7 +107,7 @@ def create_email_verify_code(request):
     if sent:
         return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
     return Response(
-        {"message": "متاسفانه ایمیل ارسال نشد، دوباره تلاش کنید"},
+        {"message": "متاسفانه کد تایید ارسال نشد، دوباره تلاش کنید"},
         status=status.HTTP_400_BAD_REQUEST,
     )
 

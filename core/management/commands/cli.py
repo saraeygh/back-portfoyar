@@ -15,6 +15,7 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
+from future_market.tasks import update_future_info
 from global_market.tasks import calculate_commodity_means_global
 
 from option_market.tasks import (
@@ -58,7 +59,8 @@ class Command(BaseCommand):
                 "2) Global market",
                 "3) Option market",
                 "4) Stock market",
-                "5) Others",
+                "5) Future market",
+                "9) Others",
                 "0) Exit",
                 sep="\n",
             )
@@ -212,7 +214,27 @@ class Command(BaseCommand):
                                 update_stock_adjusted_history()
                             case "0":
                                 break
-                case "5":  # OTHERS
+
+                case "5":  # FUTURE MARKET
+                    while True:
+                        print(
+                            "Future market commands:",
+                            "all) Run all commands",
+                            "1) Update future info",
+                            "0) Back",
+                            sep="\n",
+                        )
+                        cmd = input("Enter command: ")
+                        os.system(CLEAR_CMD)
+                        match cmd:
+                            case "all":
+                                update_future_info()
+                            case "1":
+                                update_future_info()
+                            case "0":
+                                break
+
+                case "9":  # OTHERS
                     while True:
                         print(
                             "Other commands:",
@@ -239,6 +261,8 @@ class Command(BaseCommand):
 
                 case "99":  # RUN ALL COMMANDS
                     clear_redis_cache()
+
+                    update_future_info()
 
                     calculate_commodity_means_global()
 

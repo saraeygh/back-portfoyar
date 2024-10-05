@@ -15,14 +15,15 @@ else:
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
-    path("api/account/", include("account.urls")),
-    path("api/support/", include("support.urls")),
     # APP'S URLS
+    path("api/account/", include("account.urls")),
     path("api/domestic/", include("domestic_market.urls")),
     path("api/favorite/", include("favorite.urls")),
+    path("api/future/", include("future_market.urls")),
     path("api/global-market/", include("global_market.urls")),
     path("api/option/", include("option_market.urls")),
     path("api/stock-market/", include("stock_market.urls")),
+    path("api/support/", include("support.urls")),
     # STATIC FILES SERVING URL
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": STATIC_ROOT}),
 ] + test_urls
