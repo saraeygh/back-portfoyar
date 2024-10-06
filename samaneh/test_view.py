@@ -29,15 +29,29 @@ from rest_framework.authtoken.models import Token
 import requests
 from datetime import datetime
 
-from sseclient import SSEClient
 import time
 
 from future_market.tasks import update_future_info
 
 
+redis_conn = RedisInterface(db=4)
+
+
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        update_future_info()
+
+        keys = redis_conn.client.keys(pattern="*")
+        result = dict()
+        for key in keys:
+            try:
+                key = key.decode("utf-8")
+                value = redis_conn.client.get(name=key)
+                value = json.loads(value.decode("utf-8"))
+                value = pd.DataFrame(value)
+                result[key] = value
+            except Exception:
+                continue
+        # update_future_info()
 
         # populate_option_strategy()
         # calculate_producers_yearly_value()

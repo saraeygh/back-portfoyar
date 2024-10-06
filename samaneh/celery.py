@@ -67,7 +67,8 @@ FUTURE_MARKET_SCHEDULE = {
         "task": "update_future_info_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4",
-            minute="*/5",
+            hour="8-22",
+            minute="*/1",
         ),
     },
 }
