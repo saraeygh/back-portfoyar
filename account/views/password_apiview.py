@@ -33,34 +33,38 @@ def password_is_valid(password):
         return False
 
 
+def change_user_password(user, new_password):
+    user.set_password(new_password)
+    user.save()
+
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class PasswordAPIView(APIView):
     def put(self, request):
+        OLD_PASSWORD = "old_password"
+        NEW_PASSWORD = "new_password"
+        errors = dict()
+
         user = request.user
-        old_password = request.data.get("old_password")
-        new_password = request.data.get("new_password")
+        old_password = request.data.get(OLD_PASSWORD)
+        new_password = request.data.get(NEW_PASSWORD)
 
         authenticated_user = authenticate(
             request=request, username=user.username, password=old_password
         )
         if authenticated_user is None:
-            return Response(
-                {"message": "رمز عبور قبلی اشتباه است"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            errors[OLD_PASSWORD] = "رمز عبور فعلی اشتباه است"
 
-        if password_is_valid(new_password):
-            user.set_password(new_password)
-            user.save()
-            return Response(
-                {"message": "رمز عبور با موفقیت تغییر کرد"}, status=status.HTTP_200_OK
-            )
+        if not password_is_valid(new_password):
+            errors[NEW_PASSWORD] = "رمز عبور جدید قابل قبول نیست"
 
-        return Response(
-            {"message": "رمز عبور جدید قابل قبول نیست"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        change_user_password(user, new_password)
+
+        return Response({}, status=status.HTTP_200_OK)
 
     # def post(self, request):
     #     new_username = request.data.get("username")
