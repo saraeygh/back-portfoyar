@@ -40,6 +40,8 @@ redis_conn = RedisInterface(db=4)
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
+        # update_future_info()
+
         keys = redis_conn.client.keys(pattern="*")
         result = dict()
         for key in keys:
@@ -51,7 +53,6 @@ class TestView(APIView):
                 result[key] = value
             except Exception:
                 continue
-        # update_future_info()
 
         # populate_option_strategy()
         # calculate_producers_yearly_value()

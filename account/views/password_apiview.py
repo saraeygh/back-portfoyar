@@ -62,6 +62,10 @@ class PasswordAPIView(APIView):
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
+        if old_password == new_password:
+            errors[OLD_PASSWORD] = "رمز عبور فعلی و جدید نمی‌توانند یکسان باشند"
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
         change_user_password(user, new_password)
 
         return Response({}, status=status.HTTP_200_OK)
