@@ -1,1 +1,2 @@
 from .update_future_info_task import update_future_info
+from .update_base_equity_task import update_base_equity

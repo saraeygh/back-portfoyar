@@ -47,13 +47,13 @@ class BaseEquity(TimeStampMixin, models.Model):
     base_equity_key = models.CharField(
         verbose_name="دسته‌بندی", max_length=100, choices=BASE_EQUITY_KEY_CHOICES
     )
-    base_equity_name = models.CharField(verbose_name="نام دارایی پایه", max_length=255)
     base_equity_col = models.CharField(
         verbose_name="نام ستون یکتا",
         max_length=100,
         choices=BASE_EQUITY_COL_CHOICES,
     )
     base_equity_value = models.CharField(verbose_name="مقدار ستون یکتا", max_length=100)
+    base_equity_name = models.CharField(verbose_name="نام دارایی پایه", max_length=255)
 
     class Meta:
         verbose_name = "دارایی پایه"
@@ -72,13 +72,13 @@ class Derivative(TimeStampMixin, models.Model):
     derivative_key = models.CharField(
         verbose_name="قرارداد مشتقه", max_length=100, choices=DERIVATIVE_KEY_CHOICES
     )
-    derivative_name = models.CharField(verbose_name="نام قرارداد", max_length=255)
     derivative_col = models.CharField(
         verbose_name="نام ستون یکتای قرارداد مشتقه",
         max_length=100,
         choices=DERIVATIVE_COL_CHOICES,
     )
     derivative_value = models.CharField(verbose_name="مقدار ستون یکتا", max_length=100)
+    derivative_name = models.CharField(verbose_name="نام قرارداد", max_length=255)
 
     class Meta:
         verbose_name = "قرارداد مشتقه"

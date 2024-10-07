@@ -15,7 +15,7 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
-from future_market.tasks import update_future_info
+from future_market.tasks import update_future_info, update_base_equity
 from global_market.tasks import calculate_commodity_means_global
 
 from option_market.tasks import (
@@ -221,6 +221,7 @@ class Command(BaseCommand):
                             "Future market commands:",
                             "all) Run all commands",
                             "1) Update future info",
+                            "2) Update base equity",
                             "0) Back",
                             sep="\n",
                         )
@@ -229,8 +230,11 @@ class Command(BaseCommand):
                         match cmd:
                             case "all":
                                 update_future_info()
+                                update_base_equity()
                             case "1":
                                 update_future_info()
+                            case "2":
+                                update_base_equity()
                             case "0":
                                 break
 

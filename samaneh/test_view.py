@@ -31,7 +31,7 @@ from datetime import datetime
 
 import time
 
-from future_market.tasks import update_future_info
+from future_market.tasks import update_future_info, update_base_equity
 
 
 redis_conn = RedisInterface(db=4)
@@ -41,6 +41,7 @@ class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
         # update_future_info()
+        update_base_equity()
 
         keys = redis_conn.client.keys(pattern="*")
         result = dict()
