@@ -1,1 +1,1 @@
-from .base_equity_derivative_admin import BaseEquityAdmin, DerivativeAdmin
+from .base_equity_admin import BaseEquityAdmin

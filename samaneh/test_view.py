@@ -40,8 +40,8 @@ redis_conn = RedisInterface(db=4)
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
-        # update_future_info()
-        update_base_equity()
+        update_future_info()
+        # update_base_equity()
 
         keys = redis_conn.client.keys(pattern="*")
         result = dict()
@@ -51,8 +51,10 @@ class TestView(APIView):
                 value = redis_conn.client.get(name=key)
                 value = json.loads(value.decode("utf-8"))
                 value = pd.DataFrame(value)
+                if key == "updateFutureMarketsInfo":
+                    value.to_csv("./future.csv")
                 result[key] = value
-            except Exception:
+            except Exception as e:
                 continue
 
         # populate_option_strategy()

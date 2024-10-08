@@ -3,7 +3,6 @@ from celery import shared_task
 from core.utils import RedisInterface, task_timing
 from future_market.models import (
     BaseEquity,
-    # Derivative,
     FUND_INFO,
     COMMODITY_INFO,
     GOLD_INFO,
