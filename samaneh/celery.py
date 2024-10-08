@@ -51,8 +51,8 @@ DOMESTIC_MARKET_SCHEDULE = {
             minute="*/30",
         ),
     },
-    "calculate_producers_yearly_value": {
-        "task": "calculate_producers_yearly_value",
+    "calculate_producers_yearly_value_task": {
+        "task": "calculate_producers_yearly_value_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3",
             hour="22",
