@@ -5,4 +5,5 @@ from .base_equity_model import (
     GOLD_INFO,
     ID,
     CONTRACT_CODE,
+    FUTURE_INFO,
 )

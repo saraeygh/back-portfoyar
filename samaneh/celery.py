@@ -66,13 +66,13 @@ FUTURE_MARKET_SCHEDULE = {
     "update_future_info_task": {
         "task": "update_future_info_task",
         "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3, 4",
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
             hour="8-22",
             minute="*/1",
         ),
     },
-    "update_base_equity": {
-        "task": "update_base_equity",
+    "update_base_equity_task": {
+        "task": "update_base_equity_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4",
             hour="23",

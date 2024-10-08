@@ -38,6 +38,10 @@ class BaseEquity(TimeStampMixin, models.Model):
         verbose_name="نماد قرارداد مشتقه", max_length=100
     )
 
+    unique_identifier = models.CharField(
+        verbose_name="شناسه", max_length=100, blank=True, null=True
+    )
+
     def __str__(self) -> str:
         return str(self.base_equity_name)
 

@@ -9,10 +9,16 @@ class BaseEquityAdmin(admin.ModelAdmin):
         "base_equity_key",
         "base_equity_name",
         "derivative_symbol",
+        "unique_identifier",
     )
     list_display_links = ("base_equity_name",)
     ordering = ("-updated_at",)
 
-    search_fields = ("base_equity_key", "base_equity_name", "derivative_symbol")
+    search_fields = (
+        "base_equity_key",
+        "base_equity_name",
+        "derivative_symbol",
+        "unique_identifier",
+    )
 
     list_filter = ("derivative_symbol",)
