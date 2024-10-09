@@ -40,6 +40,8 @@ RUN ["pip", "install", "-r", "/code/requirements.txt"]
 # COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/
 
+RUN ["mkdir", "-p", "logs"]
+
 # ENSURE THAT ALL MODELS CHANGES CONSIDERED FOR MIGRATION
 RUN ["python", "manage.py", "makemigrations"]
 
