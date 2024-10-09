@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 file_handler = logging.handlers.RotatingFileHandler(
-    f"{CODE_DIR}/non_20x_status_response_logger_middleware.log",
+    f"{CODE_DIR}/logs/non_20x_status_response_logger_middleware.log",
     maxBytes=10 * 1024 * 1024,
     backupCount=5,
 )

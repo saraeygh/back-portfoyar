@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 file_handler = logging.handlers.RotatingFileHandler(
-    f"{CODE_DIR}/request_response_duration_logger_middleware.log",
+    f"{CODE_DIR}/logs/request_response_duration_logger_middleware.log",
     maxBytes=10 * 1024 * 1024,
     backupCount=5,
 )

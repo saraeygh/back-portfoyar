@@ -54,6 +54,7 @@ services:
     volumes:
       - shared_options_excel_files_test:/code/media/uploaded_files/
       - ticket_appendix:/code/media/tickets/
+      - django_logs:/code/logs/
     networks:
       - test
     depends_on:
@@ -119,3 +120,4 @@ volumes:
   mongodb_test:
   shared_options_excel_files_test:
   ticket_appendix:
+  django_logs:
