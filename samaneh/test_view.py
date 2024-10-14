@@ -31,32 +31,47 @@ from datetime import datetime
 
 import time
 
-from future_market.tasks import update_future_info, update_base_equity, update_future
+from future_market.tasks import (
+    update_derivative_info,
+    update_base_equity,
+    update_future,
+)
 
 
 redis_conn = RedisInterface(db=4)
+FUTURE_STRATEGIES = {
+    "long_future": "long_future_result",
+    "short_future": "short_future_result",
+}
+
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes, permission_classes
 
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
         # update_future_info()
         # update_base_equity()
-        update_future()
+        # update_future()
 
-        keys = redis_conn.client.keys(pattern="*")
-        result = dict()
-        for key in keys:
-            try:
-                key = key.decode("utf-8")
-                value = redis_conn.client.get(name=key)
-                value = json.loads(value.decode("utf-8"))
-                value = pd.DataFrame(value)
-                if key == "updateFutureMarketsInfo":
-                    value.to_csv("./future.csv")
-                result[key] = value
-            except Exception as e:
-                continue
+        for key, value in FUTURE_STRATEGIES.items():
+            value = redis_conn.client.get(name=key)
+            value = json.loads(value.decode("utf-8"))
+            pass
+
+        # keys = redis_conn.client.keys(pattern="*")
+        # result = dict()
+        # for key in keys:
+        #     try:
+        #         key = key.decode("utf-8")
+        #         value = pd.DataFrame(value)
+        #         result[key] = value
+        #     except Exception as e:
+        #         continue
 
         # populate_option_strategy()
         # calculate_producers_yearly_value()

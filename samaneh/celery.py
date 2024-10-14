@@ -63,8 +63,8 @@ DOMESTIC_MARKET_SCHEDULE = {
 
 
 FUTURE_MARKET_SCHEDULE = {
-    "update_future_info_task": {
-        "task": "update_future_info_task",
+    "update_derivative_info_task": {
+        "task": "update_derivative_info_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4, 5",
             hour="8-22",
@@ -76,6 +76,14 @@ FUTURE_MARKET_SCHEDULE = {
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4",
             hour="23",
+        ),
+    },
+    "update_future_task": {
+        "task": "update_future_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4",
+            hour="8-22",
+            minute="*/1",
         ),
     },
 }

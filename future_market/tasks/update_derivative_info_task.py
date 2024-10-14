@@ -77,8 +77,8 @@ def update_info():
 
 
 @task_timing
-@shared_task(name="update_future_info_task")
-def update_future_info():
+@shared_task(name="update_derivative_info_task")
+def update_derivative_info():
     is_running = redis_conn.client.get(name=IS_RUNNING)
     if is_running is None:
         update_info()

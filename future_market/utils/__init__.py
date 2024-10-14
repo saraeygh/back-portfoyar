@@ -1,1 +1,1 @@
-from .dictionary_collections import FILTERED_COLUMNS
+from .dictionary_collections import RENAME_COLUMNS

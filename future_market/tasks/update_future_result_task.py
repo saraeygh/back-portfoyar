@@ -11,15 +11,11 @@ from future_market.models import (
     CONTRACT_CODE,
     FUTURE_INFO,
 )
+from future_market.utils import RENAME_COLUMNS
+from datetime import datetime
+from tqdm import tqdm
 
 redis_conn = RedisInterface(db=4)
-
-BASE_EQUITY_SYMBOLS = {
-    "زعفران": "SAF",
-    "لوتوس": "ETC",
-    "شمش": "GB",
-    "كهربا": "KB",
-}
 
 UNIQUE_IDENTIFIER_COL = {
     FUND_INFO: ID,
@@ -38,7 +34,12 @@ def get_base_equity_row(base_equity):
         == base_equity.unique_identifier
     ]
 
-    return base_equity_row
+    base_equity_row = base_equity_row.rename(
+        columns=RENAME_COLUMNS.get(base_equity.base_equity_key)
+    )
+    base_equity_row = base_equity_row.to_dict(orient="records")
+
+    return base_equity_row[0]
 
 
 def get_future_derivatives(derivative_symbol):
@@ -51,19 +52,114 @@ def get_future_derivatives(derivative_symbol):
         )
     ]
 
+    future_derivatives = future_derivatives.rename(
+        columns=RENAME_COLUMNS.get(FUTURE_INFO)
+    )
+    future_derivatives = future_derivatives.to_dict(orient="records")
+
     return future_derivatives
+
+
+def get_total_and_monthly_spread(
+    open_position_price, base_equity_last_price, expiration
+):
+    try:
+        total_spread = (
+            (open_position_price - base_equity_last_price) / base_equity_last_price
+        ) * 100
+        expiration_date = datetime.fromisoformat(expiration).date()
+        today_date = datetime.now().date()
+        remained_day = (expiration_date - today_date).days
+        monthly_spread = (total_spread / remained_day) * 30
+        spreads = {
+            "total_spread": total_spread,
+            "remained_day": remained_day,
+            "monthly_spread": monthly_spread,
+            "expiration_date": str(expiration_date),
+        }
+        return spreads
+
+    except Exception:
+        return None
+
+
+def long_future_result(base_equity_row: list, future_derivatives: list):
+    base_equity_last_price = base_equity_row.get("close")
+    results = list()
+    for row in future_derivatives:
+        open_position_price = row.get("best_sell_price")
+        expiration_date = row.get("expiration_date")
+        spreads = get_total_and_monthly_spread(
+            open_position_price, base_equity_last_price, expiration_date
+        )
+
+        if spreads:
+            result = {
+                "derivative_name": str(row.get("name")),
+                "base_equity_name": str(base_equity_row.get("name")),
+                "best_sell_price": open_position_price,
+                "base_equity_last_price": base_equity_last_price,
+                **spreads,
+            }
+            results.append(result)
+
+    return results
+
+
+def short_future_result(base_equity_row: list, future_derivatives: list):
+    base_equity_last_price = base_equity_row.get("close")
+    results = list()
+    for row in future_derivatives:
+        open_position_price = row.get("best_buy_price")
+        expiration_date = row.get("expiration_date")
+        spreads = get_total_and_monthly_spread(
+            open_position_price, base_equity_last_price, expiration_date
+        )
+
+        if spreads:
+            result = {
+                "derivative_name": str(row.get("name")),
+                "best_buy_price": open_position_price,
+                "base_equity_name": str(base_equity_row.get("name")),
+                "base_equity_last_price": base_equity_last_price,
+                **spreads,
+            }
+            results.append(result)
+
+    return results
+
+
+FUTURE_STRATEGIES = {
+    "long_future": long_future_result,
+    "short_future": short_future_result,
+}
 
 
 @task_timing
 @shared_task(name="update_future_task")
 def update_future():
     base_equities = BaseEquity.objects.all()
-    for base_equity in base_equities:
-        try:
-            base_equity_row = get_base_equity_row(base_equity)
-            future_derivatives = get_future_derivatives(base_equity.derivative_symbol)
-            pass
+    for strategy_key, calculate_result in FUTURE_STRATEGIES.items():
+        strategy_result = list()
+        for base_equity in tqdm(
+            base_equities, desc=f"Update {strategy_key} result", ncols=10
+        ):
+            try:
+                base_equity_row = get_base_equity_row(base_equity)
+                future_derivatives = get_future_derivatives(
+                    base_equity.derivative_symbol
+                )
+                result = calculate_result(base_equity_row, future_derivatives)
 
-        except Exception as e:
-            print(e)
-            continue
+                if isinstance(result, dict):
+                    strategy_result.append(result)
+                elif isinstance(result, list):
+                    strategy_result = strategy_result + result
+                else:
+                    strategy_result = strategy_result
+            except Exception:
+                continue
+
+        if strategy_result:
+            serialized_data = json.dumps(strategy_result)
+            redis_conn.client.set(strategy_key, serialized_data)

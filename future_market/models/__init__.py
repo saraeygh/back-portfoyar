@@ -6,4 +6,5 @@ from .base_equity_model import (
     ID,
     CONTRACT_CODE,
     FUTURE_INFO,
+    OPTION_INFO,
 )

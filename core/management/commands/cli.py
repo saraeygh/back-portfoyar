@@ -15,7 +15,11 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
-from future_market.tasks import update_future_info, update_base_equity
+from future_market.tasks import (
+    update_derivative_info,
+    update_base_equity,
+    update_future,
+)
 from global_market.tasks import calculate_commodity_means_global
 
 from option_market.tasks import (
@@ -220,8 +224,9 @@ class Command(BaseCommand):
                         print(
                             "Future market commands:",
                             "all) Run all commands",
-                            "1) Update future info",
+                            "1) Update derivative info",
                             "2) Update base equity",
+                            "3) Update future result",
                             "0) Back",
                             sep="\n",
                         )
@@ -229,12 +234,15 @@ class Command(BaseCommand):
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
-                                update_future_info()
+                                update_derivative_info()
                                 update_base_equity()
+                                update_future()
                             case "1":
-                                update_future_info()
+                                update_derivative_info()
                             case "2":
                                 update_base_equity()
+                            case "3":
+                                update_future()
                             case "0":
                                 break
 
@@ -262,51 +270,6 @@ class Command(BaseCommand):
                                 break
                 case "0":  # EXIT
                     break
-
-                case "99":  # RUN ALL COMMANDS
-                    clear_redis_cache()
-
-                    update_future_info()
-
-                    calculate_commodity_means_global()
-
-                    get_dollar_daily_price()
-
-                    populate_domestic_market_db()
-
-                    calculate_producers_yearly_value()
-
-                    calculate_commodity_mean_domestic()
-
-                    calculate_monthly_sell_domestic()
-
-                    calculate_production_sell_domestic()
-
-                    stock_market_watch()
-
-                    update_stock_raw_adjusted_history()
-
-                    stock_value_history()
-
-                    stock_value_change()
-
-                    stock_option_value_change()
-
-                    stock_option_price_spread()
-
-                    update_instrument_info()
-
-                    update_instrument_roi()
-
-                    update_option_data_from_tse()
-
-                    get_option_history()
-
-                    populate_option_total_volume()
-
-                    option_volume_strategy_result()
-
-                    get_monthly_activity_report_letter()
 
                 case _:
                     print("Wrong choice!!!")
