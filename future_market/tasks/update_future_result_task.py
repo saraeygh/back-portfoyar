@@ -2,6 +2,7 @@ import json
 import pandas as pd
 from celery import shared_task
 from core.utils import RedisInterface, task_timing
+from core.configs import HEZAR_RIAL_TO_BILLION_TOMAN, RIAL_TO_BILLION_TOMAN
 from future_market.models import (
     BaseEquity,
     FUND_INFO,
@@ -84,7 +85,7 @@ def get_total_and_monthly_spread(
         return None
 
 
-def long_future_result(base_equity_row: dict, future_derivatives: list, strategy):
+def long_future_result(base_equity_row: dict, future_derivatives: list):
     base_equity_last_price = base_equity_row.get("close")
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -99,19 +100,27 @@ def long_future_result(base_equity_row: dict, future_derivatives: list, strategy
 
         if spreads:
             result = {
-                "derivative_name": str(row.get("name")),
+                "derivative_name": row.get("name"),
                 "best_sell_price": open_position_price,
-                "base_equity_name": str(base_equity_row.get("name")),
+                "derivative_value": row.get("trades_value")
+                / HEZAR_RIAL_TO_BILLION_TOMAN,
+                "base_equity_name": base_equity_row.get("name"),
+                "base_equity_value": base_equity_row.get("trades_value")
+                / RIAL_TO_BILLION_TOMAN,
                 "base_equity_last_price": base_equity_last_price,
                 **spreads,
-                "strategy": strategy,
+                "initial_margin": row.get("initial_margin"),
+                "open_interests": row.get("open_interests"),
+                "last_settlement_price": row.get("last_settlement_price"),
+                "today_settlement_price": row.get("today_settlement_price"),
+                "contract_size": f"{row.get("contract_size")} {row.get("contract_size_unit_fa")}",
             }
             results.append(result)
 
     return results
 
 
-def short_future_result(base_equity_row: list, future_derivatives: list, strategy):
+def short_future_result(base_equity_row: list, future_derivatives: list):
     base_equity_last_price = base_equity_row.get("close")
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -126,12 +135,20 @@ def short_future_result(base_equity_row: list, future_derivatives: list, strateg
 
         if spreads:
             result = {
-                "derivative_name": str(row.get("name")),
+                "derivative_name": row.get("name"),
                 "best_buy_price": open_position_price,
-                "base_equity_name": str(base_equity_row.get("name")),
+                "derivative_value": row.get("trades_value")
+                / HEZAR_RIAL_TO_BILLION_TOMAN,
+                "base_equity_name": base_equity_row.get("name"),
                 "base_equity_last_price": base_equity_last_price,
+                "base_equity_value": base_equity_row.get("trades_value")
+                / RIAL_TO_BILLION_TOMAN,
                 **spreads,
-                "strategy": strategy,
+                "initial_margin": row.get("initial_margin"),
+                "open_interests": row.get("open_interests"),
+                "last_settlement_price": row.get("last_settlement_price"),
+                "today_settlement_price": row.get("today_settlement_price"),
+                "contract_size": f"{row.get("contract_size")} {row.get("contract_size_unit_fa")}",
             }
             results.append(result)
 
@@ -175,9 +192,7 @@ def update_future():
                 )
 
                 calculate_result = properties.get("calculate")
-                result = calculate_result(
-                    base_equity_row, future_derivatives, properties["name"]
-                )
+                result = calculate_result(base_equity_row, future_derivatives)
 
                 strategy_result = add_to_strategy_result(strategy_result, result)
 
