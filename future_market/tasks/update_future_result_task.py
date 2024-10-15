@@ -97,8 +97,8 @@ def long_future_result(base_equity_row: list, future_derivatives: list, strategy
         if spreads:
             result = {
                 "derivative_name": str(row.get("name")),
-                "base_equity_name": str(base_equity_row.get("name")),
                 "best_sell_price": open_position_price,
+                "base_equity_name": str(base_equity_row.get("name")),
                 "base_equity_last_price": base_equity_last_price,
                 **spreads,
                 "strategy": strategy,
