@@ -35,7 +35,7 @@ RUN ["pip", "install", "pdm"]
 COPY ./pdm.lock /code/
 COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
-RUN ["pip", "install", "-r", "/code/requirements.txt"]
+RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 
 # COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/
@@ -53,4 +53,4 @@ RUN ["chmod", "+x", "./infra/entrypoints/beat_test.sh"]
 ENV MELIPAYAMAK_USERNAME=09102188113
 ENV MELIPAYAMAK_PASSOWRD=TL5OC
 
-ENV DEBUG=True
+ENV DEBUG=False
