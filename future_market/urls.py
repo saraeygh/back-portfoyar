@@ -1,5 +1,9 @@
 from django.urls import path
 
-future_urls = []
+from future_market.views import FuturePositionsAPIView
+
+future_urls = [
+    path("positions/", FuturePositionsAPIView.as_view()),
+]
 
 urlpatterns = future_urls

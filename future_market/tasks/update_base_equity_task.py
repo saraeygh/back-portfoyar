@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from celery import shared_task
 from core.utils import RedisInterface, task_timing
 from future_market.models import (
@@ -20,12 +21,49 @@ BASE_EQUITY_SYMBOLS = {
 }
 
 NAME_COL = "name"
+FILTER_BASE_EQUITIES = "filter"
 UNIQUE_IDENTIFIER_COL = "unique_identifier"
 
+
+def filter_fund_base_equities(all_funds: pd.DataFrame):
+    filtered_funds = all_funds[~all_funds["Symbol"].str.contains(r"\d")]
+    filtered_funds = filtered_funds.to_dict(orient="records")
+
+    return filtered_funds
+
+
+def filter_commodity_base_equities(all_commodity: pd.DataFrame):
+    filtered_commodity = all_commodity
+    filtered_commodity = filtered_commodity.to_dict(orient="records")
+    return filtered_commodity
+
+
+def filter_gold_base_equities(all_gold: pd.DataFrame):
+    filtered_gold = all_gold
+    filtered_gold = filtered_gold.to_dict(orient="records")
+    return filtered_gold
+
+
 BASE_EQUITY_KEYS = {
-    FUND_INFO: {NAME_COL: "Name", UNIQUE_IDENTIFIER_COL: ID},
-    COMMODITY_INFO: {NAME_COL: "Name", UNIQUE_IDENTIFIER_COL: ID},
-    GOLD_INFO: {NAME_COL: "ContractDescription", UNIQUE_IDENTIFIER_COL: CONTRACT_CODE},
+    FUND_INFO: {
+        NAME_COL: "Name",
+        UNIQUE_IDENTIFIER_COL: ID,
+        FILTER_BASE_EQUITIES: filter_fund_base_equities,
+    },
+    COMMODITY_INFO: {
+        NAME_COL: "Name",
+        UNIQUE_IDENTIFIER_COL: ID,
+        FILTER_BASE_EQUITIES: filter_commodity_base_equities,
+    },
+    GOLD_INFO: {
+        NAME_COL: "ContractDescription",
+        UNIQUE_IDENTIFIER_COL: CONTRACT_CODE,
+        FILTER_BASE_EQUITIES: filter_gold_base_equities,
+    },
+}
+
+TO_BE_DELETED = {
+    "SAF": "51200575796028449",
 }
 
 
@@ -38,6 +76,8 @@ def update_base_equity():
             try:
                 data = redis_conn.client.get(name=base_equity_key)
                 data = json.loads(data.decode("utf-8"))
+                data = pd.DataFrame(data)
+                data = (properties.get(FILTER_BASE_EQUITIES))(data)
                 for datum in data:
                     base_equity_name = datum.get(properties.get(NAME_COL))
                     if name in base_equity_name:
@@ -54,23 +94,18 @@ def update_base_equity():
                 continue
     print("All base equity list for future market updated")
 
-    print("Removing mistake rows ...")
-    for mistake_row in MISTAKE_ROWS:
-        mistake_obj = BaseEquity.objects.filter(
-            base_equity_key=mistake_row.get("base_equity_key"),
-            base_equity_name=mistake_row.get("base_equity_name"),
-            derivative_symbol=mistake_row.get("derivative_symbol"),
-            unique_identifier=mistake_row.get("unique_identifier"),
-        )
-        mistake_obj.delete()
-    print("Mistake rows removed")
+    print("Deleting mistaken base equities ...")
 
+    for derivative_symbol, unique_identifier in TO_BE_DELETED.items():
+        try:
+            base_equity = BaseEquity.objects.get(
+                derivative_symbol=derivative_symbol, unique_identifier=unique_identifier
+            )
+            base_equity.delete()
+        except BaseEquity.DoesNotExist:
+            continue
+        except Exception as e:
+            print(e)
+            continue
 
-MISTAKE_ROWS = [
-    {
-        "base_equity_key": FUND_INFO,
-        "base_equity_name": "صندوق س. گروه زعفران سحرخيز",
-        "derivative_symbol": "SAF",
-        "unique_identifier": "51200575796028449",
-    },
-]
+    print("Mistaken base equities deleted")

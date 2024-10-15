@@ -85,7 +85,6 @@ class PriceSpreadStrategyAPIView(APIView):
         strike_deviation = int(request.data.get("strike_deviation"))
         cache_key = f"OPTIONS_PRICE_SPREAD_s_{strike_deviation}"
         cache_response = get_cache_as_json(cache_key)
-        cache_response = None
 
         if cache_response is None:
             options_df = get_options(option_types=["option_data"])

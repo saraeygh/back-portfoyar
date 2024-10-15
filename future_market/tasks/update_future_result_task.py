@@ -13,6 +13,7 @@ from future_market.models import (
 )
 from future_market.utils import RENAME_COLUMNS
 from datetime import datetime
+import jdatetime
 from tqdm import tqdm
 
 redis_conn = RedisInterface(db=4)
@@ -75,7 +76,7 @@ def get_total_and_monthly_spread(
             "total_spread": total_spread,
             "remained_day": remained_day,
             "monthly_spread": monthly_spread,
-            "expiration_date": str(expiration_date),
+            "expiration_date": str(jdatetime.date.fromgregorian(date=expiration_date)),
         }
         return spreads
 
@@ -83,7 +84,7 @@ def get_total_and_monthly_spread(
         return None
 
 
-def long_future_result(base_equity_row: list, future_derivatives: list):
+def long_future_result(base_equity_row: list, future_derivatives: list, strategy):
     base_equity_last_price = base_equity_row.get("close")
     results = list()
     for row in future_derivatives:
@@ -100,13 +101,14 @@ def long_future_result(base_equity_row: list, future_derivatives: list):
                 "best_sell_price": open_position_price,
                 "base_equity_last_price": base_equity_last_price,
                 **spreads,
+                "strategy": strategy,
             }
             results.append(result)
 
     return results
 
 
-def short_future_result(base_equity_row: list, future_derivatives: list):
+def short_future_result(base_equity_row: list, future_derivatives: list, strategy):
     base_equity_last_price = base_equity_row.get("close")
     results = list()
     for row in future_derivatives:
@@ -123,15 +125,31 @@ def short_future_result(base_equity_row: list, future_derivatives: list):
                 "base_equity_name": str(base_equity_row.get("name")),
                 "base_equity_last_price": base_equity_last_price,
                 **spreads,
+                "strategy": strategy,
             }
             results.append(result)
 
     return results
 
 
+def add_to_strategy_result(strategy_result, result):
+    if isinstance(result, dict):
+        strategy_result.append(result)
+    elif isinstance(result, list):
+        strategy_result = strategy_result + result
+
+    return strategy_result
+
+
 FUTURE_STRATEGIES = {
-    "long_future": long_future_result,
-    "short_future": short_future_result,
+    "long_future": {
+        "name": "موقعیت لانگ",
+        "calculate": long_future_result,
+    },
+    "short_future": {
+        "name": "موقعیت شورت",
+        "calculate": short_future_result,
+    },
 }
 
 
@@ -139,24 +157,24 @@ FUTURE_STRATEGIES = {
 @shared_task(name="update_future_task")
 def update_future():
     base_equities = BaseEquity.objects.all()
-    for strategy_key, calculate_result in FUTURE_STRATEGIES.items():
+
+    for strategy_key, properties in FUTURE_STRATEGIES.items():
+
         strategy_result = list()
-        for base_equity in tqdm(
-            base_equities, desc=f"Update {strategy_key} result", ncols=10
-        ):
+        for base_equity in tqdm(base_equities, desc=f"{strategy_key} result", ncols=10):
             try:
                 base_equity_row = get_base_equity_row(base_equity)
                 future_derivatives = get_future_derivatives(
                     base_equity.derivative_symbol
                 )
-                result = calculate_result(base_equity_row, future_derivatives)
 
-                if isinstance(result, dict):
-                    strategy_result.append(result)
-                elif isinstance(result, list):
-                    strategy_result = strategy_result + result
-                else:
-                    strategy_result = strategy_result
+                calculate_result = properties.get("calculate")
+                result = calculate_result(
+                    base_equity_row, future_derivatives, properties["name"]
+                )
+
+                strategy_result = add_to_strategy_result(strategy_result, result)
+
             except Exception:
                 continue
 

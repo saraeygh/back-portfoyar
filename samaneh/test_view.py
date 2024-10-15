@@ -39,10 +39,6 @@ from future_market.tasks import (
 
 
 redis_conn = RedisInterface(db=4)
-FUTURE_STRATEGIES = {
-    "long_future": "long_future_result",
-    "short_future": "short_future_result",
-}
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -55,13 +51,8 @@ class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
         # update_future_info()
-        # update_base_equity()
+        update_base_equity()
         # update_future()
-
-        for key, value in FUTURE_STRATEGIES.items():
-            value = redis_conn.client.get(name=key)
-            value = json.loads(value.decode("utf-8"))
-            pass
 
         # keys = redis_conn.client.keys(pattern="*")
         # result = dict()
