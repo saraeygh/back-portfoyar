@@ -51,8 +51,8 @@ class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
         # update_future_info()
-        update_base_equity()
-        # update_future()
+        # update_base_equity()
+        update_future()
 
         keys = redis_conn.client.keys(pattern="*")
         result = dict()

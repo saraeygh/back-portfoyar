@@ -84,8 +84,11 @@ def get_total_and_monthly_spread(
         return None
 
 
-def long_future_result(base_equity_row: list, future_derivatives: list, strategy):
+def long_future_result(base_equity_row: dict, future_derivatives: list, strategy):
     base_equity_last_price = base_equity_row.get("close")
+    contract_size = base_equity_row.get("contract_size", 1)
+    base_equity_last_price = base_equity_last_price * contract_size
+
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_sell_price")
@@ -110,6 +113,9 @@ def long_future_result(base_equity_row: list, future_derivatives: list, strategy
 
 def short_future_result(base_equity_row: list, future_derivatives: list, strategy):
     base_equity_last_price = base_equity_row.get("close")
+    contract_size = base_equity_row.get("contract_size", 1)
+    base_equity_last_price = base_equity_last_price * contract_size
+
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_buy_price")
