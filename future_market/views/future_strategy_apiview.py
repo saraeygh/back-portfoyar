@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
@@ -27,16 +26,12 @@ def sort_strategy_result(positions, sort_column):
         return positions
 
 
-def get_strategy_result_from_redis(strategy_keys):
+def get_strategy_result_from_redis(strategy_key):
     redis_conn = RedisInterface(db=4)
-    positions = pd.DataFrame()
-    for strategy_key in strategy_keys:
-        last_positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
-        last_positions = pd.DataFrame(last_positions)
-
-        positions = pd.concat([positions, last_positions])
-
+    positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
+    positions = pd.DataFrame(positions)
     positions = sort_strategy_result(positions, RESULT_SORTING_COLUMN)
+
     return positions
 
 
@@ -45,11 +40,7 @@ def get_strategy_result_from_redis(strategy_keys):
 @method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
 class FuturePositionsAPIView(APIView):
     def get(self, request):
-
-        future_strategy_list = [
-            {"name": "همه", "key": "all_future"},
-        ]
-
+        future_strategy_list = list()
         for future_strategy_key, properties in FUTURE_STRATEGIES.items():
             future_strategy_list.append(
                 {"name": properties["name"], "key": future_strategy_key}
@@ -62,16 +53,8 @@ class FuturePositionsAPIView(APIView):
         cache_key = f"FUTURE_POSITIONS_k_{strategy_key}"
         cache_response = get_cache_as_json(cache_key)
 
-        cache_response = None
-
         if cache_response is None:
-            if strategy_key == "all_future":
-                strategy_keys = list(FUTURE_STRATEGIES.keys())
-            else:
-                strategy_keys = [strategy_key]
-
-            result = get_strategy_result_from_redis(strategy_keys)
-            result.fillna(0, inplace=True)
+            result = get_strategy_result_from_redis(strategy_key)
             result = result.to_dict(orient="records")
 
             set_json_cache(cache_key, result, SIXTY_SECONDS_CACHE)
