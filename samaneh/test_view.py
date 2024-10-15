@@ -54,15 +54,16 @@ class TestView(APIView):
         update_base_equity()
         # update_future()
 
-        # keys = redis_conn.client.keys(pattern="*")
-        # result = dict()
-        # for key in keys:
-        #     try:
-        #         key = key.decode("utf-8")
-        #         value = pd.DataFrame(value)
-        #         result[key] = value
-        #     except Exception as e:
-        #         continue
+        keys = redis_conn.client.keys(pattern="*")
+        result = dict()
+        for key in keys:
+            try:
+                key = key.decode("utf-8")
+                value = json.loads(redis_conn.client.get(name=key))
+                value = pd.DataFrame(value)
+                result[key] = value
+            except Exception as e:
+                continue
 
         # populate_option_strategy()
         # calculate_producers_yearly_value()
