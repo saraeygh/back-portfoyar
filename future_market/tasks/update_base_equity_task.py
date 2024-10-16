@@ -81,7 +81,7 @@ def update_base_equity():
                 for datum in data:
                     base_equity_name = datum.get(properties.get(NAME_COL))
                     if name in base_equity_name:
-                        BaseEquity.objects.get_or_create(
+                        base_equity = BaseEquity.objects.filter(
                             base_equity_key=base_equity_key,
                             base_equity_name=base_equity_name,
                             derivative_symbol=symbol,
@@ -89,6 +89,15 @@ def update_base_equity():
                                 properties.get(UNIQUE_IDENTIFIER_COL)
                             ),
                         )
+                        if not base_equity.exists():
+                            BaseEquity.objects.create(
+                                base_equity_key=base_equity_key,
+                                base_equity_name=base_equity_name,
+                                derivative_symbol=symbol,
+                                unique_identifier=datum.get(
+                                    properties.get(UNIQUE_IDENTIFIER_COL)
+                                ),
+                            )
             except Exception as e:
                 print(e)
                 continue
