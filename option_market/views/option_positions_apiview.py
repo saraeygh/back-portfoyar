@@ -7,14 +7,20 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-RESULT_SORTING_COLUMN = "yearly_profit"
+PROFIT_SORTING_COLUMN = "yearly_profit"
+BREAK_EVEN_SORTING_COLUMN = "yearly_break_even"
 
 
-def sort_strategy_result(strategy_result_df, sort_column):
+def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_COLUMN):
     try:
         strategy_result_df.sort_values(by=sort_column, inplace=True, ascending=False)
         return strategy_result_df
     except KeyError:
+        strategy_result_df.sort_values(
+            by=BREAK_EVEN_SORTING_COLUMN, inplace=True, ascending=False
+        )
+        return strategy_result_df
+    except Exception:
         return strategy_result_df
 
 
@@ -24,7 +30,7 @@ def get_strategy_result_from_redis(strategy_key):
     strategy_result = strategy_result.get_list_of_dicts(list_key=strategy_key)
 
     strategy_result = pd.DataFrame(strategy_result)
-    strategy_result = sort_strategy_result(strategy_result, RESULT_SORTING_COLUMN)
+    strategy_result = sort_strategy_result(strategy_result)
 
     return strategy_result
 

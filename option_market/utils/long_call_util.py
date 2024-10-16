@@ -17,6 +17,38 @@ from . import (
 redis_conn = RedisInterface(db=3)
 
 
+def add_break_even(row):
+    remained_day = row.get("remained_day")
+    strike_price = float(row.get("strike_price"))
+    call_premium = float(row.get("call_best_sell_price"))
+    base_equity_last_price = float(row.get("base_equity_last_price"))
+
+    break_even = {
+        "final_break_even": 0,
+        "remained_day": remained_day,
+        "monthly_break_even": 0,
+        "yearly_break_even": 0,
+        "leverage": 0,
+    }
+
+    try:
+        break_even["final_break_even"] = (
+            ((strike_price + call_premium) / base_equity_last_price) - 1
+        ) * 100
+        break_even["leverage"] = base_equity_last_price / call_premium
+
+        if remained_day != 0:
+            break_even["monthly_break_even"] = (
+                break_even["final_break_even"] / remained_day
+            ) * 30
+            break_even["yearly_break_even"] = break_even["monthly_break_even"] * 12
+
+        return break_even
+
+    except Exception:
+        return break_even
+
+
 def long_call():
     distinct_end_date_options = get_options(option_types=["option_data"])
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
@@ -45,28 +77,22 @@ def long_call():
             profit_factor = -1 * call_premium
             document = {
                 "id": uuid4().hex,
-
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": row.get("base_equity_last_price"),
-
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
                 "strike_price": strike_price,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-                "remained_day": row.get("remained_day"),
-
+                **add_break_even(row),
                 "end_date": row.get("end_date"),
-
                 "profit_factor": profit_factor,
-
                 "coordinates": coordinates,
-
                 "actions": [
                     {
                         "action": "خرید",
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
                         **add_action_detail(row, CALL_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                 ],
             }
