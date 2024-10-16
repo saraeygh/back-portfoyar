@@ -40,13 +40,7 @@ from future_market.tasks import (
 
 redis_conn = RedisInterface(db=4)
 
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import authentication_classes, permission_classes
 
-
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
