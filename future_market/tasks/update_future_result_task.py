@@ -1,7 +1,8 @@
 import json
 import pandas as pd
 from celery import shared_task
-from core.utils import RedisInterface, task_timing
+from core.utils import RedisInterface, task_timing, MONTHLY_INTEREST_RATE_NAME
+from core.models import FeatureToggle, ACTIVE
 from core.configs import HEZAR_RIAL_TO_BILLION_TOMAN, RIAL_TO_BILLION_TOMAN
 from future_market.models import (
     BaseEquity,
@@ -63,7 +64,7 @@ def get_future_derivatives(derivative_symbol):
 
 
 def get_total_and_monthly_spread(
-    open_position_price, base_equity_last_price, expiration
+    open_position_price, base_equity_last_price, expiration, monthly_interest_rate
 ):
     try:
         total_spread = (
@@ -72,7 +73,7 @@ def get_total_and_monthly_spread(
         expiration_date = datetime.fromisoformat(expiration).date()
         today_date = datetime.now().date()
         remained_day = (expiration_date - today_date).days
-        monthly_spread = (total_spread / remained_day) * 30
+        monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
         spreads = {
             "total_spread": total_spread,
             "remained_day": remained_day,
@@ -85,7 +86,9 @@ def get_total_and_monthly_spread(
         return None
 
 
-def long_future_result(base_equity_row: dict, future_derivatives: list):
+def long_future_result(
+    base_equity_row: dict, future_derivatives: list, monthly_interest_rate: float
+):
     base_equity_last_price = base_equity_row.get("close")
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -95,7 +98,10 @@ def long_future_result(base_equity_row: dict, future_derivatives: list):
         open_position_price = row.get("best_sell_price")
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
-            open_position_price, base_equity_last_price, expiration_date
+            open_position_price,
+            base_equity_last_price,
+            expiration_date,
+            monthly_interest_rate,
         )
 
         if spreads:
@@ -122,7 +128,9 @@ def long_future_result(base_equity_row: dict, future_derivatives: list):
     return results
 
 
-def short_future_result(base_equity_row: list, future_derivatives: list):
+def short_future_result(
+    base_equity_row: list, future_derivatives: list, monthly_interest_rate: float
+):
     base_equity_last_price = base_equity_row.get("close")
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -132,7 +140,10 @@ def short_future_result(base_equity_row: list, future_derivatives: list):
         open_position_price = row.get("best_buy_price")
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
-            open_position_price, base_equity_last_price, expiration_date
+            open_position_price,
+            base_equity_last_price,
+            expiration_date,
+            -1 * monthly_interest_rate,
         )
 
         if spreads:
@@ -183,8 +194,16 @@ FUTURE_STRATEGIES = {
 @task_timing
 @shared_task(name="update_future_task")
 def update_future():
-    base_equities = BaseEquity.objects.all()
 
+    try:
+        monthly_interest_rate = FeatureToggle.objects.get(
+            name=MONTHLY_INTEREST_RATE_NAME
+        )
+        monthly_interest_rate = float(monthly_interest_rate.value)
+    except Exception:
+        monthly_interest_rate = 0
+
+    base_equities = BaseEquity.objects.all()
     for strategy_key, properties in FUTURE_STRATEGIES.items():
 
         strategy_result = list()
@@ -196,7 +215,9 @@ def update_future():
                 )
 
                 calculate_result = properties.get("calculate")
-                result = calculate_result(base_equity_row, future_derivatives)
+                result = calculate_result(
+                    base_equity_row, future_derivatives, monthly_interest_rate
+                )
 
                 strategy_result = add_to_strategy_result(strategy_result, result)
 

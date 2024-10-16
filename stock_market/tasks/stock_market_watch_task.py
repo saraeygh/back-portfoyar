@@ -14,8 +14,9 @@ from core.utils import (
     get_http_response,
     MongodbInterface,
     replace_arabic_letters_pd,
+    MARKET_STATE,
 )
-from core.models import FeatureToggle
+from core.models import FeatureToggle, ACTIVE
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
@@ -194,11 +195,11 @@ def get_history(row, index_name):
 def stock_market_watch():
 
     market_watch = pd.DataFrame()
-    check_market_state = FeatureToggle.objects.get(name="market_state")
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
     for market_type_num, market_type_name in tqdm(
         MAIN_MARKET_TYPE_DICT.items(), desc="MarketWatch", ncols=10
     ):
-        if check_market_state.state == 1:
+        if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type_num)
             if market_state != check_market_state.value:
                 print("Market is closed.")

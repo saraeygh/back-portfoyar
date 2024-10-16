@@ -2,9 +2,9 @@ from celery import shared_task
 from core.utils import RedisInterface, task_timing
 
 import pandas as pd
-from core.models import FeatureToggle
+from core.models import FeatureToggle, ACTIVE
 
-from core.utils import get_http_response, replace_arabic_letters_pd
+from core.utils import get_http_response, replace_arabic_letters_pd, MARKET_STATE
 from stock_market.utils import (
     MAIN_MARKET_TYPE_DICT,
     TSETMC_REQUEST_HEADERS,
@@ -49,9 +49,9 @@ def add_link(row) -> str:
 @task_timing
 @shared_task(name="update_option_data_from_tse_task")
 def update_option_data_from_tse():
-    check_market_state = FeatureToggle.objects.get(name="market_state")
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
     for market_type_num, _ in MAIN_MARKET_TYPE_DICT.items():
-        if check_market_state.state == 1:
+        if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type_num)
             if market_state != check_market_state.value:
                 print("Market is closed.")

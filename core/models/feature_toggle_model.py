@@ -2,10 +2,10 @@ from django.db import models
 from . import TimeStampMixin
 
 ACTIVE = 1
-DIACTIVE = 2
+DEACTIVE = 2
 FEATURE_STATE = [
     (ACTIVE, "فعال"),
-    (DIACTIVE, "غیرفعال"),
+    (DEACTIVE, "غیرفعال"),
 ]
 
 

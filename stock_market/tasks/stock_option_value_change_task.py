@@ -1,7 +1,7 @@
 from celery import shared_task
 import pandas as pd
-from core.utils import MongodbInterface, RedisInterface, task_timing
-from core.models import FeatureToggle
+from core.utils import MongodbInterface, RedisInterface, task_timing, MARKET_STATE
+from core.models import FeatureToggle, ACTIVE
 from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, RIAL_TO_MILLION_TOMAN
 
 from stock_market.utils import (
@@ -129,9 +129,9 @@ def add_last_update(row):
 def stock_option_value_change():
 
     print("Checking stock options value change ...")
-    check_market_state = FeatureToggle.objects.get(name="market_state")
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
     for market_type in list(MAIN_MARKET_TYPE_DICT.keys()):
-        if check_market_state.state == 1:
+        if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type)
             if market_state != check_market_state.value:
                 print("market is closed!")
