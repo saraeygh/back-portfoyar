@@ -98,10 +98,10 @@ def update_base_equity():
 
     for derivative_symbol, unique_identifier in TO_BE_DELETED.items():
         try:
-            base_equity = BaseEquity.objects.get(
+            base_equities = BaseEquity.objects.filter(
                 derivative_symbol=derivative_symbol, unique_identifier=unique_identifier
             )
-            base_equity.delete()
+            base_equities.delete()
         except BaseEquity.DoesNotExist:
             continue
         except Exception as e:
