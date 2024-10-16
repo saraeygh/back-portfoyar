@@ -67,7 +67,7 @@ FUTURE_MARKET_SCHEDULE = {
         "task": "update_derivative_info_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4, 5",
-            hour="8-18",
+            hour="10-18",
             minute="*/1",
         ),
     },
@@ -82,7 +82,7 @@ FUTURE_MARKET_SCHEDULE = {
         "task": "update_future_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3, 4",
-            hour="8-18",
+            hour="10-18",
             minute="*/1",
         ),
     },
