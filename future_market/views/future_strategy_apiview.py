@@ -10,7 +10,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from core.utils import set_json_cache, get_cache_as_json, RedisInterface
+from core.utils import (
+    set_json_cache,
+    get_cache_as_json,
+    RedisInterface,
+    replace_arabic_letters_pd,
+    add_index_as_id,
+)
 from future_market.tasks import FUTURE_STRATEGIES
 
 redis_conn = RedisInterface(db=4)
@@ -32,6 +38,12 @@ def get_strategy_result_from_redis(strategy_key):
     positions = pd.DataFrame(positions)
     positions = sort_strategy_result(positions, RESULT_SORTING_COLUMN)
 
+    positions["derivative_name"] = positions.apply(
+        replace_arabic_letters_pd, args=("derivative_name",), axis=1
+    )
+    positions["base_equity_name"] = positions.apply(
+        replace_arabic_letters_pd, args=("base_equity_name",), axis=1
+    )
     return positions
 
 
@@ -55,6 +67,8 @@ class FuturePositionsAPIView(APIView):
 
         if cache_response is None:
             result = get_strategy_result_from_redis(strategy_key)
+            # result.reset_index(drop=True, inplace=True)
+            # result["id"] = result.apply(add_index_as_id, axis=1)
             result = result.to_dict(orient="records")
 
             set_json_cache(cache_key, result, SIXTY_SECONDS_CACHE)
