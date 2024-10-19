@@ -36,6 +36,7 @@ THIRD_PARTY_INSTALLED_APPS = [
     "django_jalali",
     "rest_framework.authtoken",
     "django_extensions",
+    "django_prometheus",
 ]
 
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     "core.middlewares.Non20xStatusResponseLoggerMiddleware",
     # THIS MIDDLEWARE LOGS ALL REQUEST/RESPONSES DURATION TIME
     "core.middlewares.RequestResponseDurationLoggerMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 

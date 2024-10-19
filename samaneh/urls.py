@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/option/", include("option_market.urls")),
     path("api/stock-market/", include("stock_market.urls")),
     path("api/support/", include("support.urls")),
+    path("", include("django_prometheus.urls")),
     # STATIC FILES SERVING URL
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": STATIC_ROOT}),
 ] + test_urls
