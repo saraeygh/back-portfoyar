@@ -15,7 +15,10 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
     try:
         strategy_result_df.sort_values(by=sort_column, inplace=True, ascending=False)
         return strategy_result_df
-    except KeyError:
+    except Exception:
+        pass
+
+    try:
         strategy_result_df.sort_values(
             by=BREAK_EVEN_SORTING_COLUMN, inplace=True, ascending=False
         )
