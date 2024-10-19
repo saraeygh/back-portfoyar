@@ -116,6 +116,7 @@ services:
         max-file: "10"
 networks:
   test:
+  host:
 volumes:
   postgres_test:
   mongodb_test:
