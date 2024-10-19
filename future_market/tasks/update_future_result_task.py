@@ -90,12 +90,16 @@ def long_future_result(
     base_equity_row: dict, future_derivatives: list, monthly_interest_rate: float
 ):
     base_equity_last_price = base_equity_row.get("close")
+    if base_equity_last_price == 0:
+        return []
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
 
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_sell_price")
+        if open_position_price == 0:
+            continue
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
             open_position_price,
@@ -132,12 +136,16 @@ def short_future_result(
     base_equity_row: list, future_derivatives: list, monthly_interest_rate: float
 ):
     base_equity_last_price = base_equity_row.get("close")
+    if base_equity_last_price == 0:
+        return []
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
 
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_buy_price")
+        if open_position_price == 0:
+            continue
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
             open_position_price,

@@ -57,6 +57,7 @@ services:
       - django_logs:/code/logs/
     networks:
       - test
+      - host
     depends_on:
       - postgres_test
       - redis_test
