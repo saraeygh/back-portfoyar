@@ -37,24 +37,31 @@ from future_market.tasks import (
     update_future,
 )
 
+from future_market.utils import update_options_base_equity_info
+
 
 redis_conn = RedisInterface(db=4)
 
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
+        update_option_data_from_tse()
         # update_future_info()
         # update_base_equity()
-        update_future()
+        # update_future()
+        update_options_base_equity_info()
 
         keys = redis_conn.client.keys(pattern="*")
         result = dict()
         for key in keys:
             try:
                 key = key.decode("utf-8")
+                if key == "updateCDCMarketsInfo":
+                    pass
                 value = json.loads(redis_conn.client.get(name=key))
+                dic = json.loads(redis_conn.client.get(name=key))
                 value = pd.DataFrame(value)
+
                 result[key] = value
             except Exception as e:
                 continue

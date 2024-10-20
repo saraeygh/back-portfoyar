@@ -116,9 +116,9 @@ def long_future_result(
                 / HEZAR_RIAL_TO_BILLION_TOMAN,
                 "derivative_last_update": row.get("last_update"),
                 "base_equity_name": base_equity_row.get("name"),
+                "base_equity_last_price": base_equity_last_price,
                 "base_equity_value": base_equity_row.get("trades_value")
                 / RIAL_TO_BILLION_TOMAN,
-                "base_equity_last_price": base_equity_last_price,
                 "base_equity_last_update": base_equity_row.get("last_update"),
                 **spreads,
                 "initial_margin": row.get("initial_margin"),
