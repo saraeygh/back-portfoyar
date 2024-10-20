@@ -42,6 +42,7 @@ services:
       - db
     networks:
       - wordpress
+      - host
 
 networks:
   host:
