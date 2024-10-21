@@ -14,8 +14,8 @@ services:
     depends_on:
       - db
     networks:
-      - host
       - wordpress
+      - test
 
   db:
     image: docker.arvancloud.ir/mariadb:11.5.2
@@ -29,6 +29,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - wordpress
+      - test
 
   phpmyadmin:
     image: docker.arvancloud.ir/phpmyadmin:5.2.1
@@ -42,11 +43,15 @@ services:
       - db
     networks:
       - wordpress
-      - host
+      - test
 
 networks:
-  host:
   wordpress:
+    name: wordpress
+  test:
+    external: true
+    driver: bridge
+    name: test
 
 volumes:
   wordpress_data:
