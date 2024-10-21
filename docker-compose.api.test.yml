@@ -48,8 +48,8 @@ services:
       dockerfile: Dockerfile.api.test
     image: api_test
     container_name: api_test
-    ports:
-      - "9000:9000"
+    # ports:
+    #   - "9000:9000"
     entrypoint: ["/code/infra/entrypoints/api_test.sh"]
     volumes:
       - shared_options_excel_files_test:/code/media/uploaded_files/
