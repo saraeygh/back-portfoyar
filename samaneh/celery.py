@@ -86,6 +86,14 @@ FUTURE_MARKET_SCHEDULE = {
             minute="*/1",
         ),
     },
+    "update_option_result_task": {
+        "task": "update_option_result_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="10-18",
+            minute="*/1",
+        ),
+    },
 }
 
 GLOBAL_MARKET_SCHEDULE = {

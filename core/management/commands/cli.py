@@ -19,6 +19,7 @@ from future_market.tasks import (
     update_derivative_info,
     update_base_equity,
     update_future,
+    update_option_result,
 )
 from global_market.tasks import calculate_commodity_means_global
 
@@ -227,6 +228,7 @@ class Command(BaseCommand):
                             "1) Update derivative info",
                             "2) Update base equity",
                             "3) Update future result",
+                            "4) Update option result",
                             "0) Back",
                             sep="\n",
                         )
@@ -234,15 +236,17 @@ class Command(BaseCommand):
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
-                                update_derivative_info()
                                 update_base_equity()
                                 update_future()
+                                update_option_result()
                             case "1":
                                 update_derivative_info()
                             case "2":
                                 update_base_equity()
                             case "3":
                                 update_future()
+                            case "4":
+                                update_option_result()
                             case "0":
                                 break
 

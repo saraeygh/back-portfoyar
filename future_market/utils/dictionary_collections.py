@@ -134,57 +134,62 @@ RENAME_COLUMNS = {
     },
 }
 
-# OPTION_COLUMNS = {
-#     "StrikePrice": "strike_price",
+OPTION_COLUMNS = {
+    "StrikePrice": "strike_price",
+    "CallLastTradingPersianDate": "end_date",
+    "CallContractSize": "contract_size",
+    #
+    "CallBidPrice1": "call_best_buy_price",
+    "CallBidVolume1": "call_best_buy_volume",
+    "CallAskPrice1": "call_best_sell_price",
+    "CallAskVolume1": "call_best_sell_volume",
+    "CallLastTradedPrice": "call_last_price",
+    "CallTradesValue": "call_value",
+    "CallTradesVolume": "call_volume",
+    "CallTradesCount": "call_quantity",
+    "CallContractDescription": "call_name",
+    "CallContractCode": "call_symbol",
+    "CallContractID": "call_ins_code",
+    "CallOrdersPersianDateTime": "call_last_update",
+    "CallOpenInterests": "call_open_position_count",
+    #
+    "PutBidPrice1": "put_best_buy_price",
+    "PutBidVolume1": "put_best_buy_volume",
+    "PutAskPrice1": "put_best_sell_price",
+    "PutAskVolume1": "put_best_sell_volume",
+    "PutLastTradedPrice": "put_last_price",
+    "PutTradesValue": "put_value",
+    "PutTradesVolume": "put_volume",
+    "PutTradesCount": "put_quantity",
+    "PutContractDescription": "put_name",
+    "PutContractCode": "put_symbol",
+    "PutContractID": "put_ins_code",
+    "PutOrdersPersianDateTime": "put_last_update",
+    "PutOpenInterests": "put_open_position_count",
+    #
+    "base_equity_ins_code": "base_equity_ins_code",
+    "base_equity_symbol": "base_equity_symbol",
+    "base_equity_close_price": "base_equity_close_price",
+    "base_equity_yesterday_price": "base_equity_yesterday_price",
+    "base_equity_name": "base_equity_name",
+    "base_equity_value": "base_equity_value",
+    "base_equity_last_price": "base_equity_last_price",
+    "base_equity_best_buy_price": "base_equity_best_buy_price",
+    "base_equity_best_sell_price": "base_equity_best_sell_price",
+    "base_equity_best_buy_volume": "base_equity_best_buy_volume",
+    "base_equity_best_sell_volume": "base_equity_best_sell_volume",
+    "base_equity_last_update": "base_equity_last_update",
+}
 
-#     "CallBidPrice1": "call_best_buy_price",
-#     "CallBidVolume1": "call_best_buy_volume",
-#     "CallAskPrice1": "call_best_sell_price",
-#     "CallAskVolume1": "call_best_sell_volume",
-#     "CallLastTradedPrice": "call_last_price",
-#     "CallTradesValue": "call_value",
-#     "CallTradesVolume": "call_volume",
-#     "CallTradesCount": "call_quantity",
-#     "CallContractDescription": "call_name",
-#     "CallContractCode": "call_symbol",
 
-#     "PutBidPrice1": "put_best_buy_price",
-#     "PutBidVolume1": "put_best_buy_volume",
-#     "PutAskPrice1": "put_best_sell_price",
-#     "PutAskVolume1": "put_best_sell_volume",
-#     "PutLastTradedPrice": "put_last_price",
-#     "PutTradesValue": "put_value",
-#     "PutTradesVolume": "put_volume",
-#     "PutTradesCount": "put_quantity",
-#     "PutContractDescription": "put_name",
-#     "PutContractCode": "put_symbol",
-
-# COMMON
-#     "contractSize": "contract_size",
-#     "beginDate": "start_date",
-#     "endDate": "end_date",
-#     "remainedDay": "remained_day",
-
-# BASE_EQUITY_COLUMNS
-#     "uaInsCode": "base_equity_ins_code",
-#     "lval30_UA": "base_equity_symbol",
-#     "pClosing_UA": "base_equity_close_price",
-#     "priceYesterday_UA": "base_equity_yesterday_price",
-#     "base_equity_last_price": "base_equity_last_price",
-
-# CALL_OPTION_COLUMN
-#     "insCode_C": "call_ins_code",
-#     "oP_C": "call_open_position_count",
-#     "pClosing_C": "call_close_price",
-#     "priceYesterday_C": "call_yesterday_price",
-#     "notionalValue_C": "call_notional_value",
-#     "yesterdayOP_C": "call_yesterday_open_position_count",
-
-# PUT_OPTION_COLUMN
-#     "insCode_P": "put_ins_code",
-#     "notionalValue_P": "put_notional_value",
-#     "pClosing_P": "put_close_price",
-#     "priceYesterday_P": "put_yesterday_price",
-#     "oP_P": "put_open_position_count",
-#     "yesterdayOP_P": "put_yesterday_open_position_count",
-# }
+DIFF_COLS = {
+    "start_date": "20240615",
+    #
+    "call_close_price": 3000,
+    "call_yesterday_price": 3000,
+    "call_yesterday_open_position_count": 943,
+    #
+    "put_close_price": 1,
+    "put_yesterday_price": 1,
+    "put_yesterday_open_position_count": 0,
+}

@@ -116,7 +116,7 @@ BASE_EQUITY_KEYS = {
 TO_BE_DELETED = ["51200575796028449"]
 
 
-def update_options_base_equity_info():
+def get_options_base_equity_info():
     print("Updating options base equity info ...")
     base_equity_list = list()
     for name, symbol in OPTION_BASE_EQUITY_SYMBOLS.items():
@@ -133,7 +133,6 @@ def update_options_base_equity_info():
                         base_equity_data = dict()
                         for old_col, new_col in col_mapping.items():
                             base_equity_data[new_col] = datum.get(old_col)
-                        base_equity_data["name"] = name
                         base_equity_data["symbol"] = symbol
                         base_equity_list.append(base_equity_data)
 
@@ -149,5 +148,7 @@ def update_options_base_equity_info():
         if base_equity_ins_code in TO_BE_DELETED:
             continue
         corrected_options_base_equity.append(base_equity)
-    corrected_options_base_equity = pd.DataFrame(corrected_options_base_equity)
     print("Mistaken base equities deleted")
+    corrected_options_base_equity = pd.DataFrame(corrected_options_base_equity)
+
+    return corrected_options_base_equity
