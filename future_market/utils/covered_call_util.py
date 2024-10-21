@@ -10,11 +10,30 @@ from option_market.utils import (
     CALL_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
 )
 
 
 redis_conn = RedisInterface(db=4)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "call_best_buy_price",
+    "call_last_update",
+    "call_best_buy_volume",
+    "call_symbol",
+    "call_value",
+    #
+    "base_equity_last_update",
+    "base_equity_last_price",
+    "base_equity_ins_code",
+    "base_equity_symbol",
+    "base_equity_best_sell_price",
+    "base_equity_best_sell_volume",
+]
 
 
 def add_profits(row):
@@ -65,7 +84,7 @@ def covered_call(option_data):
     for end_date_option in tqdm(
         distinct_end_date_options, desc="covered_call", ncols=10
     ):
-        end_date_option.dropna(inplace=True)
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
         for _, row in end_date_option.iterrows():
             strike = float(row.get("strike_price"))
             premium = float(row.get("call_best_buy_price"))

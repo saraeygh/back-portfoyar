@@ -7,14 +7,30 @@ from option_market.utils import (
     AddOption,
     Strategy,
     CALL_BUY_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
 )
 
 redis_conn = RedisInterface(db=4)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "call_best_sell_price",
+    "call_best_sell_volume",
+    "call_last_update",
+    "call_symbol",
+    "call_value",
+    #
+    "base_equity_last_update",
+    "base_equity_last_price",
+    "base_equity_symbol",
+    "base_equity_best_sell_price",
+    "base_equity_best_sell_volume",
+]
 
 
 def add_break_even(row):
@@ -60,7 +76,7 @@ def long_call(option_data):
 
     result = []
     for end_date_option in tqdm(distinct_end_date_options, desc="long_call", ncols=10):
-        end_date_option.dropna(inplace=True)
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
         for _, row in end_date_option.iterrows():
             strike_price = float(row.get("strike_price"))
             call_premium = float(row.get("call_best_sell_price"))
@@ -89,7 +105,6 @@ def long_call(option_data):
                         "action": "خرید",
                         "link": "https://cdn.ime.co.ir/",
                         **add_action_detail(row, CALL_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row),
                     },
                 ],
             }

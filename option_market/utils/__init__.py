@@ -1,3 +1,5 @@
+from .filter_rows_with_nan_values_util import filter_rows_with_nan_values
+
 from .dictionary_collection import (
     COMMON_OPTION_COLUMN,
     CALL_OPTION_COLUMN,
