@@ -15,6 +15,19 @@ from future_market.utils import (
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
+REPLACE_SYMBOL_DICT = {
+    "قرارداد اختیار معامله فروش ": "ا.ف ",
+    "قرارداد اختیار معامله خرید": "ا.خ ",
+    "سررسید": "",
+    "ریال": "",
+    "با قیمت اعمال": "",
+    "مبتنی بر قرارداد": "",
+    "ماه": "",
+    "واحدهای سرمایه گذاری صندوق طلای": "",
+    "صندوق طلای": "",
+    "  ": " ",
+}
+
 
 def add_symbol_to_option_data(row):
     contract_code = str(row.get("CallContractCode"))
@@ -50,6 +63,18 @@ def change_str_last_update_to_int(row, col_name):
     return last_update
 
 
+def shorten_option_symbol(row, col_name):
+    try:
+        shortened_option_symbol = str(row.get(col_name))
+        for to_replace, replacement in REPLACE_SYMBOL_DICT.items():
+            shortened_option_symbol = shortened_option_symbol.replace(
+                to_replace, replacement
+            )
+        return shortened_option_symbol
+    except Exception:
+        return str(row.get(col_name))
+
+
 @task_timing
 @shared_task(name="update_option_result_task")
 def update_option_result():
@@ -78,4 +103,10 @@ def update_option_result():
         change_str_last_update_to_int, axis=1, args=("base_equity_last_update",)
     )
 
+    option_data["call_symbol"] = option_data.apply(
+        shorten_option_symbol, axis=1, args=("call_symbol",)
+    )
+    option_data["put_symbol"] = option_data.apply(
+        shorten_option_symbol, axis=1, args=("put_symbol",)
+    )
     populate_all_strategy(option_data)
