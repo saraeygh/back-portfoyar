@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import BASE_EQUITY_BUY_FEE, RIAL_TO_BILLION_TOMAN
+from core.configs import BASE_EQUITY_BUY_FEE, RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 
 from . import (
     Conversion,
@@ -16,7 +16,7 @@ from . import (
 )
 
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def add_profits(row, net_profit, profit_factor):
@@ -50,9 +50,7 @@ def conversion():
     )
 
     result = []
-    for end_date_option in tqdm(
-        distinct_end_date_options, desc="conversion", ncols=10
-    ):
+    for end_date_option in tqdm(distinct_end_date_options, desc="conversion", ncols=10):
         for _, row in end_date_option.iterrows():
             strike = float(row.get("strike_price"))
             call_premium = float(row.get("call_best_buy_price"))
@@ -60,7 +58,10 @@ def conversion():
             asset_price = float(row.get("base_equity_last_price"))
 
             covered_call_strategy = Conversion(
-                strike=strike, call_premium=call_premium, put_premium=put_premium, asset_price=asset_price
+                strike=strike,
+                call_premium=call_premium,
+                put_premium=put_premium,
+                asset_price=asset_price,
             )
             coordinates = covered_call_strategy.get_coordinate()
 
@@ -70,47 +71,42 @@ def conversion():
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": asset_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
-
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": call_premium,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
                 "strike_price": strike,
-
                 "put_buy_symbol": row.get("put_symbol"),
                 "put_best_sell_price": put_premium,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-
-                **add_profits(row, covered_call_strategy.net_profit, abs(profit_factor)),
-
+                **add_profits(
+                    row, covered_call_strategy.net_profit, abs(profit_factor)
+                ),
                 "end_date": row.get("end_date"),
-
                 "profit_factor": profit_factor,
-
                 "coordinates": coordinates,
-
                 "actions": [
                     {
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("base_equity_ins_code")}",
                         "action": "خرید",
                         **add_action_detail(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
-
-                        "trade_fee": BASE_EQUITY_BUY_FEE * row.get("base_equity_best_sell_price"),
+                        "trade_fee": BASE_EQUITY_BUY_FEE
+                        * row.get("base_equity_best_sell_price"),
                         "liquidation_settlement_fee": 0,
                         "physical_settlement_fee": 0,
-                        "total_fee": BASE_EQUITY_BUY_FEE * row.get("base_equity_best_sell_price"),
+                        "total_fee": BASE_EQUITY_BUY_FEE
+                        * row.get("base_equity_best_sell_price"),
                     },
                     {
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
                         "action": "فروش",
                         **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                     {
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("put_ins_code")}",
                         "action": "خرید",
                         **add_action_detail(row, PUT_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                 ],
             }

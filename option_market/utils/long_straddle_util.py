@@ -1,11 +1,12 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 from . import (
     AddOption,
     Strategy,
-    CALL_BUY_COLUMN_MAPPING, PUT_BUY_COLUMN_MAPPING,
+    CALL_BUY_COLUMN_MAPPING,
+    PUT_BUY_COLUMN_MAPPING,
     get_options,
     get_distinc_end_date_options,
     convert_int_date_to_str_date,
@@ -14,7 +15,7 @@ from . import (
 )
 
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def long_straddle():
@@ -54,35 +55,29 @@ def long_straddle():
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": row.get("base_equity_last_price"),
-
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
                 "put_buy_symbol": row.get("put_symbol"),
                 "put_best_sell_price": put_premium,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-
                 "strike_price": strike_price,
                 "remained_day": row.get("remained_day"),
                 "end_date": row.get("end_date"),
-
                 "profit_factor": profit_factor,
-
                 "coordinates": coordinates,
-
                 "actions": [
                     {
                         "action": "خرید",
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
                         **add_action_detail(row, CALL_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                     {
                         "action": "خرید",
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("put_ins_code")}",
                         **add_action_detail(row, PUT_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                 ],
             }

@@ -3,6 +3,7 @@ import pandas as pd
 import jdatetime
 from celery import shared_task
 
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
 
 from future_market.models import OPTION_INFO
@@ -12,7 +13,7 @@ from future_market.utils import (
     populate_all_strategy,
 )
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 
 def add_symbol_to_option_data(row):

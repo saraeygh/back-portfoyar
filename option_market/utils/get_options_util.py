@@ -1,10 +1,11 @@
 import pandas as pd
 from core.utils import RedisInterface
+from core.configs import OPTION_REDIS_DB
 
 
 def get_options(option_types):
 
-    redis_conn = RedisInterface(db=3)
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     options = pd.DataFrame()
     for option_type in option_types:
 

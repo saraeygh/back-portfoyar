@@ -119,7 +119,6 @@ services:
       container_name: nginx_test
       ports:
         - "80:80"
-        - "9000:9000"
       depends_on:
         - api_test
       networks:

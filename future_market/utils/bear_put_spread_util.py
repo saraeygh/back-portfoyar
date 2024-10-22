@@ -1,24 +1,34 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_REDIS_DB
 
-
-from . import (
+from option_market.utils import (
     AddOption,
     Strategy,
     CartesianProduct,
-    CALL_BUY_COLUMN_MAPPING,
-    CALL_SELL_COLUMN_MAPPING,
-    get_options,
+    PUT_BUY_COLUMN_MAPPING,
+    PUT_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
 )
 
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "put_value",
+    *list(PUT_BUY_COLUMN_MAPPING.values()),
+    *list(PUT_SELL_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
 
 
 def add_profits(
@@ -39,31 +49,30 @@ def add_profits(
         "yearly_profit": "-",
     }
 
-    net_profit = coordinates[0]["y_2"]
+    net_profit = coordinates[0]["y_1"]
     if profit_factor != 0:
         profits["final_profit"] = (net_profit / profit_factor) * 100
 
     return profits
 
 
-def bear_call_spread():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["call_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_best_sell_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
+def bear_put_spread(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["put_best_buy_price"] > 0)
+        & (option_data["put_best_sell_price"] > 0)
+        & (option_data["put_last_update"] > 100000)
     ]
-    distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
     )
 
     result = []
     for end_date_option in tqdm(
-        distinct_end_date_options, desc="bear_call_spread", ncols=10
+        distinct_end_date_options, desc="bear_put_spread", ncols=10
     ):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
         cartesians = CartesianProduct(dataframe=end_date_option)
         cartesians = cartesians.get_cartesian_product()
 
@@ -75,18 +84,18 @@ def bear_call_spread():
                 low_premium = end_date_option[
                     end_date_option["strike_price"] == low_strike
                 ]
-                low_premium = float(low_premium.get("call_best_buy_price").iloc[0])
-                add_option.add_call_sell(strike=low_strike, premium=low_premium)
+                low_premium = float(low_premium.get("put_best_buy_price").iloc[0])
+                add_option.add_put_sell(strike=low_strike, premium=low_premium)
 
                 high_strike = float(row.get("strike_price_0"))
                 high_premium = end_date_option[
                     end_date_option["strike_price"] == high_strike
                 ]
-                high_premium = float(high_premium.get("call_best_sell_price").iloc[0])
-                add_option.add_call_buy(strike=high_strike, premium=high_premium)
+                high_premium = float(high_premium.get("put_best_sell_price").iloc[0])
+                add_option.add_put_buy(strike=high_strike, premium=high_premium)
 
                 option_list = add_option.get_option_list
-                strategy = Strategy(option_list=option_list, name="bear_call_spread")
+                strategy = Strategy(option_list=option_list, name="bull_put_spread")
 
                 coordinates = strategy.get_coordinate()
 
@@ -98,22 +107,21 @@ def bear_call_spread():
                     end_date_option["strike_price"] == low_strike
                 ].iloc[0]
 
-                profit_factor = -1 * high_premium + low_premium
                 remained_day = row.get("remained_day")
+                profit_factor = -1 * high_premium + low_premium
                 base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
-                    "call_buy_symbol": buy_row.get("call_symbol"),
-                    "call_best_sell_price": high_premium,
-                    "call_buy_strike": high_strike,
-                    "call_buy_value": buy_row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-                    "call_sell_symbol": sell_row.get("call_symbol"),
-                    "call_best_buy_price": low_premium,
-                    "call_sell_strike": low_strike,
-                    "call_sell_value": sell_row.get("call_value")
-                    / RIAL_TO_BILLION_TOMAN,
+                    "put_buy_symbol": buy_row.get("put_symbol"),
+                    "put_best_sell_price": high_premium,
+                    "put_buy_strike": high_strike,
+                    "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
+                    "put_sell_symbol": sell_row.get("put_symbol"),
+                    "put_best_buy_price": low_premium,
+                    "put_sell_strike": low_strike,
+                    "put_sell_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
                     **add_profits(
                         coordinates,
                         abs(profit_factor),
@@ -127,23 +135,19 @@ def bear_call_spread():
                     "actions": [
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{buy_row.get("call_ins_code")}",
-                            **add_action_detail(buy_row, CALL_BUY_COLUMN_MAPPING),
-                            **add_option_fees(buy_row),
+                            "link": "https://cdn.ime.co.ir/",
+                            **add_action_detail(buy_row, PUT_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
-                            "link": f"https://www.tsetmc.com/instInfo/{sell_row.get("call_ins_code")}",
-                            **add_action_detail(sell_row, CALL_SELL_COLUMN_MAPPING),
-                            **add_option_fees(sell_row),
+                            "link": "https://cdn.ime.co.ir/",
+                            **add_action_detail(sell_row, PUT_SELL_COLUMN_MAPPING),
                         },
                     ],
                 }
 
                 result.append(document)
 
-    print(f"bear_call_spread, {len(result)} records.")
+    print(f"bear_put_spread, {len(result)} records.")
 
-    redis_conn.bulk_push_list_of_dicts(
-        list_key="bear_call_spread", list_of_dicts=result
-    )
+    redis_conn.bulk_push_list_of_dicts(list_key="bear_put_spread", list_of_dicts=result)

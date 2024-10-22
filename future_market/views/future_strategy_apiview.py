@@ -1,7 +1,7 @@
 import pandas as pd
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE
+from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE, FUTURE_REDIS_DB
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -19,7 +19,7 @@ from core.utils import (
 )
 from future_market.tasks import FUTURE_STRATEGIES
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 RESULT_SORTING_COLUMN = "monthly_spread"
 
@@ -33,7 +33,6 @@ def sort_strategy_result(positions, sort_column):
 
 
 def get_strategy_result_from_redis(strategy_key):
-    redis_conn = RedisInterface(db=4)
     positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
     positions = pd.DataFrame(positions)
     positions = sort_strategy_result(positions, RESULT_SORTING_COLUMN)

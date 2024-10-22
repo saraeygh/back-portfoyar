@@ -2,10 +2,11 @@ import json
 import requests
 from celery import shared_task
 from datetime import datetime
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
 
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 IS_RUNNING = "is_running"
 

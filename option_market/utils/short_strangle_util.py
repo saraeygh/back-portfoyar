@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 
 from . import (
     AddOption,
@@ -16,14 +16,23 @@ from . import (
     add_option_fees,
 )
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
-def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price, low_strike, high_strike):
-    if base_equity_last_price != 0 and (base_equity_last_price < low_strike or base_equity_last_price > high_strike):
+def add_profits(
+    coordinates,
+    profit_factor,
+    remained_day,
+    base_equity_last_price,
+    low_strike,
+    high_strike,
+):
+    if base_equity_last_price != 0 and (
+        base_equity_last_price < low_strike or base_equity_last_price > high_strike
+    ):
         required_change = (
             (high_strike - base_equity_last_price) / base_equity_last_price
-            ) * 100
+        ) * 100
     else:
         required_change = 0
 
@@ -104,40 +113,43 @@ def short_strangle():
                 base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
-
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
-
                     "put_sell_symbol": put_sell_row.get("put_symbol"),
                     "put_best_buy_price": low_premium,
                     "put_sell_strike": low_strike,
-                    "put_sell_value": put_sell_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-
+                    "put_sell_value": put_sell_row.get("put_value")
+                    / RIAL_TO_BILLION_TOMAN,
                     "call_sell_symbol": call_sell_row.get("call_symbol"),
                     "call_best_buy_price": high_premium,
                     "call_sell_strike": high_strike,
-                    "call_sell_value": call_sell_row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
-                    **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, low_strike, high_strike),
-
+                    "call_sell_value": call_sell_row.get("call_value")
+                    / RIAL_TO_BILLION_TOMAN,
+                    **add_profits(
+                        coordinates,
+                        abs(profit_factor),
+                        remained_day,
+                        base_equity_last_price,
+                        low_strike,
+                        high_strike,
+                    ),
                     "end_date": row.get("end_date"),
-
                     "profit_factor": profit_factor,
-
                     "coordinates": coordinates,
-
                     "actions": [
                         {
                             "action": "فروش",
                             "link": f"https://www.tsetmc.com/instInfo/{put_sell_row.get("put_ins_code")}",
                             **add_action_detail(put_sell_row, PUT_SELL_COLUMN_MAPPING),
-                            **add_option_fees(put_sell_row)
+                            **add_option_fees(put_sell_row),
                         },
                         {
                             "action": "فروش",
                             "link": f"https://www.tsetmc.com/instInfo/{call_sell_row.get("call_ins_code")}",
-                            **add_action_detail(call_sell_row, CALL_SELL_COLUMN_MAPPING),
-                            **add_option_fees(call_sell_row)
+                            **add_action_detail(
+                                call_sell_row, CALL_SELL_COLUMN_MAPPING
+                            ),
+                            **add_option_fees(call_sell_row),
                         },
                     ],
                 }

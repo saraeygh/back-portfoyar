@@ -1,4 +1,5 @@
 import pandas as pd
+from core.configs import OPTION_REDIS_DB
 from core.utils import RedisInterface
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 
 PROFIT_SORTING_COLUMN = "yearly_profit"
 BREAK_EVEN_SORTING_COLUMN = "yearly_break_even"
+
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_COLUMN):
@@ -29,8 +32,7 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 
 # NEW VIEW BASED ON RISK LEVELS #########################
 def get_strategy_result_from_redis(strategy_key):
-    strategy_result = RedisInterface(db=3)
-    strategy_result = strategy_result.get_list_of_dicts(list_key=strategy_key)
+    strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
 
     strategy_result = pd.DataFrame(strategy_result)
     strategy_result = sort_strategy_result(strategy_result)

@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
 
+# FUTURE MARKET
+KEY_WITH_EX_REDIS_DB = 1
+OPTION_REDIS_DB = 3
+FUTURE_REDIS_DB = 4
 
 # CACHE
 SIXTY_SECONDS_CACHE = 60  # 60 seconds

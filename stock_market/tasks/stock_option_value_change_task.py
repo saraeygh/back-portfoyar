@@ -2,7 +2,12 @@ from celery import shared_task
 import pandas as pd
 from core.utils import MongodbInterface, RedisInterface, task_timing, MARKET_STATE
 from core.models import FeatureToggle, ACTIVE
-from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, RIAL_TO_MILLION_TOMAN
+from core.configs import (
+    STOCK_DB,
+    RIAL_TO_BILLION_TOMAN,
+    RIAL_TO_MILLION_TOMAN,
+    OPTION_REDIS_DB,
+)
 
 from stock_market.utils import (
     MAIN_MARKET_TYPE_DICT,
@@ -10,6 +15,9 @@ from stock_market.utils import (
     get_last_market_watch_data,
     get_market_state,
 )
+
+
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def get_instrument_info():
@@ -21,9 +29,6 @@ def get_instrument_info():
 
 
 def get_last_options(option_type):
-
-    redis_conn = RedisInterface(db=3)
-
     last_options = redis_conn.get_list_of_dicts(list_key=option_type)
     last_options = pd.DataFrame(last_options)
     last_options["close_mean"] = (

@@ -2,8 +2,12 @@ import json
 import pandas as pd
 from celery import shared_task
 from core.utils import RedisInterface, task_timing, MONTHLY_INTEREST_RATE_NAME
-from core.models import FeatureToggle, ACTIVE
-from core.configs import HEZAR_RIAL_TO_BILLION_TOMAN, RIAL_TO_BILLION_TOMAN
+from core.models import FeatureToggle
+from core.configs import (
+    HEZAR_RIAL_TO_BILLION_TOMAN,
+    RIAL_TO_BILLION_TOMAN,
+    FUTURE_REDIS_DB,
+)
 from future_market.models import (
     BaseEquity,
     FUND_INFO,
@@ -18,7 +22,7 @@ from datetime import datetime
 import jdatetime
 from tqdm import tqdm
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 UNIQUE_IDENTIFIER_COL = {
     FUND_INFO: ID,

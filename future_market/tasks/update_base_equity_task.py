@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from celery import shared_task
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
 from future_market.models import (
     BaseEquity,
@@ -11,7 +12,7 @@ from future_market.models import (
     CONTRACT_CODE,
 )
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 BASE_EQUITY_SYMBOLS = {
     "زعفران": "SAF",

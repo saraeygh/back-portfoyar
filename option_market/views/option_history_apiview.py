@@ -2,7 +2,12 @@ import pandas as pd
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from core.configs import SIXTY_SECONDS_CACHE, SIXTY_MINUTES_CACHE, OPTION_DB
+from core.configs import (
+    SIXTY_SECONDS_CACHE,
+    SIXTY_MINUTES_CACHE,
+    OPTION_DB,
+    OPTION_REDIS_DB,
+)
 from core.utils import (
     RedisInterface,
     MongodbInterface,
@@ -19,6 +24,8 @@ from rest_framework.views import APIView
 
 from option_market.serializers import SymbolHistorySerializer
 
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
@@ -26,7 +33,6 @@ from option_market.serializers import SymbolHistorySerializer
 class OptionAssetNamesAPIView(APIView):
     def get(self, request):
 
-        redis_conn = RedisInterface(db=3)
         option_base_equity = pd.DataFrame(
             redis_conn.get_list_of_dicts(list_key="option_data")
         )
@@ -45,7 +51,6 @@ class AssetOptionSymbolsAPIView(APIView):
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
-            redis_conn = RedisInterface(db=3)
             calls_list = redis_conn.get_list_of_dicts(list_key="calls")
             puts_list = redis_conn.get_list_of_dicts(list_key="puts")
             calls_puts_list = calls_list + puts_list

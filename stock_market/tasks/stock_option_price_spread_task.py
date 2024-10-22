@@ -1,15 +1,16 @@
 from celery import shared_task
 import pandas as pd
-from core.configs import STOCK_OPTION_STRIKE_DEVIATION, STOCK_DB
+from core.configs import STOCK_OPTION_STRIKE_DEVIATION, STOCK_DB, OPTION_REDIS_DB
 from core.utils import RedisInterface, task_timing, MongodbInterface, MARKET_STATE
 from core.models import FeatureToggle, ACTIVE
 
 from stock_market.utils import MAIN_MARKET_TYPE_DICT, get_market_state
 
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
 
 def get_last_options(option_types):
 
-    redis_conn = RedisInterface(db=3)
     options = pd.DataFrame()
     for option_type in option_types:
 

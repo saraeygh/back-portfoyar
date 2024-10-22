@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import BASE_EQUITY_BUY_FEE, RIAL_TO_BILLION_TOMAN
+from core.configs import BASE_EQUITY_BUY_FEE, RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 
 from . import (
     CoveredCall,
@@ -15,7 +15,7 @@ from . import (
 )
 
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def add_profits(row):
@@ -27,7 +27,7 @@ def add_profits(row):
     if base_equity_last_price != 0 and base_equity_last_price < strike_price:
         required_change = (
             (strike_price - base_equity_last_price) / base_equity_last_price
-            ) * 100
+        ) * 100
     else:
         required_change = 0
 
@@ -86,36 +86,31 @@ def covered_call():
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": asset_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
-
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": premium,
                 "strike_price": strike,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
                 **add_profits(row),
-
                 "end_date": row.get("end_date"),
-
                 "profit_factor": profit_factor,
-
                 "coordinates": coordinates,
-
                 "actions": [
                     {
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("base_equity_ins_code")}",
                         "action": "خرید",
                         **add_action_detail(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
-
-                        "trade_fee": BASE_EQUITY_BUY_FEE * row.get("base_equity_best_sell_price"),
+                        "trade_fee": BASE_EQUITY_BUY_FEE
+                        * row.get("base_equity_best_sell_price"),
                         "liquidation_settlement_fee": 0,
                         "physical_settlement_fee": 0,
-                        "total_fee": BASE_EQUITY_BUY_FEE * row.get("base_equity_best_sell_price"),
+                        "total_fee": BASE_EQUITY_BUY_FEE
+                        * row.get("base_equity_best_sell_price"),
                     },
                     {
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
                         "action": "فروش",
                         **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                 ],
             }

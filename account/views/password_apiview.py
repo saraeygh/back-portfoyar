@@ -19,11 +19,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
 
-from core.utils import RedisInterface
-
-redis_conn = RedisInterface(db=1)
-
-
 def password_is_valid(password):
     try:
         validate_password(password)

@@ -3,7 +3,7 @@ import jdatetime
 from tqdm import tqdm
 from celery import shared_task
 
-from core.configs import OPTION_DB
+from core.configs import OPTION_DB, OPTION_REDIS_DB
 from core.utils import MongodbInterface, RedisInterface, task_timing, get_http_response
 from stock_market.utils import TSETMC_REQUEST_HEADERS
 
@@ -48,10 +48,11 @@ def convert_date(row, col_name: str = "date"):
 
 
 def get_update_history(instrument, instrument_type):
-    history_data_link = ("https://cdn.tsetmc.com/api/ClosingPrice/"
-                         "GetClosingPriceDailyList/"
-                         f"{instrument[f"{instrument_type}_ins_code"]}/0"
-                         )
+    history_data_link = (
+        "https://cdn.tsetmc.com/api/ClosingPrice/"
+        "GetClosingPriceDailyList/"
+        f"{instrument[f"{instrument_type}_ins_code"]}/0"
+    )
 
     option_history_df = get_http_response(
         req_url=history_data_link, req_headers=TSETMC_REQUEST_HEADERS
@@ -62,10 +63,11 @@ def get_update_history(instrument, instrument_type):
         option_history_df = option_history_df.get("closingPriceDaily")
         option_history_df = pd.DataFrame(option_history_df)
 
-        history_data_link = ("https://cdn.tsetmc.com/api/ClosingPrice/"
-                             "GetClosingPriceDailyList/"
-                             f"{instrument["base_equity_ins_code"]}/0"
-                             )
+        history_data_link = (
+            "https://cdn.tsetmc.com/api/ClosingPrice/"
+            "GetClosingPriceDailyList/"
+            f"{instrument["base_equity_ins_code"]}/0"
+        )
         base_equity_df = get_http_response(
             req_url=history_data_link, req_headers=TSETMC_REQUEST_HEADERS
         )
@@ -77,12 +79,16 @@ def get_update_history(instrument, instrument_type):
         base_equity_df = base_equity_df.rename(
             columns={"pClosing": "equit_close_price"}
         )
-        option_history_df = pd.merge(left=option_history_df, right=base_equity_df, on="dEven", how="left")
+        option_history_df = pd.merge(
+            left=option_history_df, right=base_equity_df, on="dEven", how="left"
+        )
 
         option_history_df = option_history_df.drop(UNNECESSARY_COLUMNS, axis=1)
         option_history_df = option_history_df.rename(columns=COLUMNS_NAME_MAPPING)
 
-        option_history_df["date"] = option_history_df.apply(convert_date, axis=1, args=("date",))
+        option_history_df["date"] = option_history_df.apply(
+            convert_date, axis=1, args=("date",)
+        )
         expiration_date = convert_date(row=instrument, col_name="end_date")
         option_history_df["expiration_date"] = expiration_date
 
@@ -92,17 +98,15 @@ def get_update_history(instrument, instrument_type):
 
         option_history_df = option_history_df.to_dict(orient="records")
 
-        mongodb_conn = MongodbInterface(
-            db_name=OPTION_DB,
-            collection_name="history"
-        )
+        mongodb_conn = MongodbInterface(db_name=OPTION_DB, collection_name="history")
 
         query_filter = {"option_symbol": instrument[f"{instrument_type}_symbol"]}
         mongodb_conn.collection.delete_one(query_filter)
 
         mongodb_conn.collection.insert_one(
-            {"option_symbol": instrument[f"{instrument_type}_symbol"],
-             "history": option_history_df
+            {
+                "option_symbol": instrument[f"{instrument_type}_symbol"],
+                "history": option_history_df,
             }
         )
 
@@ -113,17 +117,11 @@ def get_update_history(instrument, instrument_type):
 @task_timing
 @shared_task(name="get_option_history_task")
 def get_option_history():
-    redis_conn = RedisInterface(db=3)
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
 
     for instrument in tqdm(
         all_instruments, desc=f"Options history, #{len(all_instruments) * 2}", ncols=10
     ):
-        get_update_history(
-            instrument=instrument,
-            instrument_type="put"
-        )
-        get_update_history(
-            instrument=instrument,
-            instrument_type="call"
-        )
+        get_update_history(instrument=instrument, instrument_type="put")
+        get_update_history(instrument=instrument, instrument_type="call")

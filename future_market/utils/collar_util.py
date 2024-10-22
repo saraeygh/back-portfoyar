@@ -1,40 +1,51 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_REDIS_DB
 
-from . import (
+from option_market.utils import (
     AddOption,
     Strategy,
     CartesianProduct,
     CALL_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
 )
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 
-def collar():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["call_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_best_sell_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "call_value",
+    *list(CALL_SELL_COLUMN_MAPPING.values()),
+    *list(CALL_BUY_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
+
+
+def collar(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["call_best_buy_price"] > 0)
+        & (option_data["call_best_sell_price"] > 0)
+        & (option_data["call_last_update"] > 100000)
     ]
-    distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
     )
 
     result = []
     for end_date_option in tqdm(distinct_end_date_options, desc="collar", ncols=10):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
         cartesians = CartesianProduct(dataframe=end_date_option)
         cartesians = cartesians.get_cartesian_product()
         if cartesians:
@@ -94,23 +105,20 @@ def collar():
                     "actions": [
                         {
                             "action": "فروش",
-                            "link": f"https://www.tsetmc.com/instInfo/{low_call_sell.get("call_ins_code")}",
+                            "link": "https://cdn.ime.co.ir/",
                             **add_action_detail(
                                 low_call_sell, CALL_SELL_COLUMN_MAPPING
                             ),
-                            **add_option_fees(low_call_sell),
                         },
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{high_call_buy.get("call_ins_code")}",
+                            "link": "https://cdn.ime.co.ir/",
                             **add_action_detail(high_call_buy, CALL_BUY_COLUMN_MAPPING),
-                            **add_option_fees(high_call_buy),
                         },
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{high_call_buy.get("call_ins_code")}",
+                            "link": "https://cdn.ime.co.ir/",
                             **add_action_detail(high_call_buy, CALL_BUY_COLUMN_MAPPING),
-                            **add_option_fees(high_call_buy),
                         },
                     ],
                 }

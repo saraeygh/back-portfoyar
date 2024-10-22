@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 
 
 from . import (
@@ -17,14 +17,16 @@ from . import (
     add_option_fees,
 )
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
-def add_profits(coordinates, profit_factor, remained_day, base_equity_last_price, high_strike):
+def add_profits(
+    coordinates, profit_factor, remained_day, base_equity_last_price, high_strike
+):
     if base_equity_last_price != 0 and base_equity_last_price < high_strike:
         required_change = (
             (high_strike - base_equity_last_price) / base_equity_last_price
-            ) * 100
+        ) * 100
     else:
         required_change = 0
 
@@ -104,40 +106,38 @@ def bull_put_spread():
                 base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
-
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
-
                     "put_buy_symbol": buy_row.get("put_symbol"),
                     "put_best_sell_price": low_premium,
                     "put_buy_strike": low_strike,
                     "put_buy_value": buy_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-
                     "put_sell_symbol": sell_row.get("put_symbol"),
                     "put_best_buy_price": high_premium,
                     "put_sell_strike": high_strike,
                     "put_sell_value": sell_row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-
-                    **add_profits(coordinates, abs(profit_factor), remained_day, base_equity_last_price, high_strike),
-
+                    **add_profits(
+                        coordinates,
+                        abs(profit_factor),
+                        remained_day,
+                        base_equity_last_price,
+                        high_strike,
+                    ),
                     "end_date": row.get("end_date"),
-
                     "profit_factor": profit_factor,
-
                     "coordinates": coordinates,
-
                     "actions": [
                         {
                             "action": "خرید",
                             "link": f"https://www.tsetmc.com/instInfo/{buy_row.get("put_ins_code")}",
                             **add_action_detail(buy_row, PUT_BUY_COLUMN_MAPPING),
-                            **add_option_fees(buy_row)
+                            **add_option_fees(buy_row),
                         },
                         {
                             "action": "فروش",
                             "link": f"https://www.tsetmc.com/instInfo/{sell_row.get("put_ins_code")}",
                             **add_action_detail(sell_row, PUT_SELL_COLUMN_MAPPING),
-                            **add_option_fees(sell_row)
+                            **add_option_fees(sell_row),
                         },
                     ],
                 }

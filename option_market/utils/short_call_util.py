@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
 
 from . import (
     AddOption,
@@ -15,14 +15,14 @@ from . import (
 )
 
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def add_profits(remained_day, base_equity_last_price, strike_price):
     if base_equity_last_price != 0 and base_equity_last_price > strike_price:
         required_change = (
             (strike_price - base_equity_last_price) / base_equity_last_price
-            ) * 100
+        ) * 100
     else:
         required_change = 0
 
@@ -69,26 +69,20 @@ def short_call():
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": base_equity_last_price,
-
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": call_premium,
                 "strike_price": strike_price,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-
                 **add_profits(remained_day, base_equity_last_price, strike_price),
-
                 "end_date": row.get("end_date"),
-
                 "profit_factor": profit_factor,
-
                 "coordinates": coordinates,
-
                 "actions": [
                     {
                         "action": "فروش",
                         "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
                         **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
-                        **add_option_fees(row)
+                        **add_option_fees(row),
                     },
                 ],
             }

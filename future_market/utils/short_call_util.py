@@ -1,26 +1,36 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_REDIS_DB
 
-
-from . import (
+from option_market.utils import (
     AddOption,
     Strategy,
-    PUT_SELL_COLUMN_MAPPING,
-    get_options,
+    CALL_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
 )
 
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "call_value",
+    *list(CALL_SELL_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
 
 
 def add_profits(remained_day, base_equity_last_price, strike_price):
-    if base_equity_last_price != 0 and base_equity_last_price < strike_price:
+    if base_equity_last_price != 0 and base_equity_last_price > strike_price:
         required_change = (
             (strike_price - base_equity_last_price) / base_equity_last_price
         ) * 100
@@ -38,42 +48,41 @@ def add_profits(remained_day, base_equity_last_price, strike_price):
     return profits
 
 
-def short_put():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["put_best_buy_price"] > 0)
-        & (distinct_end_date_options["put_last_update"] > 80000)
+def short_call(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["call_best_buy_price"] > 0)
+        & (option_data["call_last_update"] > 100000)
     ]
-    distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
     )
 
     result = []
-    for end_date_option in tqdm(distinct_end_date_options, desc="short_put", ncols=10):
+    for end_date_option in tqdm(distinct_end_date_options, desc="short_call", ncols=10):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
         for _, row in end_date_option.iterrows():
             strike_price = float(row.get("strike_price"))
-            put_premium = float(row.get("put_best_buy_price"))
+            call_premium = float(row.get("call_best_buy_price"))
 
             add_option = AddOption()
-            add_option.add_put_sell(strike=strike_price, premium=put_premium)
+            add_option.add_call_sell(strike=strike_price, premium=call_premium)
             option_list = add_option.get_option_list
-            strategy = Strategy(option_list=option_list, name="short_put")
+            strategy = Strategy(option_list=option_list, name="short_call")
             coordinates = strategy.get_coordinate()
 
             remained_day = row.get("remained_day")
-            profit_factor = put_premium
+            profit_factor = call_premium
             base_equity_last_price = row.get("base_equity_last_price")
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": base_equity_last_price,
-                "put_sell_symbol": row.get("put_symbol"),
-                "put_best_buy_price": put_premium,
+                "call_sell_symbol": row.get("call_symbol"),
+                "call_best_buy_price": call_premium,
                 "strike_price": strike_price,
-                "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
+                "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
                 **add_profits(remained_day, base_equity_last_price, strike_price),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
@@ -81,15 +90,14 @@ def short_put():
                 "actions": [
                     {
                         "action": "فروش",
-                        "link": f"https://www.tsetmc.com/instInfo/{row.get("put_ins_code")}",
-                        **add_action_detail(row, PUT_SELL_COLUMN_MAPPING),
-                        **add_option_fees(row),
+                        "link": "https://cdn.ime.co.ir/",
+                        **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
                     },
                 ],
             }
 
             result.append(document)
 
-    print(f"short_put, {len(result)} records.")
+    print(f"short_call, {len(result)} records.")
 
-    redis_conn.bulk_push_list_of_dicts(list_key="short_put", list_of_dicts=result)
+    redis_conn.bulk_push_list_of_dicts(list_key="short_call", list_of_dicts=result)

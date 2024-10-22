@@ -4,6 +4,7 @@ from core.utils import RedisInterface, task_timing
 import pandas as pd
 from core.models import FeatureToggle, ACTIVE
 
+from core.configs import OPTION_REDIS_DB
 from core.utils import get_http_response, replace_arabic_letters_pd, MARKET_STATE
 from stock_market.utils import (
     MAIN_MARKET_TYPE_DICT,
@@ -20,7 +21,7 @@ from option_market.utils import (
     populate_all_option_strategy,
 )
 
-redis_conn = RedisInterface(db=3)
+redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def add_base_equity_best_orders(row, order_index):

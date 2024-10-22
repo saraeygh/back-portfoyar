@@ -26,7 +26,6 @@ from .option_strategy_class_util import (
 )
 from .add_action_detail_util import add_action_detail, add_option_fees
 from .covered_call_util import covered_call
-from .conversion_util import conversion
 from .long_call_util import long_call
 from .short_call_util import short_call
 from .long_put_util import long_put
@@ -42,6 +41,7 @@ from .short_strangle_util import short_strangle
 from .long_butterfly_util import long_butterfly
 from .short_butterfly_util import short_butterfly
 from .collar_util import collar
+from .conversion_util import conversion
 from .match_strategy_for_single_symbol_util import match_strategy_for_single_symbol
 from .get_option_volume_strategy_result_util import (
     get_option_volume_strategy_result,

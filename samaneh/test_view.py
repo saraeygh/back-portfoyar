@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 import json
 import pandas as pd
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface
 from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse
@@ -41,12 +42,12 @@ from future_market.tasks import (
 from future_market.utils import get_options_base_equity_info
 
 
-redis_conn = RedisInterface(db=4)
+redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        update_option_data_from_tse()
+        # update_option_data_from_tse()
         # update_future_info()
         # update_base_equity()
         # update_future()
@@ -54,7 +55,6 @@ class TestView(APIView):
         update_option_result()
 
         value = json.loads(redis_conn.client.get(name="covered_call"))
-
         keys = redis_conn.client.keys(pattern="*")
         result = dict()
         for key in keys:
@@ -83,7 +83,6 @@ class TestView(APIView):
         # calculate_commodity_mean_domestic()
         # config = get_recommendation_config(user=request.user)
         # stock_recommendation(config=config)
-        # redis_conn = RedisInterface(db=3)
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
 
         pass

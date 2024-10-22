@@ -1,4 +1,5 @@
 import pandas as pd
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,7 +30,7 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 
 # NEW VIEW BASED ON RISK LEVELS #########################
 def get_strategy_result_from_redis(strategy_key):
-    strategy_result = RedisInterface(db=4)
+    strategy_result = RedisInterface(db=FUTURE_REDIS_DB)
     strategy_result = strategy_result.get_list_of_dicts(list_key=strategy_key)
 
     strategy_result = pd.DataFrame(strategy_result)
@@ -332,15 +333,11 @@ FILTER_DICT = {
 class FutureOptionPositionsAPIView(APIView):
     def get(self, request, risk_level: str, strategy_key: str):
 
-        # if risk_level == "all_risk":
-        #     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-        #     strategy_result = strategy_result.to_dict(orient="records")
-        # else:
-        #     filter_key = f"{risk_level}_{strategy_key}"
-        #     strategy_result = (FILTER_DICT.get(filter_key))(strategy_key)
+        if risk_level == "all_risk":
+            strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
+            strategy_result = strategy_result.to_dict(orient="records")
+        else:
+            filter_key = f"{risk_level}_{strategy_key}"
+            strategy_result = (FILTER_DICT.get(filter_key))(strategy_key)
 
-        # return Response(strategy_result, status=status.HTTP_200_OK)
-
-        strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-        strategy_result = strategy_result.to_dict(orient="records")
         return Response(strategy_result, status=status.HTTP_200_OK)

@@ -1,23 +1,21 @@
-from core.utils import task_timing
-
 from . import (
     covered_call,
     long_call,
-    # short_call,
-    # long_put,
-    # short_put,
-    # bull_call_spread,
-    # bear_call_spread,
-    # bull_put_spread,
-    # bear_put_spread,
-    # long_straddle,
-    # short_straddle,
-    # long_strangle,
-    # short_strangle,
-    # long_butterfly,
-    # short_butterfly,
-    # collar,
-    # conversion,
+    short_call,
+    long_put,
+    short_put,
+    long_straddle,
+    short_straddle,
+    bull_call_spread,
+    bear_call_spread,
+    bull_put_spread,
+    bear_put_spread,
+    long_strangle,
+    short_strangle,
+    long_butterfly,
+    short_butterfly,
+    collar,
+    conversion,
 )
 
 
@@ -30,48 +28,48 @@ def populate_all_strategy(option_data):
     long_call(option_data)
 
     # # 3
-    # short_call()
+    short_call(option_data)
 
     # # 4
-    # long_put()
+    long_put(option_data)
 
     # # 5
-    # short_put()
+    short_put(option_data)
 
     # # 6
-    # long_straddle()
+    long_straddle(option_data)
 
     # # 7
-    # short_straddle()
+    short_straddle(option_data)
 
     # # 8
-    # bull_call_spread()
+    bull_call_spread(option_data)
 
     # # 9
-    # bear_call_spread()
+    bear_call_spread(option_data)
 
     # # 10
-    # bull_put_spread()
+    bull_put_spread(option_data)
 
     # # 11
-    # bear_put_spread()
+    bear_put_spread(option_data)
 
     # # 12
-    # long_strangle()
+    long_strangle(option_data)
 
     # # 13
-    # short_strangle()
+    short_strangle(option_data)
 
     # # 14
-    # long_butterfly()
+    long_butterfly(option_data)
 
     # # 15
-    # short_butterfly()
+    short_butterfly(option_data)
 
     # # 16
-    # collar()
+    collar(option_data)
 
     # # 17
-    # conversion()
+    conversion(option_data)
 
     return
