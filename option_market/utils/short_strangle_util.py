@@ -9,7 +9,6 @@ from . import (
     CartesianProduct,
     CALL_SELL_COLUMN_MAPPING,
     PUT_SELL_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
     convert_int_date_to_str_date,
     add_action_detail,
@@ -55,13 +54,12 @@ def add_profits(
     return profits
 
 
-def short_strangle():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["put_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
-        & (distinct_end_date_options["put_last_update"] > 80000)
+def short_strangle(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["put_best_buy_price"] > 0)
+        & (option_data["call_best_buy_price"] > 0)
+        & (option_data["call_last_update"] > 80000)
+        & (option_data["put_last_update"] > 80000)
     ]
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
         convert_int_date_to_str_date, args=("end_date",), axis=1

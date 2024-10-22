@@ -7,7 +7,6 @@ from . import (
     AddOption,
     Strategy,
     CALL_SELL_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
     convert_int_date_to_str_date,
     add_action_detail,
@@ -37,11 +36,10 @@ def add_profits(remained_day, base_equity_last_price, strike_price):
     return profits
 
 
-def short_call():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["call_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
+def short_call(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["call_best_buy_price"] > 0)
+        & (option_data["call_last_update"] > 80000)
     ]
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
         convert_int_date_to_str_date, args=("end_date",), axis=1

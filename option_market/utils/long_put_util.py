@@ -7,7 +7,6 @@ from . import (
     AddOption,
     Strategy,
     PUT_BUY_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
     convert_int_date_to_str_date,
     add_action_detail,
@@ -18,11 +17,10 @@ from . import (
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
-def long_put():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["put_best_sell_price"] > 0)
-        & (distinct_end_date_options["put_last_update"] > 80000)
+def long_put(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["put_best_sell_price"] > 0)
+        & (option_data["put_last_update"] > 80000)
     ]
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
         convert_int_date_to_str_date, args=("end_date",), axis=1

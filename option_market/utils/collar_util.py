@@ -9,7 +9,6 @@ from . import (
     CartesianProduct,
     CALL_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
-    get_options,
     get_distinc_end_date_options,
     convert_int_date_to_str_date,
     add_action_detail,
@@ -19,12 +18,11 @@ from . import (
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
-def collar():
-    distinct_end_date_options = get_options(option_types=["option_data"])
-    distinct_end_date_options = distinct_end_date_options.loc[
-        (distinct_end_date_options["call_best_buy_price"] > 0)
-        & (distinct_end_date_options["call_best_sell_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
+def collar(option_data):
+    distinct_end_date_options = option_data.loc[
+        (option_data["call_best_buy_price"] > 0)
+        & (option_data["call_best_sell_price"] > 0)
+        & (option_data["call_last_update"] > 80000)
     ]
     distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
         convert_int_date_to_str_date, args=("end_date",), axis=1
