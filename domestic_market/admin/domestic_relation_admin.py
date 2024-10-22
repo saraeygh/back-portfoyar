@@ -16,4 +16,5 @@ class DomesticRelationAdmin(admin.ModelAdmin):
         "domestic_producer__name",
         "stock_instrument__name",
         "stock_instrument__symbol",
+        "stock_instrument__ins_code",
     )
