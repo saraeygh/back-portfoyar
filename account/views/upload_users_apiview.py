@@ -65,6 +65,7 @@ class UploadUsersAPIView(APIView):
 
             user_obj: User = User.objects.filter(username=username)
             if user_obj.exists():
+                print(Fore.RED + f"Existing user: [{username}]" + Style.RESET_ALL)
                 continue
             else:
                 new_user = User(username=username)
@@ -77,6 +78,7 @@ class UploadUsersAPIView(APIView):
 
                 new_user.set_password(password)
                 new_user.save()
+                print(Fore.GREEN + f"Created user: [{username}]" + Style.RESET_ALL)
 
         if not_valid_users:
             error_users_df = pd.DataFrame(not_valid_users)
