@@ -14,6 +14,7 @@ class StrategyOptionAdmin(admin.ModelAdmin):
         "key",
         "profit_status",
         "risk_level",
+        "sequence",
         "created_at_shamsi",
         "updated_at_shamsi",
     )

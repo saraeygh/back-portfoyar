@@ -63,7 +63,6 @@ def update_info():
     event_stream = connect_to_events(negotiation_response["ConnectionToken"])
 
     for data in event_stream:
-        print(Fore.YELLOW + "New event ->> " + Style.RESET_ALL, end="")
         try:
             data = json.loads(data.decode("utf-8").split("data:")[1])
             data = data.get("M")
@@ -75,9 +74,12 @@ def update_info():
                     value = json.dumps(value[0])
                     redis_conn.client.set(key, value)
                     redis_conn.client.set(name=IS_RUNNING, value=0, ex=60)
-                    print(Fore.GREEN + "SET: ", key, Style.RESET_ALL)
+                    print(
+                        Fore.YELLOW + "New event ->> " + Fore.GREEN + "SET:",
+                        key,
+                        Style.RESET_ALL,
+                    )
         except Exception:
-            print(Fore.RED + "No Data!" + Style.RESET_ALL)
             continue
 
 

@@ -38,6 +38,8 @@ class StrategyOption(TimeStampMixin, models.Model):
         default="no_risk",
     )
 
+    sequence = models.IntegerField(verbose_name=("ترتیب"), default=1)
+
     def __str__(self) -> str:
         return self.name
 

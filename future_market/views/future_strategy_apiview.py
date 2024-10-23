@@ -66,8 +66,8 @@ class FuturePositionsAPIView(APIView):
 
         if cache_response is None:
             result = get_strategy_result_from_redis(strategy_key)
-            # result.reset_index(drop=True, inplace=True)
-            # result["id"] = result.apply(add_index_as_id, axis=1)
+            result.reset_index(drop=True, inplace=True)
+            result["id"] = result.apply(add_index_as_id, axis=1)
             result = result.to_dict(orient="records")
 
             set_json_cache(cache_key, result, SIXTY_SECONDS_CACHE)
