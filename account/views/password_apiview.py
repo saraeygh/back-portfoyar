@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
+from colorama import Fore, Style
 
 
 def password_is_valid(password):
@@ -24,7 +25,7 @@ def password_is_valid(password):
         validate_password(password)
         return True
     except Exception as e:
-        print(e)
+        print(Fore.RED + e + Style.RESET_ALL)
         return False
 
 

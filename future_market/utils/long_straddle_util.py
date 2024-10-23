@@ -12,6 +12,7 @@ from option_market.utils import (
     add_action_detail,
     filter_rows_with_nan_values,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
@@ -95,6 +96,6 @@ def long_straddle(option_data):
 
             result.append(document)
 
-    print(f"long_straddle, {len(result)} records.")
+    print(Fore.GREEN + f"long_straddle, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="long_straddle", list_of_dicts=result)

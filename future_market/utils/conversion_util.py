@@ -12,6 +12,7 @@ from option_market.utils import (
     add_action_detail,
     filter_rows_with_nan_values,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
@@ -130,6 +131,6 @@ def conversion(option_data):
 
             result.append(document)
 
-    print(f"Conversion, {len(result)} records.")
+    print(Fore.GREEN + f"conversion, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="conversion", list_of_dicts=result)

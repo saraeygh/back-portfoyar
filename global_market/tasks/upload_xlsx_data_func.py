@@ -12,6 +12,7 @@ from global_market.utils import populate_global_market_db
 from global_market.tasks import calculate_commodity_means_global
 from samaneh.settings.common import BASE_DIR
 from tqdm import tqdm
+from colorama import Fore, Style
 
 EXTRACT_PATTERN_UNIT = r"\((.*?)\)"
 EXTRACT_PATTERN_TRANSIT_1 = r"\((.*?\))\)"
@@ -191,7 +192,11 @@ def upload_xlsx_data_task(excel_file_name: str) -> None:
 
     excel_sheet_names_list = get_sheet_names(excel_file)
     for sheet_name in excel_sheet_names_list:
-        print(f"************************************** Uploading {sheet_name}")
+        print(
+            Fore.GREEN
+            + f"************************************** Uploading {sheet_name}"
+            + Style.RESET_ALL
+        )
 
         market_df = pd.read_excel(io=BytesIO(excel_file), sheet_name=sheet_name)
 
@@ -245,7 +250,7 @@ def upload_xlsx_data_task(excel_file_name: str) -> None:
                 invalid_global_market_list_of_dict.append(global_market)
 
         if invalid_global_market_list_of_dict:
-            print("Sending invalid records email")
+            print(Fore.BLUE + "Sending invalid records email" + Style.RESET_ALL)
             unvalid_global_market_df = pd.DataFrame(invalid_global_market_list_of_dict)
 
             save_dir = f"{BASE_DIR}/media/uploaded_files/"
@@ -265,10 +270,16 @@ def upload_xlsx_data_task(excel_file_name: str) -> None:
         populate_global_market_db(valid_global_market_list_of_dict)
 
         print(
-            "**************************************"
+            Fore.GREEN + "**************************************"
             f" Uploaded {sheet_name}, {len(global_market_list_of_dict)} records."
+            + Style.RESET_ALL
         )
 
-    print("************************************** Uploaded data successfully.")
+    print(
+        Fore.GREEN
+        + Style.BRIGHT
+        + "************************************** Uploaded data successfully."
+        + Style.RESET_ALL
+    )
     calculate_commodity_means_global()
     clear_redis_cache()

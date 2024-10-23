@@ -11,6 +11,7 @@ from future_market.models import (
     ID,
     CONTRACT_CODE,
 )
+from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
@@ -71,7 +72,9 @@ TO_BE_DELETED = {
 @task_timing
 @shared_task(name="update_base_equity_task")
 def update_base_equity():
-    print("Updating base equity list for future market ...")
+    print(
+        Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
+    )
     for name, symbol in BASE_EQUITY_SYMBOLS.items():
         for base_equity_key, properties in BASE_EQUITY_KEYS.items():
             try:
@@ -100,11 +103,13 @@ def update_base_equity():
                                 ),
                             )
             except Exception as e:
-                print(e)
+                print(Fore.RED + e + Style.RESET_ALL)
                 continue
-    print("All base equity list for future market updated")
+    print(
+        Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
+    )
 
-    print("Deleting mistaken base equities ...")
+    print(Fore.BLUE + "Deleting mistaken base equities ..." + Style.RESET_ALL)
 
     for derivative_symbol, unique_identifier in TO_BE_DELETED.items():
         try:
@@ -115,7 +120,7 @@ def update_base_equity():
         except BaseEquity.DoesNotExist:
             continue
         except Exception as e:
-            print(e)
+            print(Fore.RED + e + Style.RESET_ALL)
             continue
 
-    print("Mistaken base equities deleted")
+    print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)

@@ -12,7 +12,7 @@ from domestic_market.models import (
     DomesticTradesHistoryFetch,
 )
 from core.utils import get_http_response
-
+from colorama import Fore, Style
 
 TRADES_HISTORY_TIME_PERIOD = 90
 FIRST_TRADE_DATE_STR = "1380/01/01"
@@ -73,7 +73,12 @@ def get_trades_between_dates(start_date: str, end_date: str):
 
     URL = "https://www.ime.co.ir/subsystems/ime/services/home/imedata.asmx/GetAmareMoamelatList"
 
-    print(f"Getting trades data ({start_date} to {end_date}) ...", end="\r")
+    print(
+        Fore.BLUE
+        + f"Getting trades data ({start_date} to {end_date}) ..."
+        + Style.RESET_ALL,
+        end="\r",
+    )
     response = get_http_response(
         req_method="POST", req_url=URL, req_json=PAYLOAD, req_headers=HEADERS
     )
@@ -151,7 +156,7 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
         try:
             year, month, day = map(int, trade.get("DeliveryDate").split("/"))
         except Exception as e:
-            print(e)
+            print(Fore.RED + e + Style.RESET_ALL)
             continue
         delivery_date = jdatetime.date(year=year, month=month, day=day).togregorian()
 
@@ -195,7 +200,9 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
         new_trade_history.number_of_populated_trades = len(bulk_created_list)
         new_trade_history.save()
         print(
-            f"Populated trades from {start_date} to {end_date}, {len(trades_bulk_list)} records."
+            Fore.BLUE
+            + f"Populated trades from {start_date} to {end_date}, {len(trades_bulk_list)} records."
+            + Style.RESET_ALL
         )
 
 

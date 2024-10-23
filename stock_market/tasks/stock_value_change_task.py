@@ -18,6 +18,7 @@ from stock_market.utils import (
 )
 from celery import shared_task
 from tqdm import tqdm
+from colorama import Fore, Style
 
 
 def add_last_update(row):
@@ -54,7 +55,7 @@ def stock_value_change():
         if check_market_state.state == 1:
             market_state = get_market_state(market_type)
             if market_state != check_market_state.value:
-                print("market is closed!")
+                print(Fore.RED + "market is closed!" + Style.RESET_ALL)
                 continue
 
         for paper_type, paper_type_name in MAIN_PAPER_TYPE_DICT.items():

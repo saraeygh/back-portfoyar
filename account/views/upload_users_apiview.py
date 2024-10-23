@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
+from colorama import Fore, Style
 
 
 def is_valid_email(email):
@@ -150,9 +151,9 @@ def send_upload_excel_error_file_email(filename: str, task_name: str):
             server.login(email_host_user, email_host_password)
             server.sendmail(email_host_user, email_to, text)
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
 
     try:
         os.remove(filepath)
     except Exception:
-        print(f"Error removing file: {e}")
+        print(Fore.RED + f"Error removing file: {e}" + Style.RESET_ALL)

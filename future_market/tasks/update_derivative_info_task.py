@@ -4,7 +4,7 @@ from celery import shared_task
 from datetime import datetime
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
-
+from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
@@ -24,6 +24,7 @@ def negotiate_connection():
         "_": get_now_timestamp_as_str(),
     }
     response = requests.get(url=negotiate_url, params=params, timeout=15)
+    print(Fore.GREEN + "Negotiation completed!", Style.RESET_ALL)
     return response.json()
 
 
@@ -38,6 +39,7 @@ def start_connection(connection_token):
     }
     response = requests.get(url=start_url, params=params, timeout=15)
 
+    print(Fore.GREEN + "Got connectionToken!", Style.RESET_ALL)
     return response.text
 
 
@@ -51,7 +53,7 @@ def connect_to_events(connection_token):
         "tid": "0",
     }
     response = requests.get(url=sse_url, params=params, stream=True, timeout=15)
-    print("Connected to events. Waiting for responses...")
+    print(Fore.GREEN + "Waiting for event responses...", Style.RESET_ALL)
     return response.iter_lines()
 
 
@@ -61,6 +63,7 @@ def update_info():
     event_stream = connect_to_events(negotiation_response["ConnectionToken"])
 
     for data in event_stream:
+        print(Fore.YELLOW + "New event ->> " + Style.RESET_ALL, end="")
         try:
             data = json.loads(data.decode("utf-8").split("data:")[1])
             data = data.get("M")
@@ -72,8 +75,9 @@ def update_info():
                     value = json.dumps(value[0])
                     redis_conn.client.set(key, value)
                     redis_conn.client.set(name=IS_RUNNING, value=0, ex=60)
-                    print("SET: ", key)
+                    print(Fore.GREEN + "SET: ", key, Style.RESET_ALL)
         except Exception:
+            print(Fore.RED + "No Data!" + Style.RESET_ALL)
             continue
 
 

@@ -14,6 +14,7 @@ from . import (
     add_action_detail,
     add_option_fees,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -138,6 +139,6 @@ def bear_put_spread(option_data):
 
                 result.append(document)
 
-    print(f"bear_put_spread, {len(result)} records.")
+    print(Fore.GREEN + f"bear_put_spread, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="bear_put_spread", list_of_dicts=result)

@@ -14,9 +14,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
+from core.configs import KEY_WITH_EX_REDIS_DB
 from core.utils import RedisInterface
 
-redis_conn = RedisInterface(db=1)
+from colorama import Fore, Style
+
+redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def send_email_verification_code(username: str, email: str, code: str):
@@ -65,7 +68,7 @@ def send_email_verification_code(username: str, email: str, code: str):
             server.sendmail(email_host_user, email_to, text)
         return True
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
         return False
 
 

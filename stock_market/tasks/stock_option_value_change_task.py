@@ -15,6 +15,7 @@ from stock_market.utils import (
     get_last_market_watch_data,
     get_market_state,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -133,13 +134,13 @@ def add_last_update(row):
 @shared_task(name="stock_option_value_change_task")
 def stock_option_value_change():
 
-    print("Checking stock options value change ...")
+    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
     check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
     for market_type in list(MAIN_MARKET_TYPE_DICT.keys()):
         if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type)
             if market_state != check_market_state.value:
-                print("market is closed!")
+                print(Fore.RED + "market is closed!" + Style.RESET_ALL)
                 continue
 
         instrument_info = get_instrument_info()

@@ -1,4 +1,5 @@
 from core.models import FeatureToggle, ACTIVE, DEACTIVE
+from colorama import Fore, Style
 
 MARKET_STATE = "market_state"
 
@@ -15,9 +16,13 @@ def create_default_feature_toggle():
             state=DEACTIVE,
             value="S",
         )
-        print(f"{MARKET_STATE} feature toggle created.")
+        print(Fore.GREEN + f"{MARKET_STATE} feature toggle created." + Style.RESET_ALL)
     else:
-        print(f"{MARKET_STATE} feature toggle already exists.")
+        print(
+            Fore.YELLOW
+            + f"{MARKET_STATE} feature toggle already exists."
+            + Style.RESET_ALL
+        )
 
     ###########################################################################
     if not FeatureToggle.objects.filter(name=MONTHLY_INTEREST_RATE_NAME).exists():
@@ -27,6 +32,14 @@ def create_default_feature_toggle():
             state=ACTIVE,
             value=MONTHLY_INTEREST_RATE_VALUE,
         )
-        print(f"{MONTHLY_INTEREST_RATE_NAME} feature toggle created.")
+        print(
+            Fore.GREEN
+            + f"{MONTHLY_INTEREST_RATE_NAME} feature toggle created."
+            + Style.RESET_ALL
+        )
     else:
-        print(f"{MONTHLY_INTEREST_RATE_NAME} feature toggle already exists.")
+        print(
+            Fore.YELLOW
+            + f"{MONTHLY_INTEREST_RATE_NAME} feature toggle already exists."
+            + Style.RESET_ALL
+        )

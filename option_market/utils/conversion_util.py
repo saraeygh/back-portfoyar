@@ -13,6 +13,7 @@ from . import (
     add_action_detail,
     add_option_fees,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -116,6 +117,6 @@ def conversion(option_data):
 
             result.append(document)
 
-    print(f"Conversion, {len(result)} records.")
+    print(Fore.GREEN + f"conversion, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="conversion", list_of_dicts=result)

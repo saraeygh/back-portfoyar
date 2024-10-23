@@ -14,6 +14,7 @@ from . import (
     add_action_detail,
     add_option_fees,
 )
+from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
@@ -115,6 +116,6 @@ def collar(option_data):
 
                 result.append(document)
 
-    print(f"collar, {len(result)} records.")
+    print(Fore.GREEN + f"collar, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="collar", list_of_dicts=result)

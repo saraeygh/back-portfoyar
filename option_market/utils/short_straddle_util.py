@@ -13,6 +13,7 @@ from . import (
     add_action_detail,
     add_option_fees,
 )
+from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -120,6 +121,6 @@ def short_straddle(option_data):
 
             result.append(document)
 
-    print(f"short_straddle, {len(result)} records.")
+    print(Fore.GREEN + f"short_straddle, {len(result)} records." + Style.RESET_ALL)
 
     redis_conn.bulk_push_list_of_dicts(list_key="short_straddle", list_of_dicts=result)

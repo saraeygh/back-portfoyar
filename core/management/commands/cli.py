@@ -1,7 +1,7 @@
 import time
 import os
 import platform
-
+from colorama import Fore, Style
 
 from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
@@ -59,36 +59,36 @@ class Command(BaseCommand):
 
         while True:  # MAIN MENU
             print(
-                "Choose app:",
-                "1) Domestic market",
+                Style.BRIGHT + "Choose app:",
+                Fore.BLUE + "1) Domestic market",
                 "2) Global market",
                 "3) Option market",
                 "4) Stock market",
                 "5) Future market",
-                "9) Others",
-                "0) Exit",
+                Fore.RED + "9) Others",
+                Fore.RED + "0) Exit" + Style.RESET_ALL,
                 sep="\n",
             )
-            cmd = input("Enter command: ")
+            cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
             os.system(CLEAR_CMD)
 
             match cmd:
                 case "1":  # DOMESTIC MARKET
                     while True:
                         print(
-                            "Domestic market commands:",
-                            "all) Run all commands",
-                            "1) Get trades",
+                            Style.BRIGHT + "Domestic market commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Get trades",
                             "2) Calculate means",
                             "3) Get dollar price",
                             "4) Calculate monthly sell",
                             "5) Calculate production sell",
                             "6) Get dollar price history",
                             "7) Calculate producers yearly value",
-                            "0) Back",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -117,13 +117,13 @@ class Command(BaseCommand):
                 case "2":  # GLOBAL MARKET
                     while True:
                         print(
-                            "Global market commands:",
-                            "all) Run all commands",
-                            "1) Calculate means",
-                            "0) Back",
+                            Style.BRIGHT + "Global market commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Calculate means",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -135,17 +135,17 @@ class Command(BaseCommand):
                 case "3":  # OPTION MARKET
                     while True:
                         print(
-                            "Option market commands:",
-                            "all) Run all commands",
-                            "1) Update option data",
+                            Style.BRIGHT + "Option market commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Update option data",
                             "2) Populate all option strategies",
                             "3) Get option history",
                             "4) Populate option total volume",
                             "5) Option volume strategy result",
-                            "0) Back",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -169,9 +169,9 @@ class Command(BaseCommand):
                 case "4":  # STOCK MARKET
                     while True:
                         print(
-                            "Stock market commands:",
-                            "all) Run all commands",
-                            "1) Get monthly activity",
+                            Style.BRIGHT + "Stock market commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Get monthly activity",
                             "2) Update market watch",
                             "3) Update instrument history",
                             "4) Update instrument info",
@@ -181,10 +181,10 @@ class Command(BaseCommand):
                             "8) Stock option value change",
                             "9) Stock option price spread",
                             "10) Update stock adjusted history",
-                            "0) Back",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -223,16 +223,16 @@ class Command(BaseCommand):
                 case "5":  # FUTURE MARKET
                     while True:
                         print(
-                            "Future market commands:",
-                            "all) Run all commands",
-                            "1) Update derivative info",
+                            Style.BRIGHT + "Future market commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Update derivative info",
                             "2) Update base equity",
                             "3) Update future result",
                             "4) Update option result",
-                            "0) Back",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -253,14 +253,14 @@ class Command(BaseCommand):
                 case "9":  # OTHERS
                     while True:
                         print(
-                            "Other commands:",
-                            "all) Run all commands",
-                            "1) Clear redis cache",
+                            Style.BRIGHT + "Other commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) Clear redis cache",
                             "2) Relpace all arabic letters",
-                            "0) Back",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
-                        cmd = input("Enter command: ")
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
@@ -276,6 +276,6 @@ class Command(BaseCommand):
                     break
 
                 case _:
-                    print("Wrong choice!!!")
+                    print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
                     time.sleep(0.5)
                     continue

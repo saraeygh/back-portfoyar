@@ -26,6 +26,8 @@ from core.configs import (
 )
 from tqdm import tqdm
 
+from colorama import Fore, Style
+
 
 def get_time(row):
     last_time = str(row.get("last_time"))
@@ -202,7 +204,7 @@ def stock_market_watch():
         if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type_num)
             if market_state != check_market_state.value:
-                print("Market is closed.")
+                print(Fore.RED + "Market is closed." + Style.RESET_ALL)
                 continue
 
         for paper_type_num, paper_type_name in MAIN_PAPER_TYPE_DICT.items():

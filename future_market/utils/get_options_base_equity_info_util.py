@@ -9,15 +9,12 @@ from future_market.models import (
     ID,
     CONTRACT_CODE,
 )
+from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 
 OPTION_BASE_EQUITY_SYMBOLS = {
-    # "زعفران": "SAF",
-    # "لوتوس": "ETC",
-    # "شمش": "GB",
-    # "كهربا": "KB",
     "لوتوس": "TL",
     "كهربا": "KA",
     "زاگرس": "JZ",
@@ -118,7 +115,7 @@ TO_BE_DELETED = ["51200575796028449"]
 
 
 def get_options_base_equity_info():
-    print("Updating options base equity info ...")
+    print(Fore.BLUE + "Updating options base equity info ..." + Style.RESET_ALL)
     base_equity_list = list()
     for name, symbol in OPTION_BASE_EQUITY_SYMBOLS.items():
         for base_equity_key, properties in BASE_EQUITY_KEYS.items():
@@ -138,18 +135,18 @@ def get_options_base_equity_info():
                         base_equity_list.append(base_equity_data)
 
             except Exception as e:
-                print(e)
+                print(Fore.RED + e + Style.RESET_ALL)
                 continue
-    print("All options base equity info updated")
+    print(Fore.GREEN + "All options base equity info updated" + Style.RESET_ALL)
 
-    print("Deleting mistaken base equities ...")
+    print(Fore.BLUE + "Deleting mistaken base equities ..." + Style.RESET_ALL)
     corrected_options_base_equity = list()
     for base_equity in base_equity_list:
         base_equity_ins_code = base_equity.get("base_equity_ins_code")
         if base_equity_ins_code in TO_BE_DELETED:
             continue
         corrected_options_base_equity.append(base_equity)
-    print("Mistaken base equities deleted")
+    print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)
     corrected_options_base_equity = pd.DataFrame(corrected_options_base_equity)
 
     return corrected_options_base_equity

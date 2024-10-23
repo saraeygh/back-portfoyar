@@ -26,6 +26,7 @@ from support.serializers import (
 from django.http import HttpResponse
 
 from . import TICKET_APPENDIX_FILES_DIR
+from colorama import Fore, Style
 
 FILE_SIZE_LIMIT = 10_000_000
 
@@ -80,19 +81,27 @@ def save_appendix_file(file):
 
 
 def add_ticket_as_first_response(request, ticket, responses):
-    created_at = JalaliDateTime(ticket.created_at, tzinfo=pytz.UTC) + jdatetime.timedelta(hours=3, minutes=30)
+    created_at = JalaliDateTime(
+        ticket.created_at, tzinfo=pytz.UTC
+    ) + jdatetime.timedelta(hours=3, minutes=30)
 
     first_response = {
         "id": ticket.id,
         "text": ticket.text,
-        "date": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(format="%Y/%m/%d"),
-        "time": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(format="%H:%M"),
+        "date": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(
+            format="%Y/%m/%d"
+        ),
+        "time": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(
+            format="%H:%M"
+        ),
         "user": ticket.sender_user.get_full_name(),
         "is_staff": ticket.sender_user.is_staff,
         "appendix": None,
     }
     if ticket.file:
-        file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}/"
+        file_url = (
+            f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}/"
+        )
         first_response["appendix"] = file_url
     first_response = OrderedDict(sorted(first_response.items()))
 
@@ -151,7 +160,7 @@ class TicketingAPIView(APIView):
         try:
             ticket = json.loads(request.data.get("ticket"))
         except Exception as e:
-            print(e)
+            print(Fore.RED + e + Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -187,7 +196,7 @@ class GetTicketDetailAPIView(APIView):
         try:
             response = json.loads(request.data.get("response"))
         except Exception as e:
-            print(e)
+            print(Fore.RED + e + Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -235,7 +244,7 @@ class GetTicketAppendixAPIView(APIView):
             response["Content-Disposition"] = f'attachment; filename="{file_name}"'
             return response
         except Exception as e:
-            print(e)
+            print(Fore.RED + e + Style.RESET_ALL)
             return Response(
                 {"message": "فایل پیدا نشد."}, status=status.HTTP_404_NOT_FOUND
             )

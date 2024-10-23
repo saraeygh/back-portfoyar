@@ -20,6 +20,7 @@ from option_market.utils import (
     PUT_OPTION_COLUMN,
     populate_all_option_strategy,
 )
+from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
@@ -55,7 +56,7 @@ def update_option_data_from_tse():
         if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type_num)
             if market_state != check_market_state.value:
-                print("Market is closed.")
+                print(Fore.RED + "Market is closed." + Style.RESET_ALL)
                 continue
 
         URL = "https://cdn.tsetmc.com/api/Instrument/GetInstrumentOptionMarketWatch/0"
@@ -159,7 +160,7 @@ def update_option_data_from_tse():
         redis_conn.bulk_push_list_of_dicts(
             list_key="option_data", list_of_dicts=option_data
         )
-        print(f"option_data, {len(option_data)} records.")
+        print(Fore.BLUE + f"option_data, {len(option_data)} records." + Style.RESET_ALL)
 
         populate_all_option_strategy()
 

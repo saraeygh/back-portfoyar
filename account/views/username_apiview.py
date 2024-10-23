@@ -19,8 +19,9 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from melipayamak.melipayamak import Api
 
 from core.utils import RedisInterface
+from core.configs import KEY_WITH_EX_REDIS_DB
 
-redis_conn = RedisInterface(db=1)
+redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def is_valid_phone(phone):

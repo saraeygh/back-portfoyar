@@ -23,6 +23,7 @@ from stock_market.models.recommendation_config_model import (
     DomesticPositiveRange,
     DomesticNegativeRange,
 )
+from colorama import Fore, Style
 
 categories = [category[0] for category in CATEGORY_CHOICES]
 
@@ -109,7 +110,7 @@ def update_related_objects(config_id, request):
                 setattr(related_obj, "weight", weight)
             related_obj.save()
     except Exception as e:
-        print(e)
+        print(Fore.RED + e + Style.RESET_ALL)
         return Response(
             {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -145,7 +146,7 @@ def update_config(request, config_id):
         return Response(configs, status=status.HTTP_200_OK)
 
     except Exception as e:
-        print(e)
+        print(Fore.RED + e + Style.RESET_ALL)
         return Response(
             {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
         )

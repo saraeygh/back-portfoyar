@@ -4,6 +4,7 @@ services:
     container_name: wordpress
     ports:
       - "8008:80"
+    restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: armanadmin
@@ -20,6 +21,7 @@ services:
   db:
     image: docker.arvancloud.ir/mariadb:11.5.2
     container_name: wordpress_db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root@sqldb#1403!
       MYSQL_DATABASE: wordpressdb
@@ -34,6 +36,7 @@ services:
   phpmyadmin:
     image: docker.arvancloud.ir/phpmyadmin:5.2.1
     container_name: phpmyadmin
+    restart: always
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: root@sqldb#1403!

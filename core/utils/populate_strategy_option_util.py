@@ -1,4 +1,5 @@
 from option_market.models import StrategyOption
+from colorama import Fore, Style
 
 STRATEGIES = {
     "covered_call": {
@@ -106,8 +107,7 @@ def create_or_update(strategy_key: str, profit_status: str, risk_level: str, nam
 
 
 def populate_strategy_option():
-    print("Creating pre-defined strategies ...")
-
+    print(Fore.BLUE + "Creating pre-defined strategies ..." + Style.RESET_ALL)
     for strategy_key, strategy_properties in STRATEGIES.items():
         name = strategy_properties.get("name")
         profit_status = strategy_properties.get("profit_status")
@@ -115,4 +115,4 @@ def populate_strategy_option():
         for risk_level in risk_levels:
             create_or_update(strategy_key, profit_status, risk_level, name)
 
-    print("Created strategies.")
+    print(Fore.GREEN + "Created strategies." + Style.RESET_ALL)

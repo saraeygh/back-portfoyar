@@ -17,6 +17,7 @@ from stock_market.models.recommendation_config_model import (
     DomesticPositiveRange,
     DomesticNegativeRange,
 )
+from colorama import Fore, Style
 
 DEFAULT_SETTING_NAME = "portfoyar_admin_default_recommendation_configs"
 
@@ -29,7 +30,7 @@ def create_default_recommendation_setting():
             default_setting.is_default = True
             default_setting.save()
 
-        print("Default settings already exists.")
+        print(Fore.YELLOW + "Default settings already exists." + Style.RESET_ALL)
     except RecommendationConfig.DoesNotExist:
         admin_user = User.objects.get(username=ADMIN_USERNAME)
 
@@ -61,4 +62,4 @@ def create_default_recommendation_setting():
             recommendation=default_setting, is_enabled=True
         )
 
-        print("Default settings created.")
+        print(Fore.GREEN + "Default settings created." + Style.RESET_ALL)
