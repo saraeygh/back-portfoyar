@@ -109,10 +109,3 @@ class TestView(APIView):
 
         # user_generator()
         pass
-
-
-# updateAllMarketData -
-# updateFutureMarketsInfo - آتی
-# updateGavahiMarketsInfo -
-# updateSandoqMarketsInfo - صندوق‌های کالایی
-# updateCDCMarketsInfo - گواهی سپرده کالایی
