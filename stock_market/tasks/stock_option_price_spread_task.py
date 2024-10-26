@@ -111,7 +111,7 @@ def stock_option_price_spread():
 
         if not spreads.empty:
             spreads["time"] = spreads.apply(add_time, axis=1)
-            spreads = spreads[spreads["time"] > 80000]
+            spreads = spreads[spreads["time"] > 90000]
 
             spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
             spreads = spreads[

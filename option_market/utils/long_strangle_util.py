@@ -1,7 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN
 
 from . import (
     AddOption,
@@ -10,25 +9,36 @@ from . import (
     PUT_BUY_COLUMN_MAPPING,
     CALL_BUY_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
+    get_link_str,
 )
+
 from colorama import Fore, Style
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "put_value",
+    "call_value",
+    *list(PUT_BUY_COLUMN_MAPPING.values()),
+    *list(CALL_BUY_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
 
 
-def long_strangle(option_data):
+def long_strangle(option_data, redis_conn):
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_sell_price"] > 0)
         & (option_data["call_best_sell_price"] > 0)
-        & (option_data["call_last_update"] > 80000)
-        & (option_data["put_last_update"] > 80000)
+        & (option_data["call_last_update"] > 90000)
+        & (option_data["put_last_update"] > 90000)
     ]
-    distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
     )
@@ -37,6 +47,10 @@ def long_strangle(option_data):
     for end_date_option in tqdm(
         distinct_end_date_options, desc="long_strangle", ncols=10
     ):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
+
         cartesians = CartesianProduct(dataframe=end_date_option)
         cartesians = cartesians.get_cartesian_product()
 
@@ -93,15 +107,13 @@ def long_strangle(option_data):
                     "actions": [
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{put_buy_row.get("put_ins_code")}",
+                            "link": get_link_str(put_buy_row, "put_ins_code"),
                             **add_action_detail(put_buy_row, PUT_BUY_COLUMN_MAPPING),
-                            **add_option_fees(put_buy_row),
                         },
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{call_buy_row.get("call_ins_code")}",
+                            "link": get_link_str(call_buy_row, "call_ins_code"),
                             **add_action_detail(call_buy_row, CALL_BUY_COLUMN_MAPPING),
-                            **add_option_fees(call_buy_row),
                         },
                     ],
                 }

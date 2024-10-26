@@ -87,7 +87,8 @@ def user_generator():
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
-        # update_option_data_from_tse()
+        update_option_data_from_tse()
+        update_option_result()
         # update_future_info()
         # update_base_equity()
         # update_future()

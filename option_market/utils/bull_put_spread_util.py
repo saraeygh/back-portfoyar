@@ -1,7 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN
 
 
 from . import (
@@ -11,13 +10,26 @@ from . import (
     PUT_BUY_COLUMN_MAPPING,
     PUT_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
+    get_link_str,
 )
+
 from colorama import Fore, Style
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "put_value",
+    *list(PUT_BUY_COLUMN_MAPPING.values()),
+    *list(PUT_SELL_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
 
 
 def add_profits(
@@ -50,15 +62,12 @@ def add_profits(
     return profits
 
 
-def bull_put_spread(option_data):
+def bull_put_spread(option_data, redis_conn):
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_sell_price"] > 0)
         & (option_data["put_best_buy_price"] > 0)
-        & (option_data["put_last_update"] > 80000)
+        & (option_data["put_last_update"] > 90000)
     ]
-    distinct_end_date_options["end_date"] = distinct_end_date_options.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
     )
@@ -67,8 +76,13 @@ def bull_put_spread(option_data):
     for end_date_option in tqdm(
         distinct_end_date_options, desc="bull_put_spread", ncols=10
     ):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
+
         cartesians = CartesianProduct(dataframe=end_date_option)
         cartesians = cartesians.get_cartesian_product()
+
         if cartesians:
             for _, row in cartesians[0].iterrows():
                 add_option = AddOption()
@@ -128,15 +142,13 @@ def bull_put_spread(option_data):
                     "actions": [
                         {
                             "action": "خرید",
-                            "link": f"https://www.tsetmc.com/instInfo/{buy_row.get("put_ins_code")}",
+                            "link": get_link_str(buy_row, "put_ins_code"),
                             **add_action_detail(buy_row, PUT_BUY_COLUMN_MAPPING),
-                            **add_option_fees(buy_row),
                         },
                         {
                             "action": "فروش",
-                            "link": f"https://www.tsetmc.com/instInfo/{sell_row.get("put_ins_code")}",
+                            "link": get_link_str(sell_row, "put_ins_code"),
                             **add_action_detail(sell_row, PUT_SELL_COLUMN_MAPPING),
-                            **add_option_fees(sell_row),
                         },
                     ],
                 }

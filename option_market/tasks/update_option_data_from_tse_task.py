@@ -19,6 +19,7 @@ from option_market.utils import (
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
     populate_all_option_strategy,
+    convert_int_date_to_str_date,
 )
 from colorama import Fore, Style
 
@@ -155,6 +156,10 @@ def update_option_data_from_tse():
         option_data.fillna(value=60000, inplace=True)
         option_data["call_last_update"] = option_data["call_last_update"].astype(int)
         option_data["put_last_update"] = option_data["put_last_update"].astype(int)
+
+        option_data["end_date"] = option_data.apply(
+            convert_int_date_to_str_date, args=("end_date",), axis=1
+        )
 
         option_data = option_data.to_dict(orient="records")
         redis_conn.bulk_push_list_of_dicts(

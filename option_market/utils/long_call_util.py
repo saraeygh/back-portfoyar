@@ -1,20 +1,31 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.utils import RedisInterface
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN
 
 from . import (
     AddOption,
     Strategy,
     CALL_BUY_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    convert_int_date_to_str_date,
     add_action_detail,
-    add_option_fees,
+    filter_rows_with_nan_values,
+    get_link_str,
 )
+
 from colorama import Fore, Style
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
+REQUIRED_COLUMNS = [
+    "strike_price",
+    "end_date",
+    "remained_day",
+    #
+    "call_value",
+    *list(CALL_BUY_COLUMN_MAPPING.values()),
+    #
+    "base_equity_symbol",
+    "base_equity_last_price",
+]
 
 
 def add_break_even(row):
@@ -49,17 +60,14 @@ def add_break_even(row):
         return break_even
 
 
-def long_call(option_data):
+def long_call(option_data, redis_conn):
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_sell_price"] > 0)
-        & (option_data["call_last_update"] > 80000)
+        & (option_data["call_last_update"] > 90000)
     ]
-    distinct_end_date_options["end_date"] = option_data.apply(
-        convert_int_date_to_str_date, args=("end_date",), axis=1
-    )
     distinct_end_date_options = distinct_end_date_options.loc[
         (distinct_end_date_options["call_best_sell_price"] > 0)
-        & (distinct_end_date_options["call_last_update"] > 80000)
+        & (distinct_end_date_options["call_last_update"] > 90000)
     ]
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
@@ -67,6 +75,9 @@ def long_call(option_data):
 
     result = []
     for end_date_option in tqdm(distinct_end_date_options, desc="long_call", ncols=10):
+        end_date_option = filter_rows_with_nan_values(end_date_option, REQUIRED_COLUMNS)
+        if end_date_option.empty:
+            continue
         for _, row in end_date_option.iterrows():
             strike_price = float(row.get("strike_price"))
             call_premium = float(row.get("call_best_sell_price"))
@@ -93,9 +104,8 @@ def long_call(option_data):
                 "actions": [
                     {
                         "action": "خرید",
-                        "link": f"https://www.tsetmc.com/instInfo/{row.get("call_ins_code")}",
+                        "link": get_link_str(row, "call_ins_code"),
                         **add_action_detail(row, CALL_BUY_COLUMN_MAPPING),
-                        **add_option_fees(row),
                     },
                 ],
             }
