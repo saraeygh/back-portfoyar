@@ -113,6 +113,34 @@ BASE_EQUITY_KEYS = {
 
 TO_BE_DELETED = ["51200575796028449"]
 
+MISSING_BASE_EQUITIES = {
+    "46700660505281786": "FE",
+    "25559236668122210": "KB",
+}
+
+
+def add_missing_base_equities_symbols(options_base_equity: pd.DataFrame):
+    missing_base_equity_list = list()
+    for base_equity_ins_code, symbol in MISSING_BASE_EQUITIES.items():
+        row = options_base_equity.loc[
+            options_base_equity["base_equity_ins_code"] == base_equity_ins_code
+        ]
+
+        row = row.to_dict(orient="records")[0]
+        row["symbol"] = symbol
+        missing_base_equity_list.append(row)
+
+    missing_base_equity_df = pd.DataFrame(missing_base_equity_list)
+
+    sf_base_equities = options_base_equity[options_base_equity["symbol"] == "SF"]
+    sf_base_equities["symbol"] = "FS"
+
+    options_base_equity = pd.concat(
+        [options_base_equity, missing_base_equity_df, sf_base_equities]
+    )
+
+    return options_base_equity
+
 
 def get_options_base_equity_info():
     print(Fore.BLUE + "Updating options base equity info ..." + Style.RESET_ALL)
@@ -149,4 +177,11 @@ def get_options_base_equity_info():
     print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)
     corrected_options_base_equity = pd.DataFrame(corrected_options_base_equity)
 
+    corrected_options_base_equity = corrected_options_base_equity.drop_duplicates(
+        subset="base_equity_ins_code", keep=False
+    )
+
+    corrected_options_base_equity = add_missing_base_equities_symbols(
+        corrected_options_base_equity
+    )
     return corrected_options_base_equity
