@@ -1,7 +1,15 @@
-from core.models import TimeStampMixin
+import pytz
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import RegexValidator
+from django.contrib import admin
+
+
+import jdatetime
+from persiantools.jdatetime import JalaliDateTime
+from rest_framework.authtoken.models import Token
+
+from core.models import TimeStampMixin
 
 
 PHONE_PATTERN_REGEX = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
@@ -43,6 +51,29 @@ class Profile(TimeStampMixin, models.Model):
     )
 
     birth_date = models.DateField(verbose_name="تاریخ تولد", blank=True, null=True)
+
+    @admin.display(description="ورودهای قعال")
+    def active_logins(self):
+        logins = Token.objects.filter(user=self.user).count()
+        return logins
+
+    @admin.display(description="ایجاد")
+    def created_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.created_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        return shamsi
+
+    @admin.display(description="به‌روزرسانی")
+    def updated_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.updated_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        return shamsi
 
     class Meta:
         verbose_name = "پروفایل"
