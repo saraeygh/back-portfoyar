@@ -18,7 +18,7 @@ class Profile(TimeStampMixin, models.Model):
         verbose_name="کاربر", to=User, on_delete=models.CASCADE, related_name="profile"
     )
 
-    max_login = models.IntegerField(verbose_name="حداکثر لاگین همزمان", default=2)
+    max_login = models.IntegerField(verbose_name="حداکثر لاگین همزمان", default=1)
 
     phone = models.CharField(
         verbose_name="شماره موبایل",
