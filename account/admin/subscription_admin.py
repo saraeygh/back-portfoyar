@@ -1,5 +1,5 @@
 from django.contrib import admin
-from account.models import Subscription
+from account.models import Subscription, UserDiscount
 
 
 class MyPropertyFilter(admin.SimpleListFilter):
@@ -43,3 +43,37 @@ class SubscriptionAdmin(admin.ModelAdmin):
     search_fields = ("id", "user__username", "feature__name")
 
     list_filter = ("feature__name", MyPropertyFilter)
+
+
+@admin.register(UserDiscount)
+class UserDiscountAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("user", "feature")
+    list_display = (
+        "id",
+        "user",
+        "feature",
+        "name",
+        "is_enabled",
+        "discount_percent",
+        "has_discount_code",
+        "discount_code",
+        "has_start",
+        "start_at_shamsi",
+        "has_expiry",
+        "expire_at_shamsi",
+        "has_max_use_count",
+        "used_count",
+        "max_use_count",
+    )
+    list_display_links = ("name",)
+    ordering = ("-updated_at",)
+
+    search_fields = ("id", "name", "discount_code")
+
+    list_filter = (
+        "is_enabled",
+        "has_discount_code",
+        "has_start",
+        "has_expiry",
+        "has_max_use_count",
+    )

@@ -1,5 +1,7 @@
+import pytz
 from datetime import datetime
-from persiantools.jdatetime import JalaliDate
+from persiantools.jdatetime import JalaliDateTime, JalaliDate
+import jdatetime
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -61,3 +63,67 @@ class Subscription(TimeStampMixin, models.Model):
     class Meta:
         verbose_name = "اشتراک"
         verbose_name_plural = "۳) اشتراک‌ها"
+
+
+class UserDiscount(TimeStampMixin, models.Model):
+    user = models.ForeignKey(
+        verbose_name="کاربر",
+        to=User,
+        on_delete=models.CASCADE,
+        related_name="discounts",
+    )
+
+    feature = models.ForeignKey(
+        verbose_name="قابلیت سایت",
+        to=Feature,
+        on_delete=models.CASCADE,
+        related_name="user_discounts",
+    )
+
+    name = models.CharField(
+        verbose_name="نام تخفیف", max_length=255, default="", blank=True
+    )
+    description = models.TextField(verbose_name="توضیحات تخفیف", default="", blank=True)
+
+    is_enabled = models.BooleanField(verbose_name="فعال", default=False)
+
+    discount_percent = models.IntegerField(verbose_name="میزان تخفیف", default=0)
+
+    has_discount_code = models.BooleanField(
+        verbose_name="کد تخفیف دارد؟", default=False
+    )
+    discount_code = models.CharField(verbose_name="کد تخفیف", default="", blank=True)
+
+    has_start = models.BooleanField(verbose_name="تاریخ شروع دارد؟", default=False)
+    start_at = models.DateTimeField(verbose_name="زمان شروع", default=datetime.now)
+
+    has_expiry = models.BooleanField(verbose_name="تاریخ پایان دارد؟", default=False)
+    expire_at = models.DateTimeField(verbose_name="زمان پایان", default=datetime.now)
+
+    has_max_use_count = models.BooleanField(
+        verbose_name="محدودیت دفعات استفاده", default=False
+    )
+    used_count = models.IntegerField(verbose_name="دفعات استفاده شده", default=0)
+    max_use_count = models.IntegerField(
+        verbose_name="محدودیت دفعات استفاده", default=1000
+    )
+
+    @admin.display(description="تاریخ شروع")
+    def start_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.start_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        return shamsi
+
+    @admin.display(description="تاریخ پایان")
+    def expire_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.expire_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        return shamsi
+
+    class Meta:
+        verbose_name = "تخفیف کاربر"
+        verbose_name_plural = "۵) تخفیف‌های کاربران"
