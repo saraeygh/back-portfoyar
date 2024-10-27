@@ -27,7 +27,7 @@ class MyPropertyFilter(admin.SimpleListFilter):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    autocomplete_fields = ("user",)
+    autocomplete_fields = ("user", "feature")
     list_display = (
         "id",
         "user",
@@ -40,6 +40,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display_links = ("user", "feature")
     ordering = ("-updated_at",)
 
-    search_fields = ("id", "user__username", "feature")
+    search_fields = ("id", "user__username", "feature__name")
 
-    list_filter = ("feature", MyPropertyFilter)
+    list_filter = ("feature__name", MyPropertyFilter)

@@ -1,16 +1,13 @@
 from datetime import datetime
+from persiantools.jdatetime import JalaliDate
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib import admin
 from core.models import TimeStampMixin
 
-from persiantools.jdatetime import JalaliDate
 
-ALL_FEATURE = "all_feature"
-SUBSCRIPTION_FEATURE_CHOICES = [
-    (ALL_FEATURE, "تمام قابلیت‌ها"),
-]
+from . import Feature
 
 
 class Subscription(TimeStampMixin, models.Model):
@@ -21,10 +18,11 @@ class Subscription(TimeStampMixin, models.Model):
         related_name="subscription",
     )
 
-    feature = models.CharField(
+    feature = models.ForeignKey(
         verbose_name="قابلیت سایت",
-        max_length=64,
-        choices=SUBSCRIPTION_FEATURE_CHOICES,
+        to=Feature,
+        on_delete=models.CASCADE,
+        related_name="subscription",
     )
 
     start_at = models.DateField(verbose_name="تاریخ شروع اشتراک")
@@ -62,4 +60,4 @@ class Subscription(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "اشتراک"
-        verbose_name_plural = "۲) اشتراک‌ها"
+        verbose_name_plural = "۳) اشتراک‌ها"
