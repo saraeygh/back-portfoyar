@@ -33,7 +33,7 @@ def add_last_update(row):
 def add_today_to_history(row, last_date):
     history = list(row.get("history"))
     value = int(row.get("value"))
-    history.append({"trade_date": last_date, "value": value})
+    history.append({"x": last_date, "y": value})
 
     return history
 

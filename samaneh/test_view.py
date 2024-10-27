@@ -16,6 +16,8 @@ from stock_market.tasks import (
     update_instrument_info,
     update_stock_raw_adjusted_history,
     stock_option_value_change,
+    stock_market_watch,
+    stock_value_history,
 )
 from stock_market.utils import (
     stock_recommendation,
@@ -86,7 +88,8 @@ def user_generator():
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
+        stock_value_history()
+        stock_market_watch()
         # update_option_data_from_tse()
         update_option_result()
         # update_future_info()

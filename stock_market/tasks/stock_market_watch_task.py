@@ -175,19 +175,19 @@ def check_update_status(row):
 
 def get_history(row, index_name):
     new_time = row.get("last_time")
-    index_value = row.get(index_name)
+    index_value = round(row.get(index_name), 3)
     history = row.get("history")
 
     if history == NO_DAILY_HISTORY:
         history = list()
-        history.append({"time": new_time, "value": index_value})
+        history.append({"x": new_time, "y": index_value})
     else:
         time_set = set()
         for point in history:
-            time_set.add(point["time"])
+            time_set.add(point["x"])
 
         if new_time not in time_set:
-            history.append({"time": new_time, "value": index_value})
+            history.append({"x": new_time, "y": index_value})
 
     return history
 

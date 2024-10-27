@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from core.serializers import RoundedFloatField
 
+VALUE_CHANGE_X_TITLE = "تاریخ"
+VALUE_CHANGE_Y_TITLE = "ارزش معاملات (میلیارد تومان)"
+VALUE_CHANGE_CHART_TITLE = "روند تغییرات ۳۰ روز گذشته ارزش معاملات نماد"
+
 
 class StockValueChangeSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -10,7 +14,6 @@ class StockValueChangeSerailizer(serializers.Serializer):
     mean = RoundedFloatField(decimal_places=2)
     value = RoundedFloatField(decimal_places=2)
     value_change = RoundedFloatField(decimal_places=1)
-    # name = serializers.CharField()
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField(decimal_places=2)
     closing_price = RoundedFloatField()
@@ -18,20 +21,17 @@ class StockValueChangeSerailizer(serializers.Serializer):
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": VALUE_CHANGE_X_TITLE,
+            "y_title": VALUE_CHANGE_Y_TITLE,
+            "chart_title": VALUE_CHANGE_CHART_TITLE + " " + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)

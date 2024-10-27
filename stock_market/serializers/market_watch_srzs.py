@@ -1,6 +1,22 @@
 from rest_framework import serializers
 from core.serializers import RoundedFloatField
 
+MARKET_WATCH_X_TITLE = "زمان"
+market_watch_y_title_dict = {
+    "money_flow": "ورود پول حقیقی (میلیارد تومان)",
+    "buy_pressure": "شاخص قدرت خرید حقیقی",
+    "buy_value": "ارزش سرانه خرید حقیقی (میلیارد تومان)",
+    "buy_ratio": "نسبت ارزش سفارش‌های خرید به ارزش معاملات",
+    "sell_ratio": "نسبت ارزش سفارش‌های فروش به ارزش معاملات",
+}
+market_watch_chart_title_dict = {
+    "money_flow": "روند تغییرات امروز شاخص ورود پول حقیقی برای نماد",
+    "buy_pressure": "روند تغییرات امروز شاخص قدرت خرید حقیقی برای نماد",
+    "buy_value": "روند تغییرات امروز شاخص ارزش سرانه خرید حقیقی برای نماد",
+    "buy_ratio": "روند تغییرات امروز نسبت ارزش‌ سفارش‌های خرید به ارزش معاملات برای نماد",
+    "sell_ratio": "روند تغییرات امروز نسبت ارزش‌ سفارش‌های فروش به ارزش معاملات برای نماد",
+}
+
 
 class PersonMoneyFlowSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -11,30 +27,27 @@ class PersonMoneyFlowSerailizer(serializers.Serializer):
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField()
     value = RoundedFloatField()
-    # name = serializers.CharField()
     closing_price = RoundedFloatField()
     closing_price_change = RoundedFloatField(decimal_places=2)
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("money_flow"),
+            "chart_title": market_watch_chart_title_dict.get("money_flow")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)
-
 
 
 class PersonBuyPressureSerailizer(serializers.Serializer):
@@ -46,27 +59,24 @@ class PersonBuyPressureSerailizer(serializers.Serializer):
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField()
     value = RoundedFloatField()
-    # name = serializers.CharField()
     closing_price = RoundedFloatField()
     closing_price_change = RoundedFloatField(decimal_places=2)
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_pressure"),
+            "chart_title": market_watch_chart_title_dict.get("buy_pressure")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
-
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)
@@ -81,26 +91,24 @@ class PersonBuyValueSerailizer(serializers.Serializer):
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField()
     value = RoundedFloatField()
-    # name = serializers.CharField()
     closing_price = RoundedFloatField()
     closing_price_change = RoundedFloatField(decimal_places=2)
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_value"),
+            "chart_title": market_watch_chart_title_dict.get("buy_value")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)
@@ -115,30 +123,27 @@ class BuyOrderRatioSerailizer(serializers.Serializer):
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField()
     value = RoundedFloatField()
-    # name = serializers.CharField()
     closing_price = RoundedFloatField()
     closing_price_change = RoundedFloatField(decimal_places=2)
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_ratio"),
+            "chart_title": market_watch_chart_title_dict.get("buy_ratio")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)
-
 
 
 class SellOrderRatioSerailizer(serializers.Serializer):
@@ -150,26 +155,24 @@ class SellOrderRatioSerailizer(serializers.Serializer):
     trade_count = serializers.IntegerField()
     volume = RoundedFloatField()
     value = RoundedFloatField()
-    # name = serializers.CharField()
     closing_price = RoundedFloatField()
     closing_price_change = RoundedFloatField(decimal_places=2)
     last_price = RoundedFloatField()
     last_price_change = RoundedFloatField(decimal_places=2)
 
-    history = serializers.ListField(
-        child=serializers.DictField(
-            style={"type": "object"}, required=False, default={}
-        )
-    )
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
-        not_rounded_history = instance.pop("history")
-        rounded_history = []
-        for point in not_rounded_history:
-            point["value"] = round(point.pop("value"), 3)
-            rounded_history.append(point)
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("sell_ratio"),
+            "chart_title": market_watch_chart_title_dict.get("sell_ratio")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
 
-        instance["history"] = rounded_history
+        instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
 
         return super().to_representation(instance)
