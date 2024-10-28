@@ -156,7 +156,9 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
         try:
             year, month, day = map(int, trade.get("DeliveryDate").split("/"))
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
             continue
         delivery_date = jdatetime.date(year=year, month=month, day=day).togregorian()
 

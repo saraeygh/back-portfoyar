@@ -50,8 +50,9 @@ def get_http_response(
                 )
 
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
-
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
         time.sleep(2 * retry)
 
     return response

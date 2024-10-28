@@ -25,7 +25,9 @@ def password_is_valid(password):
         validate_password(password)
         return True
     except Exception as e:
-        print(Fore.RED + e + Style.RESET_ALL)
+        print(Fore.RED)
+        print(e)
+        print(Style.RESET_ALL)
         return False
 
 

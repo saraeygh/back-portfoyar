@@ -103,7 +103,9 @@ def update_base_equity():
                                 ),
                             )
             except Exception as e:
-                print(Fore.RED + e + Style.RESET_ALL)
+                print(Fore.RED)
+                print(e)
+                print(Style.RESET_ALL)
                 continue
     print(
         Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
@@ -120,7 +122,9 @@ def update_base_equity():
         except BaseEquity.DoesNotExist:
             continue
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
             continue
 
     print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)

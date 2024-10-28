@@ -160,7 +160,9 @@ class TicketingAPIView(APIView):
         try:
             ticket = json.loads(request.data.get("ticket"))
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -196,7 +198,9 @@ class GetTicketDetailAPIView(APIView):
         try:
             response = json.loads(request.data.get("response"))
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -244,7 +248,9 @@ class GetTicketAppendixAPIView(APIView):
             response["Content-Disposition"] = f'attachment; filename="{file_name}"'
             return response
         except Exception as e:
-            print(Fore.RED + e + Style.RESET_ALL)
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
             return Response(
                 {"message": "فایل پیدا نشد."}, status=status.HTTP_404_NOT_FOUND
             )

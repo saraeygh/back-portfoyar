@@ -163,7 +163,9 @@ def get_options_base_equity_info():
                         base_equity_list.append(base_equity_data)
 
             except Exception as e:
-                print(Fore.RED + e + Style.RESET_ALL)
+                print(Fore.RED)
+                print(e)
+                print(Style.RESET_ALL)
                 continue
     print(Fore.GREEN + "All options base equity info updated" + Style.RESET_ALL)
 
