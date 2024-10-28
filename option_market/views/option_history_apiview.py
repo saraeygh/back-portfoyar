@@ -51,15 +51,16 @@ class AssetOptionSymbolsAPIView(APIView):
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
-            calls_list = redis_conn.get_list_of_dicts(list_key="calls")
-            puts_list = redis_conn.get_list_of_dicts(list_key="puts")
-            calls_puts_list = calls_list + puts_list
-
-            asset_options_list = []
-            for option in calls_puts_list:
-                if option["asset_name"] == asset_name:
-                    asset_options_list.append(option["symbol"])
-
+            asset_options_list = pd.DataFrame(
+                redis_conn.get_list_of_dicts(list_key="option_data")
+            )
+            asset_options_list = asset_options_list[
+                asset_options_list["base_equity_symbol"] == asset_name
+            ]
+            asset_options_list = (
+                asset_options_list["call_symbol"].to_list()
+                + asset_options_list["put_symbol"].to_list()
+            )
             asset_options_list = sorted(asset_options_list)
             set_json_cache(cache_key, asset_options_list, SIXTY_SECONDS_CACHE)
             return Response(asset_options_list, status=status.HTTP_200_OK)

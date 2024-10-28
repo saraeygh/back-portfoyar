@@ -15,6 +15,7 @@ from stock_market.utils import (
     get_last_market_watch_data,
     get_market_state,
 )
+from stock_market.utils import CALL_OPTION, PUT_OPTION
 from colorama import Fore, Style
 
 
@@ -30,33 +31,55 @@ def get_instrument_info():
 
 
 def get_last_options(option_type):
-    last_options = redis_conn.get_list_of_dicts(list_key=option_type)
+    last_options = redis_conn.get_list_of_dicts(list_key="option_data")
     last_options = pd.DataFrame(last_options)
-    last_options["close_mean"] = (
-        last_options["value"] / last_options["volume"]
-    ) * 10_000
-    last_options = last_options[
-        ["inst_id", "option_type", "asset_name", "value", "close_mean"]
-    ]
+    if option_type == CALL_OPTION:
+        last_options = last_options[
+            ["call_ins_code", "base_equity_symbol", "call_value", "call_close_price"]
+        ]
+        return last_options
+
+    elif option_type == PUT_OPTION:
+        last_options = last_options[
+            ["put_ins_code", "base_equity_symbol", "put_value", "put_close_price"]
+        ]
+
+    else:
+        return last_options
 
     return last_options
 
 
-def get_asset_options_value_change(options):
+def get_asset_options_value_change(options, option_type):
+    close_price_col = "call_close_price"
+    if option_type == PUT_OPTION:
+        close_price_col = "put_close_price"
 
-    assets = options["asset_name"].unique().tolist()
+    value_col = "call_value"
+    if option_type == PUT_OPTION:
+        value_col = "put_value"
+
+    base_equities = options["base_equity_symbol"].unique().tolist()
     options_list = list()
-    for asset in assets:
+    for base_equity in base_equities:
 
         try:
-            asset_options: pd.DataFrame = options[options["asset_name"] == asset]
-            asset_options["month_mean_value"] = (
-                asset_options["month_mean_volume"] * 1000 * asset_options["close_mean"]
+            base_equity_options: pd.DataFrame = options[
+                options["base_equity_symbol"] == base_equity
+            ]
+            base_equity_options["month_mean_value"] = (
+                base_equity_options["month_mean_volume"]
+                * 1000
+                * base_equity_options[close_price_col]
             ) / RIAL_TO_MILLION_TOMAN
-            asset_options = asset_options[asset_options["month_mean_value"] != 0]
+            base_equity_options = base_equity_options[
+                base_equity_options["month_mean_value"] != 0
+            ]
 
-            last_mean = float(asset_options["value"].mean())
-            month_mean = float(asset_options["month_mean_value"].mean())
+            last_mean = (
+                float(base_equity_options[value_col].mean()) / RIAL_TO_MILLION_TOMAN
+            )
+            month_mean = float(base_equity_options["month_mean_value"].mean())
             value_change = last_mean / month_mean
         except Exception:
             last_mean = 0
@@ -64,7 +87,7 @@ def get_asset_options_value_change(options):
             value_change = 0
 
         new_value_change = {
-            "symbol": asset,
+            "symbol": base_equity,
             "last_mean": last_mean,
             "month_mean": month_mean,
             "value_change": value_change,
@@ -144,24 +167,40 @@ def stock_option_value_change():
                 continue
 
         instrument_info = get_instrument_info()
-
-        option_types = ["calls", "puts"]
+        instrument_info = instrument_info[
+            [
+                "ins_code",
+                "symbol",
+                "name",
+                "sector_pe",
+                "eps",
+                "psr",
+                "total_share",
+                "month_mean_volume",
+            ]
+        ]
+        option_types = [CALL_OPTION, PUT_OPTION]
         for option_type in option_types:
-            options = get_last_options(option_type=option_type)
+            options = get_last_options(option_type)
 
             if options.empty:
                 return
 
+            left_on = "call_ins_code"
+            if option_type == PUT_OPTION:
+                left_on = "put_ins_code"
             options = pd.merge(
                 left=options,
                 right=instrument_info,
-                left_on="inst_id",
+                left_on=left_on,
                 right_on="ins_code",
                 how="left",
             )
 
             options.dropna(inplace=True)
-            options = get_asset_options_value_change(options=options)
+            options = get_asset_options_value_change(
+                options=options, option_type=option_type
+            )
             options = options[options["value_change"] != 0]
 
             options = pd.merge(
@@ -179,7 +218,6 @@ def stock_option_value_change():
                     "sector_pe",
                     "psr",
                     "eps",
-                    "floating_volume",
                 ]
             ]
 
@@ -200,9 +238,9 @@ def stock_option_value_change():
             options = options.to_dict(orient="records")
 
             if options:
-                if option_type == "calls":
+                if option_type == CALL_OPTION:
                     collection_name = "call_value_change"
-                elif option_type == "puts":
+                elif option_type == PUT_OPTION:
                     collection_name = "put_value_change"
                 else:
                     continue

@@ -44,8 +44,8 @@ class StockCallValueChangeAPIView(APIView):
         results.dropna(inplace=True)
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
-        results["last_mean"] = results["last_mean"] / RIAL_TO_MILLION_TOMAN
-        results["month_mean"] = results["month_mean"] / RIAL_TO_MILLION_TOMAN
+        results["last_mean"] = results["last_mean"]
+        results["month_mean"] = results["month_mean"]
         results = results.to_dict(orient="records")
         results_srz = StockOptionValueChangeSerailizer(results, many=True)
 

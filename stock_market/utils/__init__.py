@@ -1,3 +1,5 @@
+CALL_OPTION = "CALL"
+PUT_OPTION = "PUT"
 from .get_existing_company_dict_util import get_existing_company_dict
 from .get_company_from_codal_util import get_company_from_codal
 from .get_existing_monthly_activity_report_tracing_number_util import (
