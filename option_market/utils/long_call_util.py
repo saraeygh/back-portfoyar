@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import get_deviation_percent
 
 from . import (
     AddOption,
@@ -43,9 +44,9 @@ def add_break_even(row):
     }
 
     try:
-        break_even["final_break_even"] = (
-            ((strike_price + call_premium) / base_equity_last_price) - 1
-        ) * 100
+        break_even["final_break_even"] = get_deviation_percent(
+            strike_price + call_premium, base_equity_last_price
+        )
         break_even["leverage"] = base_equity_last_price / call_premium
 
         if remained_day != 0:

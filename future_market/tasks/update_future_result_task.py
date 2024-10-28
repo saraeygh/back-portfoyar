@@ -1,7 +1,12 @@
 import json
 import pandas as pd
 from celery import shared_task
-from core.utils import RedisInterface, task_timing, MONTHLY_INTEREST_RATE_NAME
+from core.utils import (
+    RedisInterface,
+    MONTHLY_INTEREST_RATE_NAME,
+    task_timing,
+    get_deviation_percent,
+)
 from core.models import FeatureToggle
 from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
@@ -71,9 +76,9 @@ def get_total_and_monthly_spread(
     open_position_price, base_equity_last_price, expiration, monthly_interest_rate
 ):
     try:
-        total_spread = (
-            (open_position_price - base_equity_last_price) / base_equity_last_price
-        ) * 100
+        total_spread = get_deviation_percent(
+            open_position_price, base_equity_last_price
+        )
         expiration_date = datetime.fromisoformat(expiration).date()
         today_date = datetime.now().date()
         remained_day = (expiration_date - today_date).days

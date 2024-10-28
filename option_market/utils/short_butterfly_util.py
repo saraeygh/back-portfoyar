@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import get_deviation_percent
 
 from . import (
     AddOption,
@@ -44,12 +45,8 @@ def add_profits(
         and base_equity_last_price < high_strike
         and base_equity_last_price > low_strike
     ):
-        left_move = (
-            (low_strike - base_equity_last_price) / base_equity_last_price
-        ) * 100
-        right_move = (
-            (high_strike - base_equity_last_price) / base_equity_last_price
-        ) * 100
+        left_move = get_deviation_percent(low_strike, base_equity_last_price)
+        right_move = get_deviation_percent(high_strike, base_equity_last_price)
         required_change = min([abs(left_move), abs(right_move)])
     else:
         required_change = 0

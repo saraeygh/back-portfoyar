@@ -11,7 +11,7 @@ from domestic_market.models import (
     DomesticTrade,
     DomesticTradesHistoryFetch,
 )
-from core.utils import get_http_response
+from core.utils import get_http_response, get_deviation_percent
 from colorama import Fore, Style
 
 TRADES_HISTORY_TIME_PERIOD = 90
@@ -167,7 +167,7 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
         if base_price == 0:
             competition = 0
         else:
-            competition = ((close_price / base_price) - 1) * 100
+            competition = get_deviation_percent(close_price, base_price)
 
         new_trade = DomesticTrade(
             commodity_id=commodity_id,

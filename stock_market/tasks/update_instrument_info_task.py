@@ -6,6 +6,7 @@ from core.utils import (
     get_http_response,
     task_timing,
     replace_arabic_letters,
+    get_deviation_percent,
 )
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
@@ -73,7 +74,7 @@ def get_historical_roi(ins_code):
 
             if range_start * 0.9 < range_start_price_date < today_timestamp:
                 range_start_price = (range_start_price.to_dict()).get("close_mean")
-                roi = ((range_end_price - range_start_price) / range_start_price) * 100
+                roi = get_deviation_percent(range_end_price, range_start_price)
                 if abs(roi) < 3000:
                     historical_roi[duration_name] = roi
 

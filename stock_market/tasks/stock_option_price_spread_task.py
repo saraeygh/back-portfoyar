@@ -1,7 +1,13 @@
 from celery import shared_task
 import pandas as pd
 from core.configs import STOCK_OPTION_STRIKE_DEVIATION, STOCK_DB, OPTION_REDIS_DB
-from core.utils import RedisInterface, task_timing, MongodbInterface, MARKET_STATE
+from core.utils import (
+    RedisInterface,
+    MongodbInterface,
+    MARKET_STATE,
+    task_timing,
+    get_deviation_percent,
+)
 from core.models import FeatureToggle, ACTIVE
 
 from option_market.utils import (
@@ -72,7 +78,7 @@ def strike_deviation(row):
     asset_price = int(row.get("base_equity_last_price"))
 
     try:
-        deviation = ((strike - asset_price) / asset_price) * 100
+        deviation = get_deviation_percent(strike, asset_price)
     except Exception:
         deviation = 0
 
@@ -89,12 +95,12 @@ def add_strike_premium(row, option_type):
     return strike + premium
 
 
-def add_price_spread(row, option_type):
+def add_price_spread(row):
     strike_premium = int(row.get("strike_premium"))
     asset_price = int(row.get("base_equity_last_price"))
 
     try:
-        spread = (((strike_premium) - asset_price) / asset_price) * 100
+        spread = get_deviation_percent(strike_premium, asset_price)
     except Exception:
         spread = 0
 
@@ -150,9 +156,7 @@ def get_call_spreads(spreads):
             add_strike_premium, axis=1, args=(CALL_OPTION,)
         )
 
-        spreads["price_spread"] = spreads.apply(
-            add_price_spread, axis=1, args=(CALL_OPTION,)
-        )
+        spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
 
         spreads["monthly_price_spread"] = spreads.apply(monthly_price_spread, axis=1)
 
@@ -194,9 +198,7 @@ def get_put_spreads(spreads):
             add_strike_premium, axis=1, args=(PUT_OPTION,)
         )
 
-        spreads["price_spread"] = spreads.apply(
-            add_price_spread, axis=1, args=(PUT_OPTION,)
-        )
+        spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
 
         spreads["monthly_price_spread"] = spreads.apply(monthly_price_spread, axis=1)
 

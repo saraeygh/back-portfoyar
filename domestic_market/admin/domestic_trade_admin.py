@@ -1,4 +1,5 @@
 from django.contrib import admin
+from core.utils import get_deviation_percent
 from domestic_market.models import DomesticTrade
 
 
@@ -95,6 +96,6 @@ class DomesticTradeAdmin(admin.ModelAdmin):
         if obj.base_price == 0:
             obj.competition = 0
         else:
-            obj.competition = ((obj.close_price / obj.base_price) - 1) * 100
+            obj.competition = get_deviation_percent(obj.close_price, obj.base_price)
 
         return super().save_model(request, obj, form, change)

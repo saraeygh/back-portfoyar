@@ -1,6 +1,6 @@
 import pandas as pd
 from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, STOCK_NA_ROI
-from core.utils import MongodbInterface, task_timing
+from core.utils import MongodbInterface, task_timing, get_deviation_percent
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_last_market_watch_data
 from celery import shared_task
 
@@ -57,7 +57,7 @@ def add_duration_roi(row, duration_name):
         return roi
 
     try:
-        roi = ((last_price - duration_price) / duration_price) * 100
+        roi = get_deviation_percent(last_price, duration_price)
     except Exception:
         roi = STOCK_NA_ROI
 

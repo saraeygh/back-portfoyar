@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import get_deviation_percent
 
 from . import (
     CoveredCall,
@@ -34,9 +35,7 @@ def add_profits(row):
     base_equity_last_price = float(row.get("base_equity_last_price"))
 
     if base_equity_last_price != 0 and base_equity_last_price < strike_price:
-        required_change = (
-            (strike_price - base_equity_last_price) / base_equity_last_price
-        ) * 100
+        required_change = get_deviation_percent(strike_price, base_equity_last_price)
     else:
         required_change = 0
 

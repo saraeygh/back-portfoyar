@@ -5,7 +5,7 @@ from core.configs import GLOBAL_DB
 
 from tqdm import tqdm
 from celery import shared_task
-from core.utils import MongodbInterface, task_timing
+from core.utils import MongodbInterface, task_timing, get_deviation_percent
 from django.db.models import Avg
 from global_market.models import GlobalCommodity, GlobalTrade
 
@@ -47,11 +47,7 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
             ]
 
             try:
-
-                deviation = (
-                    (transit_last_trade.price - global_mean) / global_mean
-                ) * 100
-
+                deviation = get_deviation_percent(transit_last_trade.price, global_mean)
             except (ZeroDivisionError, TypeError):
                 continue
 

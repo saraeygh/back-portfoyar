@@ -1,11 +1,12 @@
-from core.configs import DOMESTIC_DB
 from datetime import datetime, timedelta
 import jdatetime
-
 from django.db.models import Sum, Avg
+
+from core.configs import DOMESTIC_DB
+from core.utils import MongodbInterface, task_timing, get_deviation_percent
+
 from tqdm import tqdm
 from celery import shared_task
-from core.utils import MongodbInterface, task_timing
 from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRelation
 
 
@@ -68,9 +69,9 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
                     commodity_value_total / producer_value_total
                 ) * 100
 
-                deviation = (
-                    (commodity_last_trade.close_price - domestic_mean) / domestic_mean
-                ) * 100
+                deviation = get_deviation_percent(
+                    commodity_last_trade.close_price, domestic_mean
+                )
 
             except (ZeroDivisionError, TypeError):
                 continue

@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
 from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import get_deviation_percent
 
 from . import (
     AddOption,
@@ -35,9 +36,7 @@ def add_profits(
     coordinates, profit_factor, remained_day, base_equity_last_price, strike_price
 ):
     if base_equity_last_price != 0:
-        required_change = (
-            (strike_price - base_equity_last_price) / base_equity_last_price
-        ) * 100
+        required_change = get_deviation_percent(strike_price, base_equity_last_price)
     else:
         required_change = 0
 
