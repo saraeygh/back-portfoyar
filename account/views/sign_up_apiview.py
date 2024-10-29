@@ -209,14 +209,15 @@ class SignUpAPIView(APIView):
         if expired:
             return result
 
-        sent_token = str(request.data.get("token"))
         generated_token = result.get("token")
+        generated_code = result.get("code")
+
+        sent_token = str(request.data.get("token"))
         matched, result = check_token_match(generated_token, sent_token)
         if not matched:
             return result
 
         sent_code = str(request.data.get("code"))
-        generated_code = result.get("code")
         matched, result = check_code_match(generated_code, sent_code)
         if not matched:
             return result
