@@ -23,6 +23,8 @@ class FeatureToggleAdmin(admin.ModelAdmin):
 
     search_fields = ("name", "desc", "value")
 
+    readonly_fields = ("name", "created_at", "updated_at")
+
     @admin.display(description="ایجاد")
     def created_at_shamsi(self, obj: FeatureToggle):
         shamsi = (
