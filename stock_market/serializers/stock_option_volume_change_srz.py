@@ -4,7 +4,7 @@ from core.serializers import RoundedFloatField
 
 class StockOptionValueChangeSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_update = serializers.CharField()
     month_mean = RoundedFloatField(decimal_places=2)
@@ -15,3 +15,9 @@ class StockOptionValueChangeSerailizer(serializers.Serializer):
     sector_pe = RoundedFloatField()
     ps = RoundedFloatField()
     market_cap = RoundedFloatField(decimal_places=0)
+
+    def to_representation(self, instance):
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)

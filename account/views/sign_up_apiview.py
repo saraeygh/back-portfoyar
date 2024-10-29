@@ -18,6 +18,7 @@ from melipayamak.melipayamak import Api
 from core.utils import RedisInterface, SEND_SIGNUP_SMS_STATUS
 from core.configs import (
     KEY_WITH_EX_REDIS_DB,
+    PHONE_PATTERN,
     REDIS_PREFIX_CODE_TEXT,
     MELIPAYAMAK_OK_RESPONSE,
     SIGNUP_CODE_EXPIRY,
@@ -33,7 +34,6 @@ redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def is_valid_phone(phone):
-    PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
     match = re.match(PHONE_PATTERN, phone)
     if match:
         return True

@@ -27,6 +27,7 @@ class Profile(TimeStampMixin, models.Model):
     )
 
     max_login = models.IntegerField(verbose_name="حداکثر لاگین همزمان", default=1)
+    active_login = models.IntegerField(verbose_name="لاگین‌های همزمان", default=0)
 
     phone = models.CharField(
         verbose_name="شماره موبایل",
@@ -51,11 +52,6 @@ class Profile(TimeStampMixin, models.Model):
     )
 
     birth_date = models.DateField(verbose_name="تاریخ تولد", blank=True, null=True)
-
-    @admin.display(description="ورودهای قعال")
-    def active_logins(self):
-        logins = Token.objects.filter(user=self.user).count()
-        return logins
 
     @admin.display(description="ایجاد")
     def created_at_shamsi(self):

@@ -20,7 +20,7 @@ market_watch_chart_title_dict = {
 
 class PersonMoneyFlowSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_time = serializers.CharField()
     money_flow = RoundedFloatField()
@@ -46,13 +46,15 @@ class PersonMoneyFlowSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)
 
 
 class PersonBuyPressureSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_time = serializers.CharField()
     buy_pressure = RoundedFloatField(decimal_places=1)
@@ -78,13 +80,15 @@ class PersonBuyPressureSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)
 
 
 class PersonBuyValueSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_time = serializers.CharField()
     buy_value = RoundedFloatField()
@@ -110,13 +114,15 @@ class PersonBuyValueSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)
 
 
 class BuyOrderRatioSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_time = serializers.CharField()
     buy_ratio = RoundedFloatField(decimal_places=0)
@@ -142,13 +148,15 @@ class BuyOrderRatioSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)
 
 
 class SellOrderRatioSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_time = serializers.CharField()
     sell_ratio = RoundedFloatField(decimal_places=0)
@@ -174,5 +182,7 @@ class SellOrderRatioSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)

@@ -8,7 +8,7 @@ VALUE_CHANGE_CHART_TITLE = "روند تغییرات ۳۰ روز گذشته ار�
 
 class StockValueChangeSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     last_update = serializers.CharField()
     mean = RoundedFloatField(decimal_places=2)
@@ -33,5 +33,7 @@ class StockValueChangeSerailizer(serializers.Serializer):
 
         instance["chart"] = chart
         instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
-
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
         return super().to_representation(instance)

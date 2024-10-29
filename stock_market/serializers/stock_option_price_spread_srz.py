@@ -4,8 +4,7 @@ from core.serializers import RoundedFloatField
 
 class StockOptionPriceSpreadSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
-    option_link = serializers.CharField()
-    stock_link = serializers.CharField()
+    links = serializers.ListField()
     symbol = serializers.CharField()
     strike = serializers.IntegerField()
     asset_name = serializers.CharField()
@@ -17,3 +16,10 @@ class StockOptionPriceSpreadSerailizer(serializers.Serializer):
     option_type = serializers.CharField()
     value = RoundedFloatField(decimal_places=0)
     strike_premium = RoundedFloatField()
+
+    def to_representation(self, instance):
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات اختیار", "link": instance.get("option_link")},
+            {"name": "لینک تابلوی معاملات سهام", "link": instance.get("stock_link")},
+        ]
+        return super().to_representation(instance)
