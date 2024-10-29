@@ -12,42 +12,24 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.throttling import AnonRateThrottle
-
 from melipayamak.melipayamak import Api
 
+
 from core.utils import RedisInterface, SEND_SIGNUP_SMS_STATUS
-from core.configs import KEY_WITH_EX_REDIS_DB
+from core.configs import (
+    KEY_WITH_EX_REDIS_DB,
+    REDIS_PREFIX_CODE_TEXT,
+    MELIPAYAMAK_OK_RESPONSE,
+    SIGNUP_CODE_EXPIRY,
+    SIGNUP_CODE_RANGE_MIN,
+    SIGNUP_CODE_RANGE_MAX,
+)
 from core.models import ACTIVE, FeatureToggle
 
-from account.serializers import SignUpSerializer
 from colorama import Fore, Style
 
 
-class SignUpAPIView(APIView):
-    throttle_classes = [AnonRateThrottle]
-
-    def post(self, request):
-        serializer = SignUpSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# V2-SIGNUP
-
-REDIS_PREFIX_CODE_TEXT = "username_verify_code_"
-
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-
-not_valid_username_response = Response(
-    {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
-)
-
-code_not_generated_repsponse = Response(
-    {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
-    status=status.HTTP_400_BAD_REQUEST,
-)
 
 
 def is_valid_phone(phone):
@@ -62,8 +44,10 @@ def is_valid_phone(phone):
 def is_valid_username(username):
     user_exists = User.objects.filter(username=username).exists()
     if username is not None and is_valid_phone(username) and not user_exists:
-        return True
-    return False
+        return True, ""
+    return False, Response(
+        {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 def set_dict_in_redis(code_info: dict):
@@ -74,22 +58,30 @@ def set_dict_in_redis(code_info: dict):
         return False
 
     code_info = json.dumps(code_info)
-    expiration_time = 60 * 5
+    expiration_time = SIGNUP_CODE_EXPIRY
     redis_conn.client.set(code_key, code_info, ex=expiration_time)
     return True
 
 
 def code_token_generated_saved(username):
-    code = str(random.randint(111111, 999999))
+    code = str(random.randint(SIGNUP_CODE_RANGE_MIN, SIGNUP_CODE_RANGE_MAX))
     token = uuid4().hex
     code_saved_in_redis = set_dict_in_redis(
         {"username": username, "code": code, "token": token}
     )
 
     if not code_saved_in_redis:
-        return False, "", ""
+        return (
+            False,
+            "",
+            "",
+            Response(
+                {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
+                status=status.HTTP_400_BAD_REQUEST,
+            ),
+        )
 
-    return True, code, token
+    return True, code, token, ""
 
 
 def send_sms_code(to, code):
@@ -183,23 +175,25 @@ def create_new_user(request, username, password):
     )
 
 
-class V2SignUpAPIView(APIView):
+class SignUpAPIView(APIView):
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
         username = request.data.get("username")
-        if not is_valid_username(username):
-            return not_valid_username_response
+        validated, result = is_valid_username(username)
+        if not validated:
+            return result
 
-        generated, code, token = code_token_generated_saved(username)
+        generated, code, token, result = code_token_generated_saved(username)
         if not generated:
-            return code_not_generated_repsponse
+            return result
 
+        ####################################################
         response = send_sms_code(username, code)
         ####################################################
-        response = "Ok"
+        response = MELIPAYAMAK_OK_RESPONSE
         ####################################################
-        if response == "Ok":
+        if response == MELIPAYAMAK_OK_RESPONSE:
             return Response(
                 {"message": "کد تایید ارسال شد", "token": token},
                 status=status.HTTP_200_OK,
