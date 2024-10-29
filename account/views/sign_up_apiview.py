@@ -7,6 +7,7 @@ from uuid import uuid4
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
+from samaneh.settings.common import DEBUG
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -95,6 +96,8 @@ def send_sms_code(to, code):
         sms = api.sms()
         response = sms.send_by_base_number(text=code, to=to, bodyId=263013)
         response = response.get("StrRetStatus")
+    elif DEBUG:
+        response = MELIPAYAMAK_OK_RESPONSE
     else:
         response = "NOK"
 
@@ -188,11 +191,7 @@ class SignUpAPIView(APIView):
         if not generated:
             return result
 
-        ####################################################
         response = send_sms_code(username, code)
-        ####################################################
-        response = MELIPAYAMAK_OK_RESPONSE
-        ####################################################
         if response == MELIPAYAMAK_OK_RESPONSE:
             return Response(
                 {"message": "کد تایید ارسال شد", "token": token},
