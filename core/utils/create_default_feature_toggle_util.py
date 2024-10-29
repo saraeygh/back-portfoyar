@@ -6,6 +6,8 @@ MARKET_STATE = "market_state"
 MONTHLY_INTEREST_RATE_NAME = "monthly_interest_rate"
 MONTHLY_INTEREST_RATE_VALUE = "2.5"
 
+SEND_SIGNUP_SMS_STATUS = "send_signup_sms_status"
+
 
 def create_default_feature_toggle():
 
@@ -41,5 +43,24 @@ def create_default_feature_toggle():
         print(
             Fore.YELLOW
             + f"{MONTHLY_INTEREST_RATE_NAME} feature toggle already exists."
+            + Style.RESET_ALL
+        )
+    ###########################################################################
+    if not FeatureToggle.objects.filter(name=SEND_SIGNUP_SMS_STATUS).exists():
+        FeatureToggle.objects.create(
+            name=SEND_SIGNUP_SMS_STATUS,
+            desc="فعال و غیرفعال کردن ارسال پیامک در صفحه ثبت‌نام",
+            state=DEACTIVE,
+            value=SEND_SIGNUP_SMS_STATUS,
+        )
+        print(
+            Fore.GREEN
+            + f"{SEND_SIGNUP_SMS_STATUS} feature toggle created."
+            + Style.RESET_ALL
+        )
+    else:
+        print(
+            Fore.YELLOW
+            + f"{SEND_SIGNUP_SMS_STATUS} feature toggle already exists."
             + Style.RESET_ALL
         )

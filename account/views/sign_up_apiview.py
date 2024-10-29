@@ -1,7 +1,6 @@
 import os
 import re
 import random
-import string
 import json
 from uuid import uuid4
 
@@ -16,8 +15,9 @@ from rest_framework.throttling import AnonRateThrottle
 
 from melipayamak.melipayamak import Api
 
-from core.utils import RedisInterface
+from core.utils import RedisInterface, SEND_SIGNUP_SMS_STATUS
 from core.configs import KEY_WITH_EX_REDIS_DB
+from core.models import ACTIVE, FeatureToggle
 
 from account.serializers import SignUpSerializer
 from colorama import Fore, Style
@@ -37,10 +37,17 @@ class SignUpAPIView(APIView):
 # V2-SIGNUP
 
 REDIS_PREFIX_CODE_TEXT = "username_verify_code_"
-OLD_PASSWORD = "old_password"
-NEW_PASSWORD = "new_password"
 
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
+
+not_valid_username_response = Response(
+    {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
+)
+
+code_not_generated_repsponse = Response(
+    {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
+    status=status.HTTP_400_BAD_REQUEST,
+)
 
 
 def is_valid_phone(phone):
@@ -50,6 +57,13 @@ def is_valid_phone(phone):
         return True
     else:
         return False
+
+
+def is_valid_username(username):
+    user_exists = User.objects.filter(username=username).exists()
+    if username is not None and is_valid_phone(username) and not user_exists:
+        return True
+    return False
 
 
 def set_dict_in_redis(code_info: dict):
@@ -65,13 +79,33 @@ def set_dict_in_redis(code_info: dict):
     return True
 
 
+def code_token_generated_saved(username):
+    code = str(random.randint(111111, 999999))
+    token = uuid4().hex
+    code_saved_in_redis = set_dict_in_redis(
+        {"username": username, "code": code, "token": token}
+    )
+
+    if not code_saved_in_redis:
+        return False, "", ""
+
+    return True, code, token
+
+
 def send_sms_code(to, code):
-    MELIPAYAMAK_USERNAME = os.environ.setdefault("MELIPAYAMAK_USERNAME", "09102188113")
-    MELIPAYAMAK_PASSOWRD = os.environ.setdefault("MELIPAYAMAK_PASSOWRD", "TL5OC")
-    api = Api(MELIPAYAMAK_USERNAME, MELIPAYAMAK_PASSOWRD)
-    sms = api.sms()
-    response = sms.send_by_base_number(text=code, to=to, bodyId=92005)
-    response = response.get("StrRetStatus")
+    send_sms = FeatureToggle.objects.filter(name=SEND_SIGNUP_SMS_STATUS).first()
+    if send_sms.state == ACTIVE:
+        MELIPAYAMAK_USERNAME = os.environ.setdefault(
+            "MELIPAYAMAK_USERNAME", "09102188113"
+        )
+        MELIPAYAMAK_PASSOWRD = os.environ.setdefault("MELIPAYAMAK_PASSOWRD", "TL5OC")
+        api = Api(MELIPAYAMAK_USERNAME, MELIPAYAMAK_PASSOWRD)
+        sms = api.sms()
+        response = sms.send_by_base_number(text=code, to=to, bodyId=263013)
+        response = response.get("StrRetStatus")
+    else:
+        response = "NOK"
+
     return response
 
 
@@ -81,23 +115,33 @@ def get_dict_from_redis(username):
     return None if code_info is None else json.loads(code_info.decode("utf-8"))
 
 
-def generate_password():
-    ASCII_LETTERS = string.ascii_letters
-    ASCII_LETTERS.replace("I", "")
-    ASCII_LETTERS.replace("l", "")
-    DIGITS = string.digits
-    PUNC = "#$@&"
+def check_code_expiry(username):
+    code_info = get_dict_from_redis(username)
+    if code_info is None:
+        return True, Response(
+            {"message": "کد منقضی شده است، لطفا دوباره تلاش کنید"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    PASS_LEN = 9
-    password = ""
-    password += random.choice(ASCII_LETTERS)
+    return False, code_info
 
-    CHAR_LIST = [ASCII_LETTERS, DIGITS, PUNC]
-    for _ in range(PASS_LEN):
-        character_type = random.choice(CHAR_LIST)
-        password += random.choice(character_type)
 
-    return password
+def check_token_match(generated_token, sent_token):
+    if sent_token != generated_token:
+        return False, Response(
+            {"message": "درخواست نامعتبر"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    return True, "OK"
+
+
+def check_code_match(generated_code, sent_code):
+    if sent_code != generated_code:
+        return False, Response(
+            {"message": "کد ارسالی اشتباه است"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    return True, "OK"
 
 
 def password_is_valid(password):
@@ -111,9 +155,32 @@ def password_is_valid(password):
         return False
 
 
-def change_user_password(user, new_password):
-    user.set_password(new_password)
-    user.save()
+def create_new_user(request, username, password):
+    if not password_is_valid(password):
+        return Response(
+            {
+                "message": "رمز عبور انتخابی امن نیست، لطفاً یک رمز عبور قوی‌تر انتخاب کنید"
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    new_user = User(username=username)
+    new_user.set_password(password)
+    new_user.save()
+
+    authenticated_user = authenticate(
+        request=request, username=username, password=password
+    )
+    if authenticated_user is None:
+        return Response(
+            {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    return Response(
+        {"message": "حساب کاربری شما با موفقیت ایجاد شد"},
+        status=status.HTTP_200_OK,
+    )
 
 
 class V2SignUpAPIView(APIView):
@@ -121,26 +188,17 @@ class V2SignUpAPIView(APIView):
 
     def post(self, request):
         username = request.data.get("username")
-        user_exists = User.objects.filter(username=username).exists()
-        if username is None or not is_valid_phone(username) or user_exists:
-            return Response(
-                {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        if not is_valid_username(username):
+            return not_valid_username_response
 
-        code = str(random.randint(123456, 999999))
-        token = uuid4().hex
-        code_saved_in_redis = set_dict_in_redis(
-            {"username": username, "code": code, "token": token}
-        )
+        generated, code, token = code_token_generated_saved(username)
+        if not generated:
+            return code_not_generated_repsponse
 
-        if not code_saved_in_redis:
-            return Response(
-                {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # response = send_sms_code(username, code)
+        response = send_sms_code(username, code)
+        ####################################################
         response = "Ok"
+        ####################################################
         if response == "Ok":
             return Response(
                 {"message": "کد تایید ارسال شد", "token": token},
@@ -153,51 +211,21 @@ class V2SignUpAPIView(APIView):
 
     def put(self, request):
         username = str(request.data.get("username"))
-        code_info = get_dict_from_redis(username)
-        if code_info is None:
-            return Response(
-                {"message": "کد منقضی شده است، لطفا دوباره تلاش کنید"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        expired, result = check_code_expiry(username)
+        if expired:
+            return result
 
         sent_token = str(request.data.get("token"))
-        generated_token = code_info.get("token")
-        if sent_token != generated_token:
-            return Response(
-                {"message": "درخواست نامعتبر"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        generated_token = result.get("token")
+        matched, result = check_token_match(generated_token, sent_token)
+        if not matched:
+            return result
 
         sent_code = str(request.data.get("code"))
-        generated_code = code_info.get("code")
-        if sent_code != generated_code:
-            return Response(
-                {"message": "کد ارسالی اشتباه است"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        generated_code = result.get("code")
+        matched, result = check_code_match(generated_code, sent_code)
+        if not matched:
+            return result
 
         password = str(request.data.get("password"))
-        if not password_is_valid(password):
-            return Response(
-                {
-                    "message": "رمز عبور انتخابی امن نیست، لطفاً یک رمز عبور قوی‌تر انتخاب کنید"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        new_user = User(username=username)
-        new_user.set_password(password)
-        new_user.save()
-
-        authenticated_user = authenticate(
-            request=request, username=username, password=password
-        )
-        if authenticated_user is None:
-            return Response(
-                {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        return Response(
-            {"message": "حساب کاربری شما با موفقیت ایجاد شد"},
-            status=status.HTTP_200_OK,
-        )
+        return create_new_user(request, username, password)

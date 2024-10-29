@@ -17,6 +17,7 @@ from .create_default_feature_toggle_util import (
     create_default_feature_toggle,
     MARKET_STATE,
     MONTHLY_INTEREST_RATE_NAME,
+    SEND_SIGNUP_SMS_STATUS,
 )
 from .create_default_recommendation_setting_util import (
     create_default_recommendation_setting,
