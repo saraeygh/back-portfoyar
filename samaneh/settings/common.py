@@ -172,7 +172,7 @@ if not DEBUG:
     REST_FRAMEWORK["DEFAULT_THROTTLE_CLASSES"] = [
         "rest_framework.throttling.AnonRateThrottle",
     ]
-    REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {"anon": "1/m"}
+    REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {"anon": "5/m"}
 
 
 CELERY_TIMEZONE = "Asia/Tehran"

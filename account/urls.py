@@ -3,6 +3,7 @@ from core.views import CustomeObtainAuthToken
 
 from account.views import (
     SignUpAPIView,
+    V2SignUpAPIView,
     UploadUsersAPIView,
     ProfileAPIView,
     EmailAPIView,
@@ -17,6 +18,7 @@ upload_users_urls = [
 
 sign_in_sign_up_urls = [
     path("sign-up/", SignUpAPIView.as_view()),
+    path("v2/sign-up/", V2SignUpAPIView.as_view()),
     path("sign-in/", CustomeObtainAuthToken.as_view()),
 ]
 
