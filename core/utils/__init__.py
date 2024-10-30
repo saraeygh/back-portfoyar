@@ -18,6 +18,7 @@ from .create_default_feature_toggle_util import (
     MARKET_STATE,
     MONTHLY_INTEREST_RATE_NAME,
     SEND_SIGNUP_SMS_STATUS,
+    DAILY_SIGNUP_TRY_LIMITATION,
 )
 from .create_default_recommendation_setting_util import (
     create_default_recommendation_setting,

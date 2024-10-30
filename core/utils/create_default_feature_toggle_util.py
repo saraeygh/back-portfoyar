@@ -8,6 +8,8 @@ MONTHLY_INTEREST_RATE_VALUE = "2.5"
 
 SEND_SIGNUP_SMS_STATUS = "send_signup_sms_status"
 
+DAILY_SIGNUP_TRY_LIMITATION = "daily_signup_try_limitation"
+
 
 def create_default_feature_toggle():
 
@@ -62,5 +64,25 @@ def create_default_feature_toggle():
         print(
             Fore.YELLOW
             + f"{SEND_SIGNUP_SMS_STATUS} feature toggle already exists."
+            + Style.RESET_ALL
+        )
+
+    ###########################################################################
+    if not FeatureToggle.objects.filter(name=DAILY_SIGNUP_TRY_LIMITATION).exists():
+        FeatureToggle.objects.create(
+            name=DAILY_SIGNUP_TRY_LIMITATION,
+            desc="فعال و غیرفعال کردن محدودیت تعداد دفعات درخواست ثبت‌نام در روز از یک آی‌پی مشخص",
+            state=ACTIVE,
+            value=DAILY_SIGNUP_TRY_LIMITATION,
+        )
+        print(
+            Fore.GREEN
+            + f"{DAILY_SIGNUP_TRY_LIMITATION} feature toggle created."
+            + Style.RESET_ALL
+        )
+    else:
+        print(
+            Fore.YELLOW
+            + f"{DAILY_SIGNUP_TRY_LIMITATION} feature toggle already exists."
             + Style.RESET_ALL
         )

@@ -19,6 +19,7 @@ from melipayamak.melipayamak import Api
 from core.utils import (
     RedisInterface,
     SEND_SIGNUP_SMS_STATUS,
+    DAILY_SIGNUP_TRY_LIMITATION,
     persian_numbers_to_english,
 )
 from core.configs import (
@@ -41,27 +42,36 @@ redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def check_daily_signup_limitation(request):
-    ip = request.META.get("REMOTE_ADDR", "")
-    tried_count = redis_conn.client.get(ip)
-    if tried_count is None:
-        redis_conn.client.set(ip, 1, ex=SIGNUP_TRY_COUNT_EXPIRY)
-        return False, ""
+    check_try_limitation = FeatureToggle.objects.filter(
+        name=DAILY_SIGNUP_TRY_LIMITATION
+    ).first()
+
+    if check_try_limitation.state == ACTIVE:
+        ip = request.META.get("REMOTE_ADDR", "")
+        tried_count = redis_conn.client.get(ip)
+        if tried_count is None:
+            redis_conn.client.set(ip, 1, ex=SIGNUP_TRY_COUNT_EXPIRY)
+            return False, ""
+
+        else:
+            today_tried_count = int((redis_conn.client.get(ip)).decode("utf-8"))
+            today_tried_count += 1
+            if today_tried_count > SIGNUP_DAILY_TRY_COUNT and not DEBUG:
+                limit_hours = int(SIGNUP_TRY_COUNT_EXPIRY / 3600)
+                return True, Response(
+                    {
+                        "message": f"تعداد تلاش‌های شما بیشتر از حد مجاز ({SIGNUP_DAILY_TRY_COUNT}) شده است، لطفاً بعد از گذشت {limit_hours} ساعت دوباره تلاش کنید"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                time_left = redis_conn.client.ttl(ip)
+                redis_conn.client.set(ip, today_tried_count, ex=time_left)
+
+                return False, ""
 
     else:
-        today_tried_count = int((redis_conn.client.get(ip)).decode("utf-8"))
-        today_tried_count += 1
-        if today_tried_count > SIGNUP_DAILY_TRY_COUNT and not DEBUG:
-            return True, Response(
-                {
-                    "message": "تعداد تلاش‌های شما بیشتر از حد مجاز شده است، لطفاً بعد از گذشت ۲۴ ساعت دوباره تلاش کنید"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        else:
-            time_left = redis_conn.client.ttl(ip)
-            redis_conn.client.set(ip, today_tried_count, ex=time_left)
-
-            return False, ""
+        return False, ""
 
 
 def is_valid_phone(phone):
