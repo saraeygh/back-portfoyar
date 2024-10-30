@@ -1,5 +1,11 @@
 from datetime import datetime, timedelta
 
+# CORE
+ONLINE_USERS_REDIS_DB = 15
+USER_STATS_REDIS_DB = 14
+USER_AGENTS_REDIS_DB = 13
+STATS_MONGO_DB = "stats"
+
 # ACCOUNT
 REDIS_PREFIX_CODE_TEXT = "username_verify_code_"
 MELIPAYAMAK_OK_RESPONSE = "Ok"

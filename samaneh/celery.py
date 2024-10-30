@@ -10,6 +10,16 @@ app = Celery("samaneh", broker=f"redis://{REDIS_SERVICE_NAME}:6379/0")
 
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
+CORE_SCHEDULE = {
+    "collect_user_stats_task": {
+        "task": "collect_user_stats_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
+            hour="23",
+            minute="58",
+        ),
+    },
+}
 
 DOMESTIC_MARKET_SCHEDULE = {
     "populate_domestic_market_db_task": {
@@ -243,6 +253,7 @@ PROCESS_TRANSACTIONS_BASED_ON_VOLUME_CHANGE_AND_COEFFICIENETS = {
 }
 
 app.conf.beat_schedule = {
+    **CORE_SCHEDULE,
     **DOMESTIC_MARKET_SCHEDULE,
     **GLOBAL_MARKET_SCHEDULE,
     **OPTION_MARKET_SCHEDULE,

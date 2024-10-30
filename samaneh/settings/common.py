@@ -58,6 +58,7 @@ MIDDLEWARE = [
     "core.middlewares.Non20xStatusResponseLoggerMiddleware",
     # THIS MIDDLEWARE LOGS ALL REQUEST/RESPONSES DURATION TIME
     "core.middlewares.RequestResponseDurationLoggerMiddleware",
+    "core.middlewares.PortfoyarUserStatsMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
