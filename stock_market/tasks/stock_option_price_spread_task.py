@@ -120,7 +120,7 @@ def monthly_price_spread(row):
 
 
 def add_stock_link(row):
-    ins_code = str(row.get(" base_equity_ins_code"))
+    ins_code = str(row.get("base_equity_ins_code"))
     link = f"https://main.tsetmc.com/InstInfo/{ins_code}/"
 
     return link

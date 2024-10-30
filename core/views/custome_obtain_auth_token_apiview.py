@@ -5,13 +5,14 @@ from rest_framework.authtoken import views
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
+from core.utils import persian_numbers_to_english
 from account.models import Profile
 
 ACCOUNT_BANNED = "ACCOUNT_BANNED"
 
 
 def get_user(request):
-    username = request.data.get("username")
+    username = persian_numbers_to_english(request.data.get("username"))
     user = get_object_or_404(User, username=username)
     return user
 
@@ -49,7 +50,6 @@ class CustomeObtainAuthToken(views.ObtainAuthToken):
                 data={"message": "حساب شما مسدود شده است"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-
         response = super().post(request, *args, **kwargs)
         token = response.data.get("token")
         full_name = get_full_name(user)

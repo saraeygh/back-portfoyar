@@ -16,7 +16,11 @@ from rest_framework.throttling import AnonRateThrottle
 from melipayamak.melipayamak import Api
 
 
-from core.utils import RedisInterface, SEND_SIGNUP_SMS_STATUS
+from core.utils import (
+    RedisInterface,
+    SEND_SIGNUP_SMS_STATUS,
+    persian_numbers_to_english,
+)
 from core.configs import (
     KEY_WITH_EX_REDIS_DB,
     PHONE_PATTERN,
@@ -182,7 +186,7 @@ class SignUpAPIView(APIView):
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
-        username = request.data.get("username")
+        username = persian_numbers_to_english(request.data.get("username"))
         validated, result = is_valid_username(username)
         if not validated:
             return result
@@ -216,7 +220,7 @@ class SignUpAPIView(APIView):
         if not matched:
             return result
 
-        sent_code = str(request.data.get("code"))
+        sent_code = str(persian_numbers_to_english(request.data.get("code")))
         matched, result = check_code_match(generated_code, sent_code)
         if not matched:
             return result
