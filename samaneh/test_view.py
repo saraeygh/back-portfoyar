@@ -92,7 +92,7 @@ from core.tasks import collect_user_stats
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        collect_user_stats()
+        # collect_user_stats()
         # stock_option_price_spread()
         # stock_value_history()
         # stock_market_watch()

@@ -15,10 +15,21 @@ mongo_conn = MongodbInterface(
 @shared_task(name="collect_user_stats_task")
 def collect_user_stats():
     keys_count = len(redis_conn.client.keys("*"))
+
+    keys = []
+    values = []
+    for key in redis_conn.client.scan_iter():
+        keys.append(key.decode("utf-8"))
+        value = redis_conn.client.get(key)
+        value = value.decode("utf-8")
+        values.append(value)
+    content = dict(zip(keys, values))
+
     redis_conn.client.flushdb()
     new_stat = {
         "date": jdatetime.date.today().strftime("%Y/%m/%d"),
         "count": keys_count,
+        "content": content,
     }
 
     prev_stats = list(mongo_conn.collection.find({}, {"_id": 0}))

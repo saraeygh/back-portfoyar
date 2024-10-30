@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 
 # CORE
+STATS_MONGO_DB = "stats"
 KEY_WITH_EX_REDIS_DB = 1
 USER_AGENTS_REDIS_DB = 13
 USER_STATS_REDIS_DB = 14
 ONLINE_USERS_REDIS_DB = 15
-STATS_MONGO_DB = "stats"
 
 # ACCOUNT
 REDIS_PREFIX_CODE_TEXT = "username_verify_code_"
