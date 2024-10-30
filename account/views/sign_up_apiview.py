@@ -29,6 +29,8 @@ from core.configs import (
     SIGNUP_CODE_EXPIRY,
     SIGNUP_CODE_RANGE_MIN,
     SIGNUP_CODE_RANGE_MAX,
+    SIGNUP_TRY_COUNT_EXPIRY,
+    SIGNUP_DAILY_TRY_COUNT,
 )
 from core.models import ACTIVE, FeatureToggle
 
@@ -36,6 +38,30 @@ from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
+
+
+def check_daily_signup_limitation(request):
+    ip = request.META.get("REMOTE_ADDR", "")
+    tried_count = redis_conn.client.get(ip)
+    if tried_count is None:
+        redis_conn.client.set(ip, 1, ex=SIGNUP_TRY_COUNT_EXPIRY)
+        return False, ""
+
+    else:
+        today_tried_count = int((redis_conn.client.get(ip)).decode("utf-8"))
+        today_tried_count += 1
+        if today_tried_count > SIGNUP_DAILY_TRY_COUNT and not DEBUG:
+            return True, Response(
+                {
+                    "message": "تعداد تلاش‌های شما بیشتر از حد مجاز شده است، لطفاً بعد از گذشت ۲۴ ساعت دوباره تلاش کنید"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        else:
+            time_left = redis_conn.client.ttl(ip)
+            redis_conn.client.set(ip, today_tried_count, ex=time_left)
+
+            return False, ""
 
 
 def is_valid_phone(phone):
@@ -51,7 +77,8 @@ def is_valid_username(username):
     if username is not None and is_valid_phone(username) and not user_exists:
         return True, ""
     return False, Response(
-        {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
+        {"message": "شماره موبایل نامعتبر، اگر حساب کاربری دارید، وارد شوید"},
+        status=status.HTTP_400_BAD_REQUEST,
     )
 
 
@@ -63,8 +90,7 @@ def set_dict_in_redis(code_info: dict):
         return False
 
     code_info = json.dumps(code_info)
-    expiration_time = SIGNUP_CODE_EXPIRY
-    redis_conn.client.set(code_key, code_info, ex=expiration_time)
+    redis_conn.client.set(code_key, code_info, ex=SIGNUP_CODE_EXPIRY)
     return True
 
 
@@ -187,6 +213,11 @@ class SignUpAPIView(APIView):
 
     def post(self, request):
         username = persian_numbers_to_english(request.data.get("username"))
+
+        passed_limit, result = check_daily_signup_limitation(request)
+        if passed_limit:
+            return result
+
         validated, result = is_valid_username(username)
         if not validated:
             return result
@@ -202,7 +233,9 @@ class SignUpAPIView(APIView):
                 status=status.HTTP_200_OK,
             )
         return Response(
-            {"message": "متاسفانه کد ارسال نشد، بعد از چند دقیقه دوباره تلاش کنید"},
+            {
+                "message": "متاسفانه کد ارسال نشد، بعد از چند دقیقه دوباره تلاش کنید و یا با پشتیبانی سایت تماس بگیرید"
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
