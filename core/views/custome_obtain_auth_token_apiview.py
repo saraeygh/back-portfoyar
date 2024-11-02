@@ -41,7 +41,7 @@ def get_full_name(user: User):
     return full_name
 
 
-class CustomeObtainAuthToken(views.ObtainAuthToken):
+class CustomObtainAuthToken(views.ObtainAuthToken):
     def post(self, request, *args, **kwargs) -> Response:
         user = get_user(request)
         result = check_max_logins(user)

@@ -1,5 +1,5 @@
 from django.urls import path
-from core.views import CustomeObtainAuthToken
+from core.views import CustomObtainAuthToken
 
 from account.views import (
     SignUpAPIView,
@@ -16,8 +16,8 @@ upload_users_urls = [
 ]
 
 sign_in_sign_up_urls = [
-    path("v2/sign-up/", SignUpAPIView.as_view()),
-    path("sign-in/", CustomeObtainAuthToken.as_view()),
+    path("sign-up/", SignUpAPIView.as_view()),
+    path("sign-in/", CustomObtainAuthToken.as_view()),
 ]
 
 profile_urls = [

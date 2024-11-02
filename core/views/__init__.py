@@ -1,1 +1,1 @@
-from .custome_obtain_auth_token_apiview import CustomeObtainAuthToken
+from .custome_obtain_auth_token_apiview import CustomObtainAuthToken
