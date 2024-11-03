@@ -23,7 +23,6 @@ option_urls = [
         "options/<str:risk_level>/<str:strategy_key>/",
         FutureOptionPositionsAPIView.as_view(),
     ),
-    # path("price-spread-strategy/", PriceSpreadStrategyAPIView.as_view()),
 ]
 
 urlpatterns = future_urls + option_urls

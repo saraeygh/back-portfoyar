@@ -1,12 +1,13 @@
 import pandas as pd
-from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
+
+from core.configs import FUTURE_REDIS_DB
+from core.utils import RedisInterface
 
 PROFIT_SORTING_COLUMN = "yearly_profit"
 BREAK_EVEN_SORTING_COLUMN = "yearly_break_even"
@@ -42,9 +43,10 @@ def get_strategy_result_from_redis(strategy_key):
 # COVERED_CALL ##########################################
 def get_low_risk_covered_call(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -52,15 +54,17 @@ def get_low_risk_covered_call(strategy_key):
 
 def get_high_risk_covered_call(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = pd.DataFrame(strategy_result)
-
-    strategy_result = strategy_result[
-        (
-            1.15 * strategy_result["base_equity_last_price"]
-            >= strategy_result["strike_price"]
-        )
-        & (strategy_result["strike_price"] > strategy_result["base_equity_last_price"])
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            (
+                1.15 * strategy_result["base_equity_last_price"]
+                >= strategy_result["strike_price"]
+            )
+            & (
+                strategy_result["strike_price"]
+                > strategy_result["base_equity_last_price"]
+            )
+        ]
 
     strategy_result = strategy_result.to_dict(orient="records")
 
@@ -77,9 +81,10 @@ def get_high_risk_long_call(strategy_key):
 # SHORT_CALL ###########################################
 def get_low_risk_short_call(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["base_equity_last_price"] <= strategy_result["strike_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["base_equity_last_price"] <= strategy_result["strike_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -87,9 +92,10 @@ def get_low_risk_short_call(strategy_key):
 
 def get_high_risk_short_call(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["base_equity_last_price"] > strategy_result["strike_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["base_equity_last_price"] > strategy_result["strike_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -105,9 +111,10 @@ def get_high_risk_long_put(strategy_key):
 # SHORT_PUT ############################################
 def get_low_risk_short_put(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -115,9 +122,10 @@ def get_low_risk_short_put(strategy_key):
 
 def get_high_risk_short_put(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["strike_price"] > strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["strike_price"] > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -142,9 +150,11 @@ def get_high_risk_short_straddle(strategy_key):
 # BULL_CALL_SPREAD ############################################
 def get_low_risk_bull_call_spread(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_sell_strike"] < strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_sell_strike"]
+            < strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -152,9 +162,11 @@ def get_low_risk_bull_call_spread(strategy_key):
 
 def get_high_risk_bull_call_spread(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_buy_strike"] > strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_buy_strike"]
+            > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -178,10 +190,11 @@ def get_low_risk_bull_put_spread(strategy_key):
 
 def get_high_risk_bull_put_spread(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["put_sell_strike"] > strategy_result["base_equity_last_price"]
-    ]
-
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["put_sell_strike"]
+            > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -190,9 +203,11 @@ def get_high_risk_bull_put_spread(strategy_key):
 # BEAR_PUT_SPREAD #######################################
 def get_low_risk_bear_put_spread(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["put_sell_strike"] > strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["put_sell_strike"]
+            > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -208,9 +223,11 @@ def get_high_risk_bear_put_spread(strategy_key):
 # LONG_STRANGLE ############################################
 def get_low_risk_long_strangle(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_buy_strike"] < strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_buy_strike"]
+            < strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -218,9 +235,11 @@ def get_low_risk_long_strangle(strategy_key):
 
 def get_high_risk_long_strangle(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_buy_strike"] > strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_buy_strike"]
+            > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -253,10 +272,11 @@ def get_high_risk_short_butterfly(strategy_key):
 # COLLAR ############################################
 def get_low_risk_collar(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_buy_strike_high"]
-        < strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_buy_strike_high"]
+            < strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -264,10 +284,11 @@ def get_low_risk_collar(strategy_key):
 
 def get_high_risk_collar(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = strategy_result[
-        strategy_result["call_buy_strike_high"]
-        > strategy_result["base_equity_last_price"]
-    ]
+    if not strategy_result.empty:
+        strategy_result = strategy_result[
+            strategy_result["call_buy_strike_high"]
+            > strategy_result["base_equity_last_price"]
+        ]
     strategy_result = strategy_result.to_dict(orient="records")
 
     return
@@ -276,7 +297,6 @@ def get_high_risk_collar(strategy_key):
 # CONVERSION ############################################
 def get_no_risk_conversion(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    strategy_result = sort_strategy_result(strategy_result, "final_profit")
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
