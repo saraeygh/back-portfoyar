@@ -13,8 +13,12 @@ ACCOUNT_BANNED = "ACCOUNT_BANNED"
 
 def get_user(request):
     username = persian_numbers_to_english(request.data.get("username"))
-    user = get_object_or_404(User, username=username)
-    return user
+    user = User.objects.filter(username=username)
+    if user.exists():
+        return user.first(), ""
+    return False, Response(
+        data={"message": "اطلاعات اشتباه است"}, status=status.HTTP_406_NOT_ACCEPTABLE
+    )
 
 
 def check_max_logins(user):
@@ -43,7 +47,9 @@ def get_full_name(user: User):
 
 class CustomObtainAuthToken(views.ObtainAuthToken):
     def post(self, request, *args, **kwargs) -> Response:
-        user = get_user(request)
+        user, response = get_user(request)
+        if not user:
+            return response
         result = check_max_logins(user)
         if result == ACCOUNT_BANNED:
             return Response(
