@@ -38,7 +38,7 @@ SEND_CHANGE_USERNAME_SMS = {
 }
 
 DAILY_SIGNUP_TRY_LIMITATION = {
-    "name": "send_change_username_sms_status",
+    "name": "daily_signup_try_limitation",
     "desc": "فعال و غیرفعال کردن محدودیت تعداد دفعات درخواست ثبت‌نام در روز از یک آی‌پی مشخص",
     "state": ACTIVE,
     "value": "3",
