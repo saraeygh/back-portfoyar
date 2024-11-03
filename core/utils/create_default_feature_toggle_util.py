@@ -1,88 +1,67 @@
 from core.models import FeatureToggle, ACTIVE, DEACTIVE
 from colorama import Fore, Style
 
-MARKET_STATE = "market_state"
+MARKET_STATE = {
+    "name": "market_state",
+    "desc": "در نظر گرفتن وضعیت بازار هنگام دریافت اطلاعات",
+    "state": DEACTIVE,
+    "value": "S",
+}
 
-MONTHLY_INTEREST_RATE_NAME = "monthly_interest_rate"
-MONTHLY_INTEREST_RATE_VALUE = "2.5"
+MONTHLY_INTEREST_RATE = {
+    "name": "monthly_interest_rate",
+    "desc": "نرخ سود ماهانه بانکی مورد نیاز برای محاسبات قراردادهای آتی",
+    "state": ACTIVE,
+    "value": "2.5",
+}
 
-SEND_SIGNUP_SMS_STATUS = "send_signup_sms_status"
+SEND_SIGNUP_SMS = {
+    "name": "send_signup_sms_status",
+    "desc": "فعال و غیرفعال کردن ارسال پیامک در صفحه ثبت‌نام",
+    "state": DEACTIVE,
+    "value": "",
+}
 
-DAILY_SIGNUP_TRY_LIMITATION = "daily_signup_try_limitation"
+
+SEND_RESET_PASSWORD_SMS = {
+    "name": "send_reset_password_sms_status",
+    "desc": "فعال و غیرفعال کردن ارسال پیامک بازنشانی رمز عبور",
+    "state": DEACTIVE,
+    "value": "",
+}
+
+SEND_CHANGE_USERNAME_SMS = {
+    "name": "send_change_username_sms_status",
+    "desc": "فعال و غیرفعال کردن ارسال پیامک تغییر نام کاربری",
+    "state": DEACTIVE,
+    "value": "",
+}
+
+DAILY_SIGNUP_TRY_LIMITATION = {
+    "name": "send_change_username_sms_status",
+    "desc": "فعال و غیرفعال کردن محدودیت تعداد دفعات درخواست ثبت‌نام در روز از یک آی‌پی مشخص",
+    "state": ACTIVE,
+    "value": "3",
+}
+
+
+def create_toggle(feature_name, feature_attr):
+    if not FeatureToggle.objects.filter(name=feature_name).exists():
+        FeatureToggle.objects.create(**feature_attr)
+        print(Fore.GREEN + f"{feature_name} feature toggle created." + Style.RESET_ALL)
+    else:
+        print(
+            Fore.YELLOW
+            + f"{feature_name} feature toggle already exists."
+            + Style.RESET_ALL
+        )
 
 
 def create_default_feature_toggle():
 
-    if not FeatureToggle.objects.filter(name=MARKET_STATE).exists():
-        FeatureToggle.objects.create(
-            name=MARKET_STATE,
-            desc="در نظر گرفتن وضعیت بازار هنگام دریافت اطلاعات",
-            state=DEACTIVE,
-            value="S",
-        )
-        print(Fore.GREEN + f"{MARKET_STATE} feature toggle created." + Style.RESET_ALL)
-    else:
-        print(
-            Fore.YELLOW
-            + f"{MARKET_STATE} feature toggle already exists."
-            + Style.RESET_ALL
-        )
-
-    ###########################################################################
-    if not FeatureToggle.objects.filter(name=MONTHLY_INTEREST_RATE_NAME).exists():
-        FeatureToggle.objects.create(
-            name=MONTHLY_INTEREST_RATE_NAME,
-            desc="نرخ سود ماهانه بانکی مورد نیاز برای محاسبات قراردادهای آتی",
-            state=ACTIVE,
-            value=MONTHLY_INTEREST_RATE_VALUE,
-        )
-        print(
-            Fore.GREEN
-            + f"{MONTHLY_INTEREST_RATE_NAME} feature toggle created."
-            + Style.RESET_ALL
-        )
-    else:
-        print(
-            Fore.YELLOW
-            + f"{MONTHLY_INTEREST_RATE_NAME} feature toggle already exists."
-            + Style.RESET_ALL
-        )
-    ###########################################################################
-    if not FeatureToggle.objects.filter(name=SEND_SIGNUP_SMS_STATUS).exists():
-        FeatureToggle.objects.create(
-            name=SEND_SIGNUP_SMS_STATUS,
-            desc="فعال و غیرفعال کردن ارسال پیامک در صفحه ثبت‌نام",
-            state=DEACTIVE,
-            value=SEND_SIGNUP_SMS_STATUS,
-        )
-        print(
-            Fore.GREEN
-            + f"{SEND_SIGNUP_SMS_STATUS} feature toggle created."
-            + Style.RESET_ALL
-        )
-    else:
-        print(
-            Fore.YELLOW
-            + f"{SEND_SIGNUP_SMS_STATUS} feature toggle already exists."
-            + Style.RESET_ALL
-        )
-
-    ###########################################################################
-    if not FeatureToggle.objects.filter(name=DAILY_SIGNUP_TRY_LIMITATION).exists():
-        FeatureToggle.objects.create(
-            name=DAILY_SIGNUP_TRY_LIMITATION,
-            desc="فعال و غیرفعال کردن محدودیت تعداد دفعات درخواست ثبت‌نام در روز از یک آی‌پی مشخص",
-            state=ACTIVE,
-            value=DAILY_SIGNUP_TRY_LIMITATION,
-        )
-        print(
-            Fore.GREEN
-            + f"{DAILY_SIGNUP_TRY_LIMITATION} feature toggle created."
-            + Style.RESET_ALL
-        )
-    else:
-        print(
-            Fore.YELLOW
-            + f"{DAILY_SIGNUP_TRY_LIMITATION} feature toggle already exists."
-            + Style.RESET_ALL
-        )
+    create_toggle(MARKET_STATE["name"], MARKET_STATE)
+    create_toggle(MONTHLY_INTEREST_RATE["name"], MONTHLY_INTEREST_RATE)
+    create_toggle(SEND_SIGNUP_SMS["name"], SEND_SIGNUP_SMS)
+    create_toggle(SEND_RESET_PASSWORD_SMS["name"], SEND_RESET_PASSWORD_SMS)
+    create_toggle(SEND_CHANGE_USERNAME_SMS["name"], SEND_CHANGE_USERNAME_SMS)
+    create_toggle(DAILY_SIGNUP_TRY_LIMITATION["name"], DAILY_SIGNUP_TRY_LIMITATION)

@@ -16,9 +16,11 @@ from .create_admin_user_util import create_admin_user
 from .create_default_feature_toggle_util import (
     create_default_feature_toggle,
     MARKET_STATE,
-    MONTHLY_INTEREST_RATE_NAME,
-    SEND_SIGNUP_SMS_STATUS,
+    MONTHLY_INTEREST_RATE,
+    SEND_SIGNUP_SMS,
     DAILY_SIGNUP_TRY_LIMITATION,
+    SEND_CHANGE_USERNAME_SMS,
+    SEND_RESET_PASSWORD_SMS,
 )
 from .create_default_recommendation_setting_util import (
     create_default_recommendation_setting,

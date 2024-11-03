@@ -8,6 +8,7 @@ from account.views import (
     EmailAPIView,
     UsernameAPIView,
     PasswordAPIView,
+    ResetPasswordAPIView,
 )
 
 
@@ -29,8 +30,9 @@ email_urls = [
 ]
 
 credential_urls = [
-    path("username/", UsernameAPIView.as_view()),
+    path("reset-password/", ResetPasswordAPIView.as_view()),
     path("password/", PasswordAPIView.as_view()),
+    path("username/", UsernameAPIView.as_view()),
 ]
 
 urlpatterns = (

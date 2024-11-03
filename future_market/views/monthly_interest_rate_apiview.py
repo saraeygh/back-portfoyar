@@ -2,7 +2,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from core.configs import SIX_HOURS_CACHE
 from core.models import FeatureToggle
-from core.utils import MONTHLY_INTEREST_RATE_NAME
+from core.utils import MONTHLY_INTEREST_RATE
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 class MonthlyInterestRateAPIView(APIView):
     def get(self, request):
         monthly_interest_rate = FeatureToggle.objects.get(
-            name=MONTHLY_INTEREST_RATE_NAME
+            name=MONTHLY_INTEREST_RATE["name"]
         )
         monthly_interest_rate = float(monthly_interest_rate.value)
 

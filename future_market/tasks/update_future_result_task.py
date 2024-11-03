@@ -3,7 +3,6 @@ import pandas as pd
 from celery import shared_task
 from core.utils import (
     RedisInterface,
-    MONTHLY_INTEREST_RATE_NAME,
     task_timing,
     get_deviation_percent,
 )
@@ -213,9 +212,7 @@ FUTURE_STRATEGIES = {
 def update_future():
 
     try:
-        monthly_interest_rate = FeatureToggle.objects.get(
-            name=MONTHLY_INTEREST_RATE_NAME
-        )
+        monthly_interest_rate = FeatureToggle.objects.get(name=MONTHLY_INTEREST_RATE)
         monthly_interest_rate = float(monthly_interest_rate.value)
     except Exception:
         monthly_interest_rate = 0

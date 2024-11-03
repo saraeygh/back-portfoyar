@@ -197,7 +197,7 @@ def get_history(row, index_name):
 def stock_market_watch():
 
     market_watch = pd.DataFrame()
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
     for market_type_num, market_type_name in tqdm(
         MAIN_MARKET_TYPE_DICT.items(), desc="MarketWatch", ncols=10
     ):

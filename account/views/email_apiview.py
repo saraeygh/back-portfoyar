@@ -1,9 +1,5 @@
-import os
 import json
-import smtplib
 import random
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 from django.core.validators import validate_email
 
@@ -14,62 +10,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
-from core.configs import KEY_WITH_EX_REDIS_DB
+from core.configs import (
+    KEY_WITH_EX_REDIS_DB,
+    EMAIL_VERIFY_CODE_EXPIRY,
+    REDIS_EMAIL_VERIFY_PREFIX,
+)
 from core.utils import RedisInterface
 
-from colorama import Fore, Style
+from account.utils import send_email_verify_code
 
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-
-
-def send_email_verification_code(username: str, email: str, code: str):
-    try:
-        email_host = os.environ.setdefault("EMAIL_HOST", "smtp.gmail.com")
-        email_port = os.environ.setdefault("EMAIL_PORT", "587")
-        email_host_user = os.environ.setdefault(
-            "EMAIL_HOST_USER", "armansmtptest@gmail.com"
-        )
-        email_host_password = os.environ.setdefault(
-            "EMAIL_HOST_PASSWORD", "gaux sxiy zhyf qhdx"
-        )
-        email_to = email
-
-        subject = f"کد تایید ایمیل پرتفویار برای حساب {username}"
-
-        html_body = f"""
-            <html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-            </head>
-            <body>
-
-                <p style='direction: rtl; unicode-bidi: embed;'>
-                کد تایید شما برای ایمیل سامانه پرتفویار:
-                </p>
-
-                <p style='direction: rtl; unicode-bidi: embed;'>
-                {code}
-                </p>
-
-            </body>
-            </html>
-            """
-
-        message = MIMEMultipart()
-        message["From"] = email_host_user
-        message["To"] = email_to
-        message["Subject"] = subject
-        message.attach(MIMEText(html_body, "html", "utf-8"))
-
-        text = message.as_string()
-        with smtplib.SMTP(email_host, email_port) as server:
-            server.starttls()
-            server.login(email_host_user, email_host_password)
-            server.sendmail(email_host_user, email_to, text)
-        return True
-    except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
-        return False
 
 
 def is_valid_email(email):
@@ -84,14 +34,14 @@ def set_dict_in_redis(code_info: dict):
     username = code_info.get("username")
     code_info = json.dumps(code_info)
 
-    code_key = f"email_verify_code_{username}"
-    expiration_time = 60 * 5
+    code_key = REDIS_EMAIL_VERIFY_PREFIX + f"{username}"
+    expiration_time = EMAIL_VERIFY_CODE_EXPIRY
     redis_conn.client.delete(code_key)
     redis_conn.client.set(code_key, code_info, ex=expiration_time)
 
 
 def get_dict_from_redis(username):
-    code_key = f"email_verify_code_{username}"
+    code_key = REDIS_EMAIL_VERIFY_PREFIX + f"{username}"
     code_info = redis_conn.client.get(code_key)
     return None if code_info is None else json.loads(code_info.decode("utf-8"))
 
@@ -106,7 +56,7 @@ def create_email_verify_code(request):
     username = request.user.username
     code = str(random.randint(123456, 999999))
     set_dict_in_redis({"username": username, "email": email, "code": code})
-    sent = send_email_verification_code(username, email, code)
+    sent = send_email_verify_code(username, email, code)
     if sent:
         return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
     return Response(

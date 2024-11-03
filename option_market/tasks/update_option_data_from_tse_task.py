@@ -52,7 +52,7 @@ def add_link(row) -> str:
 @task_timing
 @shared_task(name="update_option_data_from_tse_task")
 def update_option_data_from_tse():
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
     for market_type_num, _ in MAIN_MARKET_TYPE_DICT.items():
         if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type_num)

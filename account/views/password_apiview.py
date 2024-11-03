@@ -1,39 +1,50 @@
-import os
-import re
-import json
-import smtplib
-import random
-
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
-
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from django.contrib.auth import authenticate
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.decorators import authentication_classes, permission_classes
-from colorama import Fore, Style
+from rest_framework.authtoken.models import Token
+
+from core.utils import (
+    RedisInterface,
+    SEND_RESET_PASSWORD_SMS,
+    persian_numbers_to_english,
+)
+
+from core.configs import (
+    KEY_WITH_EX_REDIS_DB,
+    REDIS_RESET_PASSWORD_PREFIX,
+    RESET_PASSWORD_CODE_EXPIRY,
+    MELIPAYAMAK_OK_RESPONSE,
+)
+
+from account.utils import (
+    check_daily_limitation,
+    send_sms_verify_code,
+    code_token_generated_saved,
+    check_code_expiry,
+    check_token_match,
+    check_code_match,
+    is_valid_phone,
+    password_is_valid,
+)
 
 
-def password_is_valid(password):
-    try:
-        validate_password(password)
-        return True
-    except Exception as e:
-        print(Fore.RED)
-        print(e)
-        print(Style.RESET_ALL)
-        return False
+redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def change_user_password(user, new_password):
     user.set_password(new_password)
     user.save()
+
+
+def delete_user_token(user):
+    Token.objects.filter(user=user).delete()
 
 
 @authentication_classes([TokenAuthentication])
@@ -65,54 +76,103 @@ class PasswordAPIView(APIView):
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         change_user_password(user, new_password)
+        delete_user_token(user)
+        return Response(
+            {"message": "رمز عبور با موفقیت تغییر پیدا کرد، لطفاً دوباره وارد شوید"},
+            status=status.HTTP_200_OK,
+        )
 
-        return Response({}, status=status.HTTP_200_OK)
 
-    # def post(self, request):
-    #     new_username = request.data.get("username")
-    #     user_exists = User.objects.filter(username=new_username).exists()
-    #     if new_username is None or not is_valid_phone(new_username) or user_exists:
-    #         return Response(
-    #             {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
-    #         )
+###############################################################################
+def is_valid_username(username):
+    user_exists = User.objects.filter(username=username).exists()
+    if username is not None and is_valid_phone(username) and user_exists:
+        return True, ""
+    return False, Response(
+        {"message": "امکان بازنشانی رمز عبور برای این نام کاربری وجود ندارد"},
+        status=status.HTTP_400_BAD_REQUEST,
+    )
 
-    #     username = request.user.username
-    #     code = str(random.randint(123456, 999999))
-    #     code_saved_in_redis = set_dict_in_redis(
-    #         {"username": username, "new_username": new_username, "code": code}
-    #     )
-    #     if not code_saved_in_redis:
-    #         return Response(
-    #             {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
-    #             status=status.HTTP_400_BAD_REQUEST,
-    #         )
 
-    #     response = send_sms_code(new_username, code)
-    #     if response == "Ok":
-    #         return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
-    #     return Response(
-    #         {"message": "متاسفانه کد ارسال نشد، بعد از ۵ دقیقه دوباره تلاش کنید"},
-    #         status=status.HTTP_400_BAD_REQUEST,
-    #     )
+def reset_user_password(request, username, password):
+    if not password_is_valid(password):
+        return Response(
+            {
+                "message": "رمز عبور انتخابی امن نیست، لطفاً یک رمز عبور قوی‌تر انتخاب کنید"
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    # def patch(self, request):
-    #     sent_code = str(request.data.get("code"))
-    #     user: User = request.user
-    #     code_info = get_dict_from_redis(user.username)
-    #     if code_info is None:
-    #         return Response(
-    #             {"message": "کد منقضی شده است، لطفا دوباره تلاش کنید"},
-    #             status=status.HTTP_400_BAD_REQUEST,
-    #         )
-    #     generated_code = code_info.get("code")
-    #     if sent_code == generated_code:
-    #         new_username = code_info.get("new_username")
-    #         user.username = new_username
-    #         user.save()
-    #         return Response(
-    #             {"message": "نام کاربری به‌روزرسانی شد"}, status=status.HTTP_200_OK
-    #         )
+    user = User.objects.get(username=username)
+    user.set_password(password)
+    user.save()
 
-    #     return Response(
-    #         {"message": "کد ارسالی اشتباه است"}, status=status.HTTP_400_BAD_REQUEST
-    #     )
+    authenticated_user = authenticate(
+        request=request, username=username, password=password
+    )
+    if authenticated_user is None:
+        return Response(
+            {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    return Response(
+        {"message": "رمز عبور حساب کاربری شما با موفقیت تغییر یافت"},
+        status=status.HTTP_200_OK,
+    )
+
+
+class ResetPasswordAPIView(APIView):
+    throttle_classes = [AnonRateThrottle]
+
+    def post(self, request):
+        username = persian_numbers_to_english(request.data.get("username"))
+
+        passed_limit, result = check_daily_limitation(request)
+        if passed_limit:
+            return result
+
+        validated, result = is_valid_username(username)
+        if not validated:
+            return result
+
+        generated, code, token, result = code_token_generated_saved(
+            username, REDIS_RESET_PASSWORD_PREFIX, RESET_PASSWORD_CODE_EXPIRY
+        )
+        if not generated:
+            return result
+
+        response = send_sms_verify_code(username, code, SEND_RESET_PASSWORD_SMS["name"])
+        if response == MELIPAYAMAK_OK_RESPONSE:
+            return Response(
+                {"message": "کد تایید ارسال شد", "token": token},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {
+                "message": "متاسفانه کد ارسال نشد، بعد از چند دقیقه دوباره تلاش کنید و یا با پشتیبانی سایت تماس بگیرید"
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def put(self, request):
+        username = str(request.data.get("username"))
+        expired, response = check_code_expiry(username, REDIS_RESET_PASSWORD_PREFIX)
+        if expired:
+            return response
+
+        generated_token = response.get("token")
+        generated_code = response.get("code")
+
+        sent_token = str(request.data.get("token"))
+        matched, response = check_token_match(generated_token, sent_token)
+        if not matched:
+            return response
+
+        sent_code = str(persian_numbers_to_english(request.data.get("code")))
+        matched, response = check_code_match(generated_code, sent_code)
+        if not matched:
+            return response
+
+        password = str(request.data.get("password"))
+        return reset_user_password(request, username, password)

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import os
 
 # CORE
 STATS_MONGO_DB = "stats"
@@ -8,13 +9,16 @@ USER_STATS_REDIS_DB = 14
 ONLINE_USERS_REDIS_DB = 15
 
 # ACCOUNT
-REDIS_PREFIX_CODE_TEXT = "username_verify_code_"
+REDIS_SIGNUP_PREFIX = "username_verify_code_"
+REDIS_EMAIL_VERIFY_PREFIX = "email_verify_code_"
+REDIS_RESET_PASSWORD_PREFIX = "reset_password_code_"
 MELIPAYAMAK_OK_RESPONSE = "Ok"
 SIGNUP_CODE_EXPIRY = 60 * 5  # 5 Minutes
+RESET_PASSWORD_CODE_EXPIRY = SIGNUP_CODE_EXPIRY
+EMAIL_VERIFY_CODE_EXPIRY = 60 * 5  # 5 Minutes
 SIGNUP_TRY_COUNT_EXPIRY = 60 * 60 * 24  # 24 Hours
-SIGNUP_DAILY_TRY_COUNT = 3
-SIGNUP_CODE_RANGE_MIN = 111111
-SIGNUP_CODE_RANGE_MAX = 999999
+CODE_RANGE_MIN = 111111
+CODE_RANGE_MAX = 999999
 PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
 
 
@@ -74,3 +78,17 @@ ONE_YEAR_DATE_LIMIT = datetime.today().date() - timedelta(days=365)
 PERSIAN_DIGITS = "۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠"
 ENGLISH_DIGITS = "12345678901234567890"
 FA_TO_EN_TRANSLATION_TABLE = str.maketrans(PERSIAN_DIGITS, ENGLISH_DIGITS)
+
+# EMAIL
+EMAIL_HOST = os.environ.setdefault("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = os.environ.setdefault("EMAIL_PORT", "587")
+EMAIL_HOST_USER = os.environ.setdefault("EMAIL_HOST_USER", "armansmtptest@gmail.com")
+EMAIL_HOST_PASSWORD = os.environ.setdefault(
+    "EMAIL_HOST_PASSWORD", "gaux sxiy zhyf qhdx"
+)
+EMAIL_TO = os.environ.setdefault("EMAIL_TO", "saraey.gholamreza@gmail.com")
+
+# SMS
+PORTFOYAR_SMS_ID = 263013
+MELIPAYAMAK_USERNAME = os.environ.setdefault("MELIPAYAMAK_USERNAME", "09102188113")
+MELIPAYAMAK_PASSOWRD = os.environ.setdefault("MELIPAYAMAK_PASSOWRD", "TL5OC")

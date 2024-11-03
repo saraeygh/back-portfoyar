@@ -225,7 +225,7 @@ def get_put_spreads(spreads):
 def stock_option_price_spread():
 
     print(Fore.BLUE + "Checking stock price spread ..." + Style.RESET_ALL)
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE)
+    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
     for market_type in list(MAIN_MARKET_TYPE_DICT.keys()):
         if check_market_state.state == ACTIVE:
             market_state = get_market_state(market_type)

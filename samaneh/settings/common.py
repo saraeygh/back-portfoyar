@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from logging.handlers import RotatingFileHandler
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = eval(os.environ.setdefault("DEBUG", "True"))
@@ -193,22 +192,6 @@ CACHES = {
 
 USE_THOUSAND_SEPARATOR = True
 
-# EMAIL BACKEND SETTINS
-EMAIL_BACKEND = os.environ.setdefault(
-    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
-)
-EMAIL_HOST = os.environ.setdefault("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = os.environ.setdefault("EMAIL_PORT", "587")
-EMAIL_USE_TLS = os.environ.setdefault("EMAIL_USE_TLS", "True")
-EMAIL_HOST_USER = os.environ.setdefault("EMAIL_HOST_USER", "armansmtptest@gmail.com")
-EMAIL_HOST_PASSWORD = os.environ.setdefault(
-    "EMAIL_HOST_PASSWORD", "gaux sxiy zhyf qhdx"
-)
-DEFAULT_FROM_EMAIL = os.environ.setdefault(
-    "DEFAULT_FROM_EMAIL", "armansmtptest@gmail.com"
-)
-
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -232,3 +215,18 @@ LOGGING = {
         },
     },
 }
+
+# # EMAIL BACKEND SETTINS
+# EMAIL_BACKEND = os.environ.setdefault(
+#     "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+# )
+# EMAIL_HOST = os.environ.setdefault("EMAIL_HOST", "smtp.gmail.com")
+# EMAIL_PORT = os.environ.setdefault("EMAIL_PORT", "587")
+# EMAIL_USE_TLS = os.environ.setdefault("EMAIL_USE_TLS", "True")
+# EMAIL_HOST_USER = os.environ.setdefault("EMAIL_HOST_USER", "armansmtptest@gmail.com")
+# EMAIL_HOST_PASSWORD = os.environ.setdefault(
+#     "EMAIL_HOST_PASSWORD", "gaux sxiy zhyf qhdx"
+# )
+# DEFAULT_FROM_EMAIL = os.environ.setdefault(
+#     "DEFAULT_FROM_EMAIL", "armansmtptest@gmail.com"
+# )

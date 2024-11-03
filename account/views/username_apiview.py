@@ -1,13 +1,8 @@
-import os
-import re
 import json
-import smtplib
 import random
 
 from django.contrib.auth.models import User
 
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -16,21 +11,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
-from melipayamak.melipayamak import Api
 
-from core.utils import RedisInterface
-from core.configs import KEY_WITH_EX_REDIS_DB
+from core.utils import RedisInterface, SEND_CHANGE_USERNAME_SMS
+from core.configs import KEY_WITH_EX_REDIS_DB, CODE_RANGE_MIN, CODE_RANGE_MAX
+from account.utils import send_sms_verify_code, is_valid_username
 
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-
-
-def is_valid_phone(phone):
-    PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
-    match = re.match(PHONE_PATTERN, phone)
-    if match:
-        return True
-    else:
-        return False
 
 
 def set_dict_in_redis(code_info: dict):
@@ -44,16 +30,6 @@ def set_dict_in_redis(code_info: dict):
     expiration_time = 60 * 5
     redis_conn.client.set(code_key, code_info, ex=expiration_time)
     return True
-
-
-def send_sms_code(to, code):
-    MELIPAYAMAK_USERNAME = os.environ.setdefault("MELIPAYAMAK_USERNAME", "09102188113")
-    MELIPAYAMAK_PASSOWRD = os.environ.setdefault("MELIPAYAMAK_PASSOWRD", "TL5OC")
-    api = Api(MELIPAYAMAK_USERNAME, MELIPAYAMAK_PASSOWRD)
-    sms = api.sms()
-    response = sms.send_by_base_number(text=code, to=to, bodyId=92005)
-    response = response.get("StrRetStatus")
-    return response
 
 
 def get_dict_from_redis(username):
@@ -71,14 +47,12 @@ class UsernameAPIView(APIView):
 
     def post(self, request):
         new_username = request.data.get("username")
-        user_exists = User.objects.filter(username=new_username).exists()
-        if new_username is None or not is_valid_phone(new_username) or user_exists:
-            return Response(
-                {"message": "شماره موبایل نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        is_valid, result = is_valid_username(new_username)
+        if not is_valid:
+            return result
 
         username = request.user.username
-        code = str(random.randint(123456, 999999))
+        code = str(random.randint(CODE_RANGE_MIN, CODE_RANGE_MAX))
         code_saved_in_redis = set_dict_in_redis(
             {"username": username, "new_username": new_username, "code": code}
         )
@@ -88,7 +62,7 @@ class UsernameAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        response = send_sms_code(new_username, code)
+        response = send_sms_verify_code(new_username, code, SEND_CHANGE_USERNAME_SMS)
         if response == "Ok":
             return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
         return Response(
