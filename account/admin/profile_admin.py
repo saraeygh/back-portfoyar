@@ -23,7 +23,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "gender",
         "birth_date",
     )
-    ordering = ("-updated_at",)
+    ordering = ("-created_at",)
 
     search_fields = ("id", "user__username")
 

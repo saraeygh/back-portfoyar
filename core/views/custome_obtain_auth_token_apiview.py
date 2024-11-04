@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.authtoken import views
 from rest_framework.response import Response
@@ -50,6 +49,7 @@ class CustomObtainAuthToken(views.ObtainAuthToken):
         user, response = get_user(request)
         if not user:
             return response
+
         result = check_max_logins(user)
         if result == ACCOUNT_BANNED:
             return Response(
