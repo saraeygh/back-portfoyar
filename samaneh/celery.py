@@ -11,110 +11,110 @@ app = Celery("samaneh", broker=f"redis://{REDIS_SERVICE_NAME}:6379/0")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 CORE_SCHEDULE = {
-    #     "collect_user_stats_task": {
-    #         "task": "collect_user_stats_task",
-    #         "schedule": crontab(
-    #             day_of_week="6, 0, 1, 2, 3, 4, 5",
-    #             hour="23",
-    #             minute="58",
-    #         ),
-    #     },
+    "collect_user_stats_task": {
+        "task": "collect_user_stats_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
+            hour="23",
+            minute="58",
+        ),
+    },
 }
 
 DOMESTIC_MARKET_SCHEDULE = {
-    # "populate_domestic_market_db_task": {
-    #     "task": "populate_domestic_market_db_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="8-19",
-    #         minute="*/120",
-    #     ),
-    # },
-    # "calculate_commodity_mean_task_domestic": {
-    #     "task": "calculate_commodity_mean_task_domestic",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="8-19",
-    #         minute="*/130",
-    #     ),
-    # },
-    # "calculate_monthly_sell_task_domestic": {
-    #     "task": "calculate_monthly_sell_task_domestic",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="8-19",
-    #         minute="*/140",
-    #     ),
-    # },
-    # "calculate_production_sell_task_domestic": {
-    #     "task": "calculate_production_sell_task_domestic",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="8-19",
-    #         minute="*/150",
-    #     ),
-    # },
-    # "calculate_producers_yearly_value_task": {
-    #     "task": "calculate_producers_yearly_value_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="22",
-    #         minute="10",
-    #     ),
-    # },
-    # "get_dollar_daily_price_task_domestic": {
-    #     "task": "get_dollar_daily_price_task_domestic",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3, 4, 5",
-    #         minute="*/30",
-    #     ),
-    # },
+    "populate_domestic_market_db_task": {
+        "task": "populate_domestic_market_db_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="8-19",
+            minute="*/120",
+        ),
+    },
+    "calculate_commodity_mean_task_domestic": {
+        "task": "calculate_commodity_mean_task_domestic",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="8-19",
+            minute="*/130",
+        ),
+    },
+    "calculate_monthly_sell_task_domestic": {
+        "task": "calculate_monthly_sell_task_domestic",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="8-19",
+            minute="*/140",
+        ),
+    },
+    "calculate_production_sell_task_domestic": {
+        "task": "calculate_production_sell_task_domestic",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="8-19",
+            minute="*/150",
+        ),
+    },
+    "calculate_producers_yearly_value_task": {
+        "task": "calculate_producers_yearly_value_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="22",
+            minute="10",
+        ),
+    },
+    "get_dollar_daily_price_task_domestic": {
+        "task": "get_dollar_daily_price_task_domestic",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
+            minute="*/30",
+        ),
+    },
 }
 
 
 FUTURE_MARKET_SCHEDULE = {
-    # "update_derivative_info_task": {
-    #     "task": "update_derivative_info_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3, 4, 5",
-    #         hour="10-17",
-    #         minute="*/1",
-    #     ),
-    # },
-    # "update_base_equity_task": {
-    #     "task": "update_base_equity_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3, 4",
-    #         hour="23",
-    #     ),
-    # },
-    # "update_future_task": {
-    #     "task": "update_future_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3, 4",
-    #         hour="10-17",
-    #         minute="*/1",
-    #     ),
-    # },
-    # "update_option_result_task": {
-    #     "task": "update_option_result_task",
-    #     "schedule": crontab(
-    #         day_of_week="6, 0, 1, 2, 3",
-    #         hour="10-17",
-    #         minute="*/1",
-    #     ),
-    # },
+    "update_derivative_info_task": {
+        "task": "update_derivative_info_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
+            hour="10-17",
+            minute="*/1",
+        ),
+    },
+    "update_base_equity_task": {
+        "task": "update_base_equity_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4",
+            hour="23",
+        ),
+    },
+    "update_future_task": {
+        "task": "update_future_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4",
+            hour="10-17",
+            minute="*/1",
+        ),
+    },
+    "update_option_result_task": {
+        "task": "update_option_result_task",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3",
+            hour="10-17",
+            minute="*/1",
+        ),
+    },
 }
 
 GLOBAL_MARKET_SCHEDULE = {
-    #     "calculate_commodity_means_task_global": {
-    #         "task": "calculate_commodity_means_task_global",
-    #         "schedule": crontab(
-    #             day_of_week="6, 0, 1, 2, 3, 4, 5",
-    #             hour="7",
-    #             minute="10",
-    #         ),
-    #     },
+    "calculate_commodity_means_task_global": {
+        "task": "calculate_commodity_means_task_global",
+        "schedule": crontab(
+            day_of_week="6, 0, 1, 2, 3, 4, 5",
+            hour="7",
+            minute="10",
+        ),
+    },
 }
 
 OPTION_MARKET_SCHEDULE = {
