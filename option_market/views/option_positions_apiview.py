@@ -298,6 +298,10 @@ def get_high_risk_collar(strategy_key):
 # CONVERSION ############################################
 def get_no_risk_conversion(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
+
+    if not strategy_result.empty:
+        strategy_result = strategy_result[strategy_result[PROFIT_SORTING_COLUMN] >= 0]
+
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result

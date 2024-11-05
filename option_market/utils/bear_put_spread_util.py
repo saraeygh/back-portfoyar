@@ -149,5 +149,7 @@ def bear_put_spread(option_data, redis_conn):
                 result.append(document)
 
     print(Fore.GREEN + f"bear_put_spread, {len(result)} records." + Style.RESET_ALL)
-
-    redis_conn.bulk_push_list_of_dicts(list_key="bear_put_spread", list_of_dicts=result)
+    if result:
+        redis_conn.bulk_push_list_of_dicts(
+            list_key="bear_put_spread", list_of_dicts=result
+        )

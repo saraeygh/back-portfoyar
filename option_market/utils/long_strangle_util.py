@@ -121,5 +121,7 @@ def long_strangle(option_data, redis_conn):
                 result.append(document)
 
     print(Fore.GREEN + f"long_strangle, {len(result)} records." + Style.RESET_ALL)
-
-    redis_conn.bulk_push_list_of_dicts(list_key="long_strangle", list_of_dicts=result)
+    if result:
+        redis_conn.bulk_push_list_of_dicts(
+            list_key="long_strangle", list_of_dicts=result
+        )

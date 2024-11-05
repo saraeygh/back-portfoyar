@@ -94,5 +94,7 @@ def long_straddle(option_data, redis_conn):
             result.append(document)
 
     print(Fore.GREEN + f"long_straddle, {len(result)} records." + Style.RESET_ALL)
-
-    redis_conn.bulk_push_list_of_dicts(list_key="long_straddle", list_of_dicts=result)
+    if result:
+        redis_conn.bulk_push_list_of_dicts(
+            list_key="long_straddle", list_of_dicts=result
+        )

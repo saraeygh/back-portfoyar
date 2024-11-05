@@ -96,5 +96,5 @@ def short_call(option_data, redis_conn):
             result.append(document)
 
     print(Fore.GREEN + f"short_call, {len(result)} records." + Style.RESET_ALL)
-
-    redis_conn.bulk_push_list_of_dicts(list_key="short_call", list_of_dicts=result)
+    if result:
+        redis_conn.bulk_push_list_of_dicts(list_key="short_call", list_of_dicts=result)

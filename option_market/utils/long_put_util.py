@@ -77,5 +77,5 @@ def long_put(option_data, redis_conn):
             result.append(document)
 
     print(Fore.GREEN + f"long_put, {len(result)} records." + Style.RESET_ALL)
-
-    redis_conn.bulk_push_list_of_dicts(list_key="long_put", list_of_dicts=result)
+    if result:
+        redis_conn.bulk_push_list_of_dicts(list_key="long_put", list_of_dicts=result)
