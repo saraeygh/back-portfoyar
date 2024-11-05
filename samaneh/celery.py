@@ -106,16 +106,16 @@ FUTURE_MARKET_SCHEDULE = {
     },
 }
 
-GLOBAL_MARKET_SCHEDULE = {
-    "calculate_commodity_means_task_global": {
-        "task": "calculate_commodity_means_task_global",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3, 4, 5",
-            hour="7",
-            minute="10",
-        ),
-    },
-}
+# GLOBAL_MARKET_SCHEDULE = {
+#     "calculate_commodity_means_task_global": {
+#         "task": "calculate_commodity_means_task_global",
+#         "schedule": crontab(
+#             day_of_week="6, 0, 1, 2, 3, 4, 5",
+#             hour="7",
+#             minute="10",
+#         ),
+#     },
+# }
 
 OPTION_MARKET_SCHEDULE = {
     "update_option_data_from_tse_task": {
@@ -255,7 +255,7 @@ PROCESS_TRANSACTIONS_BASED_ON_VOLUME_CHANGE_AND_COEFFICIENETS = {
 app.conf.beat_schedule = {
     **CORE_SCHEDULE,
     **DOMESTIC_MARKET_SCHEDULE,
-    **GLOBAL_MARKET_SCHEDULE,
+    # **GLOBAL_MARKET_SCHEDULE,
     **OPTION_MARKET_SCHEDULE,
     **STOCK_MARKET_SCHEDULE,
     **FUTURE_MARKET_SCHEDULE,

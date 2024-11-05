@@ -20,6 +20,7 @@ DEFAULT_INSTALLED_APPS = [
 ]
 MANUALLY_INSTALLED_APPS = [
     "account.apps.AccountConfig",
+    "scheduler.apps.SchedulerConfig",
     "core.apps.CoreConfig",
     "domestic_market.apps.DomesticMarketConfig",
     "favorite.apps.FavoriteConfig",

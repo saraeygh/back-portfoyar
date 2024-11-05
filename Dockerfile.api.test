@@ -47,6 +47,7 @@ RUN ["python", "manage.py", "makemigrations"]
 
 # GRANT EXCUTE PERMISSSION TO ENTRYPOINTS FILES
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
+RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/worker_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/beat_test.sh"]
 

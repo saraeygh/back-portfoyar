@@ -88,10 +88,12 @@ def user_generator():
 
 
 from core.tasks import collect_user_stats
+from scheduler.portfoyar_scheduler_util import portfoyar_scheduler
 
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
+        portfoyar_scheduler()
         # collect_user_stats()
         # stock_option_price_spread()
         # stock_value_history()
@@ -119,3 +121,4 @@ class TestView(APIView):
 
         # user_generator()
         pass
+        print("JOB CREATED")

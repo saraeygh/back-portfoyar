@@ -74,7 +74,7 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
 
 
 @task_timing
-@shared_task(name="calculate_commodity_means_task_global")
+# @shared_task(name="calculate_commodity_means_task_global")
 def calculate_commodity_means_global():
     commodity_id_list = list(GlobalCommodity.objects.all().values_list("id", flat=True))
 
