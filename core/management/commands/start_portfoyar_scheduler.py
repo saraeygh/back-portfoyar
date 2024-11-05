@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from scheduler.portfoyar_scheduler_util import portfoyar_scheduler
+from core.portfoyar_scheduler_util import portfoyar_scheduler
 
 
 class Command(BaseCommand):
