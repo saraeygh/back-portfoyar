@@ -5,7 +5,12 @@ import pandas as pd
 from core.models import FeatureToggle, ACTIVE
 
 from core.configs import OPTION_REDIS_DB
-from core.utils import get_http_response, replace_arabic_letters_pd, MARKET_STATE
+from core.utils import (
+    MARKET_STATE,
+    get_http_response,
+    replace_arabic_letters_pd,
+    is_scheduled,
+)
 from stock_market.utils import (
     MAIN_MARKET_TYPE_DICT,
     TSETMC_REQUEST_HEADERS,
@@ -52,6 +57,10 @@ def add_link(row) -> str:
 @task_timing
 @shared_task(name="update_option_data_from_tse_task")
 def update_option_data_from_tse():
+
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
+        return
+
     check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
     for market_type_num, _ in MAIN_MARKET_TYPE_DICT.items():
         if check_market_state.state == ACTIVE:

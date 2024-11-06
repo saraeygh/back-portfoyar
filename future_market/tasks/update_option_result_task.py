@@ -4,7 +4,7 @@ import jdatetime
 from celery import shared_task
 
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface, task_timing
+from core.utils import RedisInterface, task_timing, is_scheduled
 
 from future_market.models import OPTION_INFO
 from future_market.utils import (
@@ -78,6 +78,9 @@ def shorten_option_symbol(row, col_name):
 @task_timing
 @shared_task(name="update_option_result_task")
 def update_option_result():
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17):
+        return
+
     option_data = json.loads(redis_conn.client.get(name=OPTION_INFO))
     option_data = pd.DataFrame(option_data)
 

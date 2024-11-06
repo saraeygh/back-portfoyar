@@ -100,7 +100,7 @@ class TestView(APIView):
         # update_option_result()
         # update_future_info()
         # update_base_equity()
-        # update_future()
+        update_future()
         # get_options_base_equity_info()
         # populate_option_strategy()
         # calculate_producers_yearly_value()

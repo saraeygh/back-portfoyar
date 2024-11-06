@@ -10,6 +10,7 @@ app = Celery("samaneh", broker=f"redis://{REDIS_SERVICE_NAME}:6379/0")
 
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
+
 CORE_SCHEDULE = {
     "collect_user_stats_task": {
         "task": "collect_user_stats_task",
@@ -90,19 +91,11 @@ FUTURE_MARKET_SCHEDULE = {
     },
     "update_future_task": {
         "task": "update_future_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3, 4",
-            hour="10-17",
-            minute="*/1",
-        ),
+        "schedule": 15,
     },
     "update_option_result_task": {
         "task": "update_option_result_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="10-17",
-            minute="*/1",
-        ),
+        "schedule": 15,
     },
 }
 
@@ -120,11 +113,7 @@ GLOBAL_MARKET_SCHEDULE = {
 OPTION_MARKET_SCHEDULE = {
     "update_option_data_from_tse_task": {
         "task": "update_option_data_from_tse_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/1",
-        ),
+        "schedule": 15,
     },
     "get_option_history_task": {
         "task": "get_option_history_task",
@@ -229,29 +218,6 @@ STOCK_MARKET_SCHEDULE = {
 }
 
 
-SAVE_OPTIONS_BASED_ON_DIFFERENT_VOLUME_COEFFICIENTS = {
-    "save_options_based_on_volume_comparison_with_different_coefficienets": {
-        "task": "save_options_based_on_volume_comparison_with_different_coefficienets",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",  # Monday to Friday (0=Sunday, 6=Saturday)
-            hour=f"8-13",  # Specify the hour range (e.g., "8-17" for 8 AM to 5 PM)
-            minute="*/5",  # Every minute within the specified hours
-        ),
-    }
-}
-
-
-PROCESS_TRANSACTIONS_BASED_ON_VOLUME_CHANGE_AND_COEFFICIENETS = {
-    "process_transactions_based_on_coefficients_and_volume_change_with_respect_to_the_last_transaction": {
-        "task": "process_transactions_based_on_coefficients_and_volume_change_with_respect_to_the_last_transaction",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",  # Monday to Friday (0=Sunday, 6=Saturday)
-            hour=f"8-13",  # Specify the hour range (e.g., "8-17" for 8 AM to 5 PM)
-            minute="*/5",  # Every minute within the specified hours
-        ),
-    }
-}
-
 app.conf.beat_schedule = {
     **CORE_SCHEDULE,
     **DOMESTIC_MARKET_SCHEDULE,
@@ -259,6 +225,4 @@ app.conf.beat_schedule = {
     **OPTION_MARKET_SCHEDULE,
     **STOCK_MARKET_SCHEDULE,
     **FUTURE_MARKET_SCHEDULE,
-    # **SAVE_OPTIONS_BASED_ON_DIFFERENT_VOLUME_COEFFICIENTS,
-    # **PROCESS_TRANSACTIONS_BASED_ON_VOLUME_CHANGE_AND_COEFFICIENETS,
 }

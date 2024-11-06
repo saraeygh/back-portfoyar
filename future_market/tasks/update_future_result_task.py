@@ -3,8 +3,10 @@ import pandas as pd
 from celery import shared_task
 from core.utils import (
     RedisInterface,
+    MONTHLY_INTEREST_RATE,
     task_timing,
     get_deviation_percent,
+    is_scheduled,
 )
 from core.models import FeatureToggle
 from core.configs import (
@@ -211,8 +213,13 @@ FUTURE_STRATEGIES = {
 @shared_task(name="update_future_task")
 def update_future():
 
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17):
+        return
+
     try:
-        monthly_interest_rate = FeatureToggle.objects.get(name=MONTHLY_INTEREST_RATE)
+        monthly_interest_rate = FeatureToggle.objects.get(
+            name=MONTHLY_INTEREST_RATE["name"]
+        )
         monthly_interest_rate = float(monthly_interest_rate.value)
     except Exception:
         monthly_interest_rate = 0
