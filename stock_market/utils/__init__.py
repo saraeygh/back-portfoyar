@@ -22,12 +22,14 @@ from .used_dicts_util import (
     HISTORY_COLUMN_RENAME,
     INDIVIDUAL_LEGAL_HISTORY_COLUMN_RENAME,
     VOLUME_CHANGE_DICT,
+    MARKET_WATCH_COLS,
+    INDIVIDUAL_LEGAL_COLS,
 )
 from .update_stock_raw_history_util import update_stock_raw_history
 from .update_stock_adjsuted_history_util import (
     update_stock_adjusted_history,
 )
-from .get_market_state_util import get_market_state
+from .get_market_state_util import get_market_state, is_market_open
 from .get_last_market_watch_data_util import get_last_market_watch_data
 from .stock_recommendation_util import stock_recommendation
 from .get_default_recomm_configs_util import (

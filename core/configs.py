@@ -50,11 +50,9 @@ OPTION_PHYSICAL_SETTLEMENT_FEE = 0.0005
 BASE_EQUITY_BUY_FEE = 0.003712
 BASE_EQUITY_SELL_FEE = 0.0088
 
-# SCHEDULER APP
-THREAD_POOL_EXECUTER_WORKERS = 10
-PROCESS_POOL_EXECUTER_WORKERS = 3
-
 # STOCK APP
+STOCK_REDIS_DB = 5
+MARKET_WATCH_REDIS_KEY = "market_watch"
 STOCK_DB = "stock"
 STOCK_NA_ROI = -1000
 STOCK_TOP_500_LIMIT = 500
@@ -65,6 +63,25 @@ NO_HISTORY_DATE = "NHD"
 STOCK_VALUE_CHANGE_DURATION = 30  # DAYS
 STOCK_OPTION_STRIKE_DEVIATION = 5  # PERCENT
 DEFAULT_RECOMMENDATION_CONFIG_NAME = "portfoyar_admin_default_recommendation_configs"
+MARKET_WATCH_URL = (
+    "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?"
+    "market=0&"
+    "industrialGroup=&"
+    "paperTypes[0]=1&"
+    "paperTypes[1]=2&"
+    "paperTypes[2]=3&"
+    "paperTypes[3]=4&"
+    "paperTypes[4]=5&"
+    "paperTypes[5]=6&"
+    "paperTypes[6]=7&"
+    "paperTypes[7]=8&"
+    "paperTypes[8]=9&"
+    "showTraded=true&"
+    "withBestLimits=true&"
+    "hEven=0&"
+    "RefID=0"
+)
+CLIENT_TYPE_URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
 
 # COMMON
 # DOMESTIC & GLOBAL MEAN DEVIATION

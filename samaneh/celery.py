@@ -143,6 +143,10 @@ OPTION_MARKET_SCHEDULE = {
 
 
 STOCK_MARKET_SCHEDULE = {
+    "update_market_watch_task": {
+        "task": "update_market_watch_task",
+        "schedule": 12,
+    },
     "stock_market_watch_task": {
         "task": "stock_market_watch_task",
         "schedule": crontab(

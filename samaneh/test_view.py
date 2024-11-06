@@ -19,6 +19,7 @@ from stock_market.tasks import (
     stock_market_watch,
     stock_value_history,
     stock_option_price_spread,
+    update_market_watch,
 )
 from stock_market.utils import (
     stock_recommendation,
@@ -100,7 +101,7 @@ class TestView(APIView):
         # update_option_result()
         # update_future_info()
         # update_base_equity()
-        update_future()
+        # update_future()
         # get_options_base_equity_info()
         # populate_option_strategy()
         # calculate_producers_yearly_value()
@@ -116,6 +117,6 @@ class TestView(APIView):
         # config = get_recommendation_config(user=request.user)
         # stock_recommendation(config=config)
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
-
+        update_market_watch()
         # user_generator()
         pass

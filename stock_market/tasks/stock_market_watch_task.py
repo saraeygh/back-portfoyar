@@ -10,11 +10,11 @@ from stock_market.utils import (
     get_market_state,
 )
 from core.utils import (
+    MongodbInterface,
+    MARKET_STATE,
     task_timing,
     get_http_response,
-    MongodbInterface,
     replace_arabic_letters_pd,
-    MARKET_STATE,
 )
 from core.models import FeatureToggle, ACTIVE
 from core.configs import (

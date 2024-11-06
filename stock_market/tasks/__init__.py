@@ -12,3 +12,4 @@ from .stock_value_history_task import stock_value_history
 from .stock_value_change_task import stock_value_change
 from .stock_option_value_change_task import stock_option_value_change
 from .stock_option_price_spread_task import stock_option_price_spread
+from .update_market_watch_task import update_market_watch

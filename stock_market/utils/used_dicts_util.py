@@ -140,3 +140,46 @@ VOLUME_CHANGE_DICT = {
     "pc": "last_price_change",
     "pcpc": "closing_price_change",
 }
+
+
+MARKET_WATCH_COLS = {
+    "lva": "symbol",
+    "lvc": "name",
+    "pmd": "buy_price",
+    "pmo": "sell_price",
+    "qtj": "volume",
+    "pdv": "last_price",
+    "ztt": "trade_count",
+    "qtc": "value",
+    "bv": "base_volume",
+    "pc": "last_price_change",
+    "pcpc": "closing_price_change",
+    "pmn": "min_price",
+    "pmx": "max_price",
+    "py": "yesterday_price",
+    "pf": "first_price",
+    "pcl": "closing_price",
+    "vc": "vc",
+    "csv": "csv",
+    "insID": "ins_id",
+    "pMax": "valid_max_price",
+    "pMin": "valid_min_price",
+    "ztd": "share_count",
+    "blDs": "order_book",
+    "insCode": "ins_code",
+    "dEven": "dEven",
+    "hEven": "last_time",
+}
+
+
+INDIVIDUAL_LEGAL_COLS = {
+    "insCode": "ins_code",
+    "buy_CountI": "individual_buy_count",
+    "buy_I_Volume": "individual_buy_volume",
+    "buy_CountN": "legal_buy_count",
+    "buy_N_Volume": "legal_buy_volume",
+    "sell_CountI": "individual_sell_count",
+    "sell_I_Volume": "individual_sell_volume",
+    "sell_CountN": "legal_sell_count",
+    "sell_N_Volume": "legal_sell_volume",
+}

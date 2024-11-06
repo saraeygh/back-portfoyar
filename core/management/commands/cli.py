@@ -32,6 +32,7 @@ from option_market.tasks import (
 from option_market.utils import populate_all_option_strategy
 
 from stock_market.tasks import (
+    update_market_watch,
     get_monthly_activity_report_letter,
     stock_market_watch,
     update_stock_raw_adjusted_history,
@@ -172,6 +173,7 @@ class Command(BaseCommand):
                             Style.BRIGHT + "Stock market commands:",
                             "all) Run all commands" + Style.RESET_ALL,
                             Fore.BLUE + "1) Get monthly activity",
+                            "22) Update market watch (new)",
                             "2) Update market watch",
                             "3) Update instrument history",
                             "4) Update instrument info",
@@ -188,6 +190,7 @@ class Command(BaseCommand):
                         os.system(CLEAR_CMD)
                         match cmd:
                             case "all":
+                                update_market_watch()
                                 stock_market_watch()
                                 update_instrument_info()
                                 update_instrument_roi()
@@ -199,6 +202,8 @@ class Command(BaseCommand):
                                 get_monthly_activity_report_letter()
                             case "1":
                                 get_monthly_activity_report_letter()
+                            case "22":
+                                update_market_watch()
                             case "2":
                                 stock_market_watch()
                             case "3":

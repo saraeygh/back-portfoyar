@@ -1,10 +1,15 @@
 from core.utils import get_http_response
-from . import TSETMC_REQUEST_HEADERS
+
+from core.models import FeatureToggle, ACTIVE
+from core.utils import MARKET_STATE
+
+from . import MAIN_MARKET_TYPE_DICT, TSETMC_REQUEST_HEADERS
+from colorama import Fore, Style
 
 
-def get_market_state(market_type_num):
+def get_market_state(market):
     MARKET_OVERVIEW_URL = (
-        f"https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/{market_type_num}"
+        f"https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/{market}"
     )
     market_state = get_http_response(
         req_url=MARKET_OVERVIEW_URL, req_headers=TSETMC_REQUEST_HEADERS
@@ -17,3 +22,17 @@ def get_market_state(market_type_num):
         market_state = ""
 
     return market_state
+
+
+def is_market_open():
+    check_market = FeatureToggle.objects.get(name=MARKET_STATE["name"])
+    if check_market.state != ACTIVE:
+        return True
+
+    for market, _ in MAIN_MARKET_TYPE_DICT.items():
+        market_state = get_market_state(market)
+        if market_state == check_market.value:
+            return True
+
+    print(Fore.RED + "Market is closed." + Style.RESET_ALL)
+    return False
