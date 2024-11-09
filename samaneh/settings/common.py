@@ -11,6 +11,7 @@ SECRET_KEY = os.environ.setdefault(
 ALLOWED_HOSTS = ["*"]
 
 DEFAULT_INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -123,6 +124,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "samaneh.wsgi.application"
+ASGI_APPLICATION = "samaneh.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -215,18 +217,3 @@ LOGGING = {
         },
     },
 }
-
-# # EMAIL BACKEND SETTINS
-# EMAIL_BACKEND = os.environ.setdefault(
-#     "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
-# )
-# EMAIL_HOST = os.environ.setdefault("EMAIL_HOST", "smtp.gmail.com")
-# EMAIL_PORT = os.environ.setdefault("EMAIL_PORT", "587")
-# EMAIL_USE_TLS = os.environ.setdefault("EMAIL_USE_TLS", "True")
-# EMAIL_HOST_USER = os.environ.setdefault("EMAIL_HOST_USER", "armansmtptest@gmail.com")
-# EMAIL_HOST_PASSWORD = os.environ.setdefault(
-#     "EMAIL_HOST_PASSWORD", "gaux sxiy zhyf qhdx"
-# )
-# DEFAULT_FROM_EMAIL = os.environ.setdefault(
-#     "DEFAULT_FROM_EMAIL", "armansmtptest@gmail.com"
-# )
