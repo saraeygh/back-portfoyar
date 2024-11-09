@@ -1,15 +1,19 @@
 from celery import shared_task
 import pandas as pd
-from core.configs import STOCK_OPTION_STRIKE_DEVIATION, STOCK_DB, OPTION_REDIS_DB
+from core.configs import (
+    STOCK_OPTION_STRIKE_DEVIATION,
+    STOCK_DB,
+    OPTION_REDIS_DB,
+    AUTO_MODE,
+    MANUAL_MODE,
+)
 from core.utils import (
     RedisInterface,
     MongodbInterface,
-    MARKET_STATE,
     task_timing,
     get_deviation_percent,
     is_scheduled,
 )
-from core.models import FeatureToggle, ACTIVE
 
 from option_market.utils import (
     COMMON_OPTION_COLUMN,
@@ -17,12 +21,7 @@ from option_market.utils import (
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
 )
-from stock_market.utils import (
-    MAIN_MARKET_TYPE_DICT,
-    CALL_OPTION,
-    PUT_OPTION,
-    get_market_state,
-)
+from stock_market.utils import CALL_OPTION, PUT_OPTION
 
 from colorama import Fore, Style
 
@@ -221,14 +220,7 @@ def get_put_spreads(spreads):
     return spreads
 
 
-@task_timing
-@shared_task(name="stock_option_price_spread_task")
-def stock_option_price_spread():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=9, end=19):
-        return
-    print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
-
+def stock_option_price_spread_main():
     spreads = get_last_options()
     spreads_list = list()
     if not spreads.empty:
@@ -245,4 +237,14 @@ def stock_option_price_spread():
         )
         mongo_client.insert_docs_into_collection(documents=spreads_list)
 
-    print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="stock_option_price_spread_task")
+def stock_option_price_spread(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4], start=9, end=19
+    ):
+        print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
+        stock_option_price_spread_main()
+        print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)

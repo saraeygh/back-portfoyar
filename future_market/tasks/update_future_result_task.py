@@ -13,6 +13,8 @@ from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
     RIAL_TO_BILLION_TOMAN,
     FUTURE_REDIS_DB,
+    AUTO_MODE,
+    MANUAL_MODE,
 )
 from future_market.models import (
     BaseEquity,
@@ -209,13 +211,7 @@ FUTURE_STRATEGIES = {
 }
 
 
-@task_timing
-@shared_task(name="update_future_task")
-def update_future():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17):
-        return
-
+def update_future_main():
     try:
         monthly_interest_rate = FeatureToggle.objects.get(
             name=MONTHLY_INTEREST_RATE["name"]
@@ -248,3 +244,13 @@ def update_future():
         if strategy_result:
             serialized_data = json.dumps(strategy_result)
             redis_conn.client.set(strategy_key, serialized_data)
+
+
+@task_timing
+@shared_task(name="update_future_task")
+def update_future(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17
+    ):
+        update_future_main()

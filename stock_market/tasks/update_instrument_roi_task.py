@@ -2,7 +2,13 @@ import pandas as pd
 from celery import shared_task
 from colorama import Fore, Style
 
-from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, STOCK_NA_ROI
+from core.configs import (
+    STOCK_DB,
+    RIAL_TO_BILLION_TOMAN,
+    STOCK_NA_ROI,
+    AUTO_MODE,
+    MANUAL_MODE,
+)
 from core.utils import (
     MongodbInterface,
     task_timing,
@@ -144,15 +150,7 @@ def calculate_industry_duration_roi(durations: dict):
         mongo_client.insert_docs_into_collection(documents=industry_roi_list)
 
 
-@task_timing
-@shared_task(name="update_instrument_roi_task")
-def update_instrument_roi():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=9, end=19):
-        return
-
-    print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
-
+def update_instrument_roi_main():
     mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="instrument_info")
     instrument_info = mongo_client.collection.find({}, {"_id": 0})
     instrument_info = pd.DataFrame(instrument_info)
@@ -182,4 +180,14 @@ def update_instrument_roi():
 
     calculate_industry_duration_roi(durations=durations)
 
-    print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="update_instrument_roi_task")
+def update_instrument_roi(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4], start=9, end=19
+    ):
+        print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
+        update_instrument_roi_main()
+        print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)

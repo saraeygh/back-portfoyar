@@ -3,7 +3,7 @@ import pandas as pd
 import jdatetime
 from celery import shared_task
 
-from core.configs import FUTURE_REDIS_DB
+from core.configs import FUTURE_REDIS_DB, AUTO_MODE, MANUAL_MODE
 from core.utils import RedisInterface, task_timing, is_scheduled
 
 from future_market.models import OPTION_INFO
@@ -75,12 +75,7 @@ def shorten_option_symbol(row, col_name):
         return str(row.get(col_name))
 
 
-@task_timing
-@shared_task(name="update_option_result_task")
-def update_option_result():
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17):
-        return
-
+def update_option_result_main():
     option_data = json.loads(redis_conn.client.get(name=OPTION_INFO))
     option_data = pd.DataFrame(option_data)
 
@@ -113,3 +108,12 @@ def update_option_result():
         shorten_option_symbol, axis=1, args=("put_symbol",)
     )
     populate_all_strategy(option_data)
+
+
+@task_timing
+@shared_task(name="update_option_result_task")
+def update_option_result(run_mode: str = AUTO_MODE):
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17
+    ):
+        update_option_result_main()

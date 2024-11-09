@@ -7,6 +7,8 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
     RIAL_TO_MILLION_TOMAN,
     OPTION_REDIS_DB,
+    AUTO_MODE,
+    MANUAL_MODE,
 )
 
 from stock_market.utils import CALL_OPTION, PUT_OPTION, get_market_watch_data_from_redis
@@ -148,14 +150,7 @@ def add_last_update(row):
     return last_update
 
 
-@task_timing
-@shared_task(name="stock_option_value_change_task")
-def stock_option_value_change():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
-        return
-
-    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
+def stock_option_value_change_main():
 
     instrument_info = get_instrument_info()
     instrument_info = instrument_info[
@@ -240,4 +235,14 @@ def stock_option_value_change():
             )
             mongo_client.insert_docs_into_collection(documents=options)
 
-    print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="stock_option_value_change_task")
+def stock_option_value_change(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4], start=8, end=19
+    ):
+        print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
+        stock_option_value_change_main()
+        print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)

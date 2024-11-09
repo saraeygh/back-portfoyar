@@ -91,7 +91,7 @@ FUTURE_MARKET_SCHEDULE = {
     },
     "update_future_task": {
         "task": "update_future_task",
-        "schedule": 15,
+        "schedule": 14,
     },
     "update_option_result_task": {
         "task": "update_option_result_task",

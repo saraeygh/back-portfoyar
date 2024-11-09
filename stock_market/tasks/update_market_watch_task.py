@@ -14,6 +14,8 @@ from core.configs import (
     CLIENT_TYPE_URL,
     STOCK_REDIS_DB,
     MARKET_WATCH_REDIS_KEY,
+    AUTO_MODE,
+    MANUAL_MODE,
 )
 
 from stock_market.models import StockInstrument
@@ -63,17 +65,7 @@ def get_additional_info():
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-@task_timing
-@shared_task(name="update_market_watch_task")
-def update_market_watch():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
-        return
-    print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
-
-    if not is_market_open():
-        return
-
+def update_market_watch_main():
     additional_info = get_additional_info()
     market_watch = get_market_watch()
     market_watch = pd.merge(
@@ -107,4 +99,14 @@ def update_market_watch():
         list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
     )
 
-    print(Fore.GREEN + "Market watch updated" + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="update_market_watch_task")
+def update_market_watch(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or (
+        is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19) and is_market_open()
+    ):
+        print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
+        update_market_watch_main()
+        print(Fore.GREEN + "Market watch updated" + Style.RESET_ALL)

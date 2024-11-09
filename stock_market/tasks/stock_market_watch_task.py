@@ -13,6 +13,8 @@ from core.configs import (
     NO_DAILY_HISTORY,
     NO_HISTORY_DATE,
     STOCK_REDIS_DB,
+    AUTO_MODE,
+    MANUAL_MODE,
 )
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
@@ -158,16 +160,7 @@ def get_history(row, index_name):
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-@task_timing
-@shared_task(name="stock_market_watch_task")
-def stock_market_watch():
-
-    print(Fore.RED + " *** Updating market watch tables ..." + Style.RESET_ALL)
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
-        return
-    print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
-
+def stock_market_watch_main():
     market_watch = update_market_watch_data(get_market_watch_data_from_redis())
 
     if market_watch.empty:
@@ -223,4 +216,14 @@ def stock_market_watch():
 
         mongo_client.insert_docs_into_collection(documents=index_df)
 
-    print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="stock_market_watch_task")
+def stock_market_watch(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4], start=8, end=19
+    ):
+        print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
+        stock_market_watch_main()
+        print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)

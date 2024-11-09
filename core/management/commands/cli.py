@@ -5,6 +5,7 @@ from colorama import Fore, Style
 
 from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
+from core.configs import MANUAL_MODE
 from domestic_market.utils import get_dollar_price_history
 from domestic_market.tasks import (
     calculate_commodity_mean_domestic,
@@ -158,13 +159,13 @@ class Command(BaseCommand):
                         os.system(clear_cmd)
                         match cmd:
                             case "all":
-                                update_option_data_from_tse()
+                                update_option_data_from_tse(MANUAL_MODE)
                                 populate_all_option_strategy()
                                 get_option_history()
                                 populate_option_total_volume()
                                 option_volume_strategy_result()
                             case "1":
-                                update_option_data_from_tse()
+                                update_option_data_from_tse(MANUAL_MODE)
                             case "2":
                                 populate_all_option_strategy()
                             case "3":
@@ -198,33 +199,33 @@ class Command(BaseCommand):
                         os.system(clear_cmd)
                         match cmd:
                             case "all":
-                                update_market_watch()
-                                stock_market_watch()
+                                update_market_watch(MANUAL_MODE)
+                                stock_market_watch(MANUAL_MODE)
                                 update_instrument_info()
-                                update_instrument_roi()
+                                update_instrument_roi(MANUAL_MODE)
                                 update_stock_raw_adjusted_history()
                                 stock_value_history()
-                                stock_option_value_change()
-                                stock_option_price_spread()
+                                stock_option_value_change(MANUAL_MODE)
+                                stock_option_price_spread(MANUAL_MODE)
                                 get_monthly_activity_report_letter()
                             case "1":
                                 get_monthly_activity_report_letter()
                             case "22":
-                                update_market_watch()
+                                update_market_watch(MANUAL_MODE)
                             case "2":
-                                stock_market_watch()
+                                stock_market_watch(MANUAL_MODE)
                             case "3":
                                 update_stock_raw_adjusted_history()
                             case "4":
                                 update_instrument_info()
                             case "5":
-                                update_instrument_roi()
+                                update_instrument_roi(MANUAL_MODE)
                             case "6":
                                 stock_value_history()
                             case "8":
-                                stock_option_value_change()
+                                stock_option_value_change(MANUAL_MODE)
                             case "9":
-                                stock_option_price_spread()
+                                stock_option_price_spread(MANUAL_MODE)
                             case "10":
                                 update_stock_adjusted_history()
                             case "0":
@@ -247,16 +248,16 @@ class Command(BaseCommand):
                         match cmd:
                             case "all":
                                 update_base_equity()
-                                update_future()
-                                update_option_result()
+                                update_future(MANUAL_MODE)
+                                update_option_result(MANUAL_MODE)
                             case "1":
                                 update_derivative_info()
                             case "2":
                                 update_base_equity()
                             case "3":
-                                update_future()
+                                update_future(MANUAL_MODE)
                             case "4":
-                                update_option_result()
+                                update_option_result(MANUAL_MODE)
                             case "0":
                                 break
 

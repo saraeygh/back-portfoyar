@@ -1,7 +1,14 @@
 import jdatetime
 import pandas as pd
 
-from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, TO_MILLION, STOCK_REDIS_DB
+from core.configs import (
+    STOCK_DB,
+    RIAL_TO_BILLION_TOMAN,
+    TO_MILLION,
+    STOCK_REDIS_DB,
+    AUTO_MODE,
+    MANUAL_MODE,
+)
 from core.utils import RedisInterface, MongodbInterface, task_timing, is_scheduled
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 from celery import shared_task
@@ -35,14 +42,7 @@ def add_link(row):
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-@task_timing
-@shared_task(name="stock_value_change_task")
-def stock_value_change():
-
-    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
-        return
-    print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)
-
+def stock_value_change_main():
     value_change = get_market_watch_data_from_redis()
     value_change = value_change[
         value_change["paper_type"].isin(list(MAIN_PAPER_TYPE_DICT.keys()))
@@ -89,4 +89,14 @@ def stock_value_change():
     mongo_client.collection = mongo_client.db["value_change"]
     mongo_client.insert_docs_into_collection(documents=value_change)
 
-    print(Fore.GREEN + "Stock value change updated" + Style.RESET_ALL)
+
+@task_timing
+@shared_task(name="stock_value_change_task")
+def stock_value_change(run_mode: str = AUTO_MODE):
+
+    if run_mode == MANUAL_MODE or is_scheduled(
+        weekdays=[0, 1, 2, 3, 4], start=8, end=19
+    ):
+        print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)
+        stock_value_change_main()
+        print(Fore.GREEN + "Stock value change updated" + Style.RESET_ALL)
