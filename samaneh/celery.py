@@ -149,11 +149,7 @@ STOCK_MARKET_SCHEDULE = {
     },
     "stock_market_watch_task": {
         "task": "stock_market_watch_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/5",
-        ),
+        "schedule": 15,
     },
     "update_stock_raw_adjusted_history_task": {
         "task": "update_stock_raw_adjusted_history_task",
@@ -173,11 +169,7 @@ STOCK_MARKET_SCHEDULE = {
     },
     "update_instrument_roi_task": {
         "task": "update_instrument_roi_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="9-19",
-            minute="*/3",
-        ),
+        "schedule": 45,
     },
     "stock_value_history_task": {
         "task": "stock_value_history_task",
@@ -189,27 +181,15 @@ STOCK_MARKET_SCHEDULE = {
     },
     "stock_value_change_task": {
         "task": "stock_value_change_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/5",
-        ),
+        "schedule": 30,
     },
     "stock_option_value_change_task": {
         "task": "stock_option_value_change_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/5",
-        ),
+        "schedule": 30,
     },
     "stock_option_price_spread_task": {
         "task": "stock_option_price_spread_task",
-        "schedule": crontab(
-            day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/6",
-        ),
+        "schedule": 30,
     },
     "get_monthly_activity_report_letter_task": {
         "task": "get_monthly_activity_report_letter_task",

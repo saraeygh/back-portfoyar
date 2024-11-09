@@ -9,6 +9,8 @@ from core.configs import (
 )
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface, task_timing
+
+from . import stock_value_change
 from stock_market.models import StockInstrument, StockRawHistory
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
@@ -27,6 +29,9 @@ def convert_date_obj_to_str(record):
 @task_timing
 @shared_task(name="stock_value_history_task")
 def stock_value_history():
+
+    stock_value_change()
+
     main_paper_type = list(MAIN_PAPER_TYPE_DICT.keys())
     stocks = StockInstrument.objects.filter(paper_type__in=main_paper_type)
 
@@ -61,3 +66,5 @@ def stock_value_history():
 
     mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="history")
     mongo_client.insert_docs_into_collection(documents=duration_result_list)
+
+    stock_value_change()

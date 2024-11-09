@@ -117,6 +117,6 @@ class TestView(APIView):
         # config = get_recommendation_config(user=request.user)
         # stock_recommendation(config=config)
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
-        update_market_watch()
+        # update_market_watch()
         # user_generator()
         pass

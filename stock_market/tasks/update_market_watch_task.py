@@ -1,5 +1,6 @@
 from celery import shared_task
 import pandas as pd
+from colorama import Fore, Style
 
 from core.utils import (
     RedisInterface,
@@ -22,7 +23,6 @@ from stock_market.utils import (
     INDIVIDUAL_LEGAL_COLS,
     is_market_open,
 )
-from colorama import Fore, Style
 
 
 def get_market_watch():
@@ -69,6 +69,7 @@ def update_market_watch():
 
     if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
         return
+    print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
 
     if not is_market_open():
         return
@@ -97,6 +98,9 @@ def update_market_watch():
     market_watch["symbol"] = market_watch.apply(
         replace_arabic_letters_pd, axis=1, args=("symbol",)
     )
+
+    market_watch["market_type"] = market_watch["market_type"].astype(int)
+    market_watch["paper_type"] = market_watch["paper_type"].astype(int)
 
     market_watch = market_watch.to_dict(orient="records")
     redis_conn.bulk_push_list_of_dicts(

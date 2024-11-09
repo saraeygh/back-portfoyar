@@ -126,7 +126,7 @@ TSETMC_REQUEST_HEADERS = {
     "sec-ch-ua-platform": "Linux",
 }
 
-VOLUME_CHANGE_DICT = {
+VOLUME_CHANGE_COLS = {
     "insCode": "ins_code",
     "lva": "symbol",
     "lvc": "name",

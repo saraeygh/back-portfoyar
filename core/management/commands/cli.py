@@ -39,11 +39,19 @@ from stock_market.tasks import (
     update_instrument_info,
     update_instrument_roi,
     stock_value_history,
-    stock_value_change,
     stock_option_value_change,
     stock_option_price_spread,
 )
 from stock_market.utils import update_stock_adjusted_history
+
+
+def get_clear_cmd():
+    if platform.system() == "Linux":
+        clear_cmd = "clear"
+    else:
+        clear_cmd = "cls"
+
+    return clear_cmd
 
 
 class Command(BaseCommand):
@@ -52,12 +60,9 @@ class Command(BaseCommand):
     help = "Portfoyar CLI"
 
     def handle(self, *args, **options):
-        # DEFINE OS CLEAR COMMAND LINE
-        if platform.system() == "Linux":
-            CLEAR_CMD = "clear"
-        else:
-            CLEAR_CMD = "cls"
+        clear_cmd = get_clear_cmd()
 
+        #######################################################################
         while True:  # MAIN MENU
             print(
                 Style.BRIGHT + "Choose app:",
@@ -71,9 +76,10 @@ class Command(BaseCommand):
                 sep="\n",
             )
             cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-            os.system(CLEAR_CMD)
+            os.system(clear_cmd)
 
             match cmd:
+                ###############################################################
                 case "1":  # DOMESTIC MARKET
                     while True:
                         print(
@@ -90,7 +96,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 get_dollar_daily_price()
@@ -115,6 +121,7 @@ class Command(BaseCommand):
                                 calculate_producers_yearly_value()
                             case "0":
                                 break
+                ###############################################################
                 case "2":  # GLOBAL MARKET
                     while True:
                         print(
@@ -125,7 +132,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 calculate_commodity_means_global()
@@ -133,6 +140,7 @@ class Command(BaseCommand):
                                 calculate_commodity_means_global()
                             case "0":
                                 break
+                ###############################################################
                 case "3":  # OPTION MARKET
                     while True:
                         print(
@@ -147,7 +155,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 update_option_data_from_tse()
@@ -167,6 +175,7 @@ class Command(BaseCommand):
                                 option_volume_strategy_result()
                             case "0":
                                 break
+                ###############################################################
                 case "4":  # STOCK MARKET
                     while True:
                         print(
@@ -178,8 +187,7 @@ class Command(BaseCommand):
                             "3) Update instrument history",
                             "4) Update instrument info",
                             "5) Update instrument ROI",
-                            "6) Stock value history",
-                            "7) Stock value change",
+                            "6) Stock value change",
                             "8) Stock option value change",
                             "9) Stock option price spread",
                             "10) Update stock adjusted history",
@@ -187,7 +195,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 update_market_watch()
@@ -196,7 +204,6 @@ class Command(BaseCommand):
                                 update_instrument_roi()
                                 update_stock_raw_adjusted_history()
                                 stock_value_history()
-                                stock_value_change()
                                 stock_option_value_change()
                                 stock_option_price_spread()
                                 get_monthly_activity_report_letter()
@@ -214,8 +221,6 @@ class Command(BaseCommand):
                                 update_instrument_roi()
                             case "6":
                                 stock_value_history()
-                            case "7":
-                                stock_value_change()
                             case "8":
                                 stock_option_value_change()
                             case "9":
@@ -224,7 +229,7 @@ class Command(BaseCommand):
                                 update_stock_adjusted_history()
                             case "0":
                                 break
-
+                ###############################################################
                 case "5":  # FUTURE MARKET
                     while True:
                         print(
@@ -238,7 +243,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 update_base_equity()
@@ -266,7 +271,7 @@ class Command(BaseCommand):
                             sep="\n",
                         )
                         cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-                        os.system(CLEAR_CMD)
+                        os.system(clear_cmd)
                         match cmd:
                             case "all":
                                 clear_redis_cache()

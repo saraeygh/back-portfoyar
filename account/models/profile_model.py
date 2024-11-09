@@ -7,7 +7,6 @@ from django.contrib import admin
 
 import jdatetime
 from persiantools.jdatetime import JalaliDateTime
-from rest_framework.authtoken.models import Token
 
 from core.models import TimeStampMixin
 

@@ -1,7 +1,7 @@
 from celery import shared_task
 import pandas as pd
-from core.utils import MongodbInterface, RedisInterface, task_timing, MARKET_STATE
-from core.models import FeatureToggle, ACTIVE
+from core.utils import MongodbInterface, RedisInterface, is_scheduled, task_timing
+
 from core.configs import (
     STOCK_DB,
     RIAL_TO_BILLION_TOMAN,
@@ -9,13 +9,8 @@ from core.configs import (
     OPTION_REDIS_DB,
 )
 
-from stock_market.utils import (
-    MAIN_MARKET_TYPE_DICT,
-    MARKET_WATCH_COLUMN_RENAME,
-    get_last_market_watch_data,
-    get_market_state,
-)
-from stock_market.utils import CALL_OPTION, PUT_OPTION
+from stock_market.utils import CALL_OPTION, PUT_OPTION, get_market_watch_data_from_redis
+
 from colorama import Fore, Style
 
 
@@ -157,95 +152,92 @@ def add_last_update(row):
 @shared_task(name="stock_option_value_change_task")
 def stock_option_value_change():
 
-    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
-    for market_type in list(MAIN_MARKET_TYPE_DICT.keys()):
-        if check_market_state.state == ACTIVE:
-            market_state = get_market_state(market_type)
-            if market_state != check_market_state.value:
-                print(Fore.RED + "market is closed!" + Style.RESET_ALL)
-                continue
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
+        return
 
-        instrument_info = get_instrument_info()
-        instrument_info = instrument_info[
+    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
+
+    instrument_info = get_instrument_info()
+    instrument_info = instrument_info[
+        [
+            "ins_code",
+            "symbol",
+            "name",
+            "sector_pe",
+            "eps",
+            "psr",
+            "total_share",
+            "month_mean_volume",
+        ]
+    ]
+    option_types = [CALL_OPTION, PUT_OPTION]
+    for option_type in option_types:
+        options = get_last_options(option_type)
+
+        if options.empty:
+            return
+
+        left_on = "call_ins_code"
+        if option_type == PUT_OPTION:
+            left_on = "put_ins_code"
+        options = pd.merge(
+            left=options,
+            right=instrument_info,
+            left_on=left_on,
+            right_on="ins_code",
+            how="left",
+        )
+
+        options.dropna(inplace=True)
+        options = get_asset_options_value_change(
+            options=options, option_type=option_type
+        )
+        options = options[options["value_change"] != 0]
+
+        options = pd.merge(left=options, right=instrument_info, on="symbol", how="left")
+        options = options[
             [
                 "ins_code",
                 "symbol",
                 "name",
-                "sector_pe",
-                "eps",
-                "psr",
+                "last_mean",
+                "month_mean",
+                "value_change",
                 "total_share",
-                "month_mean_volume",
+                "sector_pe",
+                "psr",
+                "eps",
             ]
         ]
-        option_types = [CALL_OPTION, PUT_OPTION]
-        for option_type in option_types:
-            options = get_last_options(option_type)
 
-            if options.empty:
-                return
+        last_data = get_market_watch_data_from_redis()
 
-            left_on = "call_ins_code"
-            if option_type == PUT_OPTION:
-                left_on = "put_ins_code"
-            options = pd.merge(
-                left=options,
-                right=instrument_info,
-                left_on=left_on,
-                right_on="ins_code",
-                how="left",
+        last_data["daily_roi"] = (
+            last_data["last_price_change"] / last_data["yesterday_price"]
+        ) * 100
+        last_data = last_data[["ins_code", "closing_price", "daily_roi", "last_time"]]
+        options = pd.merge(left=options, right=last_data, on="ins_code", how="left")
+
+        options["link"] = options.apply(add_link, axis=1)
+        options["pe"] = options.apply(add_pe, axis=1)
+        options["ps"] = options.apply(add_ps, axis=1)
+        options["market_cap"] = options.apply(add_market_cap, axis=1)
+        options.dropna(inplace=True)
+        options["last_time"] = options["last_time"].astype(int)
+        options["last_update"] = options.apply(add_last_update, axis=1)
+        options = options.to_dict(orient="records")
+
+        if options:
+            if option_type == CALL_OPTION:
+                collection_name = "call_value_change"
+            elif option_type == PUT_OPTION:
+                collection_name = "put_value_change"
+            else:
+                continue
+
+            mongo_client = MongodbInterface(
+                db_name=STOCK_DB, collection_name=collection_name
             )
+            mongo_client.insert_docs_into_collection(documents=options)
 
-            options.dropna(inplace=True)
-            options = get_asset_options_value_change(
-                options=options, option_type=option_type
-            )
-            options = options[options["value_change"] != 0]
-
-            options = pd.merge(
-                left=options, right=instrument_info, on="symbol", how="left"
-            )
-            options = options[
-                [
-                    "ins_code",
-                    "symbol",
-                    "name",
-                    "last_mean",
-                    "month_mean",
-                    "value_change",
-                    "total_share",
-                    "sector_pe",
-                    "psr",
-                    "eps",
-                ]
-            ]
-
-            last_data = get_last_market_watch_data()
-            last_data["daily_roi"] = (last_data["pc"] / last_data["py"]) * 100
-            last_data = last_data.rename(columns=MARKET_WATCH_COLUMN_RENAME)
-            last_data = last_data[
-                ["ins_code", "closing_price", "daily_roi", "last_time"]
-            ]
-            options = pd.merge(left=options, right=last_data, on="ins_code", how="left")
-
-            options["link"] = options.apply(add_link, axis=1)
-            options["pe"] = options.apply(add_pe, axis=1)
-            options["ps"] = options.apply(add_ps, axis=1)
-            options["market_cap"] = options.apply(add_market_cap, axis=1)
-            options.dropna(inplace=True)
-            options["last_update"] = options.apply(add_last_update, axis=1)
-            options = options.to_dict(orient="records")
-
-            if options:
-                if option_type == CALL_OPTION:
-                    collection_name = "call_value_change"
-                elif option_type == PUT_OPTION:
-                    collection_name = "put_value_change"
-                else:
-                    continue
-
-                mongo_client = MongodbInterface(
-                    db_name=STOCK_DB, collection_name=collection_name
-                )
-                mongo_client.insert_docs_into_collection(documents=options)
+    print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)

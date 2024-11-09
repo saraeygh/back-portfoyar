@@ -7,6 +7,7 @@ from core.utils import (
     MARKET_STATE,
     task_timing,
     get_deviation_percent,
+    is_scheduled,
 )
 from core.models import FeatureToggle, ACTIVE
 
@@ -224,30 +225,24 @@ def get_put_spreads(spreads):
 @shared_task(name="stock_option_price_spread_task")
 def stock_option_price_spread():
 
-    print(Fore.BLUE + "Checking stock price spread ..." + Style.RESET_ALL)
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
-    for market_type in list(MAIN_MARKET_TYPE_DICT.keys()):
-        if check_market_state.state == ACTIVE:
-            market_state = get_market_state(market_type)
-            if market_state != check_market_state.value:
-                print(Fore.RED + "market is closed!" + Style.RESET_ALL)
-                continue
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=9, end=19):
+        return
+    print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
 
-        spreads = get_last_options()
-        spreads_list = list()
-        if not spreads.empty:
-            call_spreads = get_call_spreads(spreads)
-            put_spreads = get_put_spreads(spreads)
+    spreads = get_last_options()
+    spreads_list = list()
+    if not spreads.empty:
+        call_spreads = get_call_spreads(spreads)
+        put_spreads = get_put_spreads(spreads)
+    else:
+        spreads = pd.DataFrame()
+        spreads = spreads.to_dict(orient="records")
 
-        else:
-            spreads = pd.DataFrame()
-            spreads = spreads.to_dict(orient="records")
+    spreads_list = call_spreads + put_spreads
+    if spreads_list:
+        mongo_client = MongodbInterface(
+            db_name=STOCK_DB, collection_name="option_price_spread"
+        )
+        mongo_client.insert_docs_into_collection(documents=spreads_list)
 
-        spreads_list = call_spreads + put_spreads
-        if spreads_list:
-            mongo_client = MongodbInterface(
-                db_name=STOCK_DB, collection_name="option_price_spread"
-            )
-            mongo_client.insert_docs_into_collection(documents=spreads_list)
-
-            return
+    print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)

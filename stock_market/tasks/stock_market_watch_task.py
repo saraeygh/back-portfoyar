@@ -2,31 +2,20 @@ from celery import shared_task
 import pandas as pd
 import numpy as np
 import jdatetime
-from stock_market.utils import (
-    MAIN_MARKET_TYPE_DICT,
-    MAIN_PAPER_TYPE_DICT,
-    MARKET_WATCH_COLUMN_RENAME,
-    TSETMC_REQUEST_HEADERS,
-    get_market_state,
-)
-from core.utils import (
-    MongodbInterface,
-    MARKET_STATE,
-    task_timing,
-    get_http_response,
-    replace_arabic_letters_pd,
-)
-from core.models import FeatureToggle, ACTIVE
+from tqdm import tqdm
+from colorama import Fore, Style
+
+from core.utils import RedisInterface, MongodbInterface, task_timing, is_scheduled
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
     STOCK_DB,
     NO_DAILY_HISTORY,
     NO_HISTORY_DATE,
+    STOCK_REDIS_DB,
 )
-from tqdm import tqdm
 
-from colorama import Fore, Style
+from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
 
 def get_time(row):
@@ -71,96 +60,70 @@ def add_link(row):
     return link
 
 
-def update_market_watch_data(
-    market_type: int, market_type_name: str, paper_type: int, paper_type_name: str
-):
-    URL = (
-        "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch"
-        f"?market={market_type}&industrialGroup="
-        f"&paperTypes%5B0%5D={paper_type}"
-        "&showTraded=true&withBestLimits=true"
-    )
-    market_watch_df = get_http_response(req_url=URL, req_headers=TSETMC_REQUEST_HEADERS)
-    try:
-        market_watch_df = market_watch_df.json()
-        market_watch_df = market_watch_df.get("marketwatch")
-        market_watch_df = pd.DataFrame(market_watch_df)
-    except Exception:
-        market_watch_df = pd.DataFrame()
+def update_market_watch_data(market_watch: pd.DataFrame):
+    market_watch = market_watch[
+        market_watch["paper_type"].isin(list(MAIN_PAPER_TYPE_DICT.keys()))
+    ]
 
-    URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
-    person_legal_df = get_http_response(req_url=URL, req_headers=TSETMC_REQUEST_HEADERS)
-    try:
-        person_legal_df = person_legal_df.json()
-        person_legal_df = person_legal_df.get("clientTypeAllDto")
-        person_legal_df = pd.DataFrame(person_legal_df)
-    except Exception:
-        person_legal_df = pd.DataFrame()
+    market_watch["last_time"] = market_watch.apply(get_time, axis=1)
+    market_watch["last_date"] = str(jdatetime.date.today())
 
-    if market_watch_df.empty or person_legal_df.empty:
-        return
+    market_watch["link"] = market_watch.apply(add_link, axis=1)
 
-    merged_df = pd.merge(market_watch_df, person_legal_df, on="insCode", how="left")
-    del market_watch_df
-    del person_legal_df
-
-    merged_df.rename(columns=MARKET_WATCH_COLUMN_RENAME, inplace=True)
-
-    merged_df["last_time"] = merged_df.apply(get_time, axis=1)
-    merged_df["last_date"] = str(jdatetime.date.today())
-
-    merged_df["link"] = merged_df.apply(add_link, axis=1)
-
-    merged_df["buy_pressure"] = (
+    market_watch["buy_pressure"] = (
         (
-            (merged_df["person_buy_volume"] / merged_df["person_buy_count"])
-            * merged_df["closing_price"]
+            (
+                market_watch["individual_buy_count"]
+                / market_watch["individual_buy_count"]
+            )
+            * market_watch["closing_price"]
         )
     ) / (
-        (merged_df["person_sell_volume"] / merged_df["person_sell_count"])
-        * merged_df["closing_price"]
+        (market_watch["individual_sell_volume"] / market_watch["individual_sell_count"])
+        * market_watch["closing_price"]
     )
 
-    merged_df["money_flow"] = (
-        (merged_df["person_buy_volume"] - merged_df["person_sell_volume"])
-        * merged_df["closing_price"]
+    market_watch["money_flow"] = (
+        (market_watch["individual_buy_volume"] - market_watch["individual_sell_volume"])
+        * market_watch["closing_price"]
     ) / RIAL_TO_BILLION_TOMAN
 
-    merged_df["buy_value"] = (
-        (merged_df["person_buy_volume"] * merged_df["closing_price"])
-        / merged_df["person_buy_count"]
+    market_watch["buy_value"] = (
+        (market_watch["individual_buy_volume"] * market_watch["closing_price"])
+        / market_watch["individual_buy_count"]
     ) / RIAL_TO_BILLION_TOMAN
 
-    merged_df["buy_order_value"] = merged_df.apply(calculate_buy_order_value, axis=1)
-
-    merged_df["buy_ratio"] = merged_df["buy_order_value"] / (
-        merged_df["volume"] * merged_df["closing_price"]
+    market_watch["buy_order_value"] = market_watch.apply(
+        calculate_buy_order_value, axis=1
     )
 
-    merged_df["sell_order_value"] = merged_df.apply(calculate_sell_order_value, axis=1)
-
-    merged_df["sell_ratio"] = merged_df["sell_order_value"] / (
-        merged_df["volume"] * merged_df["closing_price"]
+    market_watch["buy_ratio"] = market_watch["buy_order_value"] / (
+        market_watch["volume"] * market_watch["closing_price"]
     )
 
-    merged_df["person_buy_volume"] = merged_df["person_buy_volume"] / TO_MILLION
-    merged_df["volume"] = merged_df["volume"] / TO_MILLION
-    merged_df["base_volume"] = merged_df["base_volume"] / TO_MILLION
-    merged_df["value"] = merged_df["value"] / RIAL_TO_BILLION_TOMAN
-    merged_df["last_price_change"] = (
-        merged_df["last_price_change"] / merged_df["yesterday_price"]
+    market_watch["sell_order_value"] = market_watch.apply(
+        calculate_sell_order_value, axis=1
+    )
+
+    market_watch["sell_ratio"] = market_watch["sell_order_value"] / (
+        market_watch["volume"] * market_watch["closing_price"]
+    )
+
+    market_watch["person_buy_volume"] = (
+        market_watch["individual_buy_volume"] / TO_MILLION
+    )
+    market_watch["volume"] = market_watch["volume"] / TO_MILLION
+    market_watch["base_volume"] = market_watch["base_volume"] / TO_MILLION
+    market_watch["value"] = market_watch["value"] / RIAL_TO_BILLION_TOMAN
+    market_watch["last_price_change"] = (
+        market_watch["last_price_change"] / market_watch["yesterday_price"]
     ) * 100
 
-    merged_df["closing_price_change"] = (
-        merged_df["closing_price_change"] / merged_df["yesterday_price"]
+    market_watch["closing_price_change"] = (
+        market_watch["closing_price_change"] / market_watch["yesterday_price"]
     ) * 100
 
-    merged_df["market_type"] = market_type
-    merged_df["market_type_name"] = market_type_name
-    merged_df["paper_type"] = paper_type
-    merged_df["paper_type_name"] = paper_type_name
-
-    return merged_df
+    return market_watch
 
 
 def check_update_status(row):
@@ -192,41 +155,23 @@ def get_history(row, index_name):
     return history
 
 
+redis_conn = RedisInterface(db=STOCK_REDIS_DB)
+
+
 @task_timing
 @shared_task(name="stock_market_watch_task")
 def stock_market_watch():
 
-    market_watch = pd.DataFrame()
-    check_market_state = FeatureToggle.objects.get(name=MARKET_STATE["name"])
-    for market_type_num, market_type_name in tqdm(
-        MAIN_MARKET_TYPE_DICT.items(), desc="MarketWatch", ncols=10
-    ):
-        if check_market_state.state == ACTIVE:
-            market_state = get_market_state(market_type_num)
-            if market_state != check_market_state.value:
-                print(Fore.RED + "Market is closed." + Style.RESET_ALL)
-                continue
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
+        return
+    print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
 
-        for paper_type_num, paper_type_name in MAIN_PAPER_TYPE_DICT.items():
-            watch_data = update_market_watch_data(
-                market_type=market_type_num,
-                market_type_name=market_type_name,
-                paper_type=paper_type_num,
-                paper_type_name=paper_type_name,
-            )
-            market_watch = pd.concat([market_watch, watch_data], axis=0)
-            del watch_data
+    market_watch = update_market_watch_data(get_market_watch_data_from_redis())
 
     if market_watch.empty:
         return
 
     market_watch.drop_duplicates(subset=["symbol"], keep="last", inplace=True)
-    market_watch["name"] = market_watch.apply(
-        replace_arabic_letters_pd, axis=1, args=("name",)
-    )
-    market_watch["symbol"] = market_watch.apply(
-        replace_arabic_letters_pd, axis=1, args=("symbol",)
-    )
 
     common_columns = [
         "ins_code",
@@ -243,9 +188,7 @@ def stock_market_watch():
         "last_price",
         "last_price_change",
         "market_type",
-        "market_type_name",
         "paper_type",
-        "paper_type_name",
     ]
     index_list = ["buy_pressure", "money_flow", "buy_value", "buy_ratio", "sell_ratio"]
     for index_name in tqdm(index_list, desc="Update indices", ncols=10):
@@ -277,3 +220,5 @@ def stock_market_watch():
         index_df = index_df.to_dict(orient="records")
 
         mongo_client.insert_docs_into_collection(documents=index_df)
+
+    print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)

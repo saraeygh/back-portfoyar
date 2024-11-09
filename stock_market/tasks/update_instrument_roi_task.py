@@ -1,8 +1,15 @@
 import pandas as pd
-from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, STOCK_NA_ROI
-from core.utils import MongodbInterface, task_timing, get_deviation_percent
-from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_last_market_watch_data
 from celery import shared_task
+from colorama import Fore, Style
+
+from core.configs import STOCK_DB, RIAL_TO_BILLION_TOMAN, STOCK_NA_ROI
+from core.utils import (
+    MongodbInterface,
+    task_timing,
+    get_deviation_percent,
+    is_scheduled,
+)
+from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
 
 def add_link(row):
@@ -141,16 +148,23 @@ def calculate_industry_duration_roi(durations: dict):
 @shared_task(name="update_instrument_roi_task")
 def update_instrument_roi():
 
+    if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=9, end=19):
+        return
+
+    print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
+
     mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="instrument_info")
     instrument_info = mongo_client.collection.find({}, {"_id": 0})
     instrument_info = pd.DataFrame(instrument_info)
 
-    last_data = get_last_market_watch_data()
+    last_data = get_market_watch_data_from_redis()
     if last_data.empty:
         return
 
-    last_data["daily_roi"] = (last_data["pc"] / last_data["py"]) * 100
-    last_data = last_data.rename(columns={"insCode": "ins_code", "pcl": "close_mean"})
+    last_data["daily_roi"] = (
+        last_data["last_price_change"] / last_data["yesterday_price"]
+    ) * 100
+    last_data["close_mean"] = last_data["closing_price"]
     last_data = last_data[["ins_code", "daily_roi", "close_mean"]]
 
     instrument_info = pd.merge(left=instrument_info, right=last_data, on="ins_code")
@@ -167,3 +181,5 @@ def update_instrument_roi():
     update_instrument_duration_roi(instrument_info=instrument_info)
 
     calculate_industry_duration_roi(durations=durations)
+
+    print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)

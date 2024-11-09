@@ -2,6 +2,8 @@ import pandas as pd
 
 from . import TSETMC_REQUEST_HEADERS
 from core.utils import get_http_response, replace_arabic_letters_pd
+from core.utils import RedisInterface
+from core.configs import STOCK_REDIS_DB, MARKET_WATCH_REDIS_KEY
 
 
 def get_last_market_watch_data(
@@ -37,3 +39,12 @@ def get_last_market_watch_data(
     last_data["lvc"] = last_data.apply(replace_arabic_letters_pd, axis=1, args=("lvc",))
 
     return last_data
+
+
+def get_market_watch_data_from_redis():
+    redis_conn = RedisInterface(db=STOCK_REDIS_DB)
+    market_watch = pd.DataFrame(
+        redis_conn.get_list_of_dicts(list_key=MARKET_WATCH_REDIS_KEY)
+    )
+
+    return market_watch
