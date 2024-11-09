@@ -162,6 +162,11 @@ redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 @shared_task(name="stock_market_watch_task")
 def stock_market_watch():
 
+    print(
+        Fore.BLUE
+        + " >>>>>>>>>>>>>>>>>>>>>> Updating market watch tables ..."
+        + Style.RESET_ALL
+    )
     if not is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19):
         return
     print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)

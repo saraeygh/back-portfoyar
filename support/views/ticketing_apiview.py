@@ -233,8 +233,6 @@ class DisableAnonThrottle(AnonRateThrottle):
         return super().allow_request(request, view)
 
 
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
 class GetTicketAppendixAPIView(APIView):
     throttle_classes = [DisableAnonThrottle]
 
