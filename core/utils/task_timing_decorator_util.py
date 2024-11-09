@@ -3,7 +3,7 @@ from colorama import Style
 
 
 def task_timing(received_task):
-    def wrapper():
+    def wrapper(*args, **kwargs):
         start = time.time()
         received_task()
         end = time.time()

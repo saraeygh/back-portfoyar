@@ -75,9 +75,12 @@ def update_info():
                     redis_conn.client.set(key, value)
                     redis_conn.client.set(name=IS_RUNNING, value=0, ex=60)
                     print(
-                        Fore.YELLOW + "New event ->> " + Fore.GREEN + "SET:",
-                        key,
-                        Style.RESET_ALL,
+                        Fore.YELLOW
+                        + "New event ->> "
+                        + Fore.GREEN
+                        + "SET:"
+                        + f" {key}"
+                        + Style.RESET_ALL,
                     )
         except Exception:
             continue
