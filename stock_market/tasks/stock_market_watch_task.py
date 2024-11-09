@@ -72,10 +72,15 @@ def update_market_watch_data(market_watch: pd.DataFrame):
 
     market_watch["link"] = market_watch.apply(add_link, axis=1)
 
+    market_watch["money_flow"] = (
+        (market_watch["individual_buy_volume"] - market_watch["individual_sell_volume"])
+        * market_watch["closing_price"]
+    ) / RIAL_TO_BILLION_TOMAN
+
     market_watch["buy_pressure"] = (
         (
             (
-                market_watch["individual_buy_count"]
+                market_watch["individual_buy_volume"]
                 / market_watch["individual_buy_count"]
             )
             * market_watch["closing_price"]
@@ -84,11 +89,6 @@ def update_market_watch_data(market_watch: pd.DataFrame):
         (market_watch["individual_sell_volume"] / market_watch["individual_sell_count"])
         * market_watch["closing_price"]
     )
-
-    market_watch["money_flow"] = (
-        (market_watch["individual_buy_volume"] - market_watch["individual_sell_volume"])
-        * market_watch["closing_price"]
-    ) / RIAL_TO_BILLION_TOMAN
 
     market_watch["buy_value"] = (
         (market_watch["individual_buy_volume"] * market_watch["closing_price"])

@@ -6,6 +6,7 @@ from core.configs import (
     OPTION_REDIS_DB,
     AUTO_MODE,
     MANUAL_MODE,
+    RIAL_TO_MILLION_TOMAN,
 )
 from core.utils import (
     RedisInterface,
@@ -31,7 +32,7 @@ CALL_OLD_NEW_MAPPING = {
     "call_ins_code": "inst_id",
     "option_link": "option_link",
     "stock_link": "stock_link",
-    "base_equity_last_update": "last_update",
+    "call_last_update": "last_update",
     "call_symbol": "symbol",
     "base_equity_symbol": "asset_name",
     "base_equity_last_price": "base_equit_price",
@@ -51,7 +52,7 @@ PUT_OLD_NEW_MAPPING = {
     "put_ins_code": "inst_id",
     "option_link": "option_link",
     "stock_link": "stock_link",
-    "base_equity_last_update": "last_update",
+    "put_last_update": "last_update",
     "put_symbol": "symbol",
     "base_equity_symbol": "asset_name",
     "base_equity_last_price": "base_equit_price",
@@ -136,6 +137,15 @@ def add_option_link(row, option_type):
     return link
 
 
+def edit_last_update(row):
+    last_update = str(int(row.get("last_update")))
+    if len(last_update) != 6:
+        last_update = "0" + last_update
+    last_update = f"{last_update[0:2]}:{last_update[2:4]}:{last_update[4:]}"
+
+    return last_update
+
+
 def get_call_spreads(spreads):
     spreads = spreads[
         list(COMMON_OPTION_COLUMN.values())
@@ -170,6 +180,8 @@ def get_call_spreads(spreads):
         spreads.dropna(inplace=True)
         spreads = spreads.rename(columns=CALL_OLD_NEW_MAPPING)
         spreads = spreads[list(CALL_OLD_NEW_MAPPING.values())]
+        spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
+        spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
         spreads = spreads.to_dict(orient="records")
     else:
         spreads = pd.DataFrame()
@@ -212,6 +224,8 @@ def get_put_spreads(spreads):
         spreads.dropna(inplace=True)
         spreads = spreads.rename(columns=PUT_OLD_NEW_MAPPING)
         spreads = spreads[list(PUT_OLD_NEW_MAPPING.values())]
+        spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
+        spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
         spreads = spreads.to_dict(orient="records")
     else:
         spreads = pd.DataFrame()
