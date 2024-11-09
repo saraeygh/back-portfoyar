@@ -149,7 +149,7 @@ STOCK_MARKET_SCHEDULE = {
     },
     "stock_market_watch_task": {
         "task": "stock_market_watch_task",
-        "schedule": 15,
+        "schedule": 13,
     },
     "update_stock_raw_adjusted_history_task": {
         "task": "update_stock_raw_adjusted_history_task",
