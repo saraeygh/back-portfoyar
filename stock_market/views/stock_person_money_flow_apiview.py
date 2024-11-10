@@ -32,6 +32,7 @@ class StockPersonMoneyFlowAPIView(APIView):
             )
 
         results = results[~results["symbol"].str.contains(r"\d")]
+        results = results.drop_duplicates(subset=["symbol"], keep="first")
         results = results.sort_values(by="money_flow", ascending=False)
         results = results.head(STOCK_TOP_500_LIMIT)
         results.reset_index(drop=True, inplace=True)
