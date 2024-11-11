@@ -4,14 +4,13 @@ from django.views.static import serve
 
 from samaneh.settings.common import DEBUG, STATIC_ROOT
 
+test_urls = []
 if DEBUG:
     from .test_view import TestView
 
     test_urls = [
         path("api/test/", TestView.as_view()),
     ]
-else:
-    test_urls = []
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),

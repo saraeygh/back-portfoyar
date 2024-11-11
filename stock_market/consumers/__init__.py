@@ -1,0 +1,1 @@
+from .market_watch_consumer import MarketWatchConsumer
