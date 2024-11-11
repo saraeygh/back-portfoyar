@@ -27,32 +27,32 @@ DOMESTIC_MARKET_SCHEDULE = {
         "task": "populate_domestic_market_db_task",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/120",
+            hour="19",
+            minute="20",
         ),
     },
     "calculate_commodity_mean_task_domestic": {
         "task": "calculate_commodity_mean_task_domestic",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/130",
+            hour="20",
+            minute="10",
         ),
     },
     "calculate_monthly_sell_task_domestic": {
         "task": "calculate_monthly_sell_task_domestic",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/140",
+            hour="20",
+            minute="30",
         ),
     },
     "calculate_production_sell_task_domestic": {
         "task": "calculate_production_sell_task_domestic",
         "schedule": crontab(
             day_of_week="6, 0, 1, 2, 3",
-            hour="8-19",
-            minute="*/150",
+            hour="20",
+            minute="55",
         ),
     },
     "calculate_producers_yearly_value_task": {
