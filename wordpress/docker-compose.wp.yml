@@ -3,8 +3,8 @@ services:
     mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/wordpress:6.6.2
     container_name: wordpress
-    ports:
-      - "8008:80"
+    # ports:
+    #   - "8008:80"
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
@@ -43,8 +43,8 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: root@sqldb#1403!
-    ports:
-      - "8080:80"
+    # ports:
+    #   - "8080:80"
     depends_on:
       - db
     networks:
