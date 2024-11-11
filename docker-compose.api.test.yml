@@ -1,5 +1,6 @@
 services:
   postgres_test:
+    mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/postgres:16
     container_name: postgres_test
     environment:
@@ -17,6 +18,7 @@ services:
         max-size: "24m"
         max-file: "10"
   redis_test:
+    mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/redis:7.2
     container_name: redis_test
     networks:
@@ -30,6 +32,7 @@ services:
         max-size: "24m"
         max-file: "10"
   mongodb_test:
+    mem_limit: 2g  # Limit memory to 512 MB
     container_name: mongodb_test
     image: docker.arvancloud.ir/mongo:7.0.5
     volumes:
@@ -43,6 +46,7 @@ services:
         max-size: "24m"
         max-file: "10"
   api_test:
+    mem_limit: 512m  # Limit memory to 512 MB
     build:
       context: .
       dockerfile: Dockerfile.api.test
@@ -66,6 +70,7 @@ services:
         max-size: "24m"
         max-file: "10"
   worker_test:
+    mem_limit: 512m  # Limit memory to 512 MB
     build:
       context: .
       dockerfile: Dockerfile.api.test
@@ -89,6 +94,7 @@ services:
         max-size: "24m"
         max-file: "10"
   beat_test:
+    mem_limit: 512m  # Limit memory to 512 MB
     build:
       context: .
       dockerfile: Dockerfile.api.test
@@ -112,20 +118,21 @@ services:
         max-size: "24m"
         max-file: "10"
   nginx:
-      build:
-        context: .
-        dockerfile: Dockerfile.nginx.test
-      image: nginx_test
-      container_name: nginx_test
-      ports:
-        - "80:80"
-      restart: always
-      depends_on:
-        - api_test
-      networks:
-        - test
-      volumes:
-        - nginx_logs:/var/log/nginx/
+    mem_limit: 512m  # Limit memory to 512 MB
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx.test
+    image: nginx_test
+    container_name: nginx_test
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - api_test
+    networks:
+      - test
+    volumes:
+      - nginx_logs:/var/log/nginx/
 
 networks:
   test:
