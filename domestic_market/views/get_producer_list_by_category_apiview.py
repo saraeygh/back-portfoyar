@@ -1,8 +1,11 @@
-from django.db.models import Sum
+from datetime import datetime, timedelta
 import pandas as pd
+
+from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from core.configs import SIXTY_MINUTES_CACHE, ONE_YEAR_DATE_LIMIT, RIAL_TO_BILLION_TOMAN
+
+from core.configs import SIXTY_MINUTES_CACHE, RIAL_TO_BILLION_TOMAN
 
 from domestic_market.models import DomesticTrade
 from domestic_market.serializers import GetDomesticProducerSerailizer
@@ -20,8 +23,9 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class GetProducerListByCommodityAPIView(APIView):
     def get(self, request, group_id):
+        ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
         producers = list(
-            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
             .filter(commodity_id=group_id)
             .distinct("producer")
         )
@@ -33,7 +37,7 @@ class GetProducerListByCommodityAPIView(APIView):
         for producer_id in producer_id_list:
             yearly_value = (
                 (
-                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
                     .filter(producer_id=producer_id)
                     .aggregate(yearly_value=Sum("value", default=0))
                 )["yearly_value"]

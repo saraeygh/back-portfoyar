@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 import os
 
 # CORE
@@ -94,8 +93,7 @@ HEZAR_RIAL_TO_BILLION_TOMAN = 10_000_000
 RIAL_TO_BILLION_TOMAN = 10_000_000_000
 RIAL_TO_MILLION_TOMAN = 10_000_000
 TO_MILLION = 1_000_000
-# ONE YEAR AGO
-ONE_YEAR_DATE_LIMIT = datetime.today().date() - timedelta(days=365)
+
 # PERSIAN TO ENGLISH NUMBER CONVERTER
 PERSIAN_DIGITS = "۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠"
 ENGLISH_DIGITS = "12345678901234567890"

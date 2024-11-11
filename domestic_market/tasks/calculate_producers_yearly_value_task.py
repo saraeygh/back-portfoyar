@@ -1,9 +1,11 @@
-from celery import shared_task
-from core.utils import MongodbInterface, task_timing
-from core.configs import ONE_YEAR_DATE_LIMIT, RIAL_TO_BILLION_TOMAN, DOMESTIC_DB
-
-from django.db.models import Sum
 import pandas as pd
+from celery import shared_task
+from datetime import datetime, timedelta
+from django.db.models import Sum
+
+from core.utils import MongodbInterface, task_timing
+from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_DB
+
 
 from domestic_market.models import DomesticProducer, DomesticTrade
 from domestic_market.serializers import GetDomesticProducerListSerailizer
@@ -14,8 +16,10 @@ from tqdm import tqdm
 @task_timing
 @shared_task(name="calculate_producers_yearly_value_task")
 def calculate_producers_yearly_value():
+    ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
+
     producers = list(
-        DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+        DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
         .distinct("producer")
         .values_list("producer", flat=True)
     )
@@ -28,7 +32,7 @@ def calculate_producers_yearly_value():
     for producer in tqdm(producers, desc="producers yearly value", ncols=10):
         yearly_value = (
             (
-                DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+                DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
                 .filter(producer=producer)
                 .aggregate(yearly_value=Sum("value", default=0))
             )["yearly_value"]

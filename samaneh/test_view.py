@@ -94,7 +94,7 @@ from core.tasks import collect_user_stats
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
         # collect_user_stats()
-        stock_option_price_spread()
+        # stock_option_price_spread()
         # stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse()
@@ -104,7 +104,7 @@ class TestView(APIView):
         # update_future()
         # get_options_base_equity_info()
         # populate_option_strategy()
-        # calculate_producers_yearly_value()
+        calculate_producers_yearly_value()
         # calculate_commodity_means_global()
         # stock_option_value_change()
         # update_stock_adjusted_history()

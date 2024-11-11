@@ -1,12 +1,10 @@
-from django.db.models import Sum
+from datetime import datetime, timedelta
 import pandas as pd
+
+from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from core.configs import (
-    SIXTY_MINUTES_CACHE,
-    ONE_YEAR_DATE_LIMIT,
-    RIAL_TO_BILLION_TOMAN,
-)
+from core.configs import SIXTY_MINUTES_CACHE, RIAL_TO_BILLION_TOMAN
 from domestic_market.models import DomesticCommodityType, DomesticTrade
 from domestic_market.serializers import GetDomesticCommodityTypeSerailizer
 from domestic_market.utils import add_value_to_name
@@ -23,8 +21,10 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class GetCommodityTypeListAPIView(APIView):
     def get(self, request, industry_id):
+        ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
+
         commodity_types = list(
-            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
             .filter(commodity__commodity_type__industry_id=industry_id)
             .distinct("commodity__commodity_type")
             .values_list("commodity__commodity_type", flat=True)
@@ -42,7 +42,7 @@ class GetCommodityTypeListAPIView(APIView):
         for commodity_type in commodity_types:
             yearly_value = (
                 (
-                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
                     .filter(commodity__commodity_type__industry_id=industry_id)
                     .filter(commodity__commodity_type=commodity_type)
                     .aggregate(yearly_value=Sum("value", default=0))

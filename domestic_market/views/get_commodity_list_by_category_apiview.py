@@ -1,10 +1,11 @@
-from django.db.models import Sum
+from datetime import datetime, timedelta
 import pandas as pd
+
+from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from core.configs import (
     SIXTY_MINUTES_CACHE,
-    ONE_YEAR_DATE_LIMIT,
     RIAL_TO_BILLION_TOMAN,
 )
 
@@ -24,8 +25,10 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class GetCommodityListAPIView(APIView):
     def get(self, request, field_id):
+        ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
+
         commodities = list(
-            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
             .filter(commodity__commodity_type_id=field_id)
             .distinct("commodity")
             .values_list("commodity", flat=True)
@@ -40,7 +43,7 @@ class GetCommodityListAPIView(APIView):
         for commodity in commodities:
             yearly_value = (
                 (
-                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
                     .filter(commodity__commodity_type_id=field_id)
                     .filter(commodity=commodity)
                     .aggregate(yearly_value=Sum("value", default=0))

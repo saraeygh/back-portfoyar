@@ -1,12 +1,11 @@
-from django.db.models import Sum
+from datetime import datetime, timedelta
 import pandas as pd
+
+from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from core.configs import (
-    SIXTY_MINUTES_CACHE,
-    ONE_YEAR_DATE_LIMIT,
-    RIAL_TO_BILLION_TOMAN,
-)
+
+from core.configs import SIXTY_MINUTES_CACHE, RIAL_TO_BILLION_TOMAN
 
 from domestic_market.models import DomesticIndustry, DomesticTrade
 from domestic_market.serializers import GetDomesticIndustrySerailizer
@@ -24,8 +23,9 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class GetIndustryListAPIView(APIView):
     def get(self, request):
+        ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
         industries = list(
-            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+            DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
             .distinct("commodity__commodity_type__industry")
             .values_list("commodity__commodity_type__industry", flat=True)
         )
@@ -38,7 +38,7 @@ class GetIndustryListAPIView(APIView):
         for industry in industries:
             yearly_value = (
                 (
-                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_DATE_LIMIT)
+                    DomesticTrade.objects.filter(trade_date__gt=ONE_YEAR_AGO)
                     .filter(commodity__commodity_type__industry=industry)
                     .aggregate(yearly_value=Sum("value", default=0))
                 )["yearly_value"]
