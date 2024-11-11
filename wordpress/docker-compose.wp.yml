@@ -1,5 +1,6 @@
 services:
   wordpress:
+    mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/wordpress:6.6.2
     container_name: wordpress
     ports:
@@ -19,6 +20,7 @@ services:
       - test
 
   db:
+    mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/mariadb:11.5.2
     container_name: wordpress_db
     restart: always
@@ -34,6 +36,7 @@ services:
       - test
 
   phpmyadmin:
+    mem_limit: 512m  # Limit memory to 512 MB
     image: docker.arvancloud.ir/phpmyadmin:5.2.1
     container_name: phpmyadmin
     restart: always
