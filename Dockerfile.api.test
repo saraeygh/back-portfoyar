@@ -26,41 +26,6 @@ RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/reposi
 RUN ["apk", "update"]
 RUN ["apk", "add", "gcc", "python3-dev", "musl-dev", "linux-headers", "curl", "libxml2-dev", "libxslt-dev"]
 
-# RUN ["apk", "upgrade", "-U", "-a"]
-# RUN apk add \
-#   gcc \
-#   python3-dev \
-#   musl-dev \
-#   linux-headers \
-#   curl \
-#   libxml2-dev \
-#   libxslt-dev \
-#   build-base \
-#   cairo \
-#   cairo-dev \
-#   cargo \
-#   freetype-dev \
-#   gcc \
-#   gdk-pixbuf-dev \
-#   gettext \
-#   jpeg-dev \
-#   lcms2-dev \
-#   libffi-dev \
-#   musl-dev \
-#   openjpeg-dev \
-#   openssl-dev \
-#   pango-dev \
-#   poppler-utils \
-#   postgresql-client \
-#   postgresql-dev \
-#   py-cffi \
-#   python3-dev \
-#   rust \
-#   tcl-dev \
-#   tiff-dev \
-#   tk-dev \
-#   zlib-dev
-
 WORKDIR /code
 
 # INSTALL PDM AND DEPENDENCIES
