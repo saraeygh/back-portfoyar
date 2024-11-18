@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from core.utils import MongodbInterface
 from core.configs import (
     SIXTY_MINUTES_CACHE,
-    DOMESTIC_DB,
+    DOMESTIC_MONGO_DB,
 )
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 class GetProducerListAPIView(APIView):
     def get(self, request):
         mongo_client = MongodbInterface(
-            db_name=DOMESTIC_DB, collection_name="producers_yearly_value"
+            db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
         )
         producers = list(mongo_client.collection.find({}, {"_id": 0}))
         producers = pd.DataFrame(producers)

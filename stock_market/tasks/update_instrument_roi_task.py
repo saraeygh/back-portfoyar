@@ -3,7 +3,7 @@ from celery import shared_task
 from colorama import Fore, Style
 
 from core.configs import (
-    STOCK_DB,
+    STOCK_MONGO_DB,
     RIAL_TO_BILLION_TOMAN,
     STOCK_NA_ROI,
     AUTO_MODE,
@@ -114,12 +114,12 @@ def update_instrument_duration_roi(instrument_info: pd.DataFrame):
     instrument_info = instrument_info.to_dict(orient="records")
 
     if instrument_info:
-        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
         mongo_client.insert_docs_into_collection(documents=instrument_info)
 
 
 def calculate_industry_duration_roi(durations: dict):
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
     roi = list(mongo_client.collection.find({}, {"_id": 0}))
     roi = pd.DataFrame(roi)
 
@@ -145,13 +145,15 @@ def calculate_industry_duration_roi(durations: dict):
 
     if industry_roi_list:
         mongo_client = MongodbInterface(
-            db_name=STOCK_DB, collection_name="industry_ROI"
+            db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
         mongo_client.insert_docs_into_collection(documents=industry_roi_list)
 
 
 def update_instrument_roi_main():
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="instrument_info")
+    mongo_client = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
+    )
     instrument_info = mongo_client.collection.find({}, {"_id": 0})
     instrument_info = pd.DataFrame(instrument_info)
 
@@ -186,7 +188,7 @@ def update_instrument_roi_main():
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start=9, end=19
+        weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
     ):
         print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
         update_instrument_roi_main()

@@ -1,7 +1,7 @@
 import jdatetime
 from datetime import datetime, timedelta
 
-from core.configs import GLOBAL_DB
+from core.configs import GLOBAL_MONGO_DB
 
 from tqdm import tqdm
 from celery import shared_task
@@ -66,7 +66,7 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
 
             mean_list.append(new_record)
 
-    mongodb = MongodbInterface(db_name=GLOBAL_DB, collection_name=collection_name)
+    mongodb = MongodbInterface(db_name=GLOBAL_MONGO_DB, collection_name=collection_name)
     if mean_list:
         mongodb.insert_docs_into_collection(documents=mean_list)
     else:

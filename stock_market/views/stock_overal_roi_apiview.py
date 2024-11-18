@@ -2,7 +2,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
 from core.configs import (
-    STOCK_DB,
+    STOCK_MONGO_DB,
     FIVE_MINUTES_CACHE,
     STOCK_TOP_500_LIMIT,
     STOCK_NA_ROI,
@@ -25,7 +25,7 @@ from rest_framework.views import APIView
 class StockOveralROIAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
         results = mongo_client.collection.find(
             {"paper_id": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )

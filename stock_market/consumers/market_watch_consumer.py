@@ -3,7 +3,7 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 
 import pandas as pd
-from core.configs import STOCK_DB, STOCK_TOP_500_LIMIT
+from core.configs import STOCK_MONGO_DB, STOCK_TOP_500_LIMIT
 
 from core.utils import MongodbInterface, add_index_as_id
 from stock_market.serializers import PersonMoneyFlowSerailizer
@@ -23,7 +23,7 @@ class MarketWatchConsumer(WebsocketConsumer):
         if index is None:
             self.send(text_data=json.dumps({index: []}))
 
-        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name=index)
+        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index)
         results = mongo_client.collection.find(
             {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )

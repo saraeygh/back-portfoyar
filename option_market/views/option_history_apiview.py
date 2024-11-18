@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from core.configs import (
     SIXTY_SECONDS_CACHE,
     SIXTY_MINUTES_CACHE,
-    OPTION_DB,
+    OPTION_MONGO_DB,
     OPTION_REDIS_DB,
 )
 from core.utils import (
@@ -79,7 +79,7 @@ class SymbolHistoryAPIView(APIView):
 
         if cache_response is None:
             mongodb_conn = MongodbInterface(
-                db_name=OPTION_DB, collection_name="history"
+                db_name=OPTION_MONGO_DB, collection_name="history"
             )
 
             query_filter = {"option_symbol": symbol}

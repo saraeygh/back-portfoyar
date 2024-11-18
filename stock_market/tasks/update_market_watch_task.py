@@ -55,9 +55,12 @@ def get_client_type():
 
 def get_additional_info():
     additional_info = StockInstrument.objects.all().values(
-        "ins_code", "market_type", "paper_type", "industrial_group"
+        "ins_code", "market_type", "paper_type", "industrial_group__code"
     )
     additional_info = pd.DataFrame(additional_info)
+    additional_info.rename(
+        columns={"industrial_group__code": "industrial_group"}, inplace=True
+    )
 
     return additional_info
 
@@ -105,7 +108,8 @@ def update_market_watch_main():
 def update_market_watch(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or (
-        is_scheduled(weekdays=[0, 1, 2, 3, 4], start=8, end=19) and is_market_open()
+        is_scheduled(weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19)
+        and is_market_open()
     ):
         print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
         update_market_watch_main()

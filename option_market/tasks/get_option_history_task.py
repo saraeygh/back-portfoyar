@@ -3,7 +3,7 @@ import jdatetime
 from tqdm import tqdm
 from celery import shared_task
 
-from core.configs import OPTION_DB, OPTION_REDIS_DB
+from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
 from core.utils import MongodbInterface, RedisInterface, task_timing, get_http_response
 from stock_market.utils import TSETMC_REQUEST_HEADERS
 
@@ -98,7 +98,9 @@ def get_update_history(instrument, instrument_type):
 
         option_history_df = option_history_df.to_dict(orient="records")
 
-        mongodb_conn = MongodbInterface(db_name=OPTION_DB, collection_name="history")
+        mongodb_conn = MongodbInterface(
+            db_name=OPTION_MONGO_DB, collection_name="history"
+        )
 
         query_filter = {"option_symbol": instrument[f"{instrument_type}_symbol"]}
         mongodb_conn.collection.delete_one(query_filter)

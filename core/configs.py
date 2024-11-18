@@ -1,15 +1,33 @@
 import os
 
-# CORE
+######################################################## CACHE
+SIXTY_SECONDS_CACHE = 60  # 60 seconds
+FIVE_MINUTES_CACHE = 60 * 5  # 5 minutes
+THIRTY_MINUTES_CACHE = 60 * 30  # 30 minutes
+SIXTY_MINUTES_CACHE = 60 * 60  # 60 minutes
+SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
+
+
+######################################################## REDIS_DBs
+CELERY_REDIS_DB = 0  # CORE
+KEY_WITH_EX_REDIS_DB = 1  # CORE
+OPTION_REDIS_DB = 3  # FUTURE
+FUTURE_REDIS_DB = 4  # FUTURE
+STOCK_REDIS_DB = 5  # STOCK
+USER_AGENTS_REDIS_DB = 13  # CORE
+USER_STATS_REDIS_DB = 14  # CORE
+ONLINE_USERS_REDIS_DB = 15  # CORE
+
+
+######################################################## CORE APP
 STATS_MONGO_DB = "stats"
-KEY_WITH_EX_REDIS_DB = 1
-USER_AGENTS_REDIS_DB = 13
-USER_STATS_REDIS_DB = 14
-ONLINE_USERS_REDIS_DB = 15
+DASHBOARD_MONGO_DB = "dashboard"
+BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
 
-# ACCOUNT
+
+######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"
 REDIS_EMAIL_VERIFY_PREFIX = "email_verify_code_"
 REDIS_RESET_PASSWORD_PREFIX = "reset_password_code_"
@@ -23,38 +41,25 @@ CODE_RANGE_MAX = 999999
 PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
 
 
-# FUTURE MARKET
-OPTION_REDIS_DB = 3
-FUTURE_REDIS_DB = 4
-
-# CACHE
-SIXTY_SECONDS_CACHE = 60  # 60 seconds
-FIVE_MINUTES_CACHE = 60 * 5  # 5 minutes
-THIRTY_MINUTES_CACHE = 60 * 30  # 30 minutes
-SIXTY_MINUTES_CACHE = 60 * 60  # 60 minutes
-SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
+######################################################## DOMESTIC APP
+DOMESTIC_MONGO_DB = "domestic"
 
 
-# DOMESTIC APP
-DOMESTIC_DB = "domestic"
+######################################################## GLOBAL APP
+GLOBAL_MONGO_DB = "global"
 
 
-# GLOBAL APP
-GLOBAL_DB = "global"
-
-
-# OPTIONS APP
-OPTION_DB = "option"
+######################################################## OPTIONS APP
+OPTION_MONGO_DB = "option"
 OPTION_TRADE_FEE = 0.00103
 OPTION_LIQUIDATION_SETTLEMENT_FEE = 0.0005
 OPTION_PHYSICAL_SETTLEMENT_FEE = 0.0005
 BASE_EQUITY_BUY_FEE = 0.003712
 BASE_EQUITY_SELL_FEE = 0.0088
 
-# STOCK APP
-STOCK_REDIS_DB = 5
+######################################################## STOCK APP
 MARKET_WATCH_REDIS_KEY = "market_watch"
-STOCK_DB = "stock"
+STOCK_MONGO_DB = "stock"
 STOCK_NA_ROI = -1000
 STOCK_TOP_500_LIMIT = 500
 STOCK_TOP_100_LIMIT = 100
@@ -84,9 +89,10 @@ MARKET_WATCH_URL = (
 )
 CLIENT_TYPE_URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
 
-# COMMON
+######################################################## COMMON
 # DOMESTIC & GLOBAL MEAN DEVIATION
 COMMODITY_TOP_200_LIMIT = 200
+
 # UNIT CONVERSION
 HEZAR_RIAL_TO_MILLION_TOMAN = 10_000
 HEZAR_RIAL_TO_BILLION_TOMAN = 10_000_000

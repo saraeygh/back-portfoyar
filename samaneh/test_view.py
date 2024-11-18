@@ -88,7 +88,7 @@ def user_generator():
     return users
 
 
-from core.tasks import collect_user_stats
+from core.tasks import dashboard
 
 
 class TestView(APIView):
@@ -104,7 +104,7 @@ class TestView(APIView):
         # update_future()
         # get_options_base_equity_info()
         # populate_option_strategy()
-        calculate_producers_yearly_value()
+        # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
         # stock_option_value_change()
         # update_stock_adjusted_history()
@@ -119,4 +119,5 @@ class TestView(APIView):
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
         # update_market_watch()
         # user_generator()
+        dashboard()
         pass

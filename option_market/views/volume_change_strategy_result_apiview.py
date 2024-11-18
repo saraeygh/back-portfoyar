@@ -1,5 +1,5 @@
 import pandas as pd
-from core.configs import SIX_HOURS_CACHE, OPTION_DB
+from core.configs import SIX_HOURS_CACHE, OPTION_MONGO_DB
 from core.utils import MongodbInterface, set_json_cache, get_cache_as_json
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -29,7 +29,8 @@ class VolumeChangeStrategyResultAPIView(APIView):
         if cache_response is None:
             try:
                 mongodb_conn = MongodbInterface(
-                    db_name=OPTION_DB, collection_name="option_volume_strategy_result"
+                    db_name=OPTION_MONGO_DB,
+                    collection_name="option_volume_strategy_result",
                 )
                 result_key = f"m_{volume_change_ratio}_d_{return_period}_t_{threshold}"
                 query_filter = {"result_key": result_key}

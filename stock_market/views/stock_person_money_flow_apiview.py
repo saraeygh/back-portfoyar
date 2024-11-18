@@ -1,7 +1,7 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
-from core.configs import STOCK_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
+from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
 
 from core.utils import MongodbInterface, add_index_as_id
 from stock_market.serializers import PersonMoneyFlowSerailizer
@@ -20,7 +20,9 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class StockPersonMoneyFlowAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="money_flow")
+        mongo_client = MongodbInterface(
+            db_name=STOCK_MONGO_DB, collection_name="money_flow"
+        )
         results = mongo_client.collection.find(
             {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )

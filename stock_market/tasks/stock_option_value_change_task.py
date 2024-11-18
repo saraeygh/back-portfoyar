@@ -3,7 +3,7 @@ import pandas as pd
 from core.utils import MongodbInterface, RedisInterface, is_scheduled, task_timing
 
 from core.configs import (
-    STOCK_DB,
+    STOCK_MONGO_DB,
     RIAL_TO_BILLION_TOMAN,
     RIAL_TO_MILLION_TOMAN,
     OPTION_REDIS_DB,
@@ -20,7 +20,9 @@ redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def get_instrument_info():
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="instrument_info")
+    mongo_client = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
+    )
     instrument_info = list(mongo_client.collection.find({}, {"_id": 0}))
     instrument_info = pd.DataFrame(instrument_info)
 
@@ -231,7 +233,7 @@ def stock_option_value_change_main():
                 continue
 
             mongo_client = MongodbInterface(
-                db_name=STOCK_DB, collection_name=collection_name
+                db_name=STOCK_MONGO_DB, collection_name=collection_name
             )
             mongo_client.insert_docs_into_collection(documents=options)
 
@@ -241,7 +243,7 @@ def stock_option_value_change_main():
 def stock_option_value_change(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start=8, end=19
+        weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
     ):
         print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
         stock_option_value_change_main()

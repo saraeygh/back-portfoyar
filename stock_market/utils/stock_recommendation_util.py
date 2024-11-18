@@ -1,7 +1,12 @@
 import pandas as pd
 
 from core.utils import MongodbInterface
-from core.configs import STOCK_DB, STOCK_NA_ROI, GLOBAL_DB, DOMESTIC_DB
+from core.configs import (
+    STOCK_MONGO_DB,
+    STOCK_NA_ROI,
+    GLOBAL_MONGO_DB,
+    DOMESTIC_MONGO_DB,
+)
 from global_market.models import GlobalRelation
 from domestic_market.models import DomesticRelation
 from stock_market.models import RecommendationConfig
@@ -112,7 +117,7 @@ def get_market_watch_result(conf):
         score_column = f"{name}_score"
         if config.is_enabled:
             try:
-                result = result_from_mongo(db=STOCK_DB, collection=name)
+                result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
                 result = result[["ins_code", name]]
                 result = result[result[name] >= config.threshold_value]
             except Exception:
@@ -153,7 +158,7 @@ def get_roi_result(config):
     score_column = f"{name}_score"
     if config.is_enabled:
         try:
-            result = result_from_mongo(db=STOCK_DB, collection=name)
+            result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
             result = result[["ins_code", idx_name]]
             result = result[result[idx_name] != STOCK_NA_ROI]
             result = result[result[idx_name] >= config.threshold_value]
@@ -184,9 +189,9 @@ def get_value_change_result(config):
     name = "value_change"
     score_column = f"{name}_score"
     if config.is_enabled:
-        result = result_from_mongo(db=STOCK_DB, collection=name)
+        result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
         try:
-            result = result_from_mongo(db=STOCK_DB, collection=name)
+            result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
             result = result[["ins_code", name]]
             result = result[result[name] >= config.threshold_value]
         except Exception:
@@ -222,7 +227,7 @@ def get_option_value_change_result(conf):
         score_column = f"{name}_score"
         if config.is_enabled:
             try:
-                result = result_from_mongo(db=STOCK_DB, collection=name)
+                result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
                 result = result[["ins_code", idx_name]]
                 result = result[result[idx_name] >= config.threshold_value]
             except Exception:
@@ -257,7 +262,7 @@ def get_option_price_spread_result(config):
     score_column = f"{name}_score"
     if config.is_enabled:
         try:
-            result = result_from_mongo(db=STOCK_DB, collection=name)
+            result = result_from_mongo(db=STOCK_MONGO_DB, collection=name)
             result = result[["ins_code", idx_name]]
             result = result[result[idx_name] >= config.threshold_value]
         except Exception:
@@ -304,7 +309,7 @@ def get_global_result(conf):
             collection = collection_name_dict.get(config.duration)
 
             try:
-                result = result_from_mongo(db=GLOBAL_DB, collection=collection)
+                result = result_from_mongo(db=GLOBAL_MONGO_DB, collection=collection)
                 if name == "global_positive_range":
                     result = result[result[idx_name] > config.threshold_value]
                 else:
@@ -380,7 +385,7 @@ def get_domestic_result(conf):
             collection = collection_name_dict.get(config.duration)
 
             try:
-                result = result_from_mongo(db=DOMESTIC_DB, collection=collection)
+                result = result_from_mongo(db=DOMESTIC_MONGO_DB, collection=collection)
                 if name == "domestic_positive_range":
                     result = result[result[idx_name] > config.threshold_value]
                 else:
@@ -460,7 +465,7 @@ def stock_recommendation(config: RecommendationConfig):
     scores = scores.fillna(0)
     scores = scores.groupby("ins_code").sum().reset_index()
 
-    instruments = result_from_mongo(db=STOCK_DB, collection="instrument_info")
+    instruments = result_from_mongo(db=STOCK_MONGO_DB, collection="instrument_info")
     instruments = pd.DataFrame(instruments)
     instruments = instruments[["ins_code", "symbol"]]
 

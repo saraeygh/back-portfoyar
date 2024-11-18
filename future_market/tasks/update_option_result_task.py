@@ -114,6 +114,6 @@ def update_option_result_main():
 @shared_task(name="update_option_result_task")
 def update_option_result(run_mode: str = AUTO_MODE):
     if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4, 5], start=10, end=17
+        weekdays=[0, 1, 2, 3, 4, 5], start_hour=10, end_hour=17
     ):
         update_option_result_main()

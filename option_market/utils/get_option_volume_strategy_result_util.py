@@ -1,4 +1,4 @@
-from core.configs import OPTION_DB
+from core.configs import OPTION_MONGO_DB
 
 import re
 
@@ -9,7 +9,7 @@ from . import match_strategy_for_single_symbol
 
 
 def prepare_history_data_for_strategy(symbol: str):
-    mongodb_conn = MongodbInterface(db_name=OPTION_DB, collection_name="history")
+    mongodb_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
     query_filter = {"option_symbol": symbol}
     symbol_history = mongodb_conn.collection.find_one(query_filter, {"_id": 0})
     symbol_history = symbol_history["history"]
@@ -122,7 +122,7 @@ def save_strategy_result_list(
     result_key = f"m_{volume_change_ratio}_d_{return_period}_t_{threshold}"
 
     mongodb_conn = MongodbInterface(
-        db_name=OPTION_DB, collection_name="option_volume_strategy_result"
+        db_name=OPTION_MONGO_DB, collection_name="option_volume_strategy_result"
     )
 
     query_filter = {"result_key": result_key}
@@ -138,7 +138,7 @@ def save_strategy_result_list(
 def get_option_volume_strategy_result(
     volume_change_ratio: int, return_period: int, threshold: int
 ):
-    mongodb_conn = MongodbInterface(db_name=OPTION_DB, collection_name="history")
+    mongodb_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
     option_symbols = list(
         mongodb_conn.collection.find({}, {"_id": 0, "option_symbol": 1})
     )

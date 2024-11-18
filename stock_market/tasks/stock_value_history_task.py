@@ -5,7 +5,7 @@ from django.db.models import Avg
 
 from core.configs import (
     STOCK_VALUE_CHANGE_DURATION,
-    STOCK_DB,
+    STOCK_MONGO_DB,
 )
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface, task_timing
@@ -64,7 +64,7 @@ def stock_value_history():
             }
         )
 
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="history")
+    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="history")
     mongo_client.insert_docs_into_collection(documents=duration_result_list)
 
     stock_value_change()

@@ -2,7 +2,7 @@ from celery import shared_task
 import pandas as pd
 from core.configs import (
     STOCK_OPTION_STRIKE_DEVIATION,
-    STOCK_DB,
+    STOCK_MONGO_DB,
     OPTION_REDIS_DB,
     AUTO_MODE,
     MANUAL_MODE,
@@ -247,7 +247,7 @@ def stock_option_price_spread_main():
     spreads_list = call_spreads + put_spreads
     if spreads_list:
         mongo_client = MongodbInterface(
-            db_name=STOCK_DB, collection_name="option_price_spread"
+            db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
         )
         mongo_client.insert_docs_into_collection(documents=spreads_list)
 
@@ -257,7 +257,7 @@ def stock_option_price_spread_main():
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start=9, end=19
+        weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
     ):
         print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
         stock_option_price_spread_main()

@@ -1,7 +1,7 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from core.configs import THIRTY_MINUTES_CACHE, DOMESTIC_DB
+from core.configs import THIRTY_MINUTES_CACHE, DOMESTIC_MONGO_DB
 
 from core.utils import MongodbInterface
 from rest_framework import status
@@ -19,7 +19,7 @@ class ProducerSellReportAPIView(APIView):
     def get(self, request, company_id):
 
         mongo_client = MongodbInterface(
-            db_name=DOMESTIC_DB, collection_name="producer_sell"
+            db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
         )
 
         producer_sell_report = list(

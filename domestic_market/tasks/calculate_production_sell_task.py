@@ -1,4 +1,4 @@
-from core.configs import DOMESTIC_DB, HEZAR_RIAL_TO_BILLION_TOMAN
+from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_BILLION_TOMAN
 
 from django.db.models import Sum
 
@@ -94,6 +94,6 @@ def calculate_production_sell_domestic() -> None:
         production_sell_list.append(production_sell)
 
     mongodb_client = MongodbInterface(
-        db_name=DOMESTIC_DB, collection_name="producer_sell"
+        db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
     )
     mongodb_client.insert_docs_into_collection(documents=production_sell_list)

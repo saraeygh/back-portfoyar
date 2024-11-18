@@ -1,4 +1,4 @@
-from core.configs import OPTION_DB
+from core.configs import OPTION_MONGO_DB
 import pandas as pd
 from core.utils import MongodbInterface
 
@@ -124,7 +124,7 @@ def match_strategy_for_single_symbol(
     threshold: int = 0,
 ) -> tuple:
     mongodb_conn = MongodbInterface(
-        db_name=OPTION_DB, collection_name="one_year_total_volumes"
+        db_name=OPTION_MONGO_DB, collection_name="one_year_total_volumes"
     )
 
     df_last_index = symbol_history_df.shape[0] - 1

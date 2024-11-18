@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import pandas as pd
-from core.configs import STOCK_DB, STOCK_NA_ROI
+from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import (
     MongodbInterface,
     get_http_response,
@@ -21,7 +21,9 @@ from tqdm import tqdm
 from celery import shared_task
 
 
-mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="adjusted_history")
+mongo_client = MongodbInterface(
+    db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
+)
 
 
 def get_historical_roi(ins_code):

@@ -3,10 +3,12 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
+from core.configs import CELERY_REDIS_DB
+
 REDIS_SERVICE_NAME = os.environ.setdefault("REDIS_SERVICE_NAME", "localhost")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "samaneh.settings.local")
 
-app = Celery("samaneh", broker=f"redis://{REDIS_SERVICE_NAME}:6379/0")
+app = Celery("samaneh", broker=f"redis://{REDIS_SERVICE_NAME}:6379/{CELERY_REDIS_DB}")
 
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
@@ -19,6 +21,10 @@ CORE_SCHEDULE = {
             hour="23",
             minute="58",
         ),
+    },
+    "dashboard_task": {
+        "task": "dashboard_task",
+        "schedule": 60 * 5,
     },
 }
 

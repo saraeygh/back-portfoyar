@@ -4,7 +4,7 @@ from stock_market.models import StockRawHistory, StockInstrument
 from . import HISTORY_COLUMN_RENAME
 import warnings
 from core.utils import MongodbInterface
-from core.configs import STOCK_DB
+from core.configs import STOCK_MONGO_DB
 from tqdm import tqdm
 
 warnings.filterwarnings("ignore", category=pd.errors.SettingWithCopyWarning)
@@ -137,7 +137,7 @@ def update_stock_adjusted_history():
         adjusted_history = adjusted_history.to_dict(orient="records")
 
         mongodb_conn = MongodbInterface(
-            db_name=STOCK_DB, collection_name="adjusted_history"
+            db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
         )
 
         query_filter = {"ins_code": f"{instrument.ins_code}"}

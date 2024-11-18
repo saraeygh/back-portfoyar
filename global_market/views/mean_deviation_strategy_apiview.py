@@ -1,5 +1,5 @@
 import pandas as pd
-from core.configs import SIX_HOURS_CACHE, GLOBAL_DB, COMMODITY_TOP_200_LIMIT
+from core.configs import SIX_HOURS_CACHE, GLOBAL_MONGO_DB, COMMODITY_TOP_200_LIMIT
 from core.utils import (
     MongodbInterface,
     set_json_cache,
@@ -16,7 +16,9 @@ from rest_framework.views import APIView
 
 
 def get_range_result(collection_name, range_name):
-    mongo_client = MongodbInterface(db_name=GLOBAL_DB, collection_name=collection_name)
+    mongo_client = MongodbInterface(
+        db_name=GLOBAL_MONGO_DB, collection_name=collection_name
+    )
 
     if range_name == "positive_range":
         range_result = list(

@@ -1,7 +1,7 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
-from core.configs import STOCK_DB, FIVE_MINUTES_CACHE, STOCK_TOP_500_LIMIT
+from core.configs import STOCK_MONGO_DB, FIVE_MINUTES_CACHE, STOCK_TOP_500_LIMIT
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
 from core.utils import MongodbInterface, add_index_as_id
@@ -21,7 +21,7 @@ class StockValueChangeAPIView(APIView):
     def get(self, request):
 
         mongo_client = MongodbInterface(
-            db_name=STOCK_DB, collection_name="value_change"
+            db_name=STOCK_MONGO_DB, collection_name="value_change"
         )
         results = mongo_client.collection.find(
             {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}

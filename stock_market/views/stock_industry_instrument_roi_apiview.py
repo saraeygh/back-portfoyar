@@ -1,7 +1,7 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
-from core.configs import STOCK_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
+from core.configs import STOCK_MONGO_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
 
 from core.utils import MongodbInterface, add_index_as_id
 from stock_market.serializers import MarketROISerailizer
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 class StockIndustryInstrumentROIAPIView(APIView):
     def get(self, request, industry_id):
 
-        mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
         results = mongo_client.collection.find(
             {
                 "industrial_group_id": industry_id,

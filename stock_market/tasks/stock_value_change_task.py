@@ -2,7 +2,7 @@ import jdatetime
 import pandas as pd
 
 from core.configs import (
-    STOCK_DB,
+    STOCK_MONGO_DB,
     RIAL_TO_BILLION_TOMAN,
     TO_MILLION,
     STOCK_REDIS_DB,
@@ -48,7 +48,7 @@ def stock_value_change_main():
         value_change["paper_type"].isin(list(MAIN_PAPER_TYPE_DICT.keys()))
     ]
 
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="history")
+    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="history")
     history = pd.DataFrame(list(mongo_client.collection.find({}, {"_id": 0})))
     if history.empty:
         return
@@ -95,7 +95,7 @@ def stock_value_change_main():
 def stock_value_change(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start=8, end=19
+        weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
     ):
         print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)
         stock_value_change_main()

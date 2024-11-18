@@ -2,14 +2,14 @@ import jdatetime
 from celery import shared_task
 from tqdm import tqdm
 
-from core.configs import OPTION_DB
+from core.configs import OPTION_MONGO_DB
 from core.utils import MongodbInterface, task_timing
 
 
 @task_timing
 @shared_task(name="populate_option_total_volume_task")
 def populate_option_total_volume():
-    mongodb_conn = MongodbInterface(db_name=OPTION_DB, collection_name="history")
+    mongodb_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
     option_symbols = list(
         mongodb_conn.collection.find({}, {"_id": 0, "option_symbol": 1})
     )
@@ -43,6 +43,6 @@ def populate_option_total_volume():
             )
 
     mongodb_conn = MongodbInterface(
-        db_name=OPTION_DB, collection_name="one_year_total_volumes"
+        db_name=OPTION_MONGO_DB, collection_name="one_year_total_volumes"
     )
     mongodb_conn.insert_docs_into_collection(total_volume_list_of_dict)

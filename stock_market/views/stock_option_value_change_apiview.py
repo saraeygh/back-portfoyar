@@ -1,7 +1,7 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
-from core.configs import STOCK_DB, SIXTY_SECONDS_CACHE, RIAL_TO_MILLION_TOMAN
+from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, RIAL_TO_MILLION_TOMAN
 
 from core.utils import MongodbInterface, add_index_as_id
 from stock_market.serializers import StockOptionValueChangeSerailizer
@@ -29,7 +29,7 @@ class StockCallValueChangeAPIView(APIView):
             )
 
         mongo_client = MongodbInterface(
-            db_name=STOCK_DB, collection_name=collection_name
+            db_name=STOCK_MONGO_DB, collection_name=collection_name
         )
         results = mongo_client.collection.find({}, {"_id": 0})
 

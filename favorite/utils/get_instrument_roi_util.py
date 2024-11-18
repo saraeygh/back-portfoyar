@@ -1,11 +1,11 @@
 import pandas as pd
-from core.configs import STOCK_DB, STOCK_NA_ROI
+from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import MongodbInterface, add_index_as_id
 
 
 def get_instrument_roi(instruments):
 
-    mongo_client = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
 
     instruments_roi = []
     for instrument in instruments:

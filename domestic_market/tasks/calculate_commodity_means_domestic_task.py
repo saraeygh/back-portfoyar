@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import jdatetime
 from django.db.models import Sum, Avg
 
-from core.configs import DOMESTIC_DB
+from core.configs import DOMESTIC_MONGO_DB
 from core.utils import MongodbInterface, task_timing, get_deviation_percent
 
 from tqdm import tqdm
@@ -109,7 +109,9 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
             mean_list.append(new_record)
 
     if mean_list:
-        mongodb = MongodbInterface(db_name=DOMESTIC_DB, collection_name=collection_name)
+        mongodb = MongodbInterface(
+            db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
+        )
         mongodb.insert_docs_into_collection(documents=mean_list)
 
 

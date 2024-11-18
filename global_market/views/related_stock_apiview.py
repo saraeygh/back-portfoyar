@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 import pandas as pd
-from core.configs import THIRTY_MINUTES_CACHE, STOCK_DB
+from core.configs import THIRTY_MINUTES_CACHE, STOCK_MONGO_DB
 from core.utils import MongodbInterface
 from core.utils import set_json_cache, get_cache_as_json
 from global_market.serializers import GlobalRelatedStockSerailizer
@@ -31,7 +31,7 @@ class RelatedStockAPIView(APIView):
             related_stock = GlobalRelatedStockSerailizer(related_stock, many=True)
             related_stock = pd.DataFrame(related_stock.data)
 
-            stock_info = MongodbInterface(db_name=STOCK_DB, collection_name="roi")
+            stock_info = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
             stock_info = stock_info.collection.find({}, {"_id": 0})
             stock_info = pd.DataFrame(stock_info)
 

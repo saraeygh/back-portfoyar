@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.db.models import Sum
 
 from core.utils import MongodbInterface, task_timing
-from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_DB
+from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_MONGO_DB
 
 
 from domestic_market.models import DomesticProducer, DomesticTrade
@@ -50,6 +50,6 @@ def calculate_producers_yearly_value():
     yearly_values = yearly_values.to_dict(orient="records")
 
     mongo_client = MongodbInterface(
-        db_name=DOMESTIC_DB, collection_name="producers_yearly_value"
+        db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
     )
     mongo_client.insert_docs_into_collection(documents=yearly_values)

@@ -6,6 +6,7 @@ from colorama import Fore, Style
 from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
+
 from domestic_market.utils import get_dollar_price_history
 from domestic_market.tasks import (
     calculate_commodity_mean_domestic,
@@ -45,6 +46,8 @@ from stock_market.tasks import (
 )
 from stock_market.utils import update_stock_adjusted_history
 
+from core.tasks import dashboard
+
 
 def get_clear_cmd():
     if platform.system() == "Linux":
@@ -72,6 +75,7 @@ class Command(BaseCommand):
                 "3) Option market",
                 "4) Stock market",
                 "5) Future market",
+                "6) Core app",
                 Fore.RED + "9) Others",
                 Fore.RED + "0) Exit" + Style.RESET_ALL,
                 sep="\n",
@@ -260,7 +264,26 @@ class Command(BaseCommand):
                                 update_option_result(MANUAL_MODE)
                             case "0":
                                 break
-
+                ###############################################################
+                case "6":  # CORE APP
+                    while True:
+                        print(
+                            Style.BRIGHT + "Core APP commands:",
+                            "all) Run all commands" + Style.RESET_ALL,
+                            Fore.BLUE + "1) update dashboard",
+                            Fore.RED + "0) Back" + Style.RESET_ALL,
+                            sep="\n",
+                        )
+                        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+                        os.system(clear_cmd)
+                        match cmd:
+                            case "all":
+                                dashboard(MANUAL_MODE)
+                            case "1":
+                                dashboard(MANUAL_MODE)
+                            case "0":
+                                break
+                ###############################################################
                 case "9":  # OTHERS
                     while True:
                         print(
