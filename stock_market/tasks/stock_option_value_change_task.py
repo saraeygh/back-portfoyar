@@ -242,9 +242,9 @@ def stock_option_value_change_main():
 @shared_task(name="stock_option_value_change_task")
 def stock_option_value_change(run_mode: str = AUTO_MODE):
 
-    if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
-    ):
-        print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
-        stock_option_value_change_main()
-        print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)
+    # if run_mode == MANUAL_MODE or is_scheduled(
+    #     weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
+    # ):
+    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
+    stock_option_value_change_main()
+    print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)

@@ -256,9 +256,9 @@ def stock_option_price_spread_main():
 @shared_task(name="stock_option_price_spread_task")
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
-    if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
-    ):
-        print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
-        stock_option_price_spread_main()
-        print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)
+    # if run_mode == MANUAL_MODE or is_scheduled(
+    #     weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
+    # ):
+    print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
+    stock_option_price_spread_main()
+    print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)

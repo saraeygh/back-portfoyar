@@ -107,10 +107,12 @@ def update_market_watch_main():
 @shared_task(name="update_market_watch_task")
 def update_market_watch(run_mode: str = AUTO_MODE):
 
-    if run_mode == MANUAL_MODE or (
-        is_scheduled(weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19)
-        and is_market_open()
-    ):
+    # if run_mode == MANUAL_MODE or (
+    #     is_scheduled(weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19)
+    #     and is_market_open()
+    # ):
+
+    if run_mode == MANUAL_MODE or is_market_open():
         print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
         update_market_watch_main()
         print(Fore.GREEN + "Market watch updated" + Style.RESET_ALL)

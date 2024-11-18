@@ -187,9 +187,9 @@ def update_instrument_roi_main():
 @shared_task(name="update_instrument_roi_task")
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
-    if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
-    ):
-        print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
-        update_instrument_roi_main()
-        print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)
+    # if run_mode == MANUAL_MODE or is_scheduled(
+    #     weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
+    # ):
+    print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
+    update_instrument_roi_main()
+    print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)

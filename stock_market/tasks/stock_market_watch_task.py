@@ -223,9 +223,9 @@ def stock_market_watch_main():
 @shared_task(name="stock_market_watch_task")
 def stock_market_watch(run_mode: str = AUTO_MODE):
 
-    if run_mode == MANUAL_MODE or is_scheduled(
-        weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
-    ):
-        print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
-        stock_market_watch_main()
-        print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)
+    # if run_mode == MANUAL_MODE or is_scheduled(
+    #     weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
+    # ):
+    print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
+    stock_market_watch_main()
+    print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)
