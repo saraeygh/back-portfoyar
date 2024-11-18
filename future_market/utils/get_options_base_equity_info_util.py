@@ -126,7 +126,11 @@ def add_missing_base_equities_symbols(options_base_equity: pd.DataFrame):
             options_base_equity["base_equity_ins_code"] == base_equity_ins_code
         ]
 
-        row = row.to_dict(orient="records")[0]
+        try:
+            row = row.to_dict(orient="records")[0]
+        except Exception:
+            continue
+
         row["symbol"] = symbol
         missing_base_equity_list.append(row)
 
