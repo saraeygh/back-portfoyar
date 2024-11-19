@@ -259,17 +259,3 @@ class StockRecommendationConfigAPIViewV2(APIView):
         return Response(
             {"message": "تنظیمات مورد نظر حذف شد."}, status=status.HTTP_200_OK
         )
-
-
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-class StockRecommendationConfigSettingAPIViewV2(APIView):
-    def get(self, request, config_id, setting_name):
-        config = get_object_or_404(RecommendationConfig, id=config_id)
-        setting = get_setting(config, setting_name)
-
-        return Response(setting, status=status.HTTP_200_OK)
-
-    def patch(self, request, config_id, setting_name):
-        config = get_object_or_404(RecommendationConfig, id=config_id)
-        return update_setting(config, setting_name, request)

@@ -16,7 +16,6 @@ from stock_market.views import (
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
     StockRecommendationConfigAPIViewV2,
-    StockRecommendationConfigSettingAPIViewV2,
 )
 
 market_watch_behaviour_urls = [
