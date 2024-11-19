@@ -27,3 +27,7 @@ from .stock_recommendation_config_apiview import (
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
 )
+from .stock_recommendation_config_apiview_v2 import (
+    StockRecommendationConfigAPIViewV2,
+    StockRecommendationConfigSettingAPIViewV2,
+)

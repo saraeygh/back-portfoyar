@@ -19,10 +19,10 @@ RELATED_NAMES = [
     "domestic_negative_range",
 ]
 
-FOUNDAMENTAL_CATEGORY = "foundamental"
+FUNDAMENTAL_CATEGORY = "foundamental"
 MARKETWATCH_CATEGORY = "marketwatch"
 CATEGORY_CHOICES = [
-    (FOUNDAMENTAL_CATEGORY, "بنیادی"),
+    (FUNDAMENTAL_CATEGORY, "بنیادی"),
     (MARKETWATCH_CATEGORY, "تابلوخوانی"),
 ]
 

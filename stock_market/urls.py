@@ -15,6 +15,8 @@ from stock_market.views import (
     GetRecommendedConfigAPIView,
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
+    StockRecommendationConfigAPIViewV2,
+    StockRecommendationConfigSettingAPIViewV2,
 )
 
 market_watch_behaviour_urls = [
@@ -54,6 +56,8 @@ stock_recommendation_urls = [
         "recomm-config-new/<int:config_id>/<str:setting_name>/",
         StockRecommendationConfigSettingAPIView.as_view(),
     ),
+    # V2
+    path("v2/recomm-config/", StockRecommendationConfigAPIViewV2.as_view()),
 ]
 
 urlpatterns = (
