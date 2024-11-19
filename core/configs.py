@@ -9,7 +9,6 @@ SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
 
 
 ######################################################## REDIS_DBs
-CELERY_REDIS_DB = 0  # CORE
 KEY_WITH_EX_REDIS_DB = 1  # CORE
 OPTION_REDIS_DB = 3  # FUTURE
 FUTURE_REDIS_DB = 4  # FUTURE
