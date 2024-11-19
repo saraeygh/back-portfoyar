@@ -117,6 +117,31 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
+  flower_test:
+    # mem_limit: 512m
+    build:
+      context: .
+      dockerfile: Dockerfile.api.test
+    image: flower_test
+    container_name: flower_test
+    entrypoint: ["/code/infra/entrypoints/flower_test.sh"]
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+      - api_test
+      - worker_test
+      - beat_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "5555:5555"
   nginx:
     # mem_limit: 512m
     build:
