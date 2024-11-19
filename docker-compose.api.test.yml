@@ -79,6 +79,7 @@ services:
         max-size: "24m"
         max-file: "10"
   worker_test:
+    mem_limit: 4g
     build:
       context: .
       dockerfile: Dockerfile.api.test
