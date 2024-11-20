@@ -120,11 +120,4 @@ class TestView(APIView):
         # update_market_watch()
         # user_generator()
         # dashboard()
-        import os
-        import psutil
-
-        cpu = os.cpu_count()
-
-        num_threads = psutil.Process().num_threads()
-        threads = num_threads // 2
         pass

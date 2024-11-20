@@ -12,7 +12,6 @@ from core.configs import (
     NO_DAILY_HISTORY,
     NO_HISTORY_DATE,
     STOCK_REDIS_DB,
-    AUTO_MODE,
 )
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis

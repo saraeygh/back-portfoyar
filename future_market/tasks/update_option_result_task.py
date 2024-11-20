@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import jdatetime
 
-from core.configs import FUTURE_REDIS_DB, AUTO_MODE
+from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
 
 from future_market.models import OPTION_INFO

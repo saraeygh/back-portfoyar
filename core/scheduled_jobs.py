@@ -44,6 +44,31 @@ from global_market.tasks import calculate_commodity_means_global
 from colorama import Fore, Style
 
 
+def get_scheduler():
+    total_cores = os.cpu_count()
+    used_cores = total_cores // 2
+    print(Fore.BLUE + f"Cores: {total_cores}, Used: {used_cores}" + Style.RESET_ALL)
+
+    total_threads = psutil.Process().num_threads()
+    print(
+        Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
+    )
+
+    executors = {
+        "default": ThreadPoolExecutor(total_threads),
+        "processpool": ProcessPoolExecutor(used_cores),
+    }
+    job_defaults = {
+        "coalesce": True,
+    }
+
+    scheduler = BlockingScheduler(
+        executors=executors, job_defaults=job_defaults, timezone=TEHRAN_TZ
+    )
+
+    return scheduler
+
+
 def add_core_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=collect_user_stats,
@@ -73,7 +98,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
         hour="19",
-        minute="20",
+        minute="10",
     )
 
     scheduler.add_job(
@@ -99,8 +124,8 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_production_sell_domestic_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="20",
-        minute="55",
+        hour="21",
+        minute="10",
     )
 
     scheduler.add_job(
@@ -108,8 +133,8 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_producers_yearly_value_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4, 5",
-        hour="22",
-        minute="10",
+        hour="21",
+        minute="45",
     )
 
     scheduler.add_job(
@@ -138,7 +163,8 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         id="update_base_equity_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4",
-        hour="23",
+        hour="22",
+        minute="10",
     )
 
     scheduler.add_job(
@@ -168,8 +194,8 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         id="update_option_data_from_tse_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4",
-        hour="8-17",
-        second="*/25",
+        hour="8-15",
+        second="*/40",
     )
 
     scheduler.add_job(
@@ -177,7 +203,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         id="get_option_history_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4, 5",
-        hour="3",
+        hour="1",
         minute="10",
     )
 
@@ -191,7 +217,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_market_watch_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
+        hour="8-15",
         second="*/20",
     )
 
@@ -200,8 +226,8 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_market_watch_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
-        second="*/35",
+        hour="8-15",
+        second="*/55",
     )
 
     scheduler.add_job(
@@ -209,7 +235,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_stock_raw_adjusted_history_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="5",
+        hour="2",
         minute="10",
     )
 
@@ -218,7 +244,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_info_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4, 5",
-        hour="6",
+        hour="4",
         minute="10",
     )
 
@@ -227,7 +253,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_roi_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
+        hour="8-15",
         minute="*/5",
     )
 
@@ -236,7 +262,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_value_history_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4, 5",
-        hour="16",
+        hour="5",
         minute="10",
     )
 
@@ -245,8 +271,8 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_value_change_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
-        minute="*/5",
+        hour="8-15",
+        minute="*/1",
     )
 
     scheduler.add_job(
@@ -254,8 +280,8 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_option_value_change_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
-        minute="*/10",
+        hour="8-15",
+        minute="*/5",
     )
 
     scheduler.add_job(
@@ -263,7 +289,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_option_price_spread_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
-        hour="8-17",
+        hour="8-15",
         minute="*/1",
     )
 
@@ -272,7 +298,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="get_monthly_activity_report_letter_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3, 4, 5",
-        hour="4",
+        hour="6",
         minute="10",
     )
 
@@ -294,37 +320,13 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
 
 def blocking_scheduler():
 
-    total_cores = os.cpu_count()
-    used_cores = total_cores // 2
-    print(Fore.BLUE + f"Cores: {total_cores}, Used: {used_cores}" + Style.RESET_ALL)
-
-    total_threads = psutil.Process().num_threads()
-    print(
-        Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
-    )
-
-    executors = {
-        "default": ThreadPoolExecutor(total_threads),
-        "processpool": ProcessPoolExecutor(used_cores),
-    }
-    job_defaults = {
-        "coalesce": True,
-    }
-
-    scheduler = BlockingScheduler(
-        executors=executors, job_defaults=job_defaults, timezone=TEHRAN_TZ
-    )
+    scheduler = get_scheduler()
 
     scheduler = add_core_app_jobs(scheduler)
-
     scheduler = add_domestic_market_app_jobs(scheduler)
-
     scheduler = add_future_market_app_jobs(scheduler)
-
     scheduler = add_option_market_app_jobs(scheduler)
-
     scheduler = add_stock_market_app_jobs(scheduler)
-
     scheduler = add_global_market_app_jobs(scheduler)
 
     print(Fore.GREEN + "APScheduler started successfully" + Style.RESET_ALL)
