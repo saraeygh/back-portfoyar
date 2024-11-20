@@ -18,6 +18,35 @@ market_watch_chart_title_dict = {
 }
 
 
+class SummaryPersonMoneyFlowSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    money_flow = RoundedFloatField()
+    value = RoundedFloatField()
+    closing_price = RoundedFloatField()
+    closing_price_change = RoundedFloatField(decimal_places=2)
+    last_price = RoundedFloatField()
+
+    chart = serializers.DictField()
+
+    def to_representation(self, instance):
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("money_flow"),
+            "chart_title": market_watch_chart_title_dict.get("money_flow")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
+
+        instance["chart"] = chart
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)
+
+
 class PersonMoneyFlowSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
@@ -39,6 +68,35 @@ class PersonMoneyFlowSerailizer(serializers.Serializer):
             "x_title": MARKET_WATCH_X_TITLE,
             "y_title": market_watch_y_title_dict.get("money_flow"),
             "chart_title": market_watch_chart_title_dict.get("money_flow")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
+
+        instance["chart"] = chart
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)
+
+
+class SummaryPersonBuyPressureSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    buy_pressure = RoundedFloatField(decimal_places=1)
+    value = RoundedFloatField()
+    closing_price = RoundedFloatField()
+    closing_price_change = RoundedFloatField(decimal_places=2)
+    last_price = RoundedFloatField()
+
+    chart = serializers.DictField()
+
+    def to_representation(self, instance):
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_pressure"),
+            "chart_title": market_watch_chart_title_dict.get("buy_pressure")
             + " "
             + instance["symbol"],
             "history": instance.get("history"),
@@ -84,6 +142,35 @@ class PersonBuyPressureSerailizer(serializers.Serializer):
         return super().to_representation(instance)
 
 
+class SummaryPersonBuyValueSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    buy_value = RoundedFloatField()
+    value = RoundedFloatField()
+    closing_price = RoundedFloatField()
+    closing_price_change = RoundedFloatField(decimal_places=2)
+    last_price = RoundedFloatField()
+
+    chart = serializers.DictField()
+
+    def to_representation(self, instance):
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_value"),
+            "chart_title": market_watch_chart_title_dict.get("buy_value")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
+
+        instance["chart"] = chart
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)
+
+
 class PersonBuyValueSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
@@ -117,6 +204,37 @@ class PersonBuyValueSerailizer(serializers.Serializer):
         return super().to_representation(instance)
 
 
+class SummaryBuyOrderRatioSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    buy_ratio = RoundedFloatField(decimal_places=0)
+    trade_count = serializers.IntegerField()
+    volume = RoundedFloatField()
+    value = RoundedFloatField()
+    closing_price = RoundedFloatField()
+    closing_price_change = RoundedFloatField(decimal_places=2)
+    last_price = RoundedFloatField()
+
+    chart = serializers.DictField()
+
+    def to_representation(self, instance):
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("buy_ratio"),
+            "chart_title": market_watch_chart_title_dict.get("buy_ratio")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
+
+        instance["chart"] = chart
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)
+
+
 class BuyOrderRatioSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
@@ -138,6 +256,37 @@ class BuyOrderRatioSerailizer(serializers.Serializer):
             "x_title": MARKET_WATCH_X_TITLE,
             "y_title": market_watch_y_title_dict.get("buy_ratio"),
             "chart_title": market_watch_chart_title_dict.get("buy_ratio")
+            + " "
+            + instance["symbol"],
+            "history": instance.get("history"),
+        }
+
+        instance["chart"] = chart
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)
+
+
+class SummarySellOrderRatioSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    sell_ratio = RoundedFloatField(decimal_places=0)
+    trade_count = serializers.IntegerField()
+    volume = RoundedFloatField()
+    value = RoundedFloatField()
+    closing_price = RoundedFloatField()
+    closing_price_change = RoundedFloatField(decimal_places=2)
+    last_price = RoundedFloatField()
+
+    chart = serializers.DictField()
+
+    def to_representation(self, instance):
+        chart = {
+            "x_title": MARKET_WATCH_X_TITLE,
+            "y_title": market_watch_y_title_dict.get("sell_ratio"),
+            "chart_title": market_watch_chart_title_dict.get("sell_ratio")
             + " "
             + instance["symbol"],
             "history": instance.get("history"),

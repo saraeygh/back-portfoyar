@@ -4,7 +4,10 @@ import pandas as pd
 from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
 
 from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import SellOrderRatioSerailizer
+from stock_market.serializers import (
+    SummarySellOrderRatioSerailizer,
+    SellOrderRatioSerailizer,
+)
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
 from rest_framework import status
@@ -41,6 +44,10 @@ class StockSellOrderRatioAPIView(APIView):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        results = SellOrderRatioSerailizer(results, many=True)
+        table = request.query_params.get("table")
+        if table and table == "summary":
+            results = SummarySellOrderRatioSerailizer(results, many=True)
+        else:
+            results = SellOrderRatioSerailizer(results, many=True)
 
         return Response(results.data, status=status.HTTP_200_OK)

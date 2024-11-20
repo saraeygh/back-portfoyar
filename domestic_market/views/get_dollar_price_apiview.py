@@ -17,7 +17,13 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class GetDollarPriceAPIView(APIView):
     def get(self, request):
-        dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")
+        try:
+            records = int(request.query_params.get("records"))
+            dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")[
+                0:records
+            ]
+        except Exception:
+            dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")
 
         dollar_prices_srz = GetDollarPriceSerializer(dollar_prices, many=True)
 

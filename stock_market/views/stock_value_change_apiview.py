@@ -5,7 +5,10 @@ from core.configs import STOCK_MONGO_DB, FIVE_MINUTES_CACHE, STOCK_TOP_500_LIMIT
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
 from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import StockValueChangeSerailizer
+from stock_market.serializers import (
+    SummaryStockValueChangeSerailizer,
+    StockValueChangeSerailizer,
+)
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -39,6 +42,11 @@ class StockValueChangeAPIView(APIView):
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
-        results_srz = StockValueChangeSerailizer(results, many=True)
 
-        return Response(results_srz.data, status=status.HTTP_200_OK)
+        table = request.query_params.get("table")
+        if table and table == "summary":
+            results = SummaryStockValueChangeSerailizer(results, many=True)
+        else:
+            results = StockValueChangeSerailizer(results, many=True)
+
+        return Response(results.data, status=status.HTTP_200_OK)
