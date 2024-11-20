@@ -47,7 +47,7 @@ STRATEGIES = {
     "short_put": {
         "name": "شورت پوت",
         "profit_status": "limited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
+        "risk_levels": ["high_risk"],
         "sequence": SHORT_PUT_SEQ,
     },
     "long_straddle": {

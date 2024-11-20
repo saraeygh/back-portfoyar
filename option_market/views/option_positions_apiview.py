@@ -110,17 +110,6 @@ def get_high_risk_long_put(strategy_key):
 
 
 # SHORT_PUT ############################################
-def get_low_risk_short_put(strategy_key):
-    strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
-    if not strategy_result.empty:
-        strategy_result = strategy_result[
-            strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
-        ]
-    strategy_result = strategy_result.to_dict(orient="records")
-
-    return strategy_result
-
-
 def get_high_risk_short_put(strategy_key):
     strategy_result = get_strategy_result_from_redis(strategy_key=strategy_key)
     if not strategy_result.empty:
@@ -319,7 +308,6 @@ FILTER_DICT = {
     # LONG_PUT
     "high_risk_long_put": get_high_risk_long_put,
     # SHORT_PUT
-    "low_risk_short_put": get_low_risk_short_put,
     "high_risk_short_put": get_high_risk_short_put,
     # LONG_STRADDLE
     "high_risk_long_straddle": get_high_risk_long_straddle,

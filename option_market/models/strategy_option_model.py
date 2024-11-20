@@ -45,4 +45,4 @@ class StrategyOption(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "استراتژی"
-        verbose_name_plural = "۰۱) استراتژی‌ها (جدید)"
+        verbose_name_plural = "۰۱) استراتژی‌ها"
