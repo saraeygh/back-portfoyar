@@ -45,7 +45,6 @@ class PersonMoneyFlowSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]
@@ -79,7 +78,6 @@ class PersonBuyPressureSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]
@@ -113,7 +111,6 @@ class PersonBuyValueSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]
@@ -147,7 +144,6 @@ class BuyOrderRatioSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]
@@ -181,7 +177,6 @@ class SellOrderRatioSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]

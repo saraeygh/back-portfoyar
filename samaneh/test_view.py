@@ -111,7 +111,6 @@ class TestView(APIView):
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
         # update_instrument_roi()
-        # update_option_data_from_tse()
         # populate_all_option_strategy()
         # calculate_commodity_mean_domestic()
         # config = get_recommendation_config(user=request.user)

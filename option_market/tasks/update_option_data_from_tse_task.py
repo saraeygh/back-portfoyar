@@ -24,7 +24,7 @@ redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
 
 def add_base_equity_best_orders(row, order_index):
-    best_order = row.get("blDs")
+    best_order = row.get("base_equity_order_book")
     best_order = best_order[0]
 
     return best_order[order_index]
@@ -84,6 +84,7 @@ def update_option_data_from_tse_main():
             "pdv": "base_equity_last_price",
             "hEven": "base_equity_last_update",
             "qtc": "base_equity_value",
+            "blDs": "base_equity_order_book",
         }
     )
     base_equity_data["base_equity_best_buy_price"] = base_equity_data.apply(
@@ -110,6 +111,7 @@ def update_option_data_from_tse_main():
             "base_equity_best_buy_volume",
             "base_equity_best_sell_volume",
             "base_equity_last_update",
+            "base_equity_order_book",
         ]
     ]
 
@@ -124,18 +126,26 @@ def update_option_data_from_tse_main():
 
     call_data = last_market_watch_data.copy(deep=True)
     call_data = call_data.rename(
-        columns={"insCode": "call_ins_code", "hEven": "call_last_update"}
+        columns={
+            "insCode": "call_ins_code",
+            "hEven": "call_last_update",
+            "blDs": "call_order_book",
+        }
     )
-    call_data = call_data[["call_ins_code", "call_last_update"]]
+    call_data = call_data[["call_ins_code", "call_last_update", "call_order_book"]]
     option_data = pd.merge(
         left=option_data, right=call_data, on="call_ins_code", how="left"
     )
 
     put_data = last_market_watch_data.copy(deep=True)
     put_data = put_data.rename(
-        columns={"insCode": "put_ins_code", "hEven": "put_last_update"}
+        columns={
+            "insCode": "put_ins_code",
+            "hEven": "put_last_update",
+            "blDs": "put_order_book",
+        }
     )
-    put_data = put_data[["put_ins_code", "put_last_update"]]
+    put_data = put_data[["put_ins_code", "put_last_update", "put_order_book"]]
     option_data = pd.merge(
         left=option_data, right=put_data, on="put_ins_code", how="left"
     )

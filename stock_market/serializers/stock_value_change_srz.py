@@ -32,7 +32,6 @@ class StockValueChangeSerailizer(serializers.Serializer):
         }
 
         instance["chart"] = chart
-        instance["symbol"] = f"{instance["symbol"]} ({instance["name"]})"
         instance["links"] = [
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]

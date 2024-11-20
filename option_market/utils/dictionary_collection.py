@@ -92,6 +92,7 @@ BASE_EQUITY_BUY_COLUMN_MAPPING = {
     "price": "base_equity_best_sell_price",
     "volume": "base_equity_best_sell_volume",
     "last_update": "base_equity_last_update",
+    "order_book": "base_equity_order_book",
 }
 
 CALL_BUY_COLUMN_MAPPING = {
@@ -99,6 +100,7 @@ CALL_BUY_COLUMN_MAPPING = {
     "price": "call_best_sell_price",
     "volume": "call_best_sell_volume",
     "last_update": "call_last_update",
+    "order_book": "call_order_book",
 }
 
 PUT_BUY_COLUMN_MAPPING = {
@@ -106,6 +108,7 @@ PUT_BUY_COLUMN_MAPPING = {
     "price": "put_best_sell_price",
     "volume": "put_best_sell_volume",
     "last_update": "put_last_update",
+    "order_book": "put_order_book",
 }
 
 CALL_SELL_COLUMN_MAPPING = {
@@ -113,6 +116,7 @@ CALL_SELL_COLUMN_MAPPING = {
     "price": "call_best_buy_price",
     "volume": "call_best_buy_volume",
     "last_update": "call_last_update",
+    "order_book": "call_order_book",
 }
 
 PUT_SELL_COLUMN_MAPPING = {
@@ -120,6 +124,7 @@ PUT_SELL_COLUMN_MAPPING = {
     "price": "put_best_buy_price",
     "volume": "put_best_buy_volume",
     "last_update": "put_last_update",
+    "order_book": "put_order_book",
 }
 
 # OPTION_COLUMNS = {
