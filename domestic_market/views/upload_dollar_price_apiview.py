@@ -1,3 +1,4 @@
+import threading
 import numpy as np
 import pandas as pd
 from domestic_market.tasks import upload_dollar_price
@@ -37,7 +38,10 @@ class UploadDollarPriceAPIView(APIView):
         dollar_prices_list_of_dicts = dollar_prices_df.to_dict(orient="records")
 
         if dollar_prices_list_of_dicts:
-            upload_dollar_price.delay(dollar_prices_list_of_dicts)
+            upload_dollar_price_thread = threading.Thread(
+                target=upload_dollar_price, args=(dollar_prices_list_of_dicts,)
+            )
+            upload_dollar_price_thread.start()
 
             return Response(
                 {

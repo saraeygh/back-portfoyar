@@ -5,7 +5,6 @@ from core.configs import FA_TO_EN_TRANSLATION_TABLE
 
 import jdatetime
 from tqdm import trange
-from celery import shared_task
 
 from core.utils import task_timing, get_http_response
 from stock_market.utils import get_company_from_codal, get_existing_tracing_number_set
@@ -60,7 +59,6 @@ def get_gregorian_date_time(jalali_date_time_str: str):
 
 
 @task_timing
-@shared_task(name="get_monthly_activity_report_letter_task")
 def get_monthly_activity_report_letter():
 
     company_dict = get_company_from_codal()

@@ -1,11 +1,9 @@
-from celery import shared_task
 from core.utils import task_timing
 from option_market.utils import get_option_volume_strategy_result
 from tqdm import tqdm
 
 
 @task_timing
-@shared_task(name="option_volume_strategy_result_task")
 def option_volume_strategy_result():
     m = [2, 3, 4, 5, 6, 7]
     d = [4, 5, 6, 7, 8, 9, 10]

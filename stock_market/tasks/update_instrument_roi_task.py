@@ -1,5 +1,4 @@
 import pandas as pd
-from celery import shared_task
 from colorama import Fore, Style
 
 from core.configs import (
@@ -7,13 +6,11 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
     STOCK_NA_ROI,
     AUTO_MODE,
-    MANUAL_MODE,
 )
 from core.utils import (
     MongodbInterface,
     task_timing,
     get_deviation_percent,
-    is_scheduled,
 )
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
@@ -184,12 +181,8 @@ def update_instrument_roi_main():
 
 
 @task_timing
-@shared_task(name="update_instrument_roi_task")
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
-    # ):
     print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
     update_instrument_roi_main()
     print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)

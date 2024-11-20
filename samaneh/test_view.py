@@ -119,5 +119,12 @@ class TestView(APIView):
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
         # update_market_watch()
         # user_generator()
-        dashboard()
+        # dashboard()
+        import os
+        import psutil
+
+        cpu = os.cpu_count()
+
+        num_threads = psutil.Process().num_threads()
+        threads = num_threads // 2
         pass

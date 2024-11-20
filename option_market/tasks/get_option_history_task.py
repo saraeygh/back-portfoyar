@@ -1,7 +1,6 @@
 import pandas as pd
 import jdatetime
 from tqdm import tqdm
-from celery import shared_task
 
 from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
 from core.utils import MongodbInterface, RedisInterface, task_timing, get_http_response
@@ -117,7 +116,6 @@ def get_update_history(instrument, instrument_type):
 
 
 @task_timing
-@shared_task(name="get_option_history_task")
 def get_option_history():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")

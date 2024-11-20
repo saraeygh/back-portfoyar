@@ -18,7 +18,6 @@ from stock_market.utils import (
     update_get_existing_instrument,
 )
 from tqdm import tqdm
-from celery import shared_task
 
 
 mongo_client = MongodbInterface(
@@ -87,7 +86,6 @@ def get_historical_roi(ins_code):
 
 
 @task_timing
-@shared_task(name="stock_market_update_instrument_info")
 def update_instrument_info():
     existing_industrial_group = update_get_existing_industrial_group()
     existing_instruments = update_get_existing_instrument(existing_industrial_group)

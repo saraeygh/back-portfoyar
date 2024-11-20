@@ -1,3 +1,6 @@
+import os
+import psutil
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 
@@ -289,24 +292,28 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
     return scheduler
 
 
-# APSCHEDULER SETTINGS
-executors = {
-    "default": ThreadPoolExecutor(20),
-    "processpool": ProcessPoolExecutor(5),
-}
-job_defaults = {
-    "coalesce": True,
-}
-
-
 def blocking_scheduler():
+
+    total_cores = os.cpu_count()
+    used_cores = total_cores // 2
+    print(Fore.BLUE + f"Cores: {total_cores}, Used: {used_cores}" + Style.RESET_ALL)
+
+    total_threads = psutil.Process().num_threads()
+    print(
+        Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
+    )
+
+    executors = {
+        "default": ThreadPoolExecutor(total_threads),
+        "processpool": ProcessPoolExecutor(used_cores),
+    }
+    job_defaults = {
+        "coalesce": True,
+    }
+
     scheduler = BlockingScheduler(
         executors=executors, job_defaults=job_defaults, timezone=TEHRAN_TZ
     )
-
-    from datetime import datetime
-
-    print(datetime.now(scheduler.timezone))
 
     scheduler = add_core_app_jobs(scheduler)
 

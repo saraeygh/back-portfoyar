@@ -1,6 +1,5 @@
-from celery import shared_task
 import pandas as pd
-from core.utils import MongodbInterface, RedisInterface, is_scheduled, task_timing
+from core.utils import MongodbInterface, RedisInterface, task_timing
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -8,7 +7,6 @@ from core.configs import (
     RIAL_TO_MILLION_TOMAN,
     OPTION_REDIS_DB,
     AUTO_MODE,
-    MANUAL_MODE,
 )
 
 from stock_market.utils import CALL_OPTION, PUT_OPTION, get_market_watch_data_from_redis
@@ -239,12 +237,8 @@ def stock_option_value_change_main():
 
 
 @task_timing
-@shared_task(name="stock_option_value_change_task")
 def stock_option_value_change(run_mode: str = AUTO_MODE):
 
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
-    # ):
     print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
     stock_option_value_change_main()
     print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)

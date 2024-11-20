@@ -1,11 +1,9 @@
-from celery import shared_task
 import pandas as pd
 from core.configs import (
     STOCK_OPTION_STRIKE_DEVIATION,
     STOCK_MONGO_DB,
     OPTION_REDIS_DB,
     AUTO_MODE,
-    MANUAL_MODE,
     RIAL_TO_MILLION_TOMAN,
 )
 from core.utils import (
@@ -13,7 +11,6 @@ from core.utils import (
     MongodbInterface,
     task_timing,
     get_deviation_percent,
-    is_scheduled,
 )
 
 from option_market.utils import (
@@ -253,12 +250,8 @@ def stock_option_price_spread_main():
 
 
 @task_timing
-@shared_task(name="stock_option_price_spread_task")
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4], start_hour=9, end_hour=19
-    # ):
     print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
     stock_option_price_spread_main()
     print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)

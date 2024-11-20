@@ -2,7 +2,6 @@ import os
 
 import jdatetime
 import pandas as pd
-from celery import shared_task
 from core.utils import send_upload_error_file_email
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.serializers import UploadDollarPriceSerializer
@@ -10,7 +9,6 @@ from samaneh.settings.common import BASE_DIR
 from colorama import Fore, Style
 
 
-@shared_task
 def upload_dollar_price(dollar_prices_list_of_dicts) -> None:
     error_dollar_prices = []
     dollar_prices_bulk_list = []

@@ -4,7 +4,6 @@ import re
 
 import numpy as np
 import pandas as pd
-from celery import shared_task
 from core.utils import send_upload_error_file_email, clear_redis_cache
 from django.core.files.storage import default_storage
 from global_market.serializers import GlobalTradeSerializer
@@ -183,7 +182,6 @@ def convert_trades_columns_to_one(row):
     return trades
 
 
-@shared_task
 def upload_xlsx_data_task(excel_file_name: str) -> None:
     with default_storage.open(
         f"{BASE_DIR}/media/uploaded_files/{excel_file_name}"

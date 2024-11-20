@@ -7,11 +7,9 @@ from core.configs import (
     TO_MILLION,
     STOCK_REDIS_DB,
     AUTO_MODE,
-    MANUAL_MODE,
 )
-from core.utils import RedisInterface, MongodbInterface, task_timing, is_scheduled
+from core.utils import RedisInterface, MongodbInterface, task_timing
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
-from celery import shared_task
 from colorama import Fore, Style
 
 
@@ -91,12 +89,8 @@ def stock_value_change_main():
 
 
 @task_timing
-@shared_task(name="stock_value_change_task")
 def stock_value_change(run_mode: str = AUTO_MODE):
 
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
-    # ):
     print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)
     stock_value_change_main()
     print(Fore.GREEN + "Stock value change updated" + Style.RESET_ALL)

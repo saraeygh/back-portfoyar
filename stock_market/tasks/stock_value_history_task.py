@@ -14,8 +14,6 @@ from . import stock_value_change
 from stock_market.models import StockInstrument, StockRawHistory
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
-from celery import shared_task
-
 
 def convert_date_obj_to_str(record):
     trade_date = record.get("trade_date")
@@ -27,7 +25,6 @@ def convert_date_obj_to_str(record):
 
 
 @task_timing
-@shared_task(name="stock_value_history_task")
 def stock_value_history():
 
     stock_value_change()

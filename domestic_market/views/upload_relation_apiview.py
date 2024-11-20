@@ -1,4 +1,5 @@
 import os
+import threading
 
 from django.core.files.storage import default_storage
 from domestic_market.tasks import upload_xlsx_relation
@@ -34,7 +35,10 @@ class UploadRelationAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        upload_xlsx_relation.delay(excel_file_name=file_name)
+        upload_xlsx_relation_thread = threading.Thread(
+            target=upload_xlsx_relation, args=(file_name,)
+        )
+        upload_xlsx_relation_thread.start()
 
         return Response(
             {

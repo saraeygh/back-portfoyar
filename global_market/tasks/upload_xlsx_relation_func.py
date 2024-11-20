@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from celery import shared_task
 from core.utils import send_upload_error_file_email
 from django.core.files.storage import default_storage
 from global_market.utils import get_commodity_type_dict
@@ -48,7 +47,6 @@ def delete_prev_relations(comm_type_id):
     return
 
 
-@shared_task
 def upload_xlsx_relation_task(excel_file_name: str) -> None:
 
     file_path = f"{BASE_DIR}/media/uploaded_files/{excel_file_name}"
