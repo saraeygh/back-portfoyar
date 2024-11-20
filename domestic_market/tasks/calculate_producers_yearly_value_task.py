@@ -1,5 +1,4 @@
 import pandas as pd
-from celery import shared_task
 from datetime import datetime, timedelta
 from django.db.models import Sum
 
@@ -14,7 +13,6 @@ from tqdm import tqdm
 
 
 @task_timing
-@shared_task(name="calculate_producers_yearly_value_task")
 def calculate_producers_yearly_value():
     ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
 

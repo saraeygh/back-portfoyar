@@ -4,7 +4,6 @@ from core.models import FeatureToggle, ACTIVE
 from core.utils import MARKET_STATE
 
 from . import MAIN_MARKET_TYPE_DICT, TSETMC_REQUEST_HEADERS
-from colorama import Fore, Style
 
 
 def get_market_state(market):
@@ -34,5 +33,4 @@ def is_market_open():
         if market_state == check_market.value:
             return True
 
-    print(Fore.RED + "Market is closed." + Style.RESET_ALL)
     return False

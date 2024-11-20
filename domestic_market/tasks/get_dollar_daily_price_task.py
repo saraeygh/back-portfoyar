@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import jdatetime
-from celery import shared_task
 from core.utils import task_timing, get_http_response
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
@@ -40,7 +39,6 @@ def get_dollar_price_bs(URL: str, dollar: str) -> int:
 
 
 @task_timing
-@shared_task(name="get_dollar_daily_price_task_domestic")
 def get_dollar_daily_price() -> None:
 
     AZAD_URL = "https://www.tgju.org/profile/price_dollar_soleymani"

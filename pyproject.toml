@@ -30,6 +30,7 @@ dependencies = [
     "django-prometheus>=2.3.1",
     "colorama>=0.4.6",
     "flower>=2.0.1",
+    "apscheduler>=3.10.4",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

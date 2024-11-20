@@ -1,4 +1,5 @@
 import os
+from pytz import timezone
 
 ######################################################## CACHE
 SIXTY_SECONDS_CACHE = 60  # 60 seconds
@@ -91,6 +92,7 @@ CLIENT_TYPE_URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
 ######################################################## COMMON
 # DOMESTIC & GLOBAL MEAN DEVIATION
 COMMODITY_TOP_200_LIMIT = 200
+TEHRAN_TZ = timezone("Asia/Tehran")
 
 # UNIT CONVERSION
 HEZAR_RIAL_TO_MILLION_TOMAN = 10_000

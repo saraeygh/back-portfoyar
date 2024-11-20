@@ -204,7 +204,7 @@ class Command(BaseCommand):
                         match cmd:
                             case "all":
                                 update_market_watch(MANUAL_MODE)
-                                stock_market_watch(MANUAL_MODE)
+                                stock_market_watch()
                                 update_instrument_info()
                                 update_instrument_roi(MANUAL_MODE)
                                 update_stock_raw_adjusted_history()
@@ -217,7 +217,7 @@ class Command(BaseCommand):
                             case "22":
                                 update_market_watch(MANUAL_MODE)
                             case "2":
-                                stock_market_watch(MANUAL_MODE)
+                                stock_market_watch()
                             case "3":
                                 update_stock_raw_adjusted_history()
                             case "4":
@@ -252,16 +252,16 @@ class Command(BaseCommand):
                         match cmd:
                             case "all":
                                 update_base_equity()
-                                update_future(MANUAL_MODE)
-                                update_option_result(MANUAL_MODE)
+                                update_future()
+                                update_option_result()
                             case "1":
                                 update_derivative_info()
                             case "2":
                                 update_base_equity()
                             case "3":
-                                update_future(MANUAL_MODE)
+                                update_future()
                             case "4":
-                                update_option_result(MANUAL_MODE)
+                                update_option_result()
                             case "0":
                                 break
                 ###############################################################

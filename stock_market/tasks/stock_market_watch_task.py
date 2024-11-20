@@ -1,11 +1,10 @@
-from celery import shared_task
 import pandas as pd
 import numpy as np
 import jdatetime
 from tqdm import tqdm
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, MongodbInterface, task_timing, is_scheduled
+from core.utils import RedisInterface, MongodbInterface, task_timing
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
@@ -14,7 +13,6 @@ from core.configs import (
     NO_HISTORY_DATE,
     STOCK_REDIS_DB,
     AUTO_MODE,
-    MANUAL_MODE,
 )
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
@@ -220,12 +218,8 @@ def stock_market_watch_main():
 
 
 @task_timing
-@shared_task(name="stock_market_watch_task")
-def stock_market_watch(run_mode: str = AUTO_MODE):
+def stock_market_watch():
 
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19
-    # ):
     print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
     stock_market_watch_main()
     print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)

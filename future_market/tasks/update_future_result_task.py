@@ -1,20 +1,16 @@
 import json
 import pandas as pd
-from celery import shared_task
 from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
     task_timing,
     get_deviation_percent,
-    is_scheduled,
 )
 from core.models import FeatureToggle
 from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
     RIAL_TO_BILLION_TOMAN,
     FUTURE_REDIS_DB,
-    AUTO_MODE,
-    MANUAL_MODE,
 )
 from future_market.models import (
     BaseEquity,
@@ -247,11 +243,5 @@ def update_future_main():
 
 
 @task_timing
-@shared_task(name="update_future_task")
-def update_future(run_mode: str = AUTO_MODE):
-
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4, 5], start_hour=10, end_hour=17
-    # ):
-
+def update_future():
     update_future_main()

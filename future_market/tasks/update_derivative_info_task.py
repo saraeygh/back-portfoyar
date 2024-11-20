@@ -1,6 +1,5 @@
 import json
 import requests
-from celery import shared_task
 from datetime import datetime
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
@@ -87,7 +86,6 @@ def update_info():
 
 
 @task_timing
-@shared_task(name="update_derivative_info_task")
 def update_derivative_info():
     is_running = redis_conn.client.get(name=IS_RUNNING)
     if is_running is None:

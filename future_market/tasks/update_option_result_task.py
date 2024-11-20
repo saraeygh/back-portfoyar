@@ -1,10 +1,9 @@
 import json
 import pandas as pd
 import jdatetime
-from celery import shared_task
 
-from core.configs import FUTURE_REDIS_DB, AUTO_MODE, MANUAL_MODE
-from core.utils import RedisInterface, task_timing, is_scheduled
+from core.configs import FUTURE_REDIS_DB, AUTO_MODE
+from core.utils import RedisInterface, task_timing
 
 from future_market.models import OPTION_INFO
 from future_market.utils import (
@@ -111,9 +110,5 @@ def update_option_result_main():
 
 
 @task_timing
-@shared_task(name="update_option_result_task")
-def update_option_result(run_mode: str = AUTO_MODE):
-    # if run_mode == MANUAL_MODE or is_scheduled(
-    #     weekdays=[0, 1, 2, 3, 4, 5], start_hour=10, end_hour=17
-    # ):
+def update_option_result():
     update_option_result_main()

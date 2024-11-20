@@ -1,7 +1,6 @@
 from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
-from celery import shared_task
 from core.utils import task_timing, get_http_response
 from stock_market.utils import (
     update_get_existing_industrial_group,
@@ -21,7 +20,6 @@ def convert_date_str_to_obj(row):
 
 
 @task_timing
-@shared_task(name="update_stock_raw_adjusted_history_task")
 def update_stock_raw_adjusted_history():
 
     existing_industrial_group = update_get_existing_industrial_group()

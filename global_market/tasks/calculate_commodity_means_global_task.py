@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from core.configs import GLOBAL_MONGO_DB
 
 from tqdm import tqdm
-from celery import shared_task
 from core.utils import MongodbInterface, task_timing, get_deviation_percent
 from django.db.models import Avg
 from global_market.models import GlobalCommodity, GlobalTrade
@@ -74,7 +73,6 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
 
 
 @task_timing
-@shared_task(name="calculate_commodity_means_task_global")
 def calculate_commodity_means_global():
     commodity_id_list = list(GlobalCommodity.objects.all().values_list("id", flat=True))
 

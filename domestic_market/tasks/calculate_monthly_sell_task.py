@@ -2,7 +2,6 @@ from django.db.models import Avg, Sum, Min, Max
 
 import jdatetime
 from tqdm import trange
-from celery import shared_task
 from core.utils import task_timing
 
 from domestic_market.models import (
@@ -240,7 +239,6 @@ def calculate_month_sell(start_date, end_date):
 
 
 @task_timing
-@shared_task(name="calculate_monthly_sell_task_domestic")
 def calculate_monthly_sell_domestic() -> None:
     if DomesticMonthlySell.objects.exists():
         last_monthly_sell_date = DomesticMonthlySell.objects.last().start_date

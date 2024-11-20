@@ -1,10 +1,8 @@
-from celery import shared_task
 import pandas as pd
 from colorama import Fore, Style
 
 from core.utils import (
     RedisInterface,
-    is_scheduled,
     task_timing,
     get_http_response,
     replace_arabic_letters_pd,
@@ -104,13 +102,7 @@ def update_market_watch_main():
 
 
 @task_timing
-@shared_task(name="update_market_watch_task")
 def update_market_watch(run_mode: str = AUTO_MODE):
-
-    # if run_mode == MANUAL_MODE or (
-    #     is_scheduled(weekdays=[0, 1, 2, 3, 4], start_hour=8, end_hour=19)
-    #     and is_market_open()
-    # ):
 
     if run_mode == MANUAL_MODE or is_market_open():
         print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)

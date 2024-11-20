@@ -6,7 +6,6 @@ from core.configs import DOMESTIC_MONGO_DB
 from core.utils import MongodbInterface, task_timing, get_deviation_percent
 
 from tqdm import tqdm
-from celery import shared_task
 from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRelation
 
 
@@ -116,7 +115,6 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
 
 
 @task_timing
-@shared_task(name="calculate_commodity_mean_task_domestic")
 def calculate_commodity_mean_domestic():
     producer_id_list = list(DomesticProducer.objects.all().values_list("id", flat=True))
 

@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-from celery import shared_task
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, task_timing
 from future_market.models import (
@@ -70,7 +69,6 @@ TO_BE_DELETED = {
 
 
 @task_timing
-@shared_task(name="update_base_equity_task")
 def update_base_equity():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL

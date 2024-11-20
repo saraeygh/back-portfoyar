@@ -4,7 +4,6 @@ from django.db.models import Sum
 
 import jdatetime
 from tqdm import tqdm
-from celery import shared_task
 from core.utils import task_timing, MongodbInterface
 
 from domestic_market.models import DomesticMonthlySell
@@ -77,7 +76,6 @@ def calculate_producer_production_sell(start_year: int, producer_id: int):
 
 
 @task_timing
-@shared_task(name="calculate_production_sell_task_domestic")
 def calculate_production_sell_domestic() -> None:
     producers = DomesticMonthlySell.objects.distinct("producer").values_list(
         "producer", flat=True

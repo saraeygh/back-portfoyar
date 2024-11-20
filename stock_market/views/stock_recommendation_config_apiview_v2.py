@@ -55,7 +55,7 @@ def get_configs(configs: list):
             }
 
             try:
-                new_index["duration"] = obj.threshold_value
+                new_index["duration"] = obj.duration
             except AttributeError:
                 pass
             try:
