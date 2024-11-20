@@ -50,7 +50,6 @@ services:
     container_name: api_test
     entrypoint: ["/code/infra/entrypoints/api_test.sh"]
     volumes:
-      - shared_options_excel_files_test:/code/media/uploaded_files/
       - ticket_appendix:/code/media/tickets/
       - django_logs:/code/logs/
     networks:
@@ -59,43 +58,6 @@ services:
       - postgres_test
       - redis_test
       - mongodb_test
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "24m"
-        max-file: "10"
-  rabbitmq_test:
-    container_name: rabbitmq_test
-    image: docker.arvancloud.ir/rabbitmq:3-management
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - test
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "24m"
-        max-file: "10"
-  worker_test:
-    mem_limit: 4g
-    build:
-      context: .
-      dockerfile: Dockerfile.api.test
-    image: worker_test
-    container_name: worker_test
-    entrypoint: ["/code/infra/entrypoints/worker_test.sh"]
-    volumes:
-      - shared_options_excel_files_test:/code/media/uploaded_files/
-      - ticket_appendix:/code/media/tickets/
-    networks:
-      - test
-    depends_on:
-      - postgres_test
-      - redis_test
-      - mongodb_test
-      - api_test
     restart: always
     logging:
       driver: "json-file"
@@ -147,8 +109,6 @@ networks:
 volumes:
   postgres_test:
   mongodb_test:
-  shared_options_excel_files_test:
   ticket_appendix:
   django_logs:
   nginx_logs:
-  rabbitmq_data:

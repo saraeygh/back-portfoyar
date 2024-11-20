@@ -45,7 +45,7 @@ def get_http_response(
             else:
                 print(
                     Fore.RED
-                    + f"ERROR: Status code {response.status_code}"
+                    + f"ERROR: Status code {response.status_code}, url: {req_url}"
                     + Style.RESET_ALL
                 )
 

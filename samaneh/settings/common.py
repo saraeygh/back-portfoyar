@@ -177,9 +177,6 @@ if not DEBUG:
     REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {"anon": "5/m"}
 
 
-CELERY_TIMEZONE = "Asia/Tehran"
-CELERY_TASK_TRACK_STARTED = True
-
 DRF_EXCEL_DATE_FORMAT = "yyyy-mm-dd"
 
 REDIS_HOST = os.environ.setdefault("REDIS_SERVICE_NAME", "localhost")
