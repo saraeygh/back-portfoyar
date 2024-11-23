@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 import json
 import pandas as pd
-from core.configs import FUTURE_REDIS_DB
+from core.configs import FUTURE_REDIS_DB, MANUAL_MODE
 from core.utils import RedisInterface
 from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse
@@ -94,8 +94,8 @@ class TestView(APIView):
         # stock_option_price_spread()
         # stock_value_history()
         # stock_market_watch()
-        # update_option_data_from_tse()
-        # update_option_result()
+        # update_option_data_from_tse(run_mode=MANUAL_MODE)
+        update_option_result()
         # update_future_info()
         # update_base_equity()
         # update_future()

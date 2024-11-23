@@ -1,9 +1,9 @@
-from core.utils import RedisInterface, task_timing
-
 import pandas as pd
 
+from core.utils import RedisInterface, task_timing
 from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
 from core.utils import get_http_response, replace_arabic_letters_pd
+
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
     get_last_market_watch_data,
@@ -15,9 +15,11 @@ from option_market.utils import (
     BASE_EQUITY_COLUMNS,
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
+    TSE_ORDER_BOOK,
     populate_all_option_strategy,
     convert_int_date_to_str_date,
 )
+
 from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -30,20 +32,13 @@ def add_base_equity_best_orders(row, order_index):
     return best_order[order_index]
 
 
-def edit_last_update(row):
-    last_update = str(int(row.get("last_update")))
-    if len(last_update) != 6:
-        last_update = "0" + last_update
-    last_update = f"{last_update[0:2]}:{last_update[2:4]}:{last_update[4:]}"
+def rename_order_book_cols(row):
+    order_book = pd.DataFrame(row.get("blDs"))
+    order_book.rename(columns=TSE_ORDER_BOOK, inplace=True)
+    order_book = order_book[list(TSE_ORDER_BOOK.values())]
+    order_book = order_book.to_dict(orient="records")
 
-    return last_update
-
-
-def add_link(row) -> str:
-    inst_id = str(row["inst_id"])
-    inst_link = f"https://main.tsetmc.com/InstInfo/{inst_id}/"
-
-    return inst_link
+    return order_book
 
 
 def update_option_data_from_tse_main():
@@ -75,7 +70,9 @@ def update_option_data_from_tse_main():
     )
 
     last_market_watch_data = get_last_market_watch_data(show_traded="false")
-
+    last_market_watch_data["blDs"] = last_market_watch_data.apply(
+        rename_order_book_cols, axis=1
+    )
     base_equity_data = last_market_watch_data.copy(deep=True)
     base_equity_data = base_equity_data.rename(
         columns={

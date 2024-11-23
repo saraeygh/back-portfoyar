@@ -10,6 +10,8 @@ from core.configs import (
     BUY_SELL_ORDERS_COLLECTION,
 )
 
+from . import TSE_ORDER_BOOK
+
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
@@ -17,16 +19,6 @@ mongo_conn = MongodbInterface(
     db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
 )
 
-ORDER_BOOK = {
-    # BUY
-    "zmd": "buy_count",
-    "qmd": "buy_volume",
-    "pmd": "buy_price",
-    # SELL
-    "zmo": "sell_count",
-    "qmo": "sell_volume",
-    "pmo": "sell_price",
-}
 
 BUY_SELL_ORDERS_COLUMNS = [
     "industrial_group",
@@ -38,7 +30,7 @@ BUY_SELL_ORDERS_COLUMNS = [
 
 def add_buy_value(row):
     order_book = pd.DataFrame(row.get("order_book"))
-    order_book.rename(columns=ORDER_BOOK, inplace=True)
+    order_book.rename(columns=TSE_ORDER_BOOK, inplace=True)
     order_book["buy_value"] = order_book["buy_volume"] * order_book["buy_price"]
     buy_value = order_book["buy_value"].sum()
 
@@ -47,7 +39,7 @@ def add_buy_value(row):
 
 def add_sell_value(row):
     order_book = pd.DataFrame(row.get("order_book"))
-    order_book.rename(columns=ORDER_BOOK, inplace=True)
+    order_book.rename(columns=TSE_ORDER_BOOK, inplace=True)
     order_book["sell_value"] = order_book["sell_volume"] * order_book["sell_price"]
     sell_value = order_book["sell_value"].sum()
     return sell_value

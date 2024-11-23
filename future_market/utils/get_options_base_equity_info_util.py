@@ -51,6 +51,25 @@ def filter_gold_base_equities(all_gold: pd.DataFrame):
     return filtered_gold
 
 
+ORDER_BOOK_COLS = {
+    "DemandPrice2": "DemandPrice2",
+    "OfferPrice2": "OfferPrice2",
+    "DemandVolume2": "DemandVolume2",
+    "OfferVolume2": "OfferVolume2",
+    "DemandPrice3": "DemandPrice3",
+    "OfferPrice3": "OfferPrice3",
+    "DemandVolume3": "DemandVolume3",
+    "OfferVolume3": "OfferVolume3",
+    "DemandPrice4": "DemandPrice4",
+    "OfferPrice4": "OfferPrice4",
+    "DemandVolume4": "DemandVolume4",
+    "OfferVolume4": "OfferVolume4",
+    "DemandPrice5": "DemandPrice5",
+    "OfferPrice5": "OfferPrice5",
+    "DemandVolume5": "DemandVolume5",
+    "OfferVolume5": "OfferVolume5",
+}
+
 BASE_EQUITY_KEYS = {
     FUND_INFO: {
         NAME_COL: "Name",
@@ -69,6 +88,7 @@ BASE_EQUITY_KEYS = {
             "DemandVolume1": "base_equity_best_buy_volume",
             "OfferVolume1": "base_equity_best_sell_volume",
             "ModifyTime": "base_equity_last_update",
+            **ORDER_BOOK_COLS,
         },
     },
     COMMODITY_INFO: {
@@ -88,6 +108,7 @@ BASE_EQUITY_KEYS = {
             "DemandVolume1": "base_equity_best_buy_volume",
             "OfferVolume1": "base_equity_best_sell_volume",
             "ModifyTime": "base_equity_last_update",
+            **ORDER_BOOK_COLS,
         },
     },
     GOLD_INFO: {
@@ -107,6 +128,23 @@ BASE_EQUITY_KEYS = {
             "BidVolume1": "base_equity_best_buy_volume",
             "AskVolume1": "base_equity_best_sell_volume",
             "OrdersPersianDateTime": "base_equity_last_update",
+            #
+            "BidPrice2": "DemandPrice2",
+            "AskPrice2": "OfferPrice2",
+            "BidVolume2": "DemandVolume2",
+            "AskVolume2": "OfferVolume2",
+            "BidPrice3": "DemandPrice3",
+            "AskPrice3": "OfferPrice3",
+            "BidVolume3": "DemandVolume3",
+            "AskVolume3": "OfferVolume3",
+            "BidPrice4": "DemandPrice4",
+            "AskPrice4": "OfferPrice4",
+            "BidVolume4": "DemandVolume4",
+            "AskVolume4": "OfferVolume4",
+            "BidPrice5": "DemandPrice5",
+            "AskPrice5": "OfferPrice5",
+            "BidVolume5": "DemandVolume5",
+            "AskVolume5": "OfferVolume5",
         },
     },
 }
@@ -190,4 +228,5 @@ def get_options_base_equity_info():
     corrected_options_base_equity = add_missing_base_equities_symbols(
         corrected_options_base_equity
     )
+
     return corrected_options_base_equity

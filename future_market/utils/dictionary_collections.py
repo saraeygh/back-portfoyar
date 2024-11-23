@@ -3,7 +3,6 @@ from future_market.models import (
     FUND_INFO,
     COMMODITY_INFO,
     GOLD_INFO,
-    OPTION_INFO,
 )
 
 RENAME_COLUMNS = {
@@ -179,6 +178,10 @@ OPTION_COLUMNS = {
     "base_equity_best_buy_volume": "base_equity_best_buy_volume",
     "base_equity_best_sell_volume": "base_equity_best_sell_volume",
     "base_equity_last_update": "base_equity_last_update",
+    #
+    "call_order_book": "call_order_book",
+    "put_order_book": "put_order_book",
+    "base_equity_order_book": "base_equity_order_book",
 }
 
 

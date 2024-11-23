@@ -127,6 +127,16 @@ PUT_SELL_COLUMN_MAPPING = {
     "order_book": "put_order_book",
 }
 
+TSE_ORDER_BOOK = {
+    "n": "row",
+    # BUY
+    "qmd": "buy_volume",
+    "pmd": "buy_price",
+    # SELL
+    "qmo": "sell_volume",
+    "pmo": "sell_price",
+}
+
 # OPTION_COLUMNS = {
 #     contract_size: "اندازه قرارداد",
 #     start_date: "تاریخ شروع",
