@@ -85,16 +85,16 @@ def update_option_data_from_tse_main():
         }
     )
     base_equity_data["base_equity_best_buy_price"] = base_equity_data.apply(
-        add_base_equity_best_orders, args=("pmd",), axis=1
+        add_base_equity_best_orders, args=("buy_price",), axis=1
     )
     base_equity_data["base_equity_best_sell_price"] = base_equity_data.apply(
-        add_base_equity_best_orders, args=("pmo",), axis=1
+        add_base_equity_best_orders, args=("sell_price",), axis=1
     )
     base_equity_data["base_equity_best_buy_volume"] = base_equity_data.apply(
-        add_base_equity_best_orders, args=("qmd",), axis=1
+        add_base_equity_best_orders, args=("buy_volume",), axis=1
     )
     base_equity_data["base_equity_best_sell_volume"] = base_equity_data.apply(
-        add_base_equity_best_orders, args=("qmo",), axis=1
+        add_base_equity_best_orders, args=("sell_volume",), axis=1
     )
 
     base_equity_data = base_equity_data[
