@@ -1,12 +1,13 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from core.configs import SIXTY_MINUTES_CACHE
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+
+from core.configs import SIXTY_MINUTES_CACHE
 from stock_market.models import StockIndustrialGroup
 
 
