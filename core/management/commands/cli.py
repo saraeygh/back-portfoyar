@@ -36,7 +36,7 @@ from option_market.utils import populate_all_option_strategy
 from stock_market.tasks import (
     update_market_watch,
     get_monthly_activity_report_letter,
-    stock_market_watch,
+    update_market_watch_indices,
     update_stock_raw_adjusted_history,
     update_instrument_info,
     update_instrument_roi,
@@ -46,7 +46,8 @@ from stock_market.tasks import (
 )
 from stock_market.utils import update_stock_adjusted_history
 
-from core.tasks import dashboard
+
+from dashboard.tasks import dashboard
 
 
 def get_clear_cmd():
@@ -75,7 +76,7 @@ class Command(BaseCommand):
                 "3) Option market",
                 "4) Stock market",
                 "5) Future market",
-                "6) Core app",
+                "6) Dashboard app",
                 Fore.RED + "9) Others",
                 Fore.RED + "0) Exit" + Style.RESET_ALL,
                 sep="\n",
@@ -187,7 +188,6 @@ class Command(BaseCommand):
                             Style.BRIGHT + "Stock market commands:",
                             "all) Run all commands" + Style.RESET_ALL,
                             Fore.BLUE + "1) Get monthly activity",
-                            "22) Update market watch (new)",
                             "2) Update market watch",
                             "3) Update instrument history",
                             "4) Update instrument info",
@@ -204,7 +204,7 @@ class Command(BaseCommand):
                         match cmd:
                             case "all":
                                 update_market_watch(MANUAL_MODE)
-                                stock_market_watch()
+                                update_market_watch_indices()
                                 update_instrument_info()
                                 update_instrument_roi(MANUAL_MODE)
                                 update_stock_raw_adjusted_history()
@@ -214,10 +214,8 @@ class Command(BaseCommand):
                                 get_monthly_activity_report_letter()
                             case "1":
                                 get_monthly_activity_report_letter()
-                            case "22":
-                                update_market_watch(MANUAL_MODE)
                             case "2":
-                                stock_market_watch()
+                                update_market_watch(MANUAL_MODE)
                             case "3":
                                 update_stock_raw_adjusted_history()
                             case "4":
@@ -265,10 +263,10 @@ class Command(BaseCommand):
                             case "0":
                                 break
                 ###############################################################
-                case "6":  # CORE APP
+                case "6":  # DASHBOARD APP
                     while True:
                         print(
-                            Style.BRIGHT + "Core APP commands:",
+                            Style.BRIGHT + "Dashboard APP commands:",
                             "all) Run all commands" + Style.RESET_ALL,
                             Fore.BLUE + "1) update dashboard",
                             Fore.RED + "0) Back" + Style.RESET_ALL,

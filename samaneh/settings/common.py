@@ -22,6 +22,7 @@ DEFAULT_INSTALLED_APPS = [
 MANUALLY_INSTALLED_APPS = [
     "account.apps.AccountConfig",
     "core.apps.CoreConfig",
+    "dashboard.apps.DashboardConfig",
     "domestic_market.apps.DomesticMarketConfig",
     "favorite.apps.FavoriteConfig",
     "future_market.apps.FutureMarketConfig",

@@ -157,7 +157,7 @@ def get_history(row, index_name):
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-def stock_market_watch_main():
+def update_market_watch_indices_main():
     market_watch = update_market_watch_data(get_market_watch_data_from_redis())
 
     if market_watch.empty:
@@ -217,8 +217,8 @@ def stock_market_watch_main():
 
 
 @task_timing
-def stock_market_watch():
+def update_market_watch_indices():
 
     print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
-    stock_market_watch_main()
+    update_market_watch_indices_main()
     print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)

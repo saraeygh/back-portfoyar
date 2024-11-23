@@ -1,7 +1,7 @@
 from .get_monthly_activity_report_letter_task import (
     get_monthly_activity_report_letter,
 )
-from .stock_market_watch_task import stock_market_watch
+from .stock_market_watch_task import update_market_watch_indices
 from .update_market_watch_task import update_market_watch
 
 from .update_instrument_info_task import update_instrument_info

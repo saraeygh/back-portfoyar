@@ -16,6 +16,7 @@ urlpatterns = [
     path("api/admin/", admin.site.urls),
     # APP'S URLS
     path("api/account/", include("account.urls")),
+    path("api/dashboard/", include("dashboard.urls")),
     path("api/domestic/", include("domestic_market.urls")),
     path("api/favorite/", include("favorite.urls")),
     path("api/future/", include("future_market.urls")),

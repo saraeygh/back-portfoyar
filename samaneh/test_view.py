@@ -16,7 +16,7 @@ from stock_market.tasks import (
     update_instrument_info,
     update_stock_raw_adjusted_history,
     stock_option_value_change,
-    stock_market_watch,
+    update_market_watch_indices,
     stock_value_history,
     stock_option_price_spread,
     update_market_watch,
@@ -86,9 +86,6 @@ def user_generator():
     users = pd.DataFrame(users)
     users.to_excel("./users.xlsx")
     return users
-
-
-from core.tasks import dashboard
 
 
 class TestView(APIView):

@@ -1,6 +1,9 @@
-from core.utils import task_timing, buy_sell_orders_value
+from core.utils import task_timing
 from core.configs import AUTO_MODE, MANUAL_MODE
+
 from stock_market.utils import is_market_open
+from dashboard.utils import buy_sell_orders_value
+
 from colorama import Fore, Style
 
 

@@ -24,6 +24,8 @@ from stock_market.utils import (
     is_market_open,
 )
 
+from stock_market.tasks import update_market_watch_indices
+
 
 def get_market_watch():
     market_watch = get_http_response(
@@ -108,3 +110,6 @@ def update_market_watch(run_mode: str = AUTO_MODE):
         print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
         update_market_watch_main()
         print(Fore.GREEN + "Market watch updated" + Style.RESET_ALL)
+
+    if run_mode == MANUAL_MODE:
+        update_market_watch_indices()

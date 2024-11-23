@@ -6,7 +6,9 @@ from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 
 from core.configs import TEHRAN_TZ
 
-from core.tasks import dashboard, collect_user_stats
+from core.tasks import collect_user_stats
+
+from dashboard.tasks import dashboard
 
 from domestic_market.tasks import (
     populate_domestic_market_db,
@@ -28,7 +30,7 @@ from option_market.tasks import update_option_data_from_tse, get_option_history
 
 from stock_market.tasks import (
     update_market_watch,
-    stock_market_watch,
+    update_market_watch_indices,
     update_stock_raw_adjusted_history,
     update_instrument_info,
     update_instrument_roi,
@@ -222,7 +224,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     )
 
     scheduler.add_job(
-        func=stock_market_watch,
+        func=update_market_watch_indices,
         id="stock_market_watch_task",
         trigger="cron",
         day_of_week="6, 0, 1, 2, 3",
