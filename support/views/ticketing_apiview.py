@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
-from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES, OPEN
+from support.models import Ticket, TicketResponse, FEATURE_CHOICES, UNIT_CHOICES, OPEN
 from support.serializers import (
     GetUserTicketsSerailizer,
     AddUserTicketsSerailizer,
@@ -114,17 +114,25 @@ def add_ticket_as_first_response(request, ticket, responses):
 def get_ticket_detail(request, ticket_id):
     ticket_obj = get_object_or_404(Ticket, id=ticket_id)
 
-    ticket = GetUserTicketsSerailizer(ticket_obj, context={"request": request})
-    ticket = ticket.data
+    if (
+        ticket_obj.sender_user == request.user
+        or ticket_obj.receiver_user == request.user
+    ):
+        ticket = GetUserTicketsSerailizer(ticket_obj, context={"request": request})
+        ticket = ticket.data
 
-    responses = ticket_obj.responses.order_by("updated_at")
-    responses = GetTicketResponseSerailizer(
-        responses, many=True, context={"request": request}
-    )
+        responses = ticket_obj.responses.order_by("updated_at")
+        responses = GetTicketResponseSerailizer(
+            responses, many=True, context={"request": request}
+        )
 
-    ticket["responses"] = add_ticket_as_first_response(request, ticket_obj, responses)
+        ticket["responses"] = add_ticket_as_first_response(
+            request, ticket_obj, responses
+        )
 
-    return Response(ticket, status=status.HTTP_200_OK)
+        return Response(ticket, status=status.HTTP_200_OK)
+
+    return Response({"message": "تیکت وجود ندارد"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @authentication_classes([TokenAuthentication])
@@ -195,6 +203,13 @@ class GetTicketDetailAPIView(APIView):
 
     def post(self, request, ticket_id):
         ticket = get_object_or_404(Ticket, id=ticket_id)
+        if not (
+            ticket.sender_user == request.user or ticket.receiver_user == request.user
+        ):
+            return Response(
+                {"message": "تیکت وجود ندارد"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             response = json.loads(request.data.get("response"))
         except Exception as e:
@@ -237,6 +252,26 @@ class GetTicketAppendixAPIView(APIView):
     throttle_classes = [DisableAnonThrottle]
 
     def get(self, request, file_name):
+        ticket = Ticket.objects.filter(file=file_name)
+        ticket_response = TicketResponse.objects.filter(file=file_name)
+
+        if not (
+            (
+                ticket.exists()
+                and (
+                    ticket.first().sender_user == request.user
+                    or ticket.first().receiver_user == request.user
+                )
+                or (
+                    ticket_response.exists()
+                    and ticket_response.first().user == request.user
+                )
+            )
+        ):
+            return Response(
+                {"message": "فایل وجود ندارد"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         file_path = f"{TICKET_APPENDIX_FILES_DIR}{file_name}"
 
         try:

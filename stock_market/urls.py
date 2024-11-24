@@ -16,7 +16,12 @@ from stock_market.views import (
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
     StockRecommendationConfigAPIViewV2,
+    MarketWatchDashboardAPIView,
 )
+
+dashboard_urls = [
+    path("stock/", MarketWatchDashboardAPIView.as_view()),
+]
 
 market_watch_behaviour_urls = [
     path("person-money-flow/", StockPersonMoneyFlowAPIView.as_view()),
@@ -61,7 +66,8 @@ stock_recommendation_urls = [
 ]
 
 urlpatterns = (
-    market_watch_behaviour_urls
+    dashboard_urls
+    + market_watch_behaviour_urls
     + market_roi_urls
     + market_value_urls
     + option_behavior_urls

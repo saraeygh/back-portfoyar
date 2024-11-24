@@ -28,3 +28,4 @@ from .stock_recommendation_config_apiview import (
     StockRecommendationConfigSettingAPIView,
 )
 from .stock_recommendation_config_apiview_v2 import StockRecommendationConfigAPIViewV2
+from .marketwatch_dashboard_menu_apiview import MarketWatchDashboardAPIView

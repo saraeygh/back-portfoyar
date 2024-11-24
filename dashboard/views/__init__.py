@@ -1,3 +1,2 @@
 from .dashboard_menu_apiview import IndustrialGroupsAPIView, PaperTypesAPIView
-from .marketwatch_dashboard_menu_apiview import MarketWatchDashboardAPIView
 from .buy_sell_value_apiview import BuySellValueAPIView

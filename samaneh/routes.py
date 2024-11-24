@@ -1,7 +1,7 @@
 from django.urls import path
 
 from samaneh.settings.common import DEBUG
-from dashboard.routes import dashboard_ws_routes
+from stock_market.routes import marketwatch_ws_routes
 
 
 test_urls = []
@@ -12,4 +12,4 @@ if DEBUG:
         path("ws/test/", TestConsumer.as_asgi()),
     ]
 
-ws_urlpatterns = dashboard_ws_routes + test_urls
+ws_urlpatterns = marketwatch_ws_routes + test_urls
