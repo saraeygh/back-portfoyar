@@ -252,26 +252,6 @@ class GetTicketAppendixAPIView(APIView):
     throttle_classes = [DisableAnonThrottle]
 
     def get(self, request, file_name):
-        ticket = Ticket.objects.filter(file=file_name)
-        ticket_response = TicketResponse.objects.filter(file=file_name)
-
-        if not (
-            (
-                ticket.exists()
-                and (
-                    ticket.first().sender_user == request.user
-                    or ticket.first().receiver_user == request.user
-                )
-                or (
-                    ticket_response.exists()
-                    and ticket_response.first().user == request.user
-                )
-            )
-        ):
-            return Response(
-                {"message": "فایل وجود ندارد"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
         file_path = f"{TICKET_APPENDIX_FILES_DIR}{file_name}"
 
         try:
