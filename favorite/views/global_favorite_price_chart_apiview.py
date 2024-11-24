@@ -84,8 +84,7 @@ class GlobalFavoritePriceChartAPIView(APIView):
         favorite_price_chart_id = kwargs.get("favorite_price_chart_id")
 
         favorite_price_chart = get_object_or_404(
-            GlobalFavoritePriceChart,
-            id=favorite_price_chart_id,
+            GlobalFavoritePriceChart, id=favorite_price_chart_id, user=request.user
         )
         favorite_price_chart.delete()
 

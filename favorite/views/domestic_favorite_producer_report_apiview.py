@@ -69,6 +69,7 @@ class DomesticFavoriteProducerReportAPIView(APIView):
         favorite_producer_report = get_object_or_404(
             DomesticFavoriteProducerReport,
             id=favorite_producer_report_id,
+            user=request.user,
         )
         favorite_producer_report.delete()
 

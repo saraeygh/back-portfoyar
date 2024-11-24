@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 @permission_classes([IsAuthenticated])
 class StockFavoriteROIInstrumentAPIView(APIView):
     def get(self, request, group_id):
-        group = get_object_or_404(StockFavoriteROIGroup, id=group_id)
+        group = get_object_or_404(StockFavoriteROIGroup, id=group_id, user=request.user)
         instruments = ROIGroupInstrument.objects.filter(group=group.id)
         if instruments.count() < 1:
             return Response(data=[], status=status.HTTP_200_OK)
@@ -27,7 +27,7 @@ class StockFavoriteROIInstrumentAPIView(APIView):
         return Response(data=instrument_roi.data, status=status.HTTP_200_OK)
 
     def delete(self, request, group_id, symbol):
-        group = get_object_or_404(StockFavoriteROIGroup, id=group_id)
+        group = get_object_or_404(StockFavoriteROIGroup, id=group_id, user=request.user)
         instrument = ROIGroupInstrument.objects.filter(group=group).filter(
             instrument__symbol=symbol
         )

@@ -107,6 +107,7 @@ class DomesticFavoriteRatioChartByProducerAPIView(APIView):
         favorite_ratio_chart_by_producer = get_object_or_404(
             DomesticFavoriteRatioChartByProducer,
             id=favorite_ratio_chart_by_producer_id,
+            user=request.user,
         )
 
         favorite_ratio_chart_by_producer.delete()

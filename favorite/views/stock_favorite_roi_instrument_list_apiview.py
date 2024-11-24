@@ -37,7 +37,7 @@ class StockFavoriteROIInstrumentListAPIView(APIView):
         group_id = request.data.get("group_id")
         instrument_id = request.data.get("instrument_id")
 
-        group = get_object_or_404(StockFavoriteROIGroup, id=group_id)
+        group = get_object_or_404(StockFavoriteROIGroup, id=group_id, user=request.user)
         instrument = get_object_or_404(StockInstrument, id=instrument_id)
 
         exists = ROIGroupInstrument.objects.filter(

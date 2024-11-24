@@ -101,10 +101,8 @@ class GlobalFavoriteRatioChartAPIView(APIView):
         favorite_ratio_chart_id = kwargs.get("favorite_ratio_chart_id")
 
         favorite_ratio_chart = get_object_or_404(
-            GlobalFavoriteRatioChart,
-            id=favorite_ratio_chart_id,
+            GlobalFavoriteRatioChart, id=favorite_ratio_chart_id, user=request.user
         )
-
         favorite_ratio_chart.delete()
 
         return Response(

@@ -95,6 +95,7 @@ class DomesticFavoritePriceChartByCategoryAPIView(APIView):
         favorite_price_chart = get_object_or_404(
             DomesticFavoritePriceChartByCategory,
             id=favorite_price_chart_id,
+            user=request.user,
         )
         favorite_price_chart.delete()
 

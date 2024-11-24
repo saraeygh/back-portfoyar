@@ -1,13 +1,14 @@
 from django.shortcuts import get_object_or_404
-from favorite.models import StockFavoriteROIGroup
-from favorite.utils import get_group_roi
-from stock_market.serializers import IndustryROISerailizer
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from favorite.models import StockFavoriteROIGroup
+from favorite.utils import get_group_roi
+from stock_market.serializers import IndustryROISerailizer
 
 
 @authentication_classes([TokenAuthentication])
@@ -39,21 +40,16 @@ class StockFavoriteROIGroupAPIView(APIView):
         group_id = request.data.get("group_id")
         group_name = request.data.get("name")
 
-        group = get_object_or_404(StockFavoriteROIGroup, id=group_id)
-        if request.user == group.user:
-            group.name = group_name
-            group.save()
-            return Response(
-                {"message": "با موفقیت ویرایش شد"}, status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                {"message": "شما مجاز به تغییر نام نیستید"},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+        group = get_object_or_404(StockFavoriteROIGroup, id=group_id, user=request.user)
+        group.name = group_name
+        group.save()
+
+        return Response({"message": "با موفقیت ویرایش شد"}, status=status.HTTP_200_OK)
 
     def delete(self, request, favorite_id):
-        group = get_object_or_404(StockFavoriteROIGroup, id=favorite_id)
+        group = get_object_or_404(
+            StockFavoriteROIGroup, id=favorite_id, user=request.user
+        )
         group.delete()
 
         return Response({"message": "با موفقیت حذف شد."}, status=status.HTTP_200_OK)

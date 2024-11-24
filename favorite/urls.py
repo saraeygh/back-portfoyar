@@ -8,10 +8,10 @@ from favorite.views import (
     DomesticFavoriteProducerReportAPIView,
     GlobalFavoritePriceChartAPIView,
     GlobalFavoriteRatioChartAPIView,
-    # OptionsFavoriteSymbolAPIView,
     StockFavoriteROIGroupAPIView,
     StockFavoriteROIInstrumentAPIView,
     StockFavoriteROIInstrumentListAPIView,
+    # OptionsFavoriteSymbolAPIView,
 )
 
 

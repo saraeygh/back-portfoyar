@@ -120,6 +120,7 @@ class DomesticFavoriteRatioChartByCategoryAPIView(APIView):
         favorite_ratio_chart = get_object_or_404(
             DomesticFavoriteRatioChartByCategory,
             id=favorite_ratio_chart_id,
+            user=request.user,
         )
 
         favorite_ratio_chart.delete()

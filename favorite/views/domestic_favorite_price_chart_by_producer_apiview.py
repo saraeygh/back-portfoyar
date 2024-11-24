@@ -1,17 +1,19 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from favorite.models import DomesticFavoritePriceChartByProducer
-from favorite.serializers import (
-    DomesticAddFavoritePriceChartByProducerSerailizer,
-    DomesticGetFavoritePriceChartByProducerSerailizer,
-)
-from favorite.utils import domestic_validate_favorite_by_producer
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from favorite.models import DomesticFavoritePriceChartByProducer
+from favorite.serializers import (
+    DomesticAddFavoritePriceChartByProducerSerailizer,
+    DomesticGetFavoritePriceChartByProducerSerailizer,
+)
+from favorite.utils import domestic_validate_favorite_by_producer
 
 
 @authentication_classes([TokenAuthentication])
@@ -89,7 +91,9 @@ class DomesticFavoritePriceChartByProducerAPIView(APIView):
         favorite_price_chart_by_producer = get_object_or_404(
             DomesticFavoritePriceChartByProducer,
             id=favorite_price_chart_by_producer_id,
+            user=request.user,
         )
+
         favorite_price_chart_by_producer.delete()
 
         return Response(
