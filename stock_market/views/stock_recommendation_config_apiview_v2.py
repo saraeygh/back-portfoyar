@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.db import transaction
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -82,24 +84,25 @@ def create_new_config(user, config_name):
             {"message": "نام تکراری است."}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    new_config = RecommendationConfig.objects.create(user=user, name=config_name)
-    if not RecommendationConfig.objects.filter(user=user, is_default=True).exists():
-        new_config.is_default = True
-        new_config.save()
-    MoneyFlow.objects.create(recommendation=new_config, is_enabled=True)
-    BuyPressure.objects.create(recommendation=new_config, is_enabled=True)
-    BuyValue.objects.create(recommendation=new_config, is_enabled=True)
-    BuyRatio.objects.create(recommendation=new_config, is_enabled=True)
-    SellRatio.objects.create(recommendation=new_config, is_enabled=True)
-    ROI.objects.create(recommendation=new_config, is_enabled=True)
-    ValueChange.objects.create(recommendation=new_config, is_enabled=True)
-    CallValueChange.objects.create(recommendation=new_config, is_enabled=True)
-    PutValueChange.objects.create(recommendation=new_config, is_enabled=True)
-    OptionPriceSpread.objects.create(recommendation=new_config, is_enabled=True)
-    GlobalPositiveRange.objects.create(recommendation=new_config, is_enabled=True)
-    GlobalNegativeRange.objects.create(recommendation=new_config, is_enabled=True)
-    DomesticPositiveRange.objects.create(recommendation=new_config, is_enabled=True)
-    DomesticNegativeRange.objects.create(recommendation=new_config, is_enabled=True)
+    with transaction.atomic():
+        new_config = RecommendationConfig.objects.create(user=user, name=config_name)
+        if not RecommendationConfig.objects.filter(user=user, is_default=True).exists():
+            new_config.is_default = True
+            new_config.save()
+        MoneyFlow.objects.create(recommendation=new_config, is_enabled=True)
+        BuyPressure.objects.create(recommendation=new_config, is_enabled=True)
+        BuyValue.objects.create(recommendation=new_config, is_enabled=True)
+        BuyRatio.objects.create(recommendation=new_config, is_enabled=True)
+        SellRatio.objects.create(recommendation=new_config, is_enabled=True)
+        ROI.objects.create(recommendation=new_config, is_enabled=True)
+        ValueChange.objects.create(recommendation=new_config, is_enabled=True)
+        CallValueChange.objects.create(recommendation=new_config, is_enabled=True)
+        PutValueChange.objects.create(recommendation=new_config, is_enabled=True)
+        OptionPriceSpread.objects.create(recommendation=new_config, is_enabled=True)
+        GlobalPositiveRange.objects.create(recommendation=new_config, is_enabled=True)
+        GlobalNegativeRange.objects.create(recommendation=new_config, is_enabled=True)
+        DomesticPositiveRange.objects.create(recommendation=new_config, is_enabled=True)
+        DomesticNegativeRange.objects.create(recommendation=new_config, is_enabled=True)
 
     configs = list(user.configs.all().order_by("created_at"))
     configs = get_configs(configs=configs)
@@ -108,7 +111,7 @@ def create_new_config(user, config_name):
 
 
 def update_related_objects(config_id, request):
-    config = get_object_or_404(RecommendationConfig, id=config_id)
+    config = get_object_or_404(RecommendationConfig, id=config_id, user=request.user)
     related_dicts = request.data
 
     try:
@@ -138,7 +141,9 @@ def update_config(request, config_id):
         default_config_obj = get_object_or_404(
             RecommendationConfig, user=request.user, is_default=True
         )
-        update_config_obj = get_object_or_404(RecommendationConfig, id=config_id)
+        update_config_obj = get_object_or_404(
+            RecommendationConfig, id=config_id, user=request.user
+        )
         if update_config_obj.id != default_config_obj.id and is_default is True:
             user_configs = list(request.user.configs.all())
             for config in user_configs:
@@ -247,7 +252,9 @@ class StockRecommendationConfigAPIViewV2(APIView):
 
     def delete(self, request):
         config_id = request.query_params.get("config_id")
-        config = get_object_or_404(RecommendationConfig, id=config_id)
+        config = get_object_or_404(
+            RecommendationConfig, id=config_id, user=request.user
+        )
         config.delete()
 
         configs = request.user.configs
