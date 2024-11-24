@@ -7,6 +7,7 @@ class StockOptionPriceSpreadSerailizer(serializers.Serializer):
     links = serializers.ListField()
     symbol = serializers.CharField()
     strike = serializers.IntegerField()
+    premium = serializers.IntegerField()
     asset_name = serializers.CharField()
     base_equit_price = serializers.IntegerField()
     price_spread = RoundedFloatField(decimal_places=2)
