@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.setdefault(
 ALLOWED_HOSTS = ["*"]
 
 DEFAULT_INSTALLED_APPS = [
-    # "daphne",
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -125,7 +125,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "samaneh.wsgi.application"
-# ASGI_APPLICATION = "samaneh.asgi.application"
+ASGI_APPLICATION = "samaneh.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

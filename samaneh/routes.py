@@ -1,15 +1,15 @@
-# from django.urls import path
+from django.urls import path
 
-# from samaneh.settings.common import DEBUG
-# from stock_market.routes import stock_ws_routes
+from samaneh.settings.common import DEBUG
+from dashboard.routes import dashboard_ws_routes
 
 
-# test_urls = []
-# if DEBUG:
-#     from .test_consumer import TestConsumer
+test_urls = []
+if DEBUG:
+    from .test_consumer import TestConsumer
 
-#     test_urls = [
-#         path("ws/test/", TestConsumer.as_asgi()),
-#     ]
+    test_urls = [
+        path("ws/test/", TestConsumer.as_asgi()),
+    ]
 
-# ws_urlpatterns = stock_ws_routes + test_urls
+ws_urlpatterns = dashboard_ws_routes + test_urls

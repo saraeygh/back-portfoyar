@@ -1,13 +1,14 @@
 import json
+import pandas as pd
 
 from channels.generic.websocket import WebsocketConsumer
 
-import pandas as pd
-from core.configs import STOCK_MONGO_DB, STOCK_TOP_500_LIMIT
-
+from core.configs import STOCK_MONGO_DB, MARKET_WATCH_TOP_5_LIMIT
 from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import PersonMoneyFlowSerailizer
+
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+
+from dashboard.utils import MARKET_WATCH_INDICES
 
 
 class MarketWatchConsumer(WebsocketConsumer):
@@ -35,11 +36,11 @@ class MarketWatchConsumer(WebsocketConsumer):
 
         results = results[~results["symbol"].str.contains(r"\d")]
         results = results.sort_values(by=index, ascending=False)
-        results = results.head(STOCK_TOP_500_LIMIT)
+        results = results.head(MARKET_WATCH_TOP_5_LIMIT)
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        results = PersonMoneyFlowSerailizer(results, many=True)
+        results = MARKET_WATCH_INDICES[index](results, many=True)
 
         self.send(text_data=json.dumps({index: results.data}))

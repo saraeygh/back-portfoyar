@@ -12,23 +12,7 @@ from core.configs import SIXTY_SECONDS_CACHE, STOCK_MONGO_DB, MARKET_WATCH_TOP_5
 from core.utils import MongodbInterface, add_index_as_id
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
-from stock_market.serializers import (
-    PersonMoneyFlowSerailizer,
-    PersonBuyPressureSerailizer,
-    PersonBuyValueSerailizer,
-    StockValueChangeSerailizer,
-    BuyOrderRatioSerailizer,
-    SellOrderRatioSerailizer,
-)
-
-MARKET_WATCH_INDICES = {
-    "money_flow": PersonMoneyFlowSerailizer,
-    "buy_pressure": PersonBuyPressureSerailizer,
-    "buy_value": PersonBuyValueSerailizer,
-    "value_change": StockValueChangeSerailizer,
-    "buy_ratio": BuyOrderRatioSerailizer,
-    "sell_ratio": SellOrderRatioSerailizer,
-}
+from dashboard.utils import MARKET_WATCH_INDICES
 
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
