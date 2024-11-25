@@ -112,3 +112,4 @@ volumes:
   ticket_appendix:
   django_logs:
   nginx_logs:
+  
