@@ -80,18 +80,18 @@ def covered_call(option_data, redis_conn):
         for _, row in end_date_option.iterrows():
             strike = float(row.get("strike_price"))
             premium = float(row.get("call_best_buy_price"))
-            asset_price = float(row.get("base_equity_last_price"))
+            base_equity_last_price = float(row.get("base_equity_last_price"))
 
             covered_call_strategy = CoveredCall(
-                strike=strike, premium=premium, asset_price=asset_price
+                strike=strike, premium=premium, asset_price=base_equity_last_price
             )
             coordinates = covered_call_strategy.get_coordinate()
 
-            profit_factor = premium - asset_price
+            profit_factor = premium - base_equity_last_price
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_last_price": asset_price,
+                "base_equity_last_price": base_equity_last_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": premium,
@@ -100,6 +100,7 @@ def covered_call(option_data, redis_conn):
                 **add_profits(row),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {

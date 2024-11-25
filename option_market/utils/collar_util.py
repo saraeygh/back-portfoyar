@@ -82,10 +82,11 @@ def collar(option_data, redis_conn):
                 ].iloc[0]
 
                 profit_factor = low_premium + -2 * high_premium
+                base_equity_last_price = row.get("base_equity_last_price")
                 document = {
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
-                    "base_equity_last_price": row.get("base_equity_last_price"),
+                    "base_equity_last_price": base_equity_last_price,
                     "call_sell_symbol_low": low_call_sell.get("call_symbol"),
                     "call_best_buy_price_low": low_premium,
                     "call_sell_strike_low": low_strike,
@@ -99,6 +100,10 @@ def collar(option_data, redis_conn):
                     "remained_day": row.get("remained_day"),
                     "end_date": row.get("end_date"),
                     "profit_factor": profit_factor,
+                    "strike_price_deviation": max(
+                        ((low_strike / base_equity_last_price) - 1),
+                        ((high_strike / base_equity_last_price) - 1),
+                    ),
                     "coordinates": coordinates,
                     "actions": [
                         {

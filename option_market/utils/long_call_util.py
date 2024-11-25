@@ -90,10 +90,11 @@ def long_call(option_data, redis_conn):
             coordinates = strategy.get_coordinate()
 
             profit_factor = -1 * call_premium
+            base_equity_last_price = row.get("base_equity_last_price")
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_last_price": row.get("base_equity_last_price"),
+                "base_equity_last_price": base_equity_last_price,
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
                 "strike_price": strike_price,
@@ -101,6 +102,7 @@ def long_call(option_data, redis_conn):
                 **add_break_even(row),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike_price / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {

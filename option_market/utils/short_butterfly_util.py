@@ -161,6 +161,11 @@ def short_butterfly(option_data, redis_conn):
                     ),
                     "end_date": row.get("end_date"),
                     "profit_factor": profit_factor,
+                    "strike_price_deviation": max(
+                        ((low_strike / base_equity_last_price) - 1),
+                        ((mid_strike / base_equity_last_price) - 1),
+                        ((high_strike / base_equity_last_price) - 1),
+                    ),
                     "coordinates": coordinates,
                     "actions": [
                         {

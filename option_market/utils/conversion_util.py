@@ -72,21 +72,21 @@ def conversion(option_data, redis_conn):
             strike = float(row.get("strike_price"))
             call_premium = float(row.get("call_best_buy_price"))
             put_premium = float(row.get("put_best_sell_price"))
-            asset_price = float(row.get("base_equity_last_price"))
+            base_equity_last_price = float(row.get("base_equity_last_price"))
 
             covered_call_strategy = Conversion(
                 strike=strike,
                 call_premium=call_premium,
                 put_premium=put_premium,
-                asset_price=asset_price,
+                asset_price=base_equity_last_price,
             )
             coordinates = covered_call_strategy.get_coordinate()
 
-            profit_factor = call_premium - put_premium - asset_price
+            profit_factor = call_premium - put_premium - base_equity_last_price
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_last_price": asset_price,
+                "base_equity_last_price": base_equity_last_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": call_premium,
@@ -100,6 +100,7 @@ def conversion(option_data, redis_conn):
                 ),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {

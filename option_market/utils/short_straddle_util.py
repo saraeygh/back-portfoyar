@@ -113,6 +113,7 @@ def short_straddle(option_data, redis_conn):
                 ),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike_price / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {

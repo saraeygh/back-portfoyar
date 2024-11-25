@@ -83,6 +83,7 @@ def short_call(option_data, redis_conn):
                 **add_profits(remained_day, base_equity_last_price, strike_price),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike_price / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {

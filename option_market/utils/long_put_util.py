@@ -53,10 +53,11 @@ def long_put(option_data, redis_conn):
             coordinates = strategy.get_coordinate()
 
             profit_factor = -1 * put_premium
+            base_equity_last_price = row.get("base_equity_last_price")
             document = {
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
-                "base_equity_last_price": row.get("base_equity_last_price"),
+                "base_equity_last_price": base_equity_last_price,
                 "put_buy_symbol": row.get("put_symbol"),
                 "put_best_sell_price": put_premium,
                 "strike_price": strike_price,
@@ -64,6 +65,7 @@ def long_put(option_data, redis_conn):
                 "remained_day": row.get("remained_day"),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
+                "strike_price_deviation": ((strike_price / base_equity_last_price) - 1),
                 "coordinates": coordinates,
                 "actions": [
                     {
