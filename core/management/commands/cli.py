@@ -25,12 +25,7 @@ from future_market.tasks import (
 )
 from global_market.tasks import calculate_commodity_means_global
 
-from option_market.tasks import (
-    update_option_data_from_tse,
-    get_option_history,
-    populate_option_total_volume,
-    option_volume_strategy_result,
-)
+from option_market.tasks import update_option_data_from_tse, get_option_history
 from option_market.utils import populate_all_option_strategy
 
 from stock_market.tasks import (
@@ -155,8 +150,6 @@ class Command(BaseCommand):
                             Fore.BLUE + "1) Update option data",
                             "2) Populate all option strategies",
                             "3) Get option history",
-                            "4) Populate option total volume",
-                            "5) Option volume strategy result",
                             Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
@@ -167,18 +160,12 @@ class Command(BaseCommand):
                                 update_option_data_from_tse(MANUAL_MODE)
                                 populate_all_option_strategy()
                                 get_option_history()
-                                populate_option_total_volume()
-                                option_volume_strategy_result()
                             case "1":
                                 update_option_data_from_tse(MANUAL_MODE)
                             case "2":
                                 populate_all_option_strategy()
                             case "3":
                                 get_option_history()
-                            case "4":
-                                populate_option_total_volume()
-                            case "5":
-                                option_volume_strategy_result()
                             case "0":
                                 break
                 ###############################################################

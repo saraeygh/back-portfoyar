@@ -5,8 +5,6 @@ from option_market.views import (
     AssetOptionSymbolsAPIView,
     SymbolHistoryAPIView,
     PriceSpreadStrategyAPIView,
-    SingleSymbolVolumeStrategyAPIView,
-    VolumeChangeStrategyResultAPIView,
     ProfitStatusesAPIView,
     StrategiesAPIView,
     OptionPositionsAPIView,
@@ -31,10 +29,5 @@ option_history_urls = [
     path("symbol-history/", SymbolHistoryAPIView.as_view()),
 ]
 
-volume_strategy_urls = [
-    path("single-symbol-strategy/", SingleSymbolVolumeStrategyAPIView.as_view()),
-    path("volume-change-strategy/", VolumeChangeStrategyResultAPIView.as_view()),
-]
 
-
-urlpatterns = option_history_urls + volume_strategy_urls + option_strategy_urls
+urlpatterns = option_history_urls + option_strategy_urls
