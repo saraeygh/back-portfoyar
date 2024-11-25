@@ -88,12 +88,8 @@ def add_ticket_as_first_response(request, ticket, responses):
     first_response = {
         "id": ticket.id,
         "text": ticket.text,
-        "date": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(
-            format="%Y/%m/%d"
-        ),
-        "time": jdatetime.datetime.fromgregorian(datetime=created_at).strftime(
-            format="%H:%M"
-        ),
+        "date": created_at.strftime("%Y/%m/%d"),
+        "time": created_at.strftime("%H:%M"),
         "user": ticket.sender_user.get_full_name(),
         "is_staff": ticket.sender_user.is_staff,
         "appendix": None,

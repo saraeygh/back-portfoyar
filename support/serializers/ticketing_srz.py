@@ -1,7 +1,13 @@
 from datetime import datetime
 import pytz
 from rest_framework import serializers
-from support.models import Ticket, TicketResponse, FEATURE_CHOICES, STATUS_CHOICES, UNIT_CHOICES
+from support.models import (
+    Ticket,
+    TicketResponse,
+    FEATURE_CHOICES,
+    STATUS_CHOICES,
+    UNIT_CHOICES,
+)
 import jdatetime
 from persiantools.jdatetime import JalaliDateTime
 
@@ -75,13 +81,29 @@ class GetUserTicketsSerailizer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["id", "sender_name", "receiver_name", "unit", "feature", "title", "status"]
+        fields = [
+            "id",
+            "sender_name",
+            "receiver_name",
+            "unit",
+            "feature",
+            "title",
+            "status",
+        ]
 
 
 class AddUserTicketsSerailizer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ["sender_user", "receiver_user", "unit", "feature", "title", "text", "file"]
+        fields = [
+            "sender_user",
+            "receiver_user",
+            "unit",
+            "feature",
+            "title",
+            "text",
+            "file",
+        ]
 
 
 class GetTicketResponseSerailizer(serializers.ModelSerializer):
@@ -98,9 +120,12 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        updated_at = JalaliDateTime(instance.updated_at, tzinfo=pytz.UTC) + jdatetime.timedelta(hours=3, minutes=30)
-        representation["date"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%Y/%m/%d")
-        representation["time"] = jdatetime.datetime.fromgregorian(datetime=updated_at).strftime(format="%H:%M")
+        updated_at = JalaliDateTime(
+            instance.updated_at, tzinfo=pytz.UTC
+        ) + jdatetime.timedelta(hours=3, minutes=30)
+
+        representation["date"] = updated_at.strftime("%Y/%m/%d")
+        representation["time"] = updated_at.strftime("%H:%M")
 
         representation["user"] = representation.pop("user_name")
         representation["is_staff"] = instance.user.is_staff
