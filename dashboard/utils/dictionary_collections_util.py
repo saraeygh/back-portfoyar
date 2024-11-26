@@ -5,9 +5,11 @@ from stock_market.serializers import (
     StockValueChangeSerailizer,
     BuyOrderRatioSerailizer,
     SellOrderRatioSerailizer,
+    StockOptionValueChangeSerailizer,
+    StockOptionPriceSpreadSerailizer,
 )
 
-MARKET_WATCH_INDICES = {
+STOCK_MARKET_WATCH_INDICES = {
     "money_flow": PersonMoneyFlowSerailizer,
     "buy_pressure": PersonBuyPressureSerailizer,
     "buy_value": PersonBuyValueSerailizer,
@@ -15,6 +17,13 @@ MARKET_WATCH_INDICES = {
     "buy_ratio": BuyOrderRatioSerailizer,
     "sell_ratio": SellOrderRatioSerailizer,
 }
+
+OPTION_MARKET_WATCH_INDICES = {
+    "call_value_change": StockOptionValueChangeSerailizer,
+    "put_value_change": StockOptionValueChangeSerailizer,
+    "option_price_spread": StockOptionPriceSpreadSerailizer,
+}
+
 
 TSE_ORDER_BOOK = {
     "n": "row",

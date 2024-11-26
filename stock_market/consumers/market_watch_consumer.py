@@ -8,7 +8,7 @@ from core.utils import MongodbInterface, add_index_as_id
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
-from dashboard.utils import MARKET_WATCH_INDICES
+from dashboard.utils import STOCK_MARKET_WATCH_INDICES
 
 
 class MarketWatchConsumer(WebsocketConsumer):
@@ -41,6 +41,6 @@ class MarketWatchConsumer(WebsocketConsumer):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        results = MARKET_WATCH_INDICES[index](results, many=True)
+        results = STOCK_MARKET_WATCH_INDICES[index](results, many=True)
 
         self.send(text_data=json.dumps({index: results.data}))

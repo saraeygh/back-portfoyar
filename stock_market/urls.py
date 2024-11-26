@@ -16,11 +16,13 @@ from stock_market.views import (
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
     StockRecommendationConfigAPIViewV2,
-    MarketWatchDashboardAPIView,
+    StockDashboardAPIView,
+    OptionDashboardAPIView,
 )
 
 dashboard_urls = [
-    path("stock/", MarketWatchDashboardAPIView.as_view()),
+    path("stock/", StockDashboardAPIView.as_view()),
+    path("option/", OptionDashboardAPIView.as_view()),
 ]
 
 market_watch_behaviour_urls = [
