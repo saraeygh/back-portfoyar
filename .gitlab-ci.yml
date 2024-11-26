@@ -6,8 +6,10 @@ variables:
 
 develop_deploy:
   stage: deploy
+
   only:
     - develop
+
   script:
     - ssh ${SERVER_IP} "cd ~/portfoyar/backend-portfoyar && git switch develop && git pull origin develop"
     - ssh ${SERVER_IP} "sudo docker compose -f docker-compose.api.test.yml up --build -d"
