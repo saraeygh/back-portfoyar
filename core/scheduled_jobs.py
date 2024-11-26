@@ -3,6 +3,7 @@ import psutil
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from core.configs import TEHRAN_TZ
 
@@ -45,6 +46,8 @@ from global_market.tasks import calculate_commodity_means_global
 
 from colorama import Fore, Style
 
+MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
+
 
 def get_scheduler():
     total_cores = os.cpu_count()
@@ -56,6 +59,16 @@ def get_scheduler():
         Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
     )
 
+    DB_NAMEAME = os.environ.setdefault("POSTGRES_DB", "samaneh_dev")
+    DB_USERNAME = os.environ.setdefault("POSTGRES_USER", "arman")
+    DB_PASSWORD = os.environ.setdefault("POSTGRES_PASSWORD", "arman")
+    DB_HOST = os.environ.setdefault("POSTGRES_SERVICE_NAME", "localhost")
+    jobstores = {
+        "default": SQLAlchemyJobStore(
+            url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAMEAME}"
+        )
+    }
+
     executors = {
         "default": ThreadPoolExecutor(total_threads),
         "processpool": ProcessPoolExecutor(used_cores),
@@ -65,7 +78,10 @@ def get_scheduler():
     }
 
     scheduler = BlockingScheduler(
-        executors=executors, job_defaults=job_defaults, timezone=TEHRAN_TZ
+        jobstores=jobstores,
+        executors=executors,
+        job_defaults=job_defaults,
+        timezone=TEHRAN_TZ,
     )
 
     return scheduler
@@ -79,6 +95,7 @@ def add_core_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="23",
         minute="58",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -101,6 +118,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="19",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -110,6 +128,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -119,6 +138,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
         minute="30",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -128,6 +148,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="21",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -137,6 +158,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="21",
         minute="45",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -167,6 +189,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="22",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -207,6 +230,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="1",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -239,6 +263,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="2",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -248,6 +273,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="4",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -266,6 +292,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="5",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
@@ -302,6 +329,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="6",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
