@@ -1,13 +1,13 @@
 stages:
-  - develop_deploy
+  - deploy
 
 variables:
   SERVER_IP: "185.105.185.188"
 
 develop_deploy:
-  stage: develop_deploy
+  stage: deploy
   only:
     - develop
   script:
     - ssh ${SERVER_IP} "cd ~/portfoyar/backend-portfoyar && git switch develop && git pull origin develop"
-    - ssh ${SERVER_IP} "sudo docker ps -a"
+    - ssh ${SERVER_IP} "sudo docker compose -f docker-compose.api.test.yml up --build -d"
