@@ -1,0 +1,13 @@
+stages:
+  - develop_deploy
+
+variables:
+  SERVER_IP: "185.105.185.188"
+
+develop_deploy:
+  stage: develop_deploy
+  only:
+    - develop
+  script:
+    - ssh ${SERVER_IP} "cd ~/portfoyar/backend-portfoyar && git switch develop && git pull origin develop"
+    - ssh ${SERVER_IP} "sudo docker ps -a"
