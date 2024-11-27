@@ -91,6 +91,7 @@ def add_core_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=collect_user_stats,
         id="collect_user_stats_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="23",
@@ -101,6 +102,7 @@ def add_core_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=dashboard,
         id="dashboard_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-17",
@@ -114,6 +116,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=populate_domestic_market_db,
         id="populate_domestic_market_db_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="19",
@@ -124,6 +127,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_commodity_mean_domestic,
         id="calculate_commodity_mean_domestic_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
@@ -134,6 +138,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_monthly_sell_domestic,
         id="calculate_monthly_sell_domestic_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
@@ -144,6 +149,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_production_sell_domestic,
         id="calculate_production_sell_domestic_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="21",
@@ -154,6 +160,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_producers_yearly_value,
         id="calculate_producers_yearly_value_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="21",
@@ -164,6 +171,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_dollar_daily_price,
         id="get_dollar_daily_price_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         minute="*/30",
@@ -176,6 +184,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_derivative_info,
         id="update_derivative_info_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -185,6 +194,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_base_equity,
         id="update_base_equity_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="22",
@@ -195,6 +205,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_future,
         id="update_future_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -204,6 +215,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_option_result,
         id="update_option_result_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -217,6 +229,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_option_data_from_tse,
         id="update_option_data_from_tse_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -226,6 +239,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_option_history,
         id="get_option_history_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="1",
@@ -241,6 +255,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_market_watch,
         id="update_market_watch_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -250,6 +265,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_market_watch_indices,
         id="stock_market_watch_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -259,6 +275,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_stock_raw_adjusted_history,
         id="update_stock_raw_adjusted_history_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="2",
@@ -269,6 +286,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_instrument_info,
         id="update_instrument_info_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="4",
@@ -279,6 +297,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_instrument_roi,
         id="update_instrument_roi_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -288,6 +307,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_value_history,
         id="stock_value_history_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="5",
@@ -298,6 +318,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_value_change,
         id="stock_value_change_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -307,6 +328,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_option_value_change,
         id="stock_option_value_change_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -316,6 +338,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_option_price_spread,
         id="stock_option_price_spread_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
@@ -325,6 +348,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_monthly_activity_report_letter,
         id="get_monthly_activity_report_letter_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="6",
@@ -339,6 +363,7 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_commodity_means_global,
         id="calculate_commodity_means_global_task",
+        replace_existing=True,
         trigger="cron",
         day_of_week="*",
         hour="7",
