@@ -4,7 +4,6 @@ from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import (
     MongodbInterface,
     get_http_response,
-    task_timing,
     replace_arabic_letters,
     get_deviation_percent,
 )
@@ -85,7 +84,6 @@ def get_historical_roi(ins_code):
     return historical_roi
 
 
-@task_timing
 def update_instrument_info():
     existing_industrial_group = update_get_existing_industrial_group()
     existing_instruments = update_get_existing_instrument(existing_industrial_group)

@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from django.db.models import Sum
 
-from core.utils import MongodbInterface, task_timing
+from core.utils import MongodbInterface
 from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_MONGO_DB
 
 
@@ -12,7 +12,6 @@ from domestic_market.utils import add_value_to_name
 from tqdm import tqdm
 
 
-@task_timing
 def calculate_producers_yearly_value():
     ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
 

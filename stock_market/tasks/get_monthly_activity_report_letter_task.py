@@ -6,7 +6,7 @@ from core.configs import FA_TO_EN_TRANSLATION_TABLE
 import jdatetime
 from tqdm import trange
 
-from core.utils import task_timing, get_http_response
+from core.utils import get_http_response
 from stock_market.utils import get_company_from_codal, get_existing_tracing_number_set
 from stock_market.models import CodalMonthlyActivityReport
 
@@ -58,7 +58,6 @@ def get_gregorian_date_time(jalali_date_time_str: str):
     return date_time
 
 
-@task_timing
 def get_monthly_activity_report_letter():
 
     company_dict = get_company_from_codal()

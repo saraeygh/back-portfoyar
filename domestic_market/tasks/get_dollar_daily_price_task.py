@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import jdatetime
-from core.utils import task_timing, get_http_response
+from core.utils import get_http_response
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
 from bs4 import BeautifulSoup
@@ -38,7 +38,6 @@ def get_dollar_price_bs(URL: str, dollar: str) -> int:
     return last_price_value
 
 
-@task_timing
 def get_dollar_daily_price() -> None:
 
     AZAD_URL = "https://www.tgju.org/profile/price_dollar_soleymani"

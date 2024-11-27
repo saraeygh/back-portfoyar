@@ -1,6 +1,5 @@
 from .redis_interface_util import RedisInterface
 from .mongodb_interface_util import MongodbInterface
-from .task_timing_decorator_util import task_timing
 from .send_upload_error_file_email_util import send_upload_error_file_email
 from .get_set_json_cache_util import set_json_cache, get_cache_as_json
 from .clear_redis_cache_util import clear_redis_cache

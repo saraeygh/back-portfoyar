@@ -3,7 +3,7 @@ import jdatetime
 from tqdm import tqdm
 
 from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
-from core.utils import MongodbInterface, RedisInterface, task_timing, get_http_response
+from core.utils import MongodbInterface, RedisInterface, get_http_response
 from stock_market.utils import TSETMC_REQUEST_HEADERS
 
 
@@ -115,7 +115,6 @@ def get_update_history(instrument, instrument_type):
         return
 
 
-@task_timing
 def get_option_history():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")

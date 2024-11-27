@@ -9,7 +9,6 @@ from core.configs import (
 )
 from core.utils import (
     MongodbInterface,
-    task_timing,
     get_deviation_percent,
 )
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
@@ -180,7 +179,6 @@ def update_instrument_roi_main():
     calculate_industry_duration_roi(durations=durations)
 
 
-@task_timing
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
     print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)

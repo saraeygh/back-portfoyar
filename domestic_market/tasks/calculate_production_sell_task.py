@@ -4,7 +4,7 @@ from django.db.models import Sum
 
 import jdatetime
 from tqdm import tqdm
-from core.utils import task_timing, MongodbInterface
+from core.utils import MongodbInterface
 
 from domestic_market.models import DomesticMonthlySell
 
@@ -75,7 +75,6 @@ def calculate_producer_production_sell(start_year: int, producer_id: int):
     return production_sell
 
 
-@task_timing
 def calculate_production_sell_domestic() -> None:
     producers = DomesticMonthlySell.objects.distinct("producer").values_list(
         "producer", flat=True

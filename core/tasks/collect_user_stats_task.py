@@ -1,6 +1,6 @@
 import jdatetime
 
-from core.utils import RedisInterface, MongodbInterface, task_timing
+from core.utils import RedisInterface, MongodbInterface
 from core.configs import USER_STATS_REDIS_DB, STATS_MONGO_DB
 from colorama import Fore, Style
 
@@ -11,7 +11,6 @@ mongo_conn = MongodbInterface(
 )
 
 
-@task_timing
 def collect_user_stats():
     keys_count = len(redis_conn.client.keys("*"))
 

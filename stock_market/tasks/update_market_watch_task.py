@@ -3,7 +3,6 @@ from colorama import Fore, Style
 
 from core.utils import (
     RedisInterface,
-    task_timing,
     get_http_response,
     replace_arabic_letters_pd,
 )
@@ -103,7 +102,6 @@ def update_market_watch_main():
     )
 
 
-@task_timing
 def update_market_watch(run_mode: str = AUTO_MODE):
 
     if run_mode == MANUAL_MODE or is_market_open():

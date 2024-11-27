@@ -2,7 +2,7 @@ from datetime import datetime
 
 import jdatetime
 from tqdm import tqdm
-from core.utils import task_timing, get_http_response
+from core.utils import get_http_response
 from domestic_market.models import DomesticDollarPrice, BourseViewCookie
 from domestic_market.utils import get_existing_dollar_prices_dict
 
@@ -55,7 +55,6 @@ def get_dollar_price_dict(URL: str):
     return dollar_price_dict
 
 
-@task_timing
 def get_dollar_price_history():
     AZAD_URL = "https://www.bourseview.com/api/v2/currency?fromTo=[107,106]"
     NIMA_URL = "https://www.bourseview.com/api/v2/currency?fromTo=[100,106]"

@@ -1,5 +1,5 @@
 import pandas as pd
-from core.utils import MongodbInterface, RedisInterface, task_timing
+from core.utils import MongodbInterface, RedisInterface
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -236,7 +236,6 @@ def stock_option_value_change_main():
             mongo_client.insert_docs_into_collection(documents=options)
 
 
-@task_timing
 def stock_option_value_change(run_mode: str = AUTO_MODE):
 
     print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)

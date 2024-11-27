@@ -2,7 +2,7 @@ from django.db.models import Avg, Sum, Min, Max
 
 import jdatetime
 from tqdm import trange
-from core.utils import task_timing
+
 
 from domestic_market.models import (
     DomesticTrade,
@@ -238,7 +238,6 @@ def calculate_month_sell(start_date, end_date):
     return bulk_created_list
 
 
-@task_timing
 def calculate_monthly_sell_domestic() -> None:
     if DomesticMonthlySell.objects.exists():
         last_monthly_sell_date = DomesticMonthlySell.objects.last().start_date

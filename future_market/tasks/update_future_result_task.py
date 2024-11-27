@@ -3,7 +3,6 @@ import pandas as pd
 from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
-    task_timing,
     get_deviation_percent,
 )
 from core.models import FeatureToggle
@@ -242,6 +241,5 @@ def update_future_main():
             redis_conn.client.set(strategy_key, serialized_data)
 
 
-@task_timing
 def update_future():
     update_future_main()

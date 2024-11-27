@@ -1,7 +1,7 @@
 from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
-from core.utils import task_timing, get_http_response
+from core.utils import get_http_response
 from stock_market.utils import (
     update_get_existing_industrial_group,
     update_get_existing_instrument,
@@ -19,7 +19,6 @@ def convert_date_str_to_obj(row):
     return date_obj
 
 
-@task_timing
 def update_stock_raw_adjusted_history():
 
     existing_industrial_group = update_get_existing_industrial_group()

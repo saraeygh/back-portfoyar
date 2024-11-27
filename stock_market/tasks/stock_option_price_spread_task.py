@@ -9,7 +9,6 @@ from core.configs import (
 from core.utils import (
     RedisInterface,
     MongodbInterface,
-    task_timing,
     get_deviation_percent,
 )
 
@@ -249,7 +248,6 @@ def stock_option_price_spread_main():
         mongo_client.insert_docs_into_collection(documents=spreads_list)
 
 
-@task_timing
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
     print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)

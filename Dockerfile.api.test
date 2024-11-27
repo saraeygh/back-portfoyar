@@ -44,7 +44,6 @@ RUN apk add \
   jpeg-dev \
   lcms2-dev \
   libffi-dev \
-  musl-dev \
   openjpeg-dev \
   openssl-dev \
   pango-dev \
@@ -57,17 +56,20 @@ RUN apk add \
   tcl-dev \
   tiff-dev \
   tk-dev \
-  zlib-dev
+  zlib-dev \
+  build-base
 
 WORKDIR /code
 
 # INSTALL PDM AND DEPENDENCIES
-RUN ["pip", "install", "--upgrade", "pip"]
+RUN ["pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
 RUN ["pip", "install", "pdm"]
+RUN ["pdm", "self", "update"]
 COPY ./pdm.lock /code/
 COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
-RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
+# RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
+RUN ["pip", "install", "-r", "/code/requirements.txt"]
 
 # COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/

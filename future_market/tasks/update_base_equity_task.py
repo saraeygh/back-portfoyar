@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface, task_timing
+from core.utils import RedisInterface
 from future_market.models import (
     BaseEquity,
     FUND_INFO,
@@ -68,7 +68,6 @@ TO_BE_DELETED = {
 }
 
 
-@task_timing
 def update_base_equity():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL

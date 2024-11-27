@@ -4,7 +4,7 @@ import jdatetime
 from tqdm import tqdm
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, MongodbInterface, task_timing
+from core.utils import RedisInterface, MongodbInterface
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
@@ -216,7 +216,6 @@ def update_market_watch_indices_main():
         mongo_client.insert_docs_into_collection(documents=index_df)
 
 
-@task_timing
 def update_market_watch_indices():
 
     print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)

@@ -1,9 +1,7 @@
 import os
 import redis
-from .task_timing_decorator_util import task_timing
 
 
-@task_timing
 def clear_redis_cache():
     host: str = os.environ.setdefault("REDIS_SERVICE_NAME", "localhost")
     port: int = 6379

@@ -2,7 +2,7 @@ import json
 import requests
 from datetime import datetime
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface, task_timing
+from core.utils import RedisInterface
 from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
@@ -85,7 +85,6 @@ def update_info():
             continue
 
 
-@task_timing
 def update_derivative_info():
     is_running = redis_conn.client.get(name=IS_RUNNING)
     if is_running is None:

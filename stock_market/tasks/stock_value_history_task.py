@@ -8,7 +8,7 @@ from core.configs import (
     STOCK_MONGO_DB,
 )
 from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import MongodbInterface, task_timing
+from core.utils import MongodbInterface
 
 from . import stock_value_change
 from stock_market.models import StockInstrument, StockRawHistory
@@ -24,7 +24,6 @@ def convert_date_obj_to_str(record):
     return record
 
 
-@task_timing
 def stock_value_history():
 
     stock_value_change()

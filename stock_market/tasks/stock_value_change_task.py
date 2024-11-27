@@ -8,7 +8,7 @@ from core.configs import (
     STOCK_REDIS_DB,
     AUTO_MODE,
 )
-from core.utils import RedisInterface, MongodbInterface, task_timing
+from core.utils import RedisInterface, MongodbInterface
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 from colorama import Fore, Style
 
@@ -88,7 +88,6 @@ def stock_value_change_main():
     mongo_client.insert_docs_into_collection(documents=value_change)
 
 
-@task_timing
 def stock_value_change(run_mode: str = AUTO_MODE):
 
     print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)

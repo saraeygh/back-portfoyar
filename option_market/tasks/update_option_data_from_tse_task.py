@@ -1,6 +1,6 @@
 import pandas as pd
 
-from core.utils import RedisInterface, task_timing
+from core.utils import RedisInterface
 from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
 from core.utils import get_http_response, replace_arabic_letters_pd
 
@@ -166,7 +166,6 @@ def update_option_data_from_tse_main():
     return
 
 
-@task_timing
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):
     if run_mode == MANUAL_MODE or is_market_open():
         update_option_data_from_tse_main()
