@@ -1,10 +1,10 @@
 from datetime import datetime
-
 import jdatetime
-from core.utils import get_http_response
+from bs4 import BeautifulSoup
+
+from core.utils import get_http_response, print_task_info
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
-from bs4 import BeautifulSoup
 
 
 def get_last_dollar_price(dollar: str):
@@ -38,8 +38,7 @@ def get_dollar_price_bs(URL: str, dollar: str) -> int:
     return last_price_value
 
 
-def get_dollar_daily_price() -> None:
-
+def get_dollar_daily_price_main():
     AZAD_URL = "https://www.tgju.org/profile/price_dollar_soleymani"
     NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
 
@@ -69,3 +68,11 @@ def get_dollar_daily_price() -> None:
         )
 
         return today_price
+
+
+def get_dollar_daily_price() -> None:
+    print_task_info(name=__name__)
+
+    get_dollar_daily_price_main()
+
+    print_task_info(color="GREEN", name=__name__)

@@ -8,9 +8,8 @@ from core.configs import (
     STOCK_REDIS_DB,
     AUTO_MODE,
 )
-from core.utils import RedisInterface, MongodbInterface
+from core.utils import RedisInterface, MongodbInterface, print_task_info
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
-from colorama import Fore, Style
 
 
 def add_last_update(row):
@@ -89,7 +88,8 @@ def stock_value_change_main():
 
 
 def stock_value_change(run_mode: str = AUTO_MODE):
+    print_task_info(name=__name__)
 
-    print(Fore.BLUE + "Updating stock value change ..." + Style.RESET_ALL)
     stock_value_change_main()
-    print(Fore.GREEN + "Stock value change updated" + Style.RESET_ALL)
+
+    print_task_info(color="GREEN", name=__name__)

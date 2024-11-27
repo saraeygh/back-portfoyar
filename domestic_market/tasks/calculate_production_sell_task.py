@@ -1,10 +1,9 @@
-from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_BILLION_TOMAN
-
-from django.db.models import Sum
-
 import jdatetime
 from tqdm import tqdm
-from core.utils import MongodbInterface
+
+from django.db.models import Sum
+from core.utils import MongodbInterface, print_task_info
+from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_BILLION_TOMAN
 
 from domestic_market.models import DomesticMonthlySell
 
@@ -75,7 +74,7 @@ def calculate_producer_production_sell(start_year: int, producer_id: int):
     return production_sell
 
 
-def calculate_production_sell_domestic() -> None:
+def calculate_production_sell_domestic_main():
     producers = DomesticMonthlySell.objects.distinct("producer").values_list(
         "producer", flat=True
     )
@@ -94,3 +93,11 @@ def calculate_production_sell_domestic() -> None:
         db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
     )
     mongodb_client.insert_docs_into_collection(documents=production_sell_list)
+
+
+def calculate_production_sell_domestic():
+    print_task_info(name=__name__)
+
+    calculate_production_sell_domestic_main()
+
+    print_task_info(color="GREEN", name=__name__)

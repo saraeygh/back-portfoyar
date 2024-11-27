@@ -1,18 +1,18 @@
-import pandas as pd
 from datetime import datetime, timedelta
+from tqdm import tqdm
+import pandas as pd
+
 from django.db.models import Sum
 
-from core.utils import MongodbInterface
+from core.utils import MongodbInterface, print_task_info
 from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_MONGO_DB
-
 
 from domestic_market.models import DomesticProducer, DomesticTrade
 from domestic_market.serializers import GetDomesticProducerListSerailizer
 from domestic_market.utils import add_value_to_name
-from tqdm import tqdm
 
 
-def calculate_producers_yearly_value():
+def calculate_producers_yearly_value_main():
     ONE_YEAR_AGO = datetime.today().date() - timedelta(days=365)
 
     producers = list(
@@ -50,3 +50,11 @@ def calculate_producers_yearly_value():
         db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
     )
     mongo_client.insert_docs_into_collection(documents=yearly_values)
+
+
+def calculate_producers_yearly_value():
+    print_task_info(name=__name__)
+
+    calculate_producers_yearly_value_main()
+
+    print_task_info(color="GREEN", name=__name__)

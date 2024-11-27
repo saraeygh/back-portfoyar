@@ -1,7 +1,6 @@
 from .populate_domestic_market_db_task import populate_domestic_market_db
 from .calculate_commodity_means_domestic_task import calculate_commodity_mean_domestic
 from .upload_dollar_price_task import upload_dollar_price
-from .get_dollar_daily_price_task import get_dollar_daily_price
 from .calculate_monthly_sell_task import calculate_monthly_sell_domestic
 from .calculate_production_sell_task import calculate_production_sell_domestic
 from .upload_xlsx_relation_task import upload_xlsx_relation

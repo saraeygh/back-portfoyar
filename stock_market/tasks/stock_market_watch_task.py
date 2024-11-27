@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 import jdatetime
 from tqdm import tqdm
-from colorama import Fore, Style
 
-from core.utils import RedisInterface, MongodbInterface
+from core.utils import RedisInterface, MongodbInterface, print_task_info
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
@@ -217,7 +216,8 @@ def update_market_watch_indices_main():
 
 
 def update_market_watch_indices():
+    print_task_info(name=__name__)
 
-    print(Fore.BLUE + "Updating market watch tables ..." + Style.RESET_ALL)
     update_market_watch_indices_main()
-    print(Fore.GREEN + "Market watch tables updated" + Style.RESET_ALL)
+
+    print_task_info(color="GREEN", name=__name__)

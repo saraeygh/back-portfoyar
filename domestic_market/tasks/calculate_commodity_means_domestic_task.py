@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
+from tqdm import tqdm
 import jdatetime
+
 from django.db.models import Sum, Avg
 
+from core.utils import MongodbInterface, get_deviation_percent, print_task_info
 from core.configs import DOMESTIC_MONGO_DB
-from core.utils import MongodbInterface, get_deviation_percent
 
-from tqdm import tqdm
 from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRelation
 
 
@@ -114,9 +115,8 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
         mongodb.insert_docs_into_collection(documents=mean_list)
 
 
-def calculate_commodity_mean_domestic():
+def calculate_commodity_mean_domestic_main():
     producer_id_list = list(DomesticProducer.objects.all().values_list("id", flat=True))
-
     collection_name_dict = {
         7: "one_week_mean",
         30: "one_month_mean",
@@ -128,4 +128,10 @@ def calculate_commodity_mean_domestic():
     for duration, collection_name in collection_name_dict.items():
         calculate_mean(duration, collection_name, producer_id_list)
 
-    return
+
+def calculate_commodity_mean_domestic():
+    print_task_info(name=__name__)
+
+    calculate_commodity_mean_domestic_main()
+
+    print_task_info(color="GREEN", name=__name__)

@@ -1,5 +1,5 @@
 import pandas as pd
-from core.utils import MongodbInterface, RedisInterface
+from core.utils import MongodbInterface, RedisInterface, print_task_info
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -10,8 +10,6 @@ from core.configs import (
 )
 
 from stock_market.utils import CALL_OPTION, PUT_OPTION, get_market_watch_data_from_redis
-
-from colorama import Fore, Style
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -237,7 +235,8 @@ def stock_option_value_change_main():
 
 
 def stock_option_value_change(run_mode: str = AUTO_MODE):
+    print_task_info(name=__name__)
 
-    print(Fore.BLUE + "Checking stock options value change ..." + Style.RESET_ALL)
     stock_option_value_change_main()
-    print(Fore.GREEN + "Stock options value change updated" + Style.RESET_ALL)
+
+    print_task_info(color="GREEN", name=__name__)

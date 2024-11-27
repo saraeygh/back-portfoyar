@@ -3,16 +3,16 @@ import jdatetime
 from tqdm import tqdm
 from django.db.models import Avg
 
+from core.utils import MongodbInterface, print_task_info
 from core.configs import (
     STOCK_VALUE_CHANGE_DURATION,
     STOCK_MONGO_DB,
+    RIAL_TO_BILLION_TOMAN,
 )
-from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import MongodbInterface
 
-from . import stock_value_change
 from stock_market.models import StockInstrument, StockRawHistory
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from . import stock_value_change
 
 
 def convert_date_obj_to_str(record):
@@ -24,8 +24,7 @@ def convert_date_obj_to_str(record):
     return record
 
 
-def stock_value_history():
-
+def stock_value_history_main():
     stock_value_change()
 
     main_paper_type = list(MAIN_PAPER_TYPE_DICT.keys())
@@ -64,3 +63,11 @@ def stock_value_history():
     mongo_client.insert_docs_into_collection(documents=duration_result_list)
 
     stock_value_change()
+
+
+def stock_value_history():
+    print_task_info(name=__name__)
+
+    stock_value_history_main()
+
+    print_task_info(color="GREEN", name=__name__)

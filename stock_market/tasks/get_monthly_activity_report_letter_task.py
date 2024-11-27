@@ -1,12 +1,12 @@
 import json
-
-from django.utils import timezone
-from core.configs import FA_TO_EN_TRANSLATION_TABLE
-
 import jdatetime
 from tqdm import trange
 
-from core.utils import get_http_response
+from django.utils import timezone
+from core.utils import get_http_response, print_task_info
+from core.configs import FA_TO_EN_TRANSLATION_TABLE
+
+
 from stock_market.utils import get_company_from_codal, get_existing_tracing_number_set
 from stock_market.models import CodalMonthlyActivityReport
 
@@ -58,7 +58,7 @@ def get_gregorian_date_time(jalali_date_time_str: str):
     return date_time
 
 
-def get_monthly_activity_report_letter():
+def get_monthly_activity_report_letter_main():
 
     company_dict = get_company_from_codal()
     existing_tracing_number_set = get_existing_tracing_number_set()
@@ -133,3 +133,11 @@ def get_monthly_activity_report_letter():
 
         if tracing_number_repeatation > 200:
             break
+
+
+def get_monthly_activity_report_letter():
+    print_task_info(name=__name__)
+
+    get_monthly_activity_report_letter_main()
+
+    print_task_info(color="GREEN", name=__name__)

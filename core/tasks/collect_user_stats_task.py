@@ -1,8 +1,7 @@
 import jdatetime
 
-from core.utils import RedisInterface, MongodbInterface
+from core.utils import RedisInterface, MongodbInterface, print_task_info
 from core.configs import USER_STATS_REDIS_DB, STATS_MONGO_DB
-from colorama import Fore, Style
 
 USER_STATS_MONGO_COLLECTION = "user_stats"
 redis_conn = RedisInterface(db=USER_STATS_REDIS_DB)
@@ -11,7 +10,7 @@ mongo_conn = MongodbInterface(
 )
 
 
-def collect_user_stats():
+def collect_user_stats_main():
     keys_count = len(redis_conn.client.keys("*"))
 
     keys = []
@@ -35,4 +34,8 @@ def collect_user_stats():
     prev_stats.append(new_stat)
     mongo_conn.insert_docs_into_collection(documents=prev_stats)
 
-    print(Fore.GREEN + f"collect today ({today_date}) user stats" + Style.RESET_ALL)
+
+def collect_user_stats():
+    print_task_info(name=__name__)
+    collect_user_stats_main()
+    print_task_info(color="GREEN", name=__name__)

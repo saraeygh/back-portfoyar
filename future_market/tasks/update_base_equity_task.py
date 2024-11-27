@@ -1,7 +1,10 @@
 import json
 import pandas as pd
+from colorama import Fore, Style
+
+from core.utils import RedisInterface, print_task_info
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface
+
 from future_market.models import (
     BaseEquity,
     FUND_INFO,
@@ -10,7 +13,6 @@ from future_market.models import (
     ID,
     CONTRACT_CODE,
 )
-from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
@@ -68,7 +70,7 @@ TO_BE_DELETED = {
 }
 
 
-def update_base_equity():
+def update_base_equity_main():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
@@ -125,3 +127,11 @@ def update_base_equity():
             continue
 
     print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)
+
+
+def update_base_equity():
+    print_task_info(name=__name__)
+
+    update_base_equity_main()
+
+    print_task_info(color="GREEN", name=__name__)

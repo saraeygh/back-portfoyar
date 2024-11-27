@@ -4,7 +4,9 @@ from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
     get_deviation_percent,
+    print_task_info,
 )
+
 from core.models import FeatureToggle
 from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
@@ -242,4 +244,8 @@ def update_future_main():
 
 
 def update_future():
+    print_task_info(name=__name__)
+
     update_future_main()
+
+    print_task_info(color="GREEN", name=__name__)

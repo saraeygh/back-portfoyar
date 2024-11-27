@@ -5,6 +5,7 @@ from core.utils import (
     RedisInterface,
     get_http_response,
     replace_arabic_letters_pd,
+    print_task_info,
 )
 from core.configs import (
     MARKET_WATCH_URL,
@@ -103,11 +104,12 @@ def update_market_watch_main():
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):
+    print_task_info(name=__name__)
 
     if run_mode == MANUAL_MODE or is_market_open():
-        print(Fore.GREEN + "updating market watch ..." + Style.RESET_ALL)
         update_market_watch_main()
-        print(Fore.GREEN + "Market watch updated" + Style.RESET_ALL)
 
     if run_mode == MANUAL_MODE:
         update_market_watch_indices()
+
+    print_task_info(color="GREEN", name=__name__)

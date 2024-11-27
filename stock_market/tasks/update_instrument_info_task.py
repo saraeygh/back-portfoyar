@@ -6,6 +6,7 @@ from core.utils import (
     get_http_response,
     replace_arabic_letters,
     get_deviation_percent,
+    print_task_info,
 )
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
@@ -84,7 +85,7 @@ def get_historical_roi(ins_code):
     return historical_roi
 
 
-def update_instrument_info():
+def update_instrument_info_main():
     existing_industrial_group = update_get_existing_industrial_group()
     existing_instruments = update_get_existing_instrument(existing_industrial_group)
 
@@ -145,3 +146,11 @@ def update_instrument_info():
 
     mongo_client.collection = mongo_client.db["instrument_info"]
     mongo_client.insert_docs_into_collection(documents=documents)
+
+
+def update_instrument_info():
+    print_task_info(name=__name__)
+
+    update_instrument_info_main()
+
+    print_task_info(color="GREEN", name=__name__)

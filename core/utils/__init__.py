@@ -1,3 +1,4 @@
+from .pring_task_info_util import print_task_info
 from .redis_interface_util import RedisInterface
 from .mongodb_interface_util import MongodbInterface
 from .send_upload_error_file_email_util import send_upload_error_file_email

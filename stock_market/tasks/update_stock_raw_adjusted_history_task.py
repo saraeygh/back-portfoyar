@@ -1,14 +1,16 @@
 from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
-from core.utils import get_http_response
+
+from core.utils import get_http_response, print_task_info
+
 from stock_market.utils import (
+    TSETMC_REQUEST_HEADERS,
+    HISTORY_COLUMN_RENAME,
     update_get_existing_industrial_group,
     update_get_existing_instrument,
     update_stock_raw_history,
     update_stock_adjusted_history,
-    TSETMC_REQUEST_HEADERS,
-    HISTORY_COLUMN_RENAME,
 )
 
 
@@ -19,7 +21,7 @@ def convert_date_str_to_obj(row):
     return date_obj
 
 
-def update_stock_raw_adjusted_history():
+def update_stock_raw_adjusted_history_main():
 
     existing_industrial_group = update_get_existing_industrial_group()
     existing_instrument = update_get_existing_instrument(existing_industrial_group)
@@ -76,3 +78,11 @@ def update_stock_raw_adjusted_history():
             update_stock_raw_history(raw_history=history, instrument_obj=instrument_obj)
 
     update_stock_adjusted_history()
+
+
+def update_stock_raw_adjusted_history():
+    print_task_info(name=__name__)
+
+    update_stock_raw_adjusted_history_main()
+
+    print_task_info(color="GREEN", name=__name__)

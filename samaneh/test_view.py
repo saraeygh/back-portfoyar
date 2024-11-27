@@ -99,7 +99,7 @@ class TestView(APIView):
         # stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse(run_mode=MANUAL_MODE)
-        update_option_result()
+        # update_option_result()
         # update_future_info()
         # update_base_equity()
         # update_future()
@@ -112,14 +112,16 @@ class TestView(APIView):
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
         # update_instrument_roi()
-        populate_all_option_strategy()
+        # populate_all_option_strategy()
         # calculate_commodity_mean_domestic()
         # config = get_recommendation_config(user=request.user)
         # stock_recommendation(config=config)
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
         # update_market_watch()
         # user_generator()
-        # dashboard()
+        from dashboard.tasks import dashboard
+
+        dashboard()
 
         return Response(
             {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},

@@ -1,5 +1,4 @@
 import pandas as pd
-from colorama import Fore, Style
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -7,10 +6,7 @@ from core.configs import (
     STOCK_NA_ROI,
     AUTO_MODE,
 )
-from core.utils import (
-    MongodbInterface,
-    get_deviation_percent,
-)
+from core.utils import MongodbInterface, get_deviation_percent, print_task_info
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
 
@@ -180,7 +176,8 @@ def update_instrument_roi_main():
 
 
 def update_instrument_roi(run_mode: str = AUTO_MODE):
+    print_task_info(name=__name__)
 
-    print(Fore.BLUE + "Updating stock roi ..." + Style.RESET_ALL)
     update_instrument_roi_main()
-    print(Fore.GREEN + "Stock roi updated ..." + Style.RESET_ALL)
+
+    print_task_info(color="GREEN", name=__name__)

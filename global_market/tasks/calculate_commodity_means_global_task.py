@@ -1,11 +1,12 @@
-import jdatetime
 from datetime import datetime, timedelta
+import jdatetime
+from tqdm import tqdm
 
+from django.db.models import Avg
+
+from core.utils import MongodbInterface, get_deviation_percent, print_task_info
 from core.configs import GLOBAL_MONGO_DB
 
-from tqdm import tqdm
-from core.utils import MongodbInterface, get_deviation_percent
-from django.db.models import Avg
 from global_market.models import GlobalCommodity, GlobalTrade
 
 
@@ -72,7 +73,7 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
         mongodb.collection.delete_many({})
 
 
-def calculate_commodity_means_global():
+def calculate_commodity_means_global_main():
     commodity_id_list = list(GlobalCommodity.objects.all().values_list("id", flat=True))
 
     collection_name_dict = {
@@ -86,4 +87,10 @@ def calculate_commodity_means_global():
     for duration, collection_name in collection_name_dict.items():
         calculate_mean(duration, collection_name, commodity_id_list)
 
-    return
+
+def calculate_commodity_means_global():
+    print_task_info(name=__name__)
+
+    calculate_commodity_means_global_main()
+
+    print_task_info(color="GREEN", name=__name__)

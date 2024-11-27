@@ -10,6 +10,7 @@ from core.utils import (
     RedisInterface,
     MongodbInterface,
     get_deviation_percent,
+    print_task_info,
 )
 
 from option_market.utils import (
@@ -20,7 +21,6 @@ from option_market.utils import (
 )
 from stock_market.utils import CALL_OPTION, PUT_OPTION
 
-from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
@@ -249,7 +249,8 @@ def stock_option_price_spread_main():
 
 
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
+    print_task_info(name=__name__)
 
-    print(Fore.BLUE + "Updating stock price spread ..." + Style.RESET_ALL)
     stock_option_price_spread_main()
-    print(Fore.GREEN + "Stock price spread updated" + Style.RESET_ALL)
+
+    print_task_info(color="GREEN", name=__name__)

@@ -3,12 +3,12 @@ import pandas as pd
 import jdatetime
 
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface
+from core.utils import RedisInterface, print_task_info
 
 from future_market.models import OPTION_INFO
 from future_market.utils import (
-    get_options_base_equity_info,
     OPTION_COLUMNS,
+    get_options_base_equity_info,
     populate_all_strategy,
 )
 
@@ -255,4 +255,8 @@ def update_option_result_main():
 
 
 def update_option_result():
+    print_task_info(name=__name__)
+
     update_option_result_main()
+
+    print_task_info(color="GREEN", name=__name__)

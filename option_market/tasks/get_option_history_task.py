@@ -3,7 +3,12 @@ import jdatetime
 from tqdm import tqdm
 
 from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
-from core.utils import MongodbInterface, RedisInterface, get_http_response
+from core.utils import (
+    MongodbInterface,
+    RedisInterface,
+    get_http_response,
+    print_task_info,
+)
 from stock_market.utils import TSETMC_REQUEST_HEADERS
 
 
@@ -115,7 +120,7 @@ def get_update_history(instrument, instrument_type):
         return
 
 
-def get_option_history():
+def get_option_history_main():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
 
@@ -124,3 +129,11 @@ def get_option_history():
     ):
         get_update_history(instrument=instrument, instrument_type="put")
         get_update_history(instrument=instrument, instrument_type="call")
+
+
+def get_option_history():
+    print_task_info(name=__name__)
+
+    get_option_history_main()
+
+    print_task_info(color="GREEN", name=__name__)
