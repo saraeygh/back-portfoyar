@@ -32,6 +32,8 @@ class RequestResponseDurationLoggerMiddleware:
 
         t_end = time.time()
 
-        logger.info(f"{request.method} - {request.path} - {t_end - t_start}")
+        duration = t_end - t_start
+        if duration > 1:
+            logger.info("%s - %s - %s", request.method, request.path, duration)
 
         return response

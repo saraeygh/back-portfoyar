@@ -28,15 +28,11 @@ class Non20xStatusResponseLoggerMiddleware:
 
         if not 200 <= response.status_code < 300:
             logger.info(
-                "REQUEST = {"
-                f"method: {request.method}, "
-                f"user: {request.user.username}, "
-                f"url: {request.path}, "
-                # f"body: {request.body}"
-                "}"
-                " - RESPONSE = {"
-                f"status: {response.status_code}, "
-                "}"
+                "%s %s body: %s status: %s",
+                request.method,
+                request.path,
+                request.body,
+                response.status_code,
             )
 
         return response
