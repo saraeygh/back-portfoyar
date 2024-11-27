@@ -26,6 +26,7 @@ from . import (
 def populate_all_option_strategy():
 
     option_data = get_options(option_types=["option_data"])
+    option_data = option_data[option_data["base_equity_last_price"] > 0]
 
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 

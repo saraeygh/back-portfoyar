@@ -249,6 +249,8 @@ def update_option_result_main():
     option_data["put_symbol"] = option_data.apply(
         shorten_option_symbol, axis=1, args=("put_symbol",)
     )
+
+    option_data = option_data[option_data["base_equity_last_price"] > 0]
     populate_all_strategy(option_data)
 
 
