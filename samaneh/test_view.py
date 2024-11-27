@@ -127,3 +127,20 @@ class TestView(APIView):
             {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+# COMMON
+# https://cdn.tsetmc.com/api/Index/GetIndexB1LastDay/{ins_code} # Index Day history
+# https://cdn.tsetmc.com/api/Index/GetIndexB2History/{ins_code} # Index whole history
+# https://cdn.tsetmc.com/api/ClosingPrice/GetIndexCompany/{ins_code} # Index sub-companies
+
+# Bourse
+# https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/1 # Overview
+# https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/1 # List indices
+# https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/1/7 # MostVisited
+# https://cdn.tsetmc.com/api/Index/GetInstEffect/0/1/7 # Effects
+# FaraBourse
+# https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/2 # Overview
+# https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/2 # List of indices
+# https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/2/7 # MostVisited
+# https://cdn.tsetmc.com/api/Index/GetInstEffect/0/2/7 # Effects
