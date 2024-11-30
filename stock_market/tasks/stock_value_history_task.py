@@ -19,7 +19,7 @@ def convert_date_obj_to_str(record):
     trade_date = record.get("trade_date")
     trade_date = str(jdatetime.date.fromgregorian(date=trade_date))
     value = record.get("value")
-    record = {"x": trade_date, "y": value / RIAL_TO_BILLION_TOMAN}
+    record = {"x": trade_date, "y": round(value / RIAL_TO_BILLION_TOMAN, 3)}
 
     return record
 

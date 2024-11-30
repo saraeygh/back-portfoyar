@@ -2,7 +2,7 @@ from stock_market.serializers import (
     PersonMoneyFlowSerailizer,
     PersonBuyPressureSerailizer,
     PersonBuyValueSerailizer,
-    StockValueChangeSerailizer,
+    DashboardStockValueChangeSerailizer,
     BuyOrderRatioSerailizer,
     SellOrderRatioSerailizer,
     StockOptionValueChangeSerailizer,
@@ -13,7 +13,7 @@ STOCK_MARKET_WATCH_INDICES = {
     "money_flow": PersonMoneyFlowSerailizer,
     "buy_pressure": PersonBuyPressureSerailizer,
     "buy_value": PersonBuyValueSerailizer,
-    "value_change": StockValueChangeSerailizer,
+    "value_change": DashboardStockValueChangeSerailizer,
     "buy_ratio": BuyOrderRatioSerailizer,
     "sell_ratio": SellOrderRatioSerailizer,
 }

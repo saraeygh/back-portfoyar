@@ -96,7 +96,7 @@ class TestView(APIView):
     def get(self, request, *args, **kwargs):
         # collect_user_stats()
         # stock_option_price_spread()
-        # stock_value_history()
+        stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse(run_mode=MANUAL_MODE)
         # update_option_result()
