@@ -103,7 +103,7 @@ class TestView(APIView):
         # stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse(run_mode=MANUAL_MODE)
-        # update_option_result()
+        update_option_result()
         # update_future_info()
         # update_base_equity()
         # update_future()
@@ -124,9 +124,9 @@ class TestView(APIView):
         # update_market_watch()
         # user_generator()
 
-        from dashboard.utils import last_close_price
+        # from dashboard.utils import last_close_price
 
-        last_close_price()
+        # last_close_price()
 
         pass
         return Response(

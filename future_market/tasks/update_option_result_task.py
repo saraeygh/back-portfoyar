@@ -78,6 +78,10 @@ def add_call_order_book(row):
         },
     ]
 
+    call_order_book = pd.DataFrame(call_order_book)
+    call_order_book.fillna(0, inplace=True)
+    call_order_book = call_order_book.to_dict(orient="records")
+
     return call_order_book
 
 
@@ -120,11 +124,15 @@ def add_put_order_book(row):
         },
     ]
 
+    put_order_book = pd.DataFrame(put_order_book)
+    put_order_book.fillna(0, inplace=True)
+    put_order_book = put_order_book.to_dict(orient="records")
+
     return put_order_book
 
 
 def add_base_equity_order_book(row):
-    put_order_book = [
+    base_equity_order_book = [
         {
             "row": 1,
             "buy_volume": row.get("base_equity_best_buy_volume"),
@@ -162,7 +170,11 @@ def add_base_equity_order_book(row):
         },
     ]
 
-    return put_order_book
+    base_equity_order_book = pd.DataFrame(base_equity_order_book)
+    base_equity_order_book.fillna(0, inplace=True)
+    base_equity_order_book = base_equity_order_book.to_dict(orient="records")
+
+    return base_equity_order_book
 
 
 def add_symbol_to_option_data(row):
