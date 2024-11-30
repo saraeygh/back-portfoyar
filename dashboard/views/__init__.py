@@ -1,3 +1,4 @@
 from .dashboard_menu_apiview import IndustrialGroupsAPIView, PaperTypesAPIView
+from .dollar_price_apiview import DollarPriceAPIView
 from .buy_sell_value_apiview import BuySellValueAPIView
 from .last_close_price_apiview import LastClosePriceAPIView
