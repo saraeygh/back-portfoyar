@@ -25,9 +25,9 @@ DASHBOARD_MENU_PAPER_TYPE_LIST = [
     {"code": 1, "name": "سهام"},
     {"code": 2, "name": "بازار پایه فرابورس"},
     {"code": 8, "name": "صندوق‌های سرمایه‌گذاری"},
+    {"code": 4, "name": "حق تقدم"},
     {"code": 6, "name": "اختیار معامله"},
     {"code": 7, "name": "آتی"},
-    {"code": 4, "name": "حق تقدم"},
 ]
 
 

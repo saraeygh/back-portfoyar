@@ -2,7 +2,7 @@ from core.configs import AUTO_MODE, MANUAL_MODE
 from core.utils import print_task_info
 
 from stock_market.utils import is_market_open
-from dashboard.utils import buy_sell_orders_value
+from dashboard.utils import buy_sell_orders_value, last_close_price
 
 
 def dashboard(run_mode: str = AUTO_MODE):
@@ -12,6 +12,9 @@ def dashboard(run_mode: str = AUTO_MODE):
 
         print_task_info(name="buy_sell_orders_value")
         buy_sell_orders_value()
+
+        print_task_info(name="last_close_price")
+        last_close_price()
 
     else:
         print_task_info(color="RED", name=__name__ + "!MANUAL_MODE | Closed")

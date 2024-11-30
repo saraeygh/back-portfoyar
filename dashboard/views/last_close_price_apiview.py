@@ -10,40 +10,39 @@ from core.utils import MongodbInterface
 from core.configs import (
     FIVE_MINUTES_CACHE,
     DASHBOARD_MONGO_DB,
-    BUY_SELL_ORDERS_COLLECTION,
-    RIAL_TO_BILLION_TOMAN,
+    LAST_CLOSE_PRICE_COLLECTION,
 )
 
 
-def get_buy_sell_value(
-    order_book: pd.DataFrame, industrial_group: int = None, paper_type: int = None
+def get_last_close_price(
+    last_close: pd.DataFrame, industrial_group: int = None, paper_type: int = None
 ):
-    buy_sell_value = {
-        "buy_value": 0,
-        "sell_value": 0,
+    last_close_price = {
+        "last_price_change": 0,
+        "close_price_change": 0,
     }
 
     if industrial_group:
-        order_book = order_book[order_book["industrial_group"] == industrial_group]
+        last_close = last_close[last_close["industrial_group"] == industrial_group]
 
     if paper_type:
-        order_book = order_book[order_book["paper_type"] == paper_type]
+        last_close = last_close[last_close["paper_type"] == paper_type]
     else:
-        order_book = order_book[order_book["paper_type"].isin([1, 2, 8, 4])]
+        last_close = last_close[last_close["paper_type"].isin([1, 2, 8, 4])]
 
-    if not order_book.empty:
-        buy_sell_value["buy_value"] = int(
-            order_book["buy_value"].sum() / RIAL_TO_BILLION_TOMAN
+    if not last_close.empty:
+        last_close_price["last_price_change"] = round(
+            last_close["last_price_change"].mean(), 2
         )
-        buy_sell_value["sell_value"] = int(
-            order_book["sell_value"].sum() / RIAL_TO_BILLION_TOMAN
+        last_close_price["close_price_change"] = round(
+            last_close["close_price_change"].mean(), 2
         )
 
-    return buy_sell_value
+    return last_close_price
 
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
-class BuySellValueAPIView(APIView):
+class LastClosePriceAPIView(APIView):
     def get(self, request):
         try:
             industrial_group = int(request.query_params.get("industrial_group"))
@@ -55,20 +54,20 @@ class BuySellValueAPIView(APIView):
             paper_type = None
 
         mongo_client = MongodbInterface(
-            db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
+            db_name=DASHBOARD_MONGO_DB, collection_name=LAST_CLOSE_PRICE_COLLECTION
         )
 
         history_list = list(mongo_client.collection.find({}, {"_id": 0}))
+        last_close_price = list()
         if history_list:
-            buy_sell_value = list()
             for history in history_list:
-                result = get_buy_sell_value(
-                    pd.DataFrame(history["order_book_value"]),
+                result = get_last_close_price(
+                    pd.DataFrame(history["last_close_price"]),
                     industrial_group,
                     paper_type,
                 )
-                buy_sell_value.append(
+                last_close_price.append(
                     {"date": history["date"], "time": history["time"], **result}
                 )
 
-        return Response(buy_sell_value, status=status.HTTP_200_OK)
+        return Response(last_close_price, status=status.HTTP_200_OK)

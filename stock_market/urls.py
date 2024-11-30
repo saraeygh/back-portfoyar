@@ -43,7 +43,6 @@ market_roi_urls = [
     path("roi/<int:industry_id>", StockIndustryInstrumentROIAPIView.as_view()),
 ]
 
-
 option_behavior_urls = [
     path(
         "option-value-change/<str:option_type>", StockCallValueChangeAPIView.as_view()

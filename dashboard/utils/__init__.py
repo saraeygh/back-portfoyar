@@ -4,3 +4,4 @@ from .dictionary_collections_util import (
     OPTION_MARKET_WATCH_INDICES,
 )
 from .buy_sell_orders_value_util import buy_sell_orders_value
+from .last_close_price_util import last_close_price

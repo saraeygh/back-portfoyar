@@ -1,12 +1,29 @@
 import time
 import requests
+
 from colorama import Fore, Style
+
+
+TSETMC_REQUEST_HEADERS = {
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Connection": "keep-alive",
+    "Host": "cdn.tsetmc.com",
+    "Origin": "https://main.tsetmc.com",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "Linux",
+}
 
 
 def get_http_response(
     req_method: str = "GET",
     req_url: str = "",
-    req_headers: dict = {},
+    req_headers: dict = TSETMC_REQUEST_HEADERS,
     req_json: dict = {},
     req_params: dict = {},
     req_data: dict = {},

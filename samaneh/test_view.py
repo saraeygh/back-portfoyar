@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from core.configs import FUTURE_REDIS_DB, MANUAL_MODE
-from core.utils import RedisInterface
+from core.utils import RedisInterface, get_http_response
 from option_market.utils import populate_all_option_strategy
 from option_market.tasks import update_option_data_from_tse
 
@@ -48,6 +48,7 @@ from future_market.tasks import (
 )
 
 from future_market.utils import get_options_base_equity_info
+from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
@@ -94,9 +95,12 @@ def user_generator():
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
+
+        result = get_market_watch_data_from_redis()
+
         # collect_user_stats()
         # stock_option_price_spread()
-        stock_value_history()
+        # stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse(run_mode=MANUAL_MODE)
         # update_option_result()
@@ -119,10 +123,12 @@ class TestView(APIView):
         # res = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="long_call"))
         # update_market_watch()
         # user_generator()
-        from dashboard.tasks import dashboard
 
-        dashboard()
+        from dashboard.utils import last_close_price
 
+        last_close_price()
+
+        pass
         return Response(
             {"message": "مشکلی پیش آمده است، با پشتیبانی تماس بگیرید"},
             status=status.HTTP_400_BAD_REQUEST,
