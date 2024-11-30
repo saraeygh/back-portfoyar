@@ -8,6 +8,7 @@ RUN ["apk", "update"]
 RUN ["apk", "upgrade", "-U", "-a"]
 
 COPY ./infra/nginx/ /etc/nginx/
+COPY ./infra/nginx/updating.html /
 COPY ./static/ /etc/nginx/static/
 
 RUN chmod -R 755 /etc/nginx/static/

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>در حال بروزرسانی</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Vazirmatn", sans-serif, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .dot {
+            animation: dot-flashing 1.5s infinite linear;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .dot:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dot-flashing {
+            0% {
+                opacity: 0;
+            }
+            50%,
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+            width: 100px;
+            height: 100px;
+            background-image: url('https://i.imghippo.com/files/BlhQe1722064893.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: pulse 2s infinite;
+        }
+
+        .logo {
+            width: 100px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="logo-container"></div>
+<h1>
+    <span class="dot">.</span>
+    <span class="dot">.</span>
+    <span class="dot">.</span>
+    سامانه در حال به‌روزرسانی است
+</h1>
+</body>
+</html>
