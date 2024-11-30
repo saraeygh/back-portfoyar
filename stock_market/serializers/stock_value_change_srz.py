@@ -70,7 +70,7 @@ class DashboardStockValueChangeSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
     symbol = serializers.CharField()
-    last_time = serializers.CharField()
+    last_time = serializers.CharField(source="last_update")
     mean = RoundedFloatField(decimal_places=2)
     value = RoundedFloatField(decimal_places=2)
     value_change = RoundedFloatField(decimal_places=1)
