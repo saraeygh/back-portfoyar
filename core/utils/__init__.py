@@ -1,3 +1,5 @@
+TABLE_COLS_QP = "table"
+ALL_TABLE_COLS = "all"
 from .pring_task_info_util import print_task_info
 from .redis_interface_util import RedisInterface
 from .mongodb_interface_util import MongodbInterface

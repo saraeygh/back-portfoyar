@@ -1,14 +1,7 @@
+import pandas as pd
+
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-import pandas as pd
-from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
-
-from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import (
-    SummaryPersonBuyValueSerailizer,
-    PersonBuyValueSerailizer,
-)
-from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -16,6 +9,15 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
+from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
+
+from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.serializers import (
+    SummaryPersonBuyValueSerailizer,
+    PersonBuyValueSerailizer,
+)
 
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
@@ -44,10 +46,10 @@ class StockPersonBuyValueAPIView(APIView):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        table = request.query_params.get("table")
-        if table and table == "summary":
-            results = SummaryPersonBuyValueSerailizer(results, many=True)
-        else:
+        table = request.query_params.get(TABLE_COLS_QP)
+        if table and table == ALL_TABLE_COLS:
             results = PersonBuyValueSerailizer(results, many=True)
+        else:
+            results = SummaryPersonBuyValueSerailizer(results, many=True)
 
         return Response(results.data, status=status.HTTP_200_OK)
