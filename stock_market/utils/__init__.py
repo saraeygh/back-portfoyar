@@ -35,7 +35,4 @@ from .get_last_market_watch_data_util import (
     get_market_watch_data_from_redis,
 )
 from .stock_recommendation_util import stock_recommendation
-from .get_default_recomm_configs_util import (
-    get_default_recomm_configs,
-)
 from .get_recommendation_config_util import get_recommendation_config

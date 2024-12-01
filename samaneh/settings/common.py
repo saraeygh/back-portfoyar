@@ -56,9 +56,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # THIS MIDDLEWARE LOGS ALL REQUEST/RESPONSES THAT HAS STATUS_CODE OTHER THAN 20x or 30x RANGE
-    "core.middlewares.Non20xStatusResponseLoggerMiddleware",
+    # "core.middlewares.Non20xStatusResponseLoggerMiddleware",
     # THIS MIDDLEWARE LOGS ALL REQUEST/RESPONSES DURATION TIME
-    "core.middlewares.RequestResponseDurationLoggerMiddleware",
+    # "core.middlewares.RequestResponseDurationLoggerMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 

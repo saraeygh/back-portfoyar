@@ -1,4 +1,6 @@
+import random
 from django.shortcuts import get_object_or_404
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -6,6 +8,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from stock_market.models.recommendation_config_model import (
+    GLOBAL_INDEX,
+    GLOBAL_INDEX_LIST,
+    GLOBAL_POSITIVE,
+    DOMESTIC_INDEX,
+    DOMESTIC_INDEX_LIST,
+    DOMESTIC_POSITIVE,
     CATEGORY_CHOICES,
     RecommendationConfig,
     MoneyFlow,
@@ -28,11 +36,6 @@ from colorama import Fore, Style
 categories = [category[0] for category in CATEGORY_CHOICES]
 
 
-SIX_ATTRIBUTES_INDICES = ["roi", "global_positive_range", "global_negative_range"]
-
-SEVEN_ATTRIBUTES_INDICES = ["domestic_positive_range", "domestic_negative_range"]
-
-
 def get_configs(configs: list):
     config_list = list()
     for config in configs:
@@ -44,7 +47,7 @@ def get_configs(configs: list):
         for category in categories:
             config_dict[category] = list()
 
-        related_config_dict = config.get_related_objects_as_dict()
+        related_config_dict = config.get_related_objects_as_dict_v2()
 
         for obj_name, obj in related_config_dict.items():
             new_index = {
@@ -103,12 +106,30 @@ def update_related_objects(config_id, request):
 
     try:
         for related_dict in related_dicts:
-            related_obj = getattr(config, related_dict["name"])
-            setattr(related_obj, "is_enabled", related_dict["is_enabled"])
-            weight = related_dict.get("weight")
-            if weight:
-                setattr(related_obj, "weight", weight)
-            related_obj.save()
+            setting_name = related_dict["name"]
+            if setting_name == GLOBAL_INDEX:
+                for global_index in GLOBAL_INDEX_LIST:
+                    related_obj = getattr(config, global_index)
+                    setattr(related_obj, "is_enabled", related_dict["is_enabled"])
+                    weight = related_dict.get("weight")
+                    if weight:
+                        setattr(related_obj, "weight", weight)
+                    related_obj.save()
+            elif setting_name == DOMESTIC_INDEX:
+                for domestic_index in DOMESTIC_INDEX_LIST:
+                    related_obj = getattr(config, domestic_index)
+                    setattr(related_obj, "is_enabled", related_dict["is_enabled"])
+                    weight = related_dict.get("weight")
+                    if weight:
+                        setattr(related_obj, "weight", weight)
+                    related_obj.save()
+            else:
+                related_obj = getattr(config, related_dict["name"])
+                setattr(related_obj, "is_enabled", related_dict["is_enabled"])
+                weight = related_dict.get("weight")
+                if weight:
+                    setattr(related_obj, "weight", weight)
+                related_obj.save()
     except Exception as e:
         print(Fore.RED)
         print(e)
@@ -139,7 +160,7 @@ def update_config(request, config_id):
             update_config_obj.is_default = is_default
 
         new_name = request.data.get("name")
-        if new_name:
+        if new_name and new_name != "":
             update_config_obj.name = new_name
         update_config_obj.save()
 
@@ -157,23 +178,34 @@ def update_config(request, config_id):
 
 
 def get_setting(config, setting_name):
-    obj = getattr(config, setting_name)
-
-    if setting_name in SIX_ATTRIBUTES_INDICES:
+    if setting_name == GLOBAL_INDEX:
+        obj = getattr(config, GLOBAL_POSITIVE)
         setting = {
             "name": setting_name,
             "weight": obj.weight,
             "threshold_value": obj.threshold_value,
             "duration": obj.duration,
         }
+        return setting
 
-    elif setting_name in SEVEN_ATTRIBUTES_INDICES:
+    if setting_name == DOMESTIC_INDEX:
+        obj = getattr(config, DOMESTIC_POSITIVE)
         setting = {
             "name": setting_name,
             "weight": obj.weight,
             "threshold_value": obj.threshold_value,
             "duration": obj.duration,
             "min_commodity_ratio": obj.min_commodity_ratio,
+        }
+        return setting
+
+    obj = getattr(config, setting_name)
+    if setting_name == "roi":
+        setting = {
+            "name": setting_name,
+            "weight": obj.weight,
+            "threshold_value": obj.threshold_value,
+            "duration": obj.duration,
         }
     else:
         setting = {
@@ -186,17 +218,40 @@ def get_setting(config, setting_name):
 
 
 def update_setting(config, setting_name, request):
-    related_obj = getattr(config, setting_name)
     new_setting_data = request.data
 
-    if setting_name in SIX_ATTRIBUTES_INDICES:
+    if setting_name == GLOBAL_INDEX:
+        for global_index in GLOBAL_INDEX_LIST:
+            related_obj = getattr(config, global_index)
+            attr_names = ["weight", "threshold_value", "duration"]
+            for attr_name in attr_names:
+                if attr_name in new_setting_data:
+                    setattr(related_obj, attr_name, new_setting_data[attr_name])
+                    related_obj.save()
+        return Response(
+            {"message": "تنظیمات به‌روزرسانی شد."}, status=status.HTTP_200_OK
+        )
+
+    if setting_name == DOMESTIC_INDEX:
+        for domestic_index in DOMESTIC_INDEX_LIST:
+            related_obj = getattr(config, domestic_index)
+            attr_names = [
+                "weight",
+                "threshold_value",
+                "duration",
+                "min_commodity_ratio",
+            ]
+            for attr_name in attr_names:
+                if attr_name in new_setting_data:
+                    setattr(related_obj, attr_name, new_setting_data[attr_name])
+                    related_obj.save()
+        return Response(
+            {"message": "تنظیمات به‌روزرسانی شد."}, status=status.HTTP_200_OK
+        )
+
+    related_obj = getattr(config, setting_name)
+    if setting_name == "roi":
         attr_names = ["weight", "threshold_value", "duration"]
-        for attr_name in attr_names:
-            if attr_name in new_setting_data:
-                setattr(related_obj, attr_name, new_setting_data[attr_name])
-                related_obj.save()
-    elif setting_name in SEVEN_ATTRIBUTES_INDICES:
-        attr_names = ["weight", "threshold_value", "duration", "min_commodity_ratio"]
         for attr_name in attr_names:
             if attr_name in new_setting_data:
                 setattr(related_obj, attr_name, new_setting_data[attr_name])
@@ -209,6 +264,12 @@ def update_setting(config, setting_name, request):
                 related_obj.save()
 
     return Response({"message": "تنظیمات به‌روزرسانی شد."}, status=status.HTTP_200_OK)
+
+
+def turn_all_configs_to_non_default(user_configs):
+    for user_config in user_configs:
+        user_config.is_default = False
+        user_config.save()
 
 
 @authentication_classes([TokenAuthentication])
@@ -237,12 +298,16 @@ class StockRecommendationConfigAPIView(APIView):
         return update_related_objects(config_id, request)
 
     def delete(self, request, config_id):
-        config = get_object_or_404(RecommendationConfig, id=config_id)
+        config_id = request.query_params.get("config_id")
+        config = get_object_or_404(
+            RecommendationConfig, user=request.user, id=config_id
+        )
         config.delete()
 
-        configs = request.user.configs
-        if configs.exists():
-            random_config = configs.first()
+        user_configs = list(request.user.configs.all())
+        if user_configs:
+            turn_all_configs_to_non_default(user_configs)
+            random_config = random.choice(user_configs)
             random_config.is_default = True
             random_config.save()
 

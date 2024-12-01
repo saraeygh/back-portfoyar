@@ -12,7 +12,6 @@ from stock_market.views import (
     StockCallValueChangeAPIView,
     StockOptionPriceSpreadAPIView,
     StockRecommendedAPIView,
-    GetRecommendedConfigAPIView,
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
     StockRecommendationConfigAPIViewV2,
@@ -51,9 +50,7 @@ option_behavior_urls = [
 ]
 
 stock_recommendation_urls = [
-    path("recomm-config/", GetRecommendedConfigAPIView.as_view()),
-    path("recommended/", StockRecommendedAPIView.as_view()),
-    # NEW
+    # V1
     path("recomm-config-new/", StockRecommendationConfigAPIView.as_view()),
     path(
         "recomm-config-new/<int:config_id>/", StockRecommendationConfigAPIView.as_view()
@@ -64,6 +61,8 @@ stock_recommendation_urls = [
     ),
     # V2
     path("v2/recomm-config/", StockRecommendationConfigAPIViewV2.as_view()),
+    # Positions
+    path("recommended/", StockRecommendedAPIView.as_view()),
 ]
 
 urlpatterns = (

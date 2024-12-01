@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 from core.models import TimeStampMixin
 
 RELATED_NAMES = [
@@ -18,6 +19,32 @@ RELATED_NAMES = [
     "global_negative_range",
     "domestic_positive_range",
     "domestic_negative_range",
+]
+
+GLOBAL_INDEX = "global"
+GLOBAL_POSITIVE = "global_positive_range"
+GLOBAL_NEGATIVE = "global_negative_range"
+GLOBAL_INDEX_LIST = [GLOBAL_POSITIVE, GLOBAL_NEGATIVE]
+
+DOMESTIC_INDEX = "domestic"
+DOMESTIC_POSITIVE = "domestic_positive_range"
+DOMESTIC_NEGATIVE = "domestic_negative_range"
+DOMESTIC_INDEX_LIST = [DOMESTIC_POSITIVE, DOMESTIC_NEGATIVE]
+
+RELATED_NAMES_V2 = [
+    "money_flow",
+    "buy_pressure",
+    "buy_value",
+    "buy_ratio",
+    "sell_ratio",
+    "value_change",
+    "call_value_change",
+    "put_value_change",
+    "option_price_spread",
+    "roi",
+    #
+    GLOBAL_INDEX,
+    DOMESTIC_INDEX,
 ]
 
 FUNDAMENTAL_CATEGORY = "foundamental"
@@ -54,6 +81,20 @@ class RecommendationConfig(TimeStampMixin, models.Model):
         for attr in RELATED_NAMES:
             try:
                 related_objects[attr] = getattr(self, attr)
+            except AttributeError:
+                continue
+        return related_objects
+
+    def get_related_objects_as_dict_v2(self):
+        related_objects = {}
+        for attr in RELATED_NAMES_V2:
+            try:
+                if attr == GLOBAL_INDEX:
+                    related_objects[GLOBAL_INDEX] = getattr(self, GLOBAL_POSITIVE)
+                elif attr == DOMESTIC_INDEX:
+                    related_objects[DOMESTIC_INDEX] = getattr(self, DOMESTIC_POSITIVE)
+                else:
+                    related_objects[attr] = getattr(self, attr)
             except AttributeError:
                 continue
         return related_objects

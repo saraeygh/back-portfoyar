@@ -20,9 +20,6 @@ from .stock_option_price_spread_apiview import (
     StockOptionPriceSpreadAPIView,
 )
 from .stock_recommended_apiview import StockRecommendedAPIView
-from .default_recommended_config_apiview import (
-    GetRecommendedConfigAPIView,
-)
 from .stock_recommendation_config_apiview import (
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
