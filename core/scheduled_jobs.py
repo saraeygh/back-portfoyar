@@ -7,7 +7,6 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from core.configs import TEHRAN_TZ
 
-from core.tasks import collect_user_stats
 
 from dashboard.tasks import dashboard
 
@@ -88,16 +87,6 @@ def get_scheduler():
 
 
 def add_core_app_jobs(scheduler: BlockingScheduler):
-    scheduler.add_job(
-        func=collect_user_stats,
-        id="collect_user_stats_task",
-        replace_existing=True,
-        trigger="cron",
-        day_of_week="*",
-        hour="23",
-        minute="58",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
-    )
 
     scheduler.add_job(
         func=dashboard,

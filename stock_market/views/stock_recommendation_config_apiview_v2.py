@@ -182,13 +182,14 @@ class StockRecommendationConfigAPIViewV2(APIView):
         return Response(configs, status=status.HTTP_200_OK)
 
     def post(self, request):
+        user = request.user
         config_name = request.data.get("name")
         if config_name is None or config_name == "":
             return Response(
                 {"message": "نام نامعتبر است."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        return create_new_config(user=request.user, config_name=config_name)
+        return create_new_config(user=user, config_name=config_name)
 
     def patch(self, request):
         return update_config(request)

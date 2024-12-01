@@ -98,7 +98,6 @@ class TestView(APIView):
 
         result = get_market_watch_data_from_redis()
 
-        # collect_user_stats()
         # stock_option_price_spread()
         # stock_value_history()
         # stock_market_watch()

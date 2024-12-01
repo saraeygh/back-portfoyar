@@ -1,1 +1,0 @@
-from .collect_user_stats_task import collect_user_stats

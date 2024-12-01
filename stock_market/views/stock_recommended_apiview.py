@@ -1,9 +1,3 @@
-from core.configs import THIRTY_MINUTES_CACHE, STOCK_TOP_100_LIMIT
-
-from core.utils import add_index_as_id, set_json_cache, get_cache_as_json
-from stock_market.models.recommendation_config_model import RELATED_NAMES
-from stock_market.serializers import StockRecommendedSerailizer
-from stock_market.utils import stock_recommendation, get_recommendation_config
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -11,13 +5,30 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.configs import THIRTY_MINUTES_CACHE, STOCK_TOP_100_LIMIT
+from core.utils import (
+    TABLE_COLS_QP,
+    ALL_TABLE_COLS,
+    add_index_as_id,
+    set_json_cache,
+    get_cache_as_json,
+)
+
+from stock_market.models.recommendation_config_model import RELATED_NAMES
+from stock_market.serializers import (
+    StockRecommendedSerailizer,
+    SummaryStockRecommendedSerailizer,
+)
+from stock_market.utils import stock_recommendation, get_recommendation_config
+
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class StockRecommendedAPIView(APIView):
-
     def get(self, request):
         config = get_recommendation_config(user=request.user)
+        table = str(request.query_params.get(TABLE_COLS_QP))
+
         if config is None:
             return Response([], status=status.HTTP_200_OK)
 
@@ -26,6 +37,7 @@ class StockRecommendedAPIView(APIView):
             "STOCK_RECOMMENDATION_RESULT"
             f"_config_id_{config.id}"
             f"_updated_at_{updated_at}"
+            f"_table_{table}"
         )
         for related_name in RELATED_NAMES:
             updated_at = getattr(config, related_name).updated_at.strftime("%H-%M-%S")
@@ -44,9 +56,13 @@ class StockRecommendedAPIView(APIView):
             results["id"] = results.apply(add_index_as_id, axis=1)
             results.dropna(inplace=True)
             results = results.to_dict(orient="records")
-            results = StockRecommendedSerailizer(results, many=True)
+
+            if table == ALL_TABLE_COLS:
+                results = StockRecommendedSerailizer(results, many=True)
+            else:
+                results = SummaryStockRecommendedSerailizer(results, many=True)
 
             set_json_cache(cache_key, results.data, THIRTY_MINUTES_CACHE)
             return Response(results.data, status=status.HTTP_200_OK)
-        else:
-            return Response(cache_response, status=status.HTTP_200_OK)
+
+        return Response(cache_response, status=status.HTTP_200_OK)
