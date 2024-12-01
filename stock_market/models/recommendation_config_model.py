@@ -71,7 +71,7 @@ class MoneyFlow(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -88,7 +88,7 @@ class BuyPressure(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -105,7 +105,7 @@ class BuyValue(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -122,7 +122,7 @@ class BuyRatio(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -139,7 +139,7 @@ class SellRatio(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=0)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -176,7 +176,7 @@ class ROI(TimeStampMixin, models.Model):
         verbose_name="دوره عملکرد", choices=ROI_DURATIONS_CHOICES, default=90
     )
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -193,7 +193,7 @@ class ValueChange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -210,7 +210,7 @@ class CallValueChange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -227,7 +227,7 @@ class PutValueChange(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -244,7 +244,7 @@ class OptionPriceSpread(TimeStampMixin, models.Model):
     weight = models.IntegerField(verbose_name="وزن", default=6)
     threshold_value = models.IntegerField(verbose_name="مقدار آستانه", default=-100_000)
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="marketwatch"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=MARKETWATCH_CATEGORY
     )
 
 
@@ -275,7 +275,7 @@ class GlobalPositiveRange(TimeStampMixin, models.Model):
         default=30,
     )
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=FUNDAMENTAL_CATEGORY
     )
 
 
@@ -297,7 +297,7 @@ class GlobalNegativeRange(TimeStampMixin, models.Model):
         default=30,
     )
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=FUNDAMENTAL_CATEGORY
     )
 
 
@@ -322,7 +322,7 @@ class DomesticPositiveRange(TimeStampMixin, models.Model):
         verbose_name="حداقل مقدار نسبت محصول", default=0
     )
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=FUNDAMENTAL_CATEGORY
     )
 
 
@@ -347,5 +347,5 @@ class DomesticNegativeRange(TimeStampMixin, models.Model):
         verbose_name="حداقل مقدار نسبت محصول", default=0
     )
     category = models.CharField(
-        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default="foundamental"
+        verbose_name=("نوع"), choices=CATEGORY_CHOICES, default=FUNDAMENTAL_CATEGORY
     )
