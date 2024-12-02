@@ -45,7 +45,7 @@ class GlobalPriceChartAPIView(APIView):
                 price_chart_dict, many=True
             )
 
-            set_json_cache(cache_key, price_chart_dict_srz.data, SIXTY_MINUTES_CACHE)
+            # set_json_cache(cache_key, price_chart_dict_srz.data, SIXTY_MINUTES_CACHE)
             return Response(price_chart_dict_srz.data, status=status.HTTP_200_OK)
 
         else:
