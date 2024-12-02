@@ -3,7 +3,7 @@ from rest_framework import serializers
 from core.serializers import RoundedFloatField
 
 
-class MeanDeviationSerailizer(serializers.Serializer):
+class DomesticMeanDeviationSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     producer = serializers.CharField()
     symbol = serializers.CharField()
@@ -39,7 +39,7 @@ class MeanDeviationSerailizer(serializers.Serializer):
         return super().to_representation(instance)
 
 
-class SummaryMeanDeviationSerailizer(serializers.Serializer):
+class SummaryDomesticMeanDeviationSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     producer = serializers.CharField()
     symbol = serializers.CharField()

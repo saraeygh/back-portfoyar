@@ -17,8 +17,8 @@ from core.utils import (
 )
 
 from domestic_market.serializers import (
-    MeanDeviationSerailizer,
-    SummaryMeanDeviationSerailizer,
+    DomesticMeanDeviationSerailizer,
+    SummaryDomesticMeanDeviationSerailizer,
 )
 
 
@@ -52,9 +52,9 @@ def get_range_result(collection_name, range_name, table=None):
     range_result = range_result.to_dict(orient="records")
 
     if table and table == ALL_TABLE_COLS:
-        range_result = MeanDeviationSerailizer(range_result, many=True)
+        range_result = DomesticMeanDeviationSerailizer(range_result, many=True)
     else:
-        range_result = SummaryMeanDeviationSerailizer(range_result, many=True)
+        range_result = SummaryDomesticMeanDeviationSerailizer(range_result, many=True)
 
     range_result = range_result.data
 

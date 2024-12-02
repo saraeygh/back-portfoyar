@@ -4,7 +4,10 @@ from .get_commodity_srz import GetDomesticCommoditySerailizer
 from .get_producer_srz import GetDomesticProducerSerailizer
 from .price_chart_srz import PriceChartSerailizer
 from .ratio_chart_srz import RatioChartSerailizer
-from .mean_deviation_srz import MeanDeviationSerailizer, SummaryMeanDeviationSerailizer
+from .mean_deviation_srz import (
+    DomesticMeanDeviationSerailizer,
+    SummaryDomesticMeanDeviationSerailizer,
+)
 from .upload_dollar_price_srz import UploadDollarPriceSerializer
 from .get_dollar_price_srz import GetDollarPriceSerializer
 from .get_producer_list_srz import GetDomesticProducerListSerailizer
