@@ -31,9 +31,8 @@ from stock_market.models.recommendation_config_model import (
 from colorama import Fore, Style
 
 
-SIX_ATTR_INDICES = ["roi", "global_positive_range", "global_negative_range"]
-
-SEVEN_ATTR_INDICES = ["domestic_positive_range", "domestic_negative_range"]
+SIX_ATTR_INDICES = ["roi", "global"]
+SEVEN_ATTR_INDICES = ["domestic"]
 
 
 def get_configs(request):
@@ -51,14 +50,14 @@ def get_configs(request):
         user=request.user, is_default=True
     ).first()
     if default_config:
-        related_config_dict = default_config.get_related_objects_as_dict()
+        related_config_dict = default_config.get_related_objects_as_dict_v2()
 
         for obj_name, obj in related_config_dict.items():
             new_index = {
                 "name": obj_name,
                 "is_enabled": obj.is_enabled,
                 "weight": obj.weight,
-                "threshold_value": obj.threshold_value,
+                # "threshold_value": obj.threshold_value,
             }
 
             if obj_name in SIX_ATTR_INDICES or obj_name in SEVEN_ATTR_INDICES:

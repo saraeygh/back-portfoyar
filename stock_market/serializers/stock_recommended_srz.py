@@ -1,23 +1,7 @@
 from rest_framework import serializers
 from core.serializers import RoundedFloatField
 
-
-RELATED_NAMES = [
-    "money_flow",
-    "buy_pressure",
-    "buy_value",
-    "buy_ratio",
-    "sell_ratio",
-    "roi",
-    "value_change",
-    "call_value_change",
-    "put_value_change",
-    "option_price_spread",
-    "global_positive_range",
-    "global_negative_range",
-    "domestic_positive_range",
-    "domestic_negative_range",
-]
+from stock_market.models.recommendation_config_model import RELATED_NAMES_V2
 
 
 class StockRecommendedSerailizer(serializers.Serializer):
@@ -29,7 +13,7 @@ class StockRecommendedSerailizer(serializers.Serializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        for name in RELATED_NAMES:
+        for name in RELATED_NAMES_V2:
             if name in instance:
                 score = f"{name}_score"
                 representation[name] = round(instance[name], 3)
@@ -47,7 +31,7 @@ class SummaryStockRecommendedSerailizer(serializers.Serializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        for name in RELATED_NAMES:
+        for name in RELATED_NAMES_V2:
             if name in instance:
                 representation[name] = round(instance[name], 3)
 

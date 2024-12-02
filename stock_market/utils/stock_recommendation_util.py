@@ -10,6 +10,14 @@ from core.configs import (
 from global_market.models import GlobalRelation
 from domestic_market.models import DomesticRelation
 from stock_market.models import RecommendationConfig
+from stock_market.models.recommendation_config_model import (
+    GLOBAL_INDEX,
+    GLOBAL_POSITIVE,
+    GLOBAL_NEGATIVE,
+    DOMESTIC_INDEX,
+    DOMESTIC_POSITIVE,
+    DOMESTIC_NEGATIVE,
+)
 
 
 def result_from_mongo(db, collection):
@@ -361,6 +369,23 @@ def get_global_result(conf):
         else:
             continue
 
+    if result_dict:
+        scores = pd.merge(
+            left=result_dict[GLOBAL_POSITIVE],
+            right=result_dict[GLOBAL_NEGATIVE],
+            on="ins_code",
+        )
+        scores = scores.fillna(0)
+
+        scores[GLOBAL_INDEX] = scores[GLOBAL_POSITIVE] + scores[GLOBAL_NEGATIVE]
+        scores[GLOBAL_INDEX + "_score"] = (
+            scores[GLOBAL_POSITIVE + "_score"] + scores[GLOBAL_NEGATIVE + "_score"]
+        )
+        result = {
+            GLOBAL_INDEX: scores[["ins_code", GLOBAL_INDEX, GLOBAL_INDEX + "_score"]]
+        }
+        result_dict = result
+
     return result_dict
 
 
@@ -433,9 +458,27 @@ def get_domestic_result(conf):
                 result_dict[name] = related_stock
             except Exception:
                 continue
-
         else:
             continue
+
+    if result_dict:
+        scores = pd.merge(
+            left=result_dict[DOMESTIC_POSITIVE],
+            right=result_dict[DOMESTIC_NEGATIVE],
+            on="ins_code",
+        )
+        scores = scores.fillna(0)
+
+        scores[DOMESTIC_INDEX] = scores[DOMESTIC_POSITIVE] + scores[DOMESTIC_NEGATIVE]
+        scores[DOMESTIC_INDEX + "_score"] = (
+            scores[DOMESTIC_POSITIVE + "_score"] + scores[DOMESTIC_NEGATIVE + "_score"]
+        )
+        result = {
+            DOMESTIC_INDEX: scores[
+                ["ins_code", DOMESTIC_INDEX, DOMESTIC_INDEX + "_score"]
+            ]
+        }
+        result_dict = result
 
     return result_dict
 

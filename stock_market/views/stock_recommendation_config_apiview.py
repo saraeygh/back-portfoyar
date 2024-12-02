@@ -183,7 +183,7 @@ def get_setting(config, setting_name):
         setting = {
             "name": setting_name,
             "weight": obj.weight,
-            "threshold_value": obj.threshold_value,
+            # "threshold_value": obj.threshold_value,
             "duration": obj.duration,
         }
         return setting
@@ -193,7 +193,7 @@ def get_setting(config, setting_name):
         setting = {
             "name": setting_name,
             "weight": obj.weight,
-            "threshold_value": obj.threshold_value,
+            # "threshold_value": obj.threshold_value,
             "duration": obj.duration,
             "min_commodity_ratio": obj.min_commodity_ratio,
         }
@@ -204,14 +204,14 @@ def get_setting(config, setting_name):
         setting = {
             "name": setting_name,
             "weight": obj.weight,
-            "threshold_value": obj.threshold_value,
+            # "threshold_value": obj.threshold_value,
             "duration": obj.duration,
         }
     else:
         setting = {
             "name": setting_name,
             "weight": obj.weight,
-            "threshold_value": obj.threshold_value,
+            # "threshold_value": obj.threshold_value,
         }
 
     return setting
@@ -223,7 +223,11 @@ def update_setting(config, setting_name, request):
     if setting_name == GLOBAL_INDEX:
         for global_index in GLOBAL_INDEX_LIST:
             related_obj = getattr(config, global_index)
-            attr_names = ["weight", "threshold_value", "duration"]
+            attr_names = [
+                "weight",
+                # "threshold_value",
+                "duration",
+            ]
             for attr_name in attr_names:
                 if attr_name in new_setting_data:
                     setattr(related_obj, attr_name, new_setting_data[attr_name])
@@ -237,7 +241,7 @@ def update_setting(config, setting_name, request):
             related_obj = getattr(config, domestic_index)
             attr_names = [
                 "weight",
-                "threshold_value",
+                # "threshold_value",
                 "duration",
                 "min_commodity_ratio",
             ]
@@ -251,13 +255,20 @@ def update_setting(config, setting_name, request):
 
     related_obj = getattr(config, setting_name)
     if setting_name == "roi":
-        attr_names = ["weight", "threshold_value", "duration"]
+        attr_names = [
+            "weight",
+            # "threshold_value",
+            "duration",
+        ]
         for attr_name in attr_names:
             if attr_name in new_setting_data:
                 setattr(related_obj, attr_name, new_setting_data[attr_name])
                 related_obj.save()
     else:
-        attr_names = ["weight", "threshold_value"]
+        attr_names = [
+            "weight",
+            # "threshold_value",
+        ]
         for attr_name in attr_names:
             if attr_name in new_setting_data:
                 setattr(related_obj, attr_name, new_setting_data[attr_name])
