@@ -1,16 +1,20 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 import pandas as pd
-from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, RIAL_TO_MILLION_TOMAN
-
-from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import StockOptionValueChangeSerailizer
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, RIAL_TO_MILLION_TOMAN
+from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_index_as_id
+
+from stock_market.serializers import (
+    StockOptionValueChangeSerailizer,
+    SummaryStockOptionValueChangeSerailizer,
+)
 
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
@@ -45,6 +49,11 @@ class StockCallValueChangeAPIView(APIView):
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
-        results_srz = StockOptionValueChangeSerailizer(results, many=True)
 
-        return Response(results_srz.data, status=status.HTTP_200_OK)
+        table = request.query_params.get(TABLE_COLS_QP)
+        if table and table == ALL_TABLE_COLS:
+            results = StockOptionValueChangeSerailizer(results, many=True)
+        else:
+            results = SummaryStockOptionValueChangeSerailizer(results, many=True)
+
+        return Response(results.data, status=status.HTTP_200_OK)

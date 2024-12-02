@@ -21,3 +21,21 @@ class StockOptionValueChangeSerailizer(serializers.Serializer):
             {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
         ]
         return super().to_representation(instance)
+
+
+class SummaryStockOptionValueChangeSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    symbol = serializers.CharField()
+    last_update = serializers.CharField()
+    month_mean = RoundedFloatField(decimal_places=2)
+    last_mean = RoundedFloatField(decimal_places=2)
+    value_change = RoundedFloatField(decimal_places=1)
+    daily_roi = RoundedFloatField(decimal_places=2)
+    market_cap = RoundedFloatField(decimal_places=0)
+
+    def to_representation(self, instance):
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات", "link": instance.get("link")}
+        ]
+        return super().to_representation(instance)

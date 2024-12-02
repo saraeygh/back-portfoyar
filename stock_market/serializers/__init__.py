@@ -21,6 +21,7 @@ from .stock_value_change_srz import (
 )
 from .stock_option_volume_change_srz import (
     StockOptionValueChangeSerailizer,
+    SummaryStockOptionValueChangeSerailizer,
 )
 from .stock_option_price_spread_srz import (
     StockOptionPriceSpreadSerailizer,
