@@ -12,7 +12,11 @@ from .market_watch_srzs import (
 )
 
 
-from .market_roi_srz import MarketROISerailizer, FavoriteGroupMarketROISerailizer
+from .market_roi_srz import (
+    MarketROISerailizer,
+    FavoriteGroupMarketROISerailizer,
+    SummaryMarketROISerailizer,
+)
 from .industry_roi_srz import IndustryROISerailizer
 from .stock_value_change_srz import (
     SummaryStockValueChangeSerailizer,
