@@ -3,20 +3,28 @@ from colorama import Fore, Style
 
 COVERED_CALL_SEQ = 1
 CONVERSION_SEQ = 2
+
 LONG_CALL_SEQ = 3
 SHORT_CALL_DEQ = 4
+
 LONG_PUT_SEQ = 5
 SHORT_PUT_SEQ = 6
+
 LONG_STRADDLE_SEQ = 7
 SHORT_STRADDLE_SEQ = 8
+
 BULL_CALL_SPREAD_SEQ = 9
 BEAR_CALL_SPREAD_SEQ = 10
+
 BULL_PUT_SPREAD_SEQ = 11
 BEAR_PUT_SPREAD_SEQ = 12
+
 LONG_STRANGLE_SEQ = 13
 SHORT_STRANGLE_SEQ = 14
+
 LONG_BUTTERFLY_SEQ = 15
 SHORT_BUTTERFLY_SEQ = 16
+
 COLLAR_SEQ = 17
 
 STRATEGIES = {
@@ -25,102 +33,164 @@ STRATEGIES = {
         "profit_status": "limited_profit",
         "risk_levels": ["low_risk", "high_risk"],
         "sequence": COVERED_CALL_SEQ,
-    },
-    "long_call": {
-        "name": "لانگ کال",
-        "profit_status": "unlimited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": LONG_CALL_SEQ,
-    },
-    "short_call": {
-        "name": "شورت کال",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": SHORT_CALL_DEQ,
-    },
-    "long_put": {
-        "name": "لانگ پوت",
-        "profit_status": "unlimited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": LONG_PUT_SEQ,
-    },
-    "short_put": {
-        "name": "شورت پوت",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": SHORT_PUT_SEQ,
-    },
-    "long_straddle": {
-        "name": "لانگ استرادل",
-        "profit_status": "unlimited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": LONG_STRADDLE_SEQ,
-    },
-    "short_straddle": {
-        "name": "شورت استرادل",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": SHORT_STRADDLE_SEQ,
-    },
-    "bull_call_spread": {
-        "name": "بول کال اسپرد",
-        "profit_status": "limited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
-        "sequence": BULL_CALL_SPREAD_SEQ,
-    },
-    "bear_call_spread": {
-        "name": "بیر کال اسپرد",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": BEAR_CALL_SPREAD_SEQ,
-    },
-    "bull_put_spread": {
-        "name": "بول پوت اسپرد",
-        "profit_status": "limited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
-        "sequence": BULL_PUT_SPREAD_SEQ,
-    },
-    "bear_put_spread": {
-        "name": "بیر پوت اسپرد",
-        "profit_status": "limited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
-        "sequence": BEAR_PUT_SPREAD_SEQ,
-    },
-    "long_strangle": {
-        "name": "لانگ استرانگل",
-        "profit_status": "unlimited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
-        "sequence": LONG_STRANGLE_SEQ,
-    },
-    "short_strangle": {
-        "name": "شورت استرانگل",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": SHORT_STRANGLE_SEQ,
-    },
-    "long_butterfly": {
-        "name": "لانگ باترفلای",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": LONG_BUTTERFLY_SEQ,
-    },
-    "short_butterfly": {
-        "name": "شورت باترفلای",
-        "profit_status": "limited_profit",
-        "risk_levels": ["high_risk"],
-        "sequence": SHORT_BUTTERFLY_SEQ,
-    },
-    "collar": {
-        "name": "کولار",
-        "profit_status": "unlimited_profit",
-        "risk_levels": ["low_risk", "high_risk"],
-        "sequence": COLLAR_SEQ,
+        "drop_cols": [
+            "base_equity_best_sell_price",
+            "call_value",
+            "required_change",
+            "end_date",
+            "yearly_profit",
+        ],
     },
     "conversion": {
         "name": "کانورژن",
         "profit_status": "limited_profit",
         "risk_levels": ["no_risk"],
         "sequence": CONVERSION_SEQ,
+        "drop_cols": [
+            "base_equity_best_sell_price",
+            "call_value",
+            "put_value",
+            "final_profit",
+            "required_change",
+            "end_date",
+            "yearly_profit",
+        ],
+    },
+    #
+    #
+    "long_call": {
+        "name": "لانگ کال",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": LONG_CALL_SEQ,
+        "drop_cols": ["end_date", "final_break_even", "yearly_break_even"],
+    },
+    "short_call": {
+        "name": "شورت کال",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": SHORT_CALL_DEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "long_put": {
+        "name": "لانگ پوت",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": LONG_PUT_SEQ,
+        "drop_cols": [],
+    },
+    "short_put": {
+        "name": "شورت پوت",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": SHORT_PUT_SEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "long_straddle": {
+        "name": "لانگ استرادل",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": LONG_STRADDLE_SEQ,
+        "drop_cols": ["end_date"],
+    },
+    "short_straddle": {
+        "name": "شورت استرادل",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": SHORT_STRADDLE_SEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "bull_call_spread": {
+        "name": "بول کال اسپرد",
+        "profit_status": "limited_profit",
+        "risk_levels": ["low_risk", "high_risk"],
+        "sequence": BULL_CALL_SPREAD_SEQ,
+        "drop_cols": ["end_date", "final_profit", "yearly_profit"],
+    },
+    "bear_call_spread": {
+        "name": "بیر کال اسپرد",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": BEAR_CALL_SPREAD_SEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "bull_put_spread": {
+        "name": "بول پوت اسپرد",
+        "profit_status": "limited_profit",
+        "risk_levels": ["low_risk", "high_risk"],
+        "sequence": BULL_PUT_SPREAD_SEQ,
+        "drop_cols": ["end_date", "final_profit", "yearly_profit"],
+    },
+    "bear_put_spread": {
+        "name": "بیر پوت اسپرد",
+        "profit_status": "limited_profit",
+        "risk_levels": ["low_risk", "high_risk"],
+        "sequence": BEAR_PUT_SPREAD_SEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "long_strangle": {
+        "name": "لانگ استرانگل",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["low_risk", "high_risk"],
+        "sequence": LONG_STRANGLE_SEQ,
+        "drop_cols": [],
+    },
+    "short_strangle": {
+        "name": "شورت استرانگل",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": SHORT_STRANGLE_SEQ,
+        "drop_cols": ["end_date", "final_profit", "monthly_profit", "yearly_profit"],
+    },
+    #
+    #
+    "long_butterfly": {
+        "name": "لانگ باترفلای",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": LONG_BUTTERFLY_SEQ,
+        "drop_cols": [
+            "end_date",
+            "final_profit",
+            "yearly_profit",
+            "call_buy_value_low",
+            "call_sell_value_mid",
+            "call_buy_value_high",
+        ],
+    },
+    "short_butterfly": {
+        "name": "شورت باترفلای",
+        "profit_status": "limited_profit",
+        "risk_levels": ["high_risk"],
+        "sequence": SHORT_BUTTERFLY_SEQ,
+        "drop_cols": [
+            "end_date",
+            "final_profit",
+            "monthly_profit",
+            "yearly_profit",
+            "call_sell_value_low",
+            "call_buy_value_mid",
+            "call_sell_value_high",
+        ],
+    },
+    #
+    #
+    "collar": {
+        "name": "کولار",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["low_risk", "high_risk"],
+        "sequence": COLLAR_SEQ,
+        "drop_cols": ["end_date", "call_sell_value_low", "call_buy_value_low"],
     },
 }
 
