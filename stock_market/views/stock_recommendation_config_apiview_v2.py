@@ -12,6 +12,10 @@ from rest_framework.views import APIView
 from stock_market.models.recommendation_config_model import (
     MARKETWATCH_CATEGORY,
     FUNDAMENTAL_CATEGORY,
+    GLOBAL_INDEX,
+    GLOBAL_INDEX_LIST,
+    DOMESTIC_INDEX,
+    DOMESTIC_INDEX_LIST,
     RecommendationConfig,
     MoneyFlow,
     BuyPressure,
@@ -142,10 +146,27 @@ def update_default_config_setting(
 ):
     try:
         for setting in config_settings:
-            setting_obj = getattr(default_config, setting.pop("name"))
-            for attr_name, attr_value in setting.items():
-                setattr(setting_obj, attr_name, attr_value)
-            setting_obj.save()
+            setting_name = setting.pop("name")
+            if setting_name == GLOBAL_INDEX:
+                for global_index in GLOBAL_INDEX_LIST:
+                    setting_obj = getattr(default_config, global_index)
+                    for attr_name, attr_value in setting.items():
+                        setattr(setting_obj, attr_name, attr_value)
+                    setting_obj.save()
+
+            elif setting_name == DOMESTIC_INDEX:
+                for domestic_index in DOMESTIC_INDEX_LIST:
+                    setting_obj = getattr(default_config, domestic_index)
+                    for attr_name, attr_value in setting.items():
+                        setattr(setting_obj, attr_name, attr_value)
+                    setting_obj.save()
+
+            else:
+                setting_obj = getattr(default_config, setting_name)
+                for attr_name, attr_value in setting.items():
+                    setattr(setting_obj, attr_name, attr_value)
+                setting_obj.save()
+
     except Exception as e:
         print(Fore.RED)
         print(e)
