@@ -10,7 +10,6 @@ from stock_market.views import (
     StockOveralROIAPIView,
     StockValueChangeAPIView,
     StockCallValueChangeAPIView,
-    StockOptionPriceSpreadAPIView,
     StockRecommendedAPIView,
     StockRecommendationConfigAPIView,
     StockRecommendationConfigSettingAPIView,
@@ -43,10 +42,7 @@ market_roi_urls = [
 ]
 
 option_behavior_urls = [
-    path(
-        "option-value-change/<str:option_type>", StockCallValueChangeAPIView.as_view()
-    ),
-    path("option-price-spread/", StockOptionPriceSpreadAPIView.as_view()),
+    path("option-value-change/<str:option_type>", StockCallValueChangeAPIView.as_view())
 ]
 
 stock_recommendation_urls = [
