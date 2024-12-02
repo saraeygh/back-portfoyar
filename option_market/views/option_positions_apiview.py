@@ -86,6 +86,18 @@ def get_high_risk_covered_call(strategy_key, table=None):
     return strategy_result
 
 
+# CONVERSION ############################################
+def get_no_risk_conversion(strategy_key, table=None):
+    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+
+    if not strategy_result.empty:
+        strategy_result = strategy_result[strategy_result[PROFIT_SORTING_COLUMN] >= 0]
+
+    strategy_result = strategy_result.to_dict(orient="records")
+
+    return strategy_result
+
+
 # LONG_CALL ############################################
 def get_high_risk_long_call(strategy_key, table=None):
     strategy_result = get_strategy_result_from_redis(strategy_key, table)
@@ -293,18 +305,6 @@ def get_high_risk_collar(strategy_key, table=None):
             strategy_result["call_buy_strike_high"]
             > strategy_result["base_equity_last_price"]
         ]
-    strategy_result = strategy_result.to_dict(orient="records")
-
-    return strategy_result
-
-
-# CONVERSION ############################################
-def get_no_risk_conversion(strategy_key, table=None):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
-
-    if not strategy_result.empty:
-        strategy_result = strategy_result[strategy_result[PROFIT_SORTING_COLUMN] >= 0]
-
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
