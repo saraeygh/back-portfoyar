@@ -1,17 +1,20 @@
+import pandas as pd
+
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-import pandas as pd
-from core.configs import STOCK_MONGO_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
 
-from core.utils import MongodbInterface, add_index_as_id
-from stock_market.serializers import MarketROISerailizer
-from stock_market.utils import MAIN_PAPER_TYPE_DICT
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from core.configs import STOCK_MONGO_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
+from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_index_as_id
+
+from stock_market.serializers import MarketROISerailizer, SummaryMarketROISerailizer
+from stock_market.utils import MAIN_PAPER_TYPE_DICT
 
 
 @method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
@@ -41,8 +44,12 @@ class StockIndustryInstrumentROIAPIView(APIView):
         results = results[~results["symbol"].str.contains(r"\d")]
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
-
         results = results.to_dict(orient="records")
-        results = MarketROISerailizer(results, many=True)
+
+        table = request.query_params.get(TABLE_COLS_QP)
+        if table and table == ALL_TABLE_COLS:
+            results = MarketROISerailizer(results, many=True)
+        else:
+            results = SummaryMarketROISerailizer(results, many=True)
 
         return Response(results.data, status=status.HTTP_200_OK)

@@ -1,17 +1,24 @@
 from django.shortcuts import get_object_or_404
 import pandas as pd
-from core.configs import THIRTY_MINUTES_CACHE, STOCK_MONGO_DB
-from core.utils import MongodbInterface
-from core.utils import set_json_cache, get_cache_as_json
-from global_market.serializers import GlobalRelatedStockSerailizer
-from stock_market.serializers import MarketROISerailizer
-from global_market.models import GlobalCommodityType, GlobalRelation
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from core.configs import THIRTY_MINUTES_CACHE, STOCK_MONGO_DB
+from core.utils import (
+    MongodbInterface,
+    TABLE_COLS_QP,
+    ALL_TABLE_COLS,
+    set_json_cache,
+    get_cache_as_json,
+)
+
+from global_market.serializers import GlobalRelatedStockSerailizer
+from global_market.models import GlobalCommodityType, GlobalRelation
+from stock_market.serializers import MarketROISerailizer, SummaryMarketROISerailizer
 
 
 @authentication_classes([TokenAuthentication])
@@ -54,10 +61,15 @@ class RelatedStockAPIView(APIView):
 
             related_stock.dropna(inplace=True)
             related_stock = related_stock.to_dict(orient="records")
-            related_stock = MarketROISerailizer(related_stock, many=True)
+
+            table = request.query_params.get(TABLE_COLS_QP)
+            if table and table == ALL_TABLE_COLS:
+                related_stock = MarketROISerailizer(related_stock, many=True)
+            else:
+                related_stock = SummaryMarketROISerailizer(related_stock, many=True)
 
             set_json_cache(cache_key, related_stock.data, THIRTY_MINUTES_CACHE)
-            return Response(data=related_stock.data, status=status.HTTP_200_OK)
+            return Response(related_stock.data, status=status.HTTP_200_OK)
 
         else:
             return Response(cache_response, status=status.HTTP_200_OK)
