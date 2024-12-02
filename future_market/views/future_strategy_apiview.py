@@ -26,14 +26,6 @@ redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 RESULT_SORTING_COLUMN = "monthly_spread"
 
 
-def sort_strategy_result(positions, sort_column):
-    try:
-        positions.sort_values(by=sort_column, inplace=True, ascending=False)
-        return positions
-    except KeyError:
-        return positions
-
-
 LONG_SUMMARY_TABLE_LIST = [
     "derivative_name",
     "best_sell_price",
@@ -56,25 +48,36 @@ SHORT_SUMMARY_TABLE_LIST = [
 ]
 
 
+def sort_strategy_result(positions, sort_column, strategy_key, table):
+    try:
+        positions.sort_values(by=sort_column, inplace=True, ascending=False)
+
+        positions["derivative_name"] = positions.apply(
+            replace_arabic_letters_pd, args=("derivative_name",), axis=1
+        )
+        positions["base_equity_name"] = positions.apply(
+            replace_arabic_letters_pd, args=("base_equity_name",), axis=1
+        )
+
+        if table and table == ALL_TABLE_COLS:
+            pass
+        else:
+            if strategy_key == "long_future":
+                positions = positions[LONG_SUMMARY_TABLE_LIST]
+            else:
+                positions = positions[SHORT_SUMMARY_TABLE_LIST]
+
+        return positions
+    except KeyError:
+        return positions
+
+
 def get_strategy_result_from_redis(strategy_key, table):
     positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
     positions = pd.DataFrame(positions)
-    positions = sort_strategy_result(positions, RESULT_SORTING_COLUMN)
-
-    positions["derivative_name"] = positions.apply(
-        replace_arabic_letters_pd, args=("derivative_name",), axis=1
+    positions = sort_strategy_result(
+        positions, RESULT_SORTING_COLUMN, strategy_key, table
     )
-    positions["base_equity_name"] = positions.apply(
-        replace_arabic_letters_pd, args=("base_equity_name",), axis=1
-    )
-
-    if table and table == ALL_TABLE_COLS:
-        pass
-    else:
-        if strategy_key == "long_future":
-            positions = positions[LONG_SUMMARY_TABLE_LIST]
-        else:
-            positions = positions[SHORT_SUMMARY_TABLE_LIST]
 
     return positions
 
