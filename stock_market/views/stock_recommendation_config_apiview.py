@@ -309,7 +309,6 @@ class StockRecommendationConfigAPIView(APIView):
         return update_related_objects(config_id, request)
 
     def delete(self, request, config_id):
-        config_id = request.query_params.get("config_id")
         config = get_object_or_404(
             RecommendationConfig, user=request.user, id=config_id
         )
