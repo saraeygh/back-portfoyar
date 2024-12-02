@@ -1,13 +1,4 @@
 import pandas as pd
-from core.configs import SIX_HOURS_CACHE, DOMESTIC_MONGO_DB, COMMODITY_TOP_200_LIMIT
-
-from core.utils import (
-    MongodbInterface,
-    set_json_cache,
-    get_cache_as_json,
-    add_index_as_id,
-)
-from domestic_market.serializers import MeanDeviationSerailizer
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -15,8 +6,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.configs import SIX_HOURS_CACHE, DOMESTIC_MONGO_DB, COMMODITY_TOP_200_LIMIT
+from core.utils import (
+    MongodbInterface,
+    TABLE_COLS_QP,
+    ALL_TABLE_COLS,
+    set_json_cache,
+    get_cache_as_json,
+    add_index_as_id,
+)
 
-def get_range_result(collection_name, range_name):
+from domestic_market.serializers import (
+    MeanDeviationSerailizer,
+    SummaryMeanDeviationSerailizer,
+)
+
+
+def get_range_result(collection_name, range_name, table=None):
     mongo_client = MongodbInterface(
         db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
     )
@@ -44,7 +50,12 @@ def get_range_result(collection_name, range_name):
     range_result.reset_index(drop=True, inplace=True)
     range_result["id"] = range_result.apply(add_index_as_id, axis=1)
     range_result = range_result.to_dict(orient="records")
-    range_result = MeanDeviationSerailizer(range_result, many=True)
+
+    if table and table == ALL_TABLE_COLS:
+        range_result = MeanDeviationSerailizer(range_result, many=True)
+    else:
+        range_result = SummaryMeanDeviationSerailizer(range_result, many=True)
+
     range_result = range_result.data
 
     return range_result
@@ -63,7 +74,8 @@ class MeanDeviationAPIView(APIView):
             365: "one_year_mean",
         }
 
-        cache_key = f"DOMESTIC_MEAN_DEVIATION_duration_{duration}"
+        table = request.query_params.get(TABLE_COLS_QP)
+        cache_key = f"DOMESTIC_MEAN_DEVIATION_duration_{duration}_{str(table)}"
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
@@ -71,10 +83,14 @@ class MeanDeviationAPIView(APIView):
             mean_deviation_result = {}
 
             mean_deviation_result["positive_range"] = get_range_result(
-                collection_name=collection_name, range_name="positive_range"
+                collection_name=collection_name,
+                range_name="positive_range",
+                table=table,
             )
             mean_deviation_result["negative_range"] = get_range_result(
-                collection_name=collection_name, range_name="negative_range"
+                collection_name=collection_name,
+                range_name="negative_range",
+                table=table,
             )
 
             set_json_cache(cache_key, mean_deviation_result, SIX_HOURS_CACHE)
