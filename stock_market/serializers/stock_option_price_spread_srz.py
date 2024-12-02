@@ -5,18 +5,39 @@ from core.serializers import RoundedFloatField
 class StockOptionPriceSpreadSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
+    asset_name = serializers.CharField()
+    base_equit_price = serializers.IntegerField()
+
     symbol = serializers.CharField()
     strike = serializers.IntegerField()
     premium = serializers.IntegerField()
-    asset_name = serializers.CharField()
-    base_equit_price = serializers.IntegerField()
     price_spread = RoundedFloatField(decimal_places=2)
     days_to_expire = serializers.IntegerField()
     last_update = serializers.CharField()
     expiration_date = serializers.CharField()
-    option_type = serializers.CharField()
     value = RoundedFloatField(decimal_places=0)
     strike_premium = RoundedFloatField()
+
+    def to_representation(self, instance):
+        instance["links"] = [
+            {"name": "لینک تابلوی معاملات اختیار", "link": instance.get("option_link")},
+            {"name": "لینک تابلوی معاملات سهام", "link": instance.get("stock_link")},
+        ]
+        return super().to_representation(instance)
+
+
+class SummaryStockOptionPriceSpreadSerailizer(serializers.Serializer):
+    id = serializers.IntegerField()
+    links = serializers.ListField()
+    asset_name = serializers.CharField()
+    base_equit_price = serializers.IntegerField()
+
+    symbol = serializers.CharField()
+    strike = serializers.IntegerField()
+    premium = serializers.IntegerField()
+    price_spread = RoundedFloatField(decimal_places=2)
+    days_to_expire = serializers.IntegerField()
+    value = RoundedFloatField(decimal_places=0)
 
     def to_representation(self, instance):
         instance["links"] = [
