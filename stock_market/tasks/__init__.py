@@ -10,6 +10,7 @@ from .update_stock_raw_adjusted_history_task import (
 )
 from .update_instrument_roi_task import update_instrument_roi
 from .stock_value_change_task import stock_value_change
-from .stock_value_history_task import stock_value_history
 from .stock_option_value_change_task import stock_option_value_change
+from .stock_value_history_task import stock_value_history
+from .stock_option_value_history_task import stock_option_value_history
 from .stock_option_price_spread_task import stock_option_price_spread

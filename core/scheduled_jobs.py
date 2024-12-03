@@ -36,6 +36,7 @@ from stock_market.tasks import (
     update_instrument_roi,
     stock_value_history,
     stock_value_change,
+    stock_option_value_history,
     stock_option_value_change,
     stock_option_price_spread,
     get_monthly_activity_report_letter,
@@ -312,6 +313,17 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed",
         hour="8-15",
         minute="*/1",
+    )
+
+    scheduler.add_job(
+        func=stock_option_value_history,
+        id="stock_option_value_history_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="*",
+        hour="7",
+        minute="30",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(

@@ -36,6 +36,7 @@ from stock_market.tasks import (
     update_instrument_info,
     update_instrument_roi,
     stock_value_history,
+    stock_option_value_history,
     stock_option_value_change,
     stock_option_price_spread,
 )
@@ -180,6 +181,7 @@ class Command(BaseCommand):
                             "4) Update instrument info",
                             "5) Update instrument ROI",
                             "6) Stock value change",
+                            "7) Stock option value history",
                             "8) Stock option value change",
                             "9) Stock option price spread",
                             "10) Update stock adjusted history",
@@ -210,6 +212,8 @@ class Command(BaseCommand):
                             case "5":
                                 update_instrument_roi(MANUAL_MODE)
                             case "6":
+                                stock_option_value_history()
+                            case "7":
                                 stock_value_history()
                             case "8":
                                 stock_option_value_change(MANUAL_MODE)

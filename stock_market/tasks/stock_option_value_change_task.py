@@ -30,6 +30,18 @@ def get_instrument_info():
     return instrument_info
 
 
+def add_history(options: pd.DataFrame, history_collection_name: str):
+    mongo_client = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name=history_collection_name
+    )
+    history = list(mongo_client.collection.find({}, {"_id": 0}))
+    history = pd.DataFrame(history)
+
+    options = pd.merge(left=options, right=history, on="symbol")
+
+    return options
+
+
 def get_last_options(option_type):
     last_options = redis_conn.get_list_of_dicts(list_key="option_data")
     last_options = pd.DataFrame(last_options)
@@ -50,11 +62,7 @@ def get_last_options(option_type):
     return last_options
 
 
-def get_asset_options_value_change(options, option_type):
-    close_price_col = "call_close_price"
-    if option_type == PUT_OPTION:
-        close_price_col = "put_close_price"
-
+def get_asset_options_last_value_mean(options, option_type):
     value_col = "call_value"
     if option_type == PUT_OPTION:
         value_col = "put_value"
@@ -67,37 +75,29 @@ def get_asset_options_value_change(options, option_type):
             base_equity_options: pd.DataFrame = options[
                 options["base_equity_symbol"] == base_equity
             ]
-            base_equity_options["month_mean_value"] = (
-                base_equity_options["month_mean_volume"]
-                * 1000
-                * base_equity_options[close_price_col]
-            ) / RIAL_TO_MILLION_TOMAN
-            base_equity_options = base_equity_options[
-                base_equity_options["month_mean_value"] != 0
-            ]
-
             last_mean = (
                 float(base_equity_options[value_col].mean()) / RIAL_TO_MILLION_TOMAN
             )
-            month_mean = float(base_equity_options["month_mean_value"].mean())
-            value_change = last_mean / month_mean
         except Exception:
             last_mean = 0
-            month_mean = 0
-            value_change = 0
 
-        new_value_change = {
-            "symbol": base_equity,
-            "last_mean": last_mean,
-            "month_mean": month_mean,
-            "value_change": value_change,
-        }
-        options_list.append(new_value_change)
+        new_last_value_mean = {"symbol": base_equity, "last_mean": last_mean}
+        options_list.append(new_last_value_mean)
 
-    option_value_change = pd.DataFrame(options_list)
-    option_value_change.dropna(inplace=True)
+    option_last_value_mean = pd.DataFrame(options_list)
+    option_last_value_mean.dropna(inplace=True)
 
-    return option_value_change
+    return option_last_value_mean
+
+
+def add_month_mean(row):
+    try:
+        history = pd.DataFrame(row.get("chart").get("history"))
+        month_mean = float(history["y"].mean())
+    except Exception:
+        month_mean = 0
+
+    return month_mean
 
 
 def add_link(row):
@@ -177,13 +177,17 @@ def stock_option_value_change_main():
     option_types = [CALL_OPTION, PUT_OPTION]
     for option_type in option_types:
         options = get_last_options(option_type)
-
         if options.empty:
             return
 
         left_on = "call_ins_code"
+        collection_name = "call_value_change"
+        history_collection_name = "call_value_history"
         if option_type == PUT_OPTION:
             left_on = "put_ins_code"
+            collection_name = "put_value_change"
+            history_collection_name = "put_value_history"
+
         options = pd.merge(
             left=options,
             right=instrument_info,
@@ -191,11 +195,16 @@ def stock_option_value_change_main():
             right_on="ins_code",
             how="left",
         )
-
         options.dropna(inplace=True)
-        options = get_asset_options_value_change(
+
+        options = get_asset_options_last_value_mean(
             options=options, option_type=option_type
         )
+
+        options = add_history(options, history_collection_name)
+        options["month_mean"] = options.apply(add_month_mean, axis=1)
+        options = options[options["month_mean"] != 0]
+        options["value_change"] = options["last_mean"] / options["month_mean"]
         options = options[options["value_change"] != 0]
 
         options = pd.merge(left=options, right=instrument_info, on="symbol", how="left")
@@ -207,6 +216,7 @@ def stock_option_value_change_main():
                 "last_mean",
                 "month_mean",
                 "value_change",
+                "chart",
                 "total_share",
                 "sector_pe",
                 "psr",
@@ -234,13 +244,6 @@ def stock_option_value_change_main():
         options = options.to_dict(orient="records")
 
         if options:
-            if option_type == CALL_OPTION:
-                collection_name = "call_value_change"
-            elif option_type == PUT_OPTION:
-                collection_name = "put_value_change"
-            else:
-                continue
-
             mongo_client = MongodbInterface(
                 db_name=STOCK_MONGO_DB, collection_name=collection_name
             )

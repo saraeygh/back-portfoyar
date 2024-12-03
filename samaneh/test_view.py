@@ -23,6 +23,7 @@ from stock_market.tasks import (
     stock_value_history,
     stock_option_price_spread,
     update_market_watch,
+    stock_option_value_history,
 )
 from stock_market.utils import (
     stock_recommendation,
@@ -46,7 +47,7 @@ from future_market.utils import get_options_base_equity_info
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
 
-        stock_option_price_spread()
+        # stock_option_price_spread()
         # stock_value_history()
         # stock_market_watch()
         # update_option_data_from_tse(run_mode=MANUAL_MODE)
@@ -58,7 +59,8 @@ class TestView(APIView):
         # populate_option_strategy()
         # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
-        # stock_option_value_change()
+        # stock_option_value_history()
+        stock_option_value_change()
         # update_stock_adjusted_history()
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
