@@ -95,6 +95,7 @@ def long_call(option_data, redis_conn):
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": base_equity_last_price,
+                "base_equity_order_book": row.get("base_equity_order_book"),
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
                 "strike_price": strike_price,

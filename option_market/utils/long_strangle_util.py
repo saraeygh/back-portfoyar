@@ -91,6 +91,7 @@ def long_strangle(option_data, redis_conn):
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
+                    "base_equity_order_book": row.get("base_equity_order_book"),
                     "put_buy_symbol": put_buy_row.get("put_symbol"),
                     "put_best_sell_price": low_premium,
                     "put_buy_strike": low_strike,

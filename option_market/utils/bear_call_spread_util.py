@@ -115,6 +115,7 @@ def bear_call_spread(option_data, redis_conn):
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
+                    "base_equity_order_book": row.get("base_equity_order_book"),
                     "call_buy_symbol": buy_row.get("call_symbol"),
                     "call_best_sell_price": high_premium,
                     "call_buy_strike": high_strike,

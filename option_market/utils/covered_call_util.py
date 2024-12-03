@@ -93,6 +93,7 @@ def covered_call(option_data, redis_conn):
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": base_equity_last_price,
                 "base_equity_best_sell_price": row.get("base_equity_best_sell_price"),
+                "base_equity_order_book": row.get("base_equity_order_book"),
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": premium,
                 "strike_price": strike,

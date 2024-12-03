@@ -97,6 +97,7 @@ def short_straddle(option_data, redis_conn):
                 "id": uuid4().hex,
                 "base_equity_symbol": row.get("base_equity_symbol"),
                 "base_equity_last_price": base_equity_last_price,
+                "base_equity_order_book": row.get("base_equity_order_book"),
                 "call_sell_symbol": row.get("call_symbol"),
                 "call_best_buy_price": call_premium,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,

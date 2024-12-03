@@ -163,8 +163,6 @@ def update_option_data_from_tse_main():
 
     populate_all_option_strategy()
 
-    return
-
 
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):
     if run_mode == MANUAL_MODE or is_market_open():

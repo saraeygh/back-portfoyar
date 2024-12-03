@@ -69,6 +69,7 @@ def long_straddle(option_data, redis_conn):
                 "base_equity_last_price": base_equity_last_price,
                 "call_buy_symbol": row.get("call_symbol"),
                 "call_best_sell_price": call_premium,
+                "base_equity_order_book": row.get("base_equity_order_book"),
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
                 "put_buy_symbol": row.get("put_symbol"),
                 "put_best_sell_price": put_premium,

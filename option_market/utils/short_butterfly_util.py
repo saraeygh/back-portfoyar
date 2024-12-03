@@ -136,6 +136,7 @@ def short_butterfly(option_data, redis_conn):
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
+                    "base_equity_order_book": row.get("base_equity_order_book"),
                     "call_sell_symbol_low": low_call_sell.get("call_symbol"),
                     "call_best_buy_price_low": low_premium,
                     "call_sell_strike_low": low_strike,

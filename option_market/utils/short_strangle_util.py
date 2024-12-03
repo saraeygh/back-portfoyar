@@ -127,6 +127,7 @@ def short_strangle(option_data, redis_conn):
                     "id": uuid4().hex,
                     "base_equity_symbol": row.get("base_equity_symbol"),
                     "base_equity_last_price": base_equity_last_price,
+                    "base_equity_order_book": row.get("base_equity_order_book"),
                     "put_sell_symbol": put_sell_row.get("put_symbol"),
                     "put_best_buy_price": low_premium,
                     "put_sell_strike": low_strike,
