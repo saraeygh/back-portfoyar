@@ -141,39 +141,48 @@ def update_default_config_attrs(user, config_list):
     return default_config
 
 
-def update_default_config_setting(
-    default_config: RecommendationConfig, config_settings
-):
-    try:
-        for setting in config_settings:
-            setting_name = setting.pop("name")
-            if setting_name == GLOBAL_INDEX:
-                for global_index in GLOBAL_INDEX_LIST:
-                    setting_obj = getattr(default_config, global_index)
+def update_default_config_setting(default_config: RecommendationConfig, config_data):
+    config_settings = config_data.get("default_config")
+    if (
+        config_settings is not None
+        and MARKETWATCH_CATEGORY in config_settings
+        and FUNDAMENTAL_CATEGORY in config_settings
+    ):
+        try:
+            config_settings = (
+                config_settings[MARKETWATCH_CATEGORY]
+                + config_settings[FUNDAMENTAL_CATEGORY]
+            )
+
+            for setting in config_settings:
+                setting_name = setting.pop("name")
+                if setting_name == GLOBAL_INDEX:
+                    for global_index in GLOBAL_INDEX_LIST:
+                        setting_obj = getattr(default_config, global_index)
+                        for attr_name, attr_value in setting.items():
+                            setattr(setting_obj, attr_name, attr_value)
+                        setting_obj.save()
+
+                elif setting_name == DOMESTIC_INDEX:
+                    for domestic_index in DOMESTIC_INDEX_LIST:
+                        setting_obj = getattr(default_config, domestic_index)
+                        for attr_name, attr_value in setting.items():
+                            setattr(setting_obj, attr_name, attr_value)
+                        setting_obj.save()
+
+                else:
+                    setting_obj = getattr(default_config, setting_name)
                     for attr_name, attr_value in setting.items():
                         setattr(setting_obj, attr_name, attr_value)
                     setting_obj.save()
 
-            elif setting_name == DOMESTIC_INDEX:
-                for domestic_index in DOMESTIC_INDEX_LIST:
-                    setting_obj = getattr(default_config, domestic_index)
-                    for attr_name, attr_value in setting.items():
-                        setattr(setting_obj, attr_name, attr_value)
-                    setting_obj.save()
-
-            else:
-                setting_obj = getattr(default_config, setting_name)
-                for attr_name, attr_value in setting.items():
-                    setattr(setting_obj, attr_name, attr_value)
-                setting_obj.save()
-
-    except Exception as e:
-        print(Fore.RED)
-        print(e)
-        print(Style.RESET_ALL)
-        return Response(
-            {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        except Exception as e:
+            print(Fore.RED)
+            print(e)
+            print(Style.RESET_ALL)
+            return Response(
+                {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     return Response(
         {"message": "تنظیمات با موفقیت به‌روزرسانی شد‌"}, status=status.HTTP_200_OK
@@ -187,11 +196,7 @@ def update_config(request):
     config_list = config_data.get("config_list")
     default_config = update_default_config_attrs(user, config_list)
 
-    config_settings = config_data.get("default_config")
-    config_settings = (
-        config_settings[MARKETWATCH_CATEGORY] + config_settings[FUNDAMENTAL_CATEGORY]
-    )
-    return update_default_config_setting(default_config, config_settings)
+    return update_default_config_setting(default_config, config_data)
 
 
 @authentication_classes([TokenAuthentication])
