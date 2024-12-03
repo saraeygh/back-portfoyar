@@ -15,6 +15,7 @@ class StockOptionValueChangeSerailizer(serializers.Serializer):
     sector_pe = RoundedFloatField()
     ps = RoundedFloatField()
     market_cap = RoundedFloatField(decimal_places=0)
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
         instance["links"] = [
