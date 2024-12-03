@@ -1,3 +1,5 @@
+from pytz import timezone
+import jdatetime as jdt
 import pandas as pd
 from core.configs import (
     STOCK_OPTION_STRIKE_DEVIATION,
@@ -20,6 +22,8 @@ from option_market.utils import (
     PUT_OPTION_COLUMN,
 )
 from stock_market.utils import CALL_OPTION, PUT_OPTION
+
+TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -230,22 +234,87 @@ def get_put_spreads(spreads):
     return spreads
 
 
+def check_date(mongo_client):
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
+    date = today_datetime.strftime("%Y-%m-%d")
+    time = today_datetime.strftime("%H:%M")
+
+    one_doc = mongo_client.collection.find_one({}, {"_id": 0})
+    if one_doc:
+        doc_date = one_doc.get("date")
+        if date != doc_date:
+            mongo_client.collection.delete_many({})
+
+    return date, time
+
+
+X_TITLE = "زمان"
+Y_TITLE = "اسپرد قیمتی"
+CHART_TITLE = "روند تغییرات روزانه اسپرد قیمتی"
+
+
+def add_last_spread_to_history(row):
+    row = row.to_dict()
+    chart = row.get("chart")
+    x = row.get("last_update")
+    y = row.get("price_spread")
+
+    if isinstance(chart, dict):
+        history: list = chart.get("history")
+        last_history = history[-1]
+        if x != last_history["x"]:
+            history.append({"x": x, "y": y})
+            chart["history"] = history
+            return chart
+
+    else:
+        chart = {
+            "x_title": X_TITLE,
+            "y_title": Y_TITLE,
+            "chart_title": CHART_TITLE,
+            "history": [{"x": x, "y": y}],
+        }
+
+    return chart
+
+
+def add_spread_history(mongo_client, last_spreads):
+    try:
+        spread_history = pd.DataFrame(
+            mongo_client.collection.find(
+                {},
+                {"_id": 0, "inst_id": 1, "chart": 1},
+            )
+        )
+        if not spread_history.empty:
+            last_spreads = pd.merge(
+                left=last_spreads, right=spread_history, on="inst_id", how="left"
+            )
+    except Exception:
+        pass
+
+    last_spreads["chart"] = last_spreads.apply(add_last_spread_to_history, axis=1)
+
+    return last_spreads
+
+
 def stock_option_price_spread_main():
     spreads = get_last_options()
-    spreads_list = list()
+    last_spreads = pd.DataFrame()
     if not spreads.empty:
         call_spreads = get_call_spreads(spreads)
         put_spreads = get_put_spreads(spreads)
-    else:
-        spreads = pd.DataFrame()
-        spreads = spreads.to_dict(orient="records")
+        last_spreads = pd.DataFrame(call_spreads + put_spreads)
 
-    spreads_list = call_spreads + put_spreads
-    if spreads_list:
+    if not last_spreads.empty:
         mongo_client = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
         )
-        mongo_client.insert_docs_into_collection(documents=spreads_list)
+        last_spreads["date"], _ = check_date(mongo_client)
+        last_spreads = add_spread_history(mongo_client, last_spreads)
+
+        last_spreads = last_spreads.to_dict(orient="records")
+        mongo_client.insert_docs_into_collection(documents=last_spreads)
 
 
 def stock_option_price_spread(run_mode: str = AUTO_MODE):

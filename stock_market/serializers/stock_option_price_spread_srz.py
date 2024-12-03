@@ -17,6 +17,7 @@ class StockOptionPriceSpreadSerailizer(serializers.Serializer):
     expiration_date = serializers.CharField()
     value = RoundedFloatField(decimal_places=0)
     strike_premium = RoundedFloatField()
+    chart = serializers.DictField()
 
     def to_representation(self, instance):
         instance["links"] = [
