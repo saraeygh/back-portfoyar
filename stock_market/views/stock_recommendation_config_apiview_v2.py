@@ -74,6 +74,12 @@ def get_configs(request):
     return user_configs
 
 
+def turn_all_configs_to_non_default(user_configs):
+    for user_config in user_configs:
+        user_config.is_default = False
+        user_config.save()
+
+
 def create_new_config(user, config_name):
     if RecommendationConfig.objects.filter(user=user).count() > 4:
         return Response(
@@ -87,10 +93,12 @@ def create_new_config(user, config_name):
         )
 
     with transaction.atomic():
-        new_config = RecommendationConfig.objects.create(user=user, name=config_name)
-        if not RecommendationConfig.objects.filter(user=user, is_default=True).exists():
-            new_config.is_default = True
-            new_config.save()
+        user_configs = list(user.configs.all())
+        turn_all_configs_to_non_default(user_configs)
+        new_config = RecommendationConfig.objects.create(
+            user=user, name=config_name, is_default=True
+        )
+
         MoneyFlow.objects.create(recommendation=new_config, is_enabled=True)
         BuyPressure.objects.create(recommendation=new_config, is_enabled=True)
         BuyValue.objects.create(recommendation=new_config, is_enabled=True)
@@ -109,12 +117,6 @@ def create_new_config(user, config_name):
     return Response(
         {"message": "تنظیمات با موفقیت ساخته شد"}, status=status.HTTP_200_OK
     )
-
-
-def turn_all_configs_to_non_default(user_configs):
-    for user_config in user_configs:
-        user_config.is_default = False
-        user_config.save()
 
 
 def update_default_config_attrs(user, config_list):
