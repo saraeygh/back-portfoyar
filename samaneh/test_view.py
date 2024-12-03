@@ -59,7 +59,7 @@ class TestView(APIView):
         # populate_option_strategy()
         # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
-        # stock_option_value_history()
+        stock_option_value_history()
         stock_option_value_change()
         # update_stock_adjusted_history()
         # update_stock_raw_adjusted_history()

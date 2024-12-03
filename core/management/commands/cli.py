@@ -212,9 +212,9 @@ class Command(BaseCommand):
                             case "5":
                                 update_instrument_roi(MANUAL_MODE)
                             case "6":
-                                stock_option_value_history()
-                            case "7":
                                 stock_value_history()
+                            case "7":
+                                stock_option_value_history()
                             case "8":
                                 stock_option_value_change(MANUAL_MODE)
                             case "9":
