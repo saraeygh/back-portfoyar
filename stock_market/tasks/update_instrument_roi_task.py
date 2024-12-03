@@ -7,7 +7,11 @@ from core.configs import (
     AUTO_MODE,
 )
 from core.utils import MongodbInterface, get_deviation_percent, print_task_info
-from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
+from stock_market.utils import (
+    MAIN_PAPER_TYPE_DICT,
+    FUND_PAPER,
+    get_market_watch_data_from_redis,
+)
 
 
 def add_link(row):
@@ -43,6 +47,12 @@ def add_ps(row):
 
 def add_market_cap(row):
     row = row.to_dict()
+
+    paper_type = row.get("paper_id")
+    if paper_type == FUND_PAPER:
+        market_cap = 0
+        return market_cap
+
     close_mean = row.get("close_mean")
     total_share = row.get("total_share")
     try:

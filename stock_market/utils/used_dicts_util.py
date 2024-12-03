@@ -5,20 +5,30 @@ MAIN_MARKET_TYPE_DICT = {
 
 ALL_MARKET_TYPE_DICT = {0: "بورس و فرابورس", **MAIN_MARKET_TYPE_DICT}
 
+STOCK_PAPER = 1
+INITIAL_MARKET_PAPER = 2
+ACCOMMODATION_PAPER = 3
+PRIORITY_PAPER = 4
+DEBT_PAPER = 5
+OPTION_PAPER = 6
+FUTURE_PAPER = 7
+FUND_PAPER = 8
+COMMODITY_PAPER = 9
+
 MAIN_PAPER_TYPE_DICT = {
-    1: "سهام",
-    2: "بازار پایه فرابورس",
+    STOCK_PAPER: "سهام",
+    INITIAL_MARKET_PAPER: "بازار پایه فرابورس",
 }
 
 ALL_PAPER_TYPE_DICT = {
     **MAIN_PAPER_TYPE_DICT,
-    3: "تسهیلات مسکن",
-    4: "حق تقدم",
-    5: "اوراق بدهی",
-    6: "اختیار معامله",
-    7: "آتی",
-    8: "صندوق‌های سرمایه‌گذاری",
-    9: "بورس کالا",
+    ACCOMMODATION_PAPER: "تسهیلات مسکن",
+    PRIORITY_PAPER: "حق تقدم",
+    DEBT_PAPER: "اوراق بدهی",
+    OPTION_PAPER: "اختیار معامله",
+    FUTURE_PAPER: "آتی",
+    FUND_PAPER: "صندوق‌های سرمایه‌گذاری",
+    COMMODITY_PAPER: "بورس کالا",
 }
 
 

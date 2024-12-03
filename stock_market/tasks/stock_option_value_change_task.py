@@ -9,7 +9,12 @@ from core.configs import (
     AUTO_MODE,
 )
 
-from stock_market.utils import CALL_OPTION, PUT_OPTION, get_market_watch_data_from_redis
+from stock_market.utils import (
+    CALL_OPTION,
+    PUT_OPTION,
+    FUND_PAPER,
+    get_market_watch_data_from_redis,
+)
 
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
@@ -128,6 +133,12 @@ def add_ps(row):
 
 def add_market_cap(row):
     row = row.to_dict()
+
+    paper_type = row.get("paper_type")
+    if paper_type == FUND_PAPER:
+        market_cap = 0
+        return market_cap
+
     close_mean = row.get("closing_price")
     total_share = row.get("total_share")
     try:
@@ -208,7 +219,9 @@ def stock_option_value_change_main():
         last_data["daily_roi"] = (
             last_data["last_price_change"] / last_data["yesterday_price"]
         ) * 100
-        last_data = last_data[["ins_code", "closing_price", "daily_roi", "last_time"]]
+        last_data = last_data[
+            ["ins_code", "closing_price", "daily_roi", "last_time", "paper_type"]
+        ]
         options = pd.merge(left=options, right=last_data, on="ins_code", how="left")
 
         options["link"] = options.apply(add_link, axis=1)
