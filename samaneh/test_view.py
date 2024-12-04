@@ -59,26 +59,9 @@ class TestView(APIView):
         # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
 
-        #######################################################################
-        #######################################################################
-        #######################################################################
-        #######################################################################
-        # add last_mean to value mean history
-        # reverse the order of history
-        # Round the history y values
-        #######################################################################
-        stock_option_value_history()
-        stock_option_value_change()
-        stock_option_price_spread()
-        #######################################################################
-        # WARINING
-        # /code/stock_market/tasks/stock_option_value_history_task.py:83: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
-        # trade_date_options: pd.DataFrame = base_equity_options[
-        #######################################################################
-        #######################################################################
-        #######################################################################
-        #######################################################################
-
+        # stock_option_value_history()
+        # stock_option_value_change()
+        # stock_option_price_spread()
         # update_stock_adjusted_history()
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
