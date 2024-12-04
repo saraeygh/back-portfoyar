@@ -41,7 +41,9 @@ def stock_option_value_history_main():
     last_option = last_option[
         [
             "call_ins_code",
+            "call_symbol",
             "put_ins_code",
+            "put_symbol",
             "base_equity_ins_code",
             "base_equity_symbol",
         ]
@@ -74,7 +76,7 @@ def stock_option_value_history_main():
                 },
             }
             try:
-                base_equity_options: pd.DataFrame = options[
+                base_equity_options: pd.DataFrame = options.loc[
                     options["base_equity_symbol"] == base_equity
                 ]
 
