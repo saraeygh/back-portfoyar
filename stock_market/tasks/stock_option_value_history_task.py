@@ -78,7 +78,9 @@ def stock_option_value_history_main():
                     options["base_equity_symbol"] == base_equity
                 ]
 
-                trade_dates = base_equity_options["trade_date"].unique().tolist()
+                trade_dates = sorted(
+                    base_equity_options["trade_date"].unique().tolist()
+                )
                 for trade_date in trade_dates:
                     trade_date_options: pd.DataFrame = base_equity_options[
                         options["trade_date"] == trade_date
@@ -91,7 +93,7 @@ def stock_option_value_history_main():
                             3,
                         ),
                     }
-                    base_equity_value_history["chart"]["history"].insert(0, new_history)
+                    base_equity_value_history["chart"]["history"].append(new_history)
                 option_value_mean_history.append(base_equity_value_history)
             except Exception:
                 continue
