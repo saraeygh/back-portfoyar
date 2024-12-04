@@ -16,11 +16,15 @@ STATUSES = {status[0]: status[1] for status in STATUS_CHOICES}
 UNITS = {unit[0]: unit[1] for unit in UNIT_CHOICES}
 
 
-def get_short_text(text: str, max_len: int = 30):
-    if len(text) <= max_len:
-        return text
-    else:
-        return text[0 : max_len + 1]
+def get_short_text(text: str, max_word_count: int = 10):
+    text = text.split(" ")
+    THREE_DOTS = ""
+    if len(text) > max_word_count:
+        text = text[:max_word_count]
+        THREE_DOTS = " ..."
+
+    text = " ".join(text) + THREE_DOTS
+    return text
 
 
 def get_last_update(last_update):
