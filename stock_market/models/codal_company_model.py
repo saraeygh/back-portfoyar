@@ -31,7 +31,9 @@ class CodalCompany(TimeStampMixin, models.Model):
     publisher_state = models.IntegerField(
         verbose_name=("وضعیت ناشر"), choices=PUBLISHER_STATE_CHOICES
     )
-    codal_t = models.IntegerField(verbose_name=("فیلد t"))
+    codal_t = models.IntegerField(verbose_name=("فیلد t"), blank=True, null=True)
+    codal_IG = models.IntegerField(verbose_name=("فیلد IG"), blank=True, null=True)
+    codal_RT = models.IntegerField(verbose_name=("فیلد RT"), blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.symbol})"
