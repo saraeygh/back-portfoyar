@@ -16,6 +16,13 @@ STATUSES = {status[0]: status[1] for status in STATUS_CHOICES}
 UNITS = {unit[0]: unit[1] for unit in UNIT_CHOICES}
 
 
+def get_short_text(text: str, max_len: int = 2):
+    if len(text) <= max_len:
+        return text
+    else:
+        return text[0 : max_len + 1]
+
+
 def get_last_update(last_update):
 
     last_update = last_update.replace(tzinfo=pytz.UTC)
@@ -58,8 +65,9 @@ class GetUserTicketsSerailizer(serializers.ModelSerializer):
         except Exception:
             return "ادمین سایت"
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Ticket):
         representation = super().to_representation(instance)
+
         representation["response_count"] = instance.responses.count()
         representation["last_update"] = get_last_update(instance.updated_at)
 
@@ -76,6 +84,12 @@ class GetUserTicketsSerailizer(serializers.ModelSerializer):
 
         representation["sender"] = representation.pop("sender_name")
         representation["receiver"] = representation.pop("receiver_name")
+
+        last_response = instance.responses.last()
+        if last_response:
+            representation["text"] = get_short_text(last_response.text)
+        else:
+            representation["text"] = get_short_text(instance.text)
 
         return representation
 

@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
-from support.models import Ticket, TicketResponse, FEATURE_CHOICES, UNIT_CHOICES, OPEN
+from support.models import Ticket, FEATURE_CHOICES, UNIT_CHOICES, OPEN
 from support.serializers import (
     GetUserTicketsSerailizer,
     AddUserTicketsSerailizer,

@@ -35,10 +35,15 @@ credential_urls = [
     path("username/", UsernameAPIView.as_view()),
 ]
 
+subscription_urls = [
+    # path("username/", UsernameAPIView.as_view()),
+]
+
 urlpatterns = (
     upload_users_urls
     + sign_in_sign_up_urls
     + profile_urls
     + email_urls
     + credential_urls
+    + subscription_urls
 )

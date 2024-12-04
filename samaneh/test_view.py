@@ -60,7 +60,7 @@ class TestView(APIView):
         # calculate_producers_yearly_value()
         # calculate_commodity_means_global()
 
-        get_monthly_activity_report_letter()
+        # get_monthly_activity_report_letter()
         # stock_option_value_history()
         # stock_option_value_change()
         # stock_option_price_spread()
