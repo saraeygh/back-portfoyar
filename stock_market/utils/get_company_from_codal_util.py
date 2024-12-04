@@ -36,6 +36,8 @@ def get_company_from_codal():
             company["name"] = company.pop("n")
             company["publisher_state"] = company.pop("st")
             company["codal_t"] = company.pop("t")
+            company["codal_IG"] = company.pop("IG")
+            company["codal_RT"] = company.pop("RT")
 
             new_company = CodalCompany(**company)
             existing_company_dict[symbol] = new_company
