@@ -1,4 +1,5 @@
 import pandas as pd
+import jdatetime as jdt
 from core.utils import MongodbInterface, RedisInterface, print_task_info
 
 from core.configs import (
@@ -75,8 +76,8 @@ def get_asset_options_last_value_mean(options, option_type):
             base_equity_options: pd.DataFrame = options[
                 options["base_equity_symbol"] == base_equity
             ]
-            last_mean = (
-                float(base_equity_options[value_col].mean()) / RIAL_TO_MILLION_TOMAN
+            last_mean = round(
+                float(base_equity_options[value_col].mean()) / RIAL_TO_MILLION_TOMAN, 3
             )
         except Exception:
             last_mean = 0
@@ -88,6 +89,17 @@ def get_asset_options_last_value_mean(options, option_type):
     option_last_value_mean.dropna(inplace=True)
 
     return option_last_value_mean
+
+
+def add_last_mean_to_history(row):
+    chart = row.get("chart")
+    history = chart.get("history")
+    y = row.get("last_mean")
+    x = str(jdt.date.today())
+    history.append({"x": x, "y": y})
+    chart["history"] = history
+
+    return chart
 
 
 def add_month_mean(row):
@@ -202,6 +214,7 @@ def stock_option_value_change_main():
         )
 
         options = add_history(options, history_collection_name)
+        options["chart"] = options.apply(add_last_mean_to_history, axis=1)
         options["month_mean"] = options.apply(add_month_mean, axis=1)
         options = options[options["month_mean"] != 0]
         options["value_change"] = options["last_mean"] / options["month_mean"]

@@ -85,10 +85,13 @@ def stock_option_value_history_main():
                     ]
                     new_history = {
                         "x": str(jdt.date.fromgregorian(date=trade_date)),
-                        "y": float(trade_date_options["value"].mean())
-                        / RIAL_TO_MILLION_TOMAN,
+                        "y": round(
+                            float(trade_date_options["value"].mean())
+                            / RIAL_TO_MILLION_TOMAN,
+                            3,
+                        ),
                     }
-                    base_equity_value_history["chart"]["history"].append(new_history)
+                    base_equity_value_history["chart"]["history"].insert(0, new_history)
                 option_value_mean_history.append(base_equity_value_history)
             except Exception:
                 continue
