@@ -263,7 +263,7 @@ def add_last_spread_to_history(row):
         history: list = chart.get("history")
         last_history = history[-1]
         if x != last_history["x"]:
-            history.append({"x": x, "y": y})
+            history.append({"x": x, "y": round(y, 3)})
             chart["history"] = history
             return chart
 
@@ -272,7 +272,7 @@ def add_last_spread_to_history(row):
             "x_title": X_TITLE,
             "y_title": Y_TITLE,
             "chart_title": CHART_TITLE,
-            "history": [{"x": x, "y": y}],
+            "history": [{"x": x, "y": round(y, 3)}],
         }
 
     return chart
