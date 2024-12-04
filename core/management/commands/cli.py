@@ -298,6 +298,27 @@ class Command(BaseCommand):
                 case "0":  # EXIT
                     break
 
+                case "night-tasks":  # RUN LAST NIGHT TASKS
+                    print(Fore.BLUE + "Running night tasks." + Style.RESET_ALL)
+                    populate_domestic_market_db()
+                    calculate_commodity_mean_domestic()
+                    calculate_monthly_sell_domestic()
+                    calculate_production_sell_domestic()
+                    calculate_producers_yearly_value()
+                    #
+                    update_base_equity()
+                    #
+                    get_option_history()
+                    #
+                    update_stock_raw_adjusted_history()
+                    update_instrument_info()
+                    stock_value_history()
+                    stock_option_value_history()
+                    get_monthly_activity_report_letter()
+                    calculate_commodity_means_global()
+                    print(Fore.GREEN + "Night tasks done!" + Style.RESET_ALL)
+                    break
+
                 case _:
                     print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
                     time.sleep(0.5)
