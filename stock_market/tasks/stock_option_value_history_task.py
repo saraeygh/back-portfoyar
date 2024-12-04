@@ -84,7 +84,7 @@ def stock_option_value_history_main():
                     base_equity_options["trade_date"].unique().tolist()
                 )
                 for trade_date in trade_dates:
-                    trade_date_options: pd.DataFrame = base_equity_options[
+                    trade_date_options: pd.DataFrame = base_equity_options.loc[
                         options["trade_date"] == trade_date
                     ]
                     new_history = {
