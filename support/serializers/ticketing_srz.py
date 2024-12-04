@@ -16,7 +16,7 @@ STATUSES = {status[0]: status[1] for status in STATUS_CHOICES}
 UNITS = {unit[0]: unit[1] for unit in UNIT_CHOICES}
 
 
-def get_short_text(text: str, max_len: int = 2):
+def get_short_text(text: str, max_len: int = 30):
     if len(text) <= max_len:
         return text
     else:
