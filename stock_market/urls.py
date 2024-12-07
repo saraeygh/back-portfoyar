@@ -42,7 +42,9 @@ market_roi_urls = [
 ]
 
 option_behavior_urls = [
-    path("option-value-change/<str:option_type>", StockCallValueChangeAPIView.as_view())
+    path(
+        "option-value-change/<str:option_type>/", StockCallValueChangeAPIView.as_view()
+    )
 ]
 
 stock_recommendation_urls = [
