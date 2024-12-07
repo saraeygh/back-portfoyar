@@ -15,13 +15,15 @@ class CodalCompanyAdmin(admin.ModelAdmin):
         "codal_id",
         "publisher_state",
         "codal_t",
+        "codal_IG",
+        "codal_RT",
         "created_at_shamsi",
         "updated_at_shamsi",
     )
 
     list_display_links = ("id", "symbol", "name", "codal_id")
 
-    list_filter = ("publisher_state", "codal_t")
+    list_filter = ("publisher_state", "codal_t", "codal_IG", "codal_RT")
 
     ordering = ("-updated_at",)
 
@@ -31,6 +33,8 @@ class CodalCompanyAdmin(admin.ModelAdmin):
         "name",
         "codal_id",
         "codal_t",
+        "codal_IG",
+        "codal_RT",
     )
 
     fieldsets = (
@@ -40,7 +44,15 @@ class CodalCompanyAdmin(admin.ModelAdmin):
         ),
         (
             "سایر اطلاعات",
-            {"fields": ("codal_id", "codal_t", "publisher_state")},
+            {
+                "fields": (
+                    "codal_id",
+                    "codal_t",
+                    "codal_IG",
+                    "codal_RT",
+                    "publisher_state",
+                )
+            },
         ),
     )
 

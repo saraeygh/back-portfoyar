@@ -12,13 +12,14 @@ class FeatureAdmin(admin.ModelAdmin):
         "has_discount",
         "discount_percent",
         "discounted_price",
+        "login_count",
     )
     list_display_links = ("name",)
     ordering = ("-updated_at",)
 
     search_fields = ("id", "name", "price")
 
-    list_filter = ("name", "duration", "has_discount")
+    list_filter = ("name", "duration", "has_discount", "login_count")
 
     search_fields = ("id", "name")
 

@@ -43,6 +43,8 @@ class Feature(TimeStampMixin, models.Model):
     has_discount = models.BooleanField(verbose_name="تخفیف", default=False)
     discount_percent = models.IntegerField(verbose_name="میزان تخفیف", default=0)
 
+    login_count = models.IntegerField(verbose_name="تعداد کاربران", default=1)
+
     @property
     @admin.display(description="قیمت با تخفیف")
     def discounted_price(self):

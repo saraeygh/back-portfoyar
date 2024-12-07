@@ -2,6 +2,7 @@ from django.urls import path
 from core.views import CustomObtainAuthToken
 
 from account.views import (
+    PricingAPIView,
     SignUpAPIView,
     UploadUsersAPIView,
     ProfileAPIView,
@@ -36,7 +37,7 @@ credential_urls = [
 ]
 
 subscription_urls = [
-    # path("username/", UsernameAPIView.as_view()),
+    path("pricing/", PricingAPIView.as_view()),
 ]
 
 urlpatterns = (
