@@ -162,7 +162,15 @@ class TicketingAPIView(APIView):
     def post(self, request):
 
         try:
-            ticket = json.loads(request.data.get("ticket"))
+            ticket = request.data.get("ticket", None)
+            new_ticket = {
+                "sender_user": request.user.id,
+                "receiver_user": User.objects.filter(username="admin").first().id,
+                "unit": ticket.get("unit"),
+                "feature": ticket.get("feature"),
+                "title": ticket.get("title"),
+                "text": ticket.get("text"),
+            }
         except Exception as e:
             print(Fore.RED)
             print(e)
@@ -171,16 +179,7 @@ class TicketingAPIView(APIView):
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        new_ticket = {
-            "sender_user": request.user.id,
-            "receiver_user": User.objects.filter(username="admin").first().id,
-            "unit": ticket.get("unit"),
-            "feature": ticket.get("feature"),
-            "title": ticket.get("title"),
-            "text": ticket.get("text"),
-        }
-
-        file = request.FILES.get("appendix")
+        file = request.FILES.get("appendix", None)
         if file:
             new_ticket["file"] = save_appendix_file(file=file)
 
