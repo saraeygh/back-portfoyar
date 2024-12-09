@@ -162,6 +162,9 @@ class TicketingAPIView(APIView):
     def post(self, request):
         try:
             ticket = request.data.get("ticket", None)
+            if isinstance(ticket, str):
+                ticket = json.loads(ticket)
+
             new_ticket = {
                 "sender_user": request.user.id,
                 "receiver_user": User.objects.filter(username="admin").first().id,
@@ -205,7 +208,9 @@ class GetTicketDetailAPIView(APIView):
             )
 
         try:
-            response = request.data.get("response")
+            response = request.data.get("response", None)
+            if isinstance(response, str):
+                response = json.loads(response)
             new_response = {
                 "ticket": ticket.id,
                 "user": request.user.id,
@@ -219,7 +224,7 @@ class GetTicketDetailAPIView(APIView):
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        file = request.FILES.get("appendix")
+        file = request.FILES.get("appendix", None)
         if file:
             new_response["file"] = save_appendix_file(file=file)
 

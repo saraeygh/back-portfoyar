@@ -10,7 +10,7 @@ from core.models import TimeStampMixin
 
 ALL_FEATURE = "all_feature"
 SUBSCRIPTION_FEATURE_CHOICES = [
-    (ALL_FEATURE, "تمام قابلیت‌ها"),
+    (ALL_FEATURE, "تمام قابلیت‌های سایت"),
 ]
 
 ONE_MONTH = 1
@@ -49,8 +49,7 @@ class Feature(TimeStampMixin, models.Model):
     @admin.display(description="قیمت با تخفیف")
     def discounted_price(self):
         if self.has_discount:
-            price = (100 - self.discount_percent) / 100
-            price = int(self.price * price)
+            price = int(self.price * (1 - (self.discount_percent / 100)))
             return price
         else:
             return self.price
@@ -119,4 +118,4 @@ class FeatureDiscount(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "تخفیف قابلیت سایت"
-        verbose_name_plural = "۴) تخفیف‌های قابلیت‌های سایت"
+        verbose_name_plural = "۳) تخفیف‌های قابلیت‌های سایت"

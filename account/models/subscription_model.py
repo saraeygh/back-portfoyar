@@ -1,13 +1,14 @@
 import pytz
 import jdatetime
+
 from datetime import datetime
 from persiantools.jdatetime import JalaliDateTime, JalaliDate
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib import admin
-from core.models import TimeStampMixin
 
+from core.models import TimeStampMixin
 
 from . import Feature
 
@@ -62,7 +63,7 @@ class Subscription(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "اشتراک"
-        verbose_name_plural = "۳) اشتراک‌ها"
+        verbose_name_plural = "۵) اشتراک‌ها"
 
 
 class UserDiscount(TimeStampMixin, models.Model):
@@ -104,9 +105,7 @@ class UserDiscount(TimeStampMixin, models.Model):
         verbose_name="محدودیت دفعات استفاده", default=False
     )
     used_count = models.IntegerField(verbose_name="دفعات استفاده شده", default=0)
-    max_use_count = models.IntegerField(
-        verbose_name="محدودیت دفعات استفاده", default=1000
-    )
+    max_use_count = models.IntegerField(verbose_name="محدودیت دفعات استفاده", default=1)
 
     @admin.display(description="تاریخ شروع")
     def start_at_shamsi(self):
@@ -126,4 +125,4 @@ class UserDiscount(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "تخفیف کاربر"
-        verbose_name_plural = "۵) تخفیف‌های کاربران"
+        verbose_name_plural = "۴) تخفیف‌های کاربران"

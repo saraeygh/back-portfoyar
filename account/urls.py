@@ -2,7 +2,8 @@ from django.urls import path
 from core.views import CustomObtainAuthToken
 
 from account.views import (
-    PricingAPIView,
+    PlansAPIView,
+    PlanAPIView,
     SignUpAPIView,
     UploadUsersAPIView,
     ProfileAPIView,
@@ -37,7 +38,8 @@ credential_urls = [
 ]
 
 subscription_urls = [
-    path("pricing/", PricingAPIView.as_view()),
+    path("plans/<int:plan_id>/", PlanAPIView.as_view()),
+    path("plans/", PlansAPIView.as_view()),
 ]
 
 urlpatterns = (

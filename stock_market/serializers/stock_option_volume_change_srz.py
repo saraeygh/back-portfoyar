@@ -28,7 +28,6 @@ class SummaryStockOptionValueChangeSerailizer(serializers.Serializer):
     id = serializers.IntegerField()
     links = serializers.ListField()
     symbol = serializers.CharField()
-    last_update = serializers.CharField()
     month_mean = RoundedFloatField(decimal_places=2)
     last_mean = RoundedFloatField(decimal_places=2)
     value_change = RoundedFloatField(decimal_places=1)
