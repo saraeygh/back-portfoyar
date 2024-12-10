@@ -1,13 +1,15 @@
 from core.configs import SIXTY_MINUTES_CACHE
 from core.utils import set_json_cache, get_cache_as_json
-from global_market.serializers import PriceRatioChartSerailizer
-from global_market.utils import get_price_chart
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from global_market.serializers import PriceRatioChartSerailizer
+from global_market.utils import get_price_chart
 
 
 @authentication_classes([TokenAuthentication])

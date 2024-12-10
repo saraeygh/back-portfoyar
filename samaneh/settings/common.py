@@ -28,6 +28,7 @@ MANUALLY_INSTALLED_APPS = [
     "future_market.apps.FutureMarketConfig",
     "global_market.apps.GlobalMarketConfig",
     "option_market.apps.OptionMarketConfig",
+    "payment.apps.PaymentConfig",
     "stock_market.apps.StockMarketConfig",
     "support.apps.SupportConfig",
 ]
