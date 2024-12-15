@@ -1,26 +1,6 @@
 # GET BASE IMAGE
 FROM docker.arvancloud.ir/python:3.12.3-alpine3.20
 
-# PYTHON CONFIGS
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# DJANGO CONFIGS
-ENV DJANGO_SETTINGS_MODULE=samaneh.settings.test
-ENV SECRET_KEY="django-insecure-oi-e(9+%x^#hj=x4y32+!(auwgtj513eccl%dg+!&ldf36uk8-"
-
-# MONGODB & REDIS SERVICE NAMES
-ENV RABBITMQ_SERVICE_NAME=rabbitmq_test
-ENV REDIS_SERVICE_NAME=redis_test
-ENV MONGODB_SERVICE_NAME=mongodb_test
-
-# SMTP EMAIL CONFIGS
-ENV EMAIL_HOST=smtp.gmail.com
-ENV EMAIL_PORT=587
-ENV EMAIL_HOST_USER=armansmtptest@gmail.com
-ENV EMAIL_HOST_PASSWORD="gaux sxiy zhyf qhdx"
-ENV EMAIL_TO=saraey.gholamreza@gmail.com
-
 # INSTALL REQUIRED PACKAGES ON ALPINE
 RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/repositories && \
 echo "https://mirrors.gigenet.com/alpinelinux/v3.20/community/" >> /etc/apk/repositories
@@ -79,6 +59,25 @@ RUN ["mkdir", "-p", "logs"]
 # GRANT EXCUTE PERMISSSION TO ENTRYPOINTS FILES
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
+
+# PYTHON CONFIGS
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# DJANGO CONFIGS
+ENV DJANGO_SETTINGS_MODULE=samaneh.settings.test
+ENV SECRET_KEY="django-insecure-oi-e(9+%x^#hj-x4y32+!(auwgtj513eccl%dg+!&ldf36uk8-"
+
+# MONGODB & REDIS SERVICE NAMES
+ENV REDIS_SERVICE_NAME=redis_test
+ENV MONGODB_SERVICE_NAME=mongodb_test
+
+# SMTP EMAIL CONFIGS
+ENV EMAIL_HOST=smtp.gmail.com
+ENV EMAIL_PORT=587
+ENV EMAIL_HOST_USER=armansmtptest@gmail.com
+ENV EMAIL_HOST_PASSWORD="gaux sxiy zhyf qhdx"
+ENV EMAIL_TO=saraey.gholamreza@gmail.com
 
 ENV MELIPAYAMAK_USERNAME=09102188113
 ENV MELIPAYAMAK_PASSOWRD=TL5OC

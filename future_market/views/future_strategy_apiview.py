@@ -108,7 +108,7 @@ class FuturePositionsAPIView(APIView):
             result["id"] = result.apply(add_index_as_id, axis=1)
             result = result.to_dict(orient="records")
 
-            # set_json_cache(cache_key, result, SIXTY_SECONDS_CACHE)
+            set_json_cache(cache_key, result, SIXTY_SECONDS_CACHE)
             return Response(result, status=status.HTTP_200_OK)
 
         else:
