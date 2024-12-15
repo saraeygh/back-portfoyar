@@ -1,11 +1,10 @@
-import os
-
 from django.core.mail import EmailMessage
+from core.configs import EMAIL_TO
 
 
 def send_upload_error_file_email(file_path: str, task_name: str) -> None:
     subject = f"نتیجه آپلود اطلاعات {task_name}"
-    email_to = os.environ.setdefault("EMAIL_TO", "saraey.gholamreza@gmail.com")
+    email_to = EMAIL_TO
 
     html_body = (
         "مواردی که در فایل سی‌اس‌وی پیوست آمده‌اند،"

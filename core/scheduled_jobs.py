@@ -1,5 +1,11 @@
 import os
 import psutil
+from samaneh.settings.common import (
+    POSTGRES_DB,
+    POSTGRES_USER,
+    POSTGRES_PASSWORD,
+    POSTGRES_SERVICE_NAME,
+)
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
@@ -7,6 +13,7 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from core.configs import TEHRAN_TZ
 
+from account.tasks import disable_expired_subscription
 
 from dashboard.tasks import dashboard
 
@@ -59,13 +66,9 @@ def get_scheduler():
         Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
     )
 
-    DB_NAMEAME = os.environ.setdefault("POSTGRES_DB", "samaneh_dev")
-    DB_USERNAME = os.environ.setdefault("POSTGRES_USER", "arman")
-    DB_PASSWORD = os.environ.setdefault("POSTGRES_PASSWORD", "arman")
-    DB_HOST = os.environ.setdefault("POSTGRES_SERVICE_NAME", "localhost")
     jobstores = {
         "default": SQLAlchemyJobStore(
-            url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAMEAME}"
+            url=f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVICE_NAME}:5432/{POSTGRES_DB}"
         )
     }
 
@@ -82,6 +85,21 @@ def get_scheduler():
         executors=executors,
         job_defaults=job_defaults,
         timezone=TEHRAN_TZ,
+    )
+
+    return scheduler
+
+
+def add_account_app_jobs(scheduler: BlockingScheduler):
+
+    scheduler.add_job(
+        func=disable_expired_subscription,
+        id="disable_expired_subscription_task",
+        replace_existing=True,
+        trigger="cron",
+        hour="1",
+        minute="5",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -378,6 +396,7 @@ def blocking_scheduler():
 
     scheduler = get_scheduler()
 
+    scheduler = add_account_app_jobs(scheduler)
     scheduler = add_core_app_jobs(scheduler)
     scheduler = add_domestic_market_app_jobs(scheduler)
     scheduler = add_future_market_app_jobs(scheduler)

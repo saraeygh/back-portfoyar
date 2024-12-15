@@ -1,7 +1,7 @@
-import os
 import json
 import numpy as np
 import redis
+from samaneh.settings.common import REDIS_HOST
 
 
 class Int64Encoder(json.JSONEncoder):
@@ -12,12 +12,7 @@ class Int64Encoder(json.JSONEncoder):
 
 
 class RedisInterface:
-    def __init__(
-        self,
-        host: str = os.environ.setdefault("REDIS_SERVICE_NAME", "localhost"),
-        port: int = 6379,
-        db: int = 1,
-    ):
+    def __init__(self, host: str = REDIS_HOST, port: int = 6379, db: int = 1):
         self.client = redis.Redis(host=host, port=port, db=db)
 
     def get_list_of_field_values(self, list_key: str, field_name: str) -> list:

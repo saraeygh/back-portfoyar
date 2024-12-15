@@ -86,10 +86,16 @@ RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 ENV MELIPAYAMAK_USERNAME=09102188113
 ENV MELIPAYAMAK_PASSOWRD=TL5OC
 
-
 ENV DEBUG=False
 
 ENV POSTGRES_DB=samane_jame_test
 ENV POSTGRES_USER=arman
 ENV POSTGRES_PASSWORD=arman
 ENV POSTGRES_SERVICE_NAME=postgres_test
+
+ENV ZARINPAL_MERCHANTID=8a4c30e4-a37a-4151-9d00-affbf3d4b79c
+ENV ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL=/api/payment/zarinpal/
+ENV ZP_PAY_REQUEST_URL=https://www.zarinpal.com/pg/rest/WebGate/PaymentRequest.json
+ENV ZP_STARTPAY_URL=https://www.zarinpal.com/pg/StartPay/
+ENV ZP_REDIRECT_FRONTEND_URL=/dashboard/recommended/recommended
+ENV ZP_PAY_VERIFY_URL=https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json

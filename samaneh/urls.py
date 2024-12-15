@@ -22,6 +22,7 @@ urlpatterns = [
     path("api/future/", include("future_market.urls")),
     path("api/global-market/", include("global_market.urls")),
     path("api/option/", include("option_market.urls")),
+    path("api/payment/", include("payment.urls")),
     path("api/stock-market/", include("stock_market.urls")),
     path("api/support/", include("support.urls")),
     path("", include("django_prometheus.urls")),

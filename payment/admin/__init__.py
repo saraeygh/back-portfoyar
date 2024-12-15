@@ -1,1 +1,1 @@
-from .transaction_admin import TransactionAdmin
+from .receipt_admin import TransactionAdmin, ReceiptAdmin

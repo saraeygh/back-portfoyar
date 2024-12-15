@@ -28,11 +28,13 @@ class Subscription(TimeStampMixin, models.Model):
         related_name="subscription",
     )
 
+    is_enabled = models.BooleanField(verbose_name="فعال", default=True)
+
     start_at = models.DateField(verbose_name="تاریخ شروع اشتراک")
     end_at = models.DateField(verbose_name="تاریخ پایان اشتراک")
 
     @property
-    @admin.display(boolean=True, description="فعال")
+    @admin.display(boolean=True, description="اعتبار دارد؟")
     def is_active(self):
         today_date = datetime.today().date()
         sub_end_date = self.end_at
@@ -122,6 +124,9 @@ class UserDiscount(TimeStampMixin, models.Model):
             + jdatetime.timedelta(hours=3, minutes=30)
         ).strftime("%Y-%m-%d %H:%M:%S")
         return shamsi
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.feature.name} - {self.feature.duration}"
 
     class Meta:
         verbose_name = "تخفیف کاربر"

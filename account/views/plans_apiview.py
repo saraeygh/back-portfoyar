@@ -4,6 +4,8 @@ import jdatetime
 from datetime import datetime as dt
 
 from django.shortcuts import get_object_or_404
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +14,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
 from core.configs import TEHRAN_TZ
-from payment.models import Transaction
+from payment.models import Receipt
 from account.models import (
     Feature,
     FeatureDiscount,
@@ -26,12 +28,18 @@ FEATURES = {feature[0]: feature[1] for feature in SUBSCRIPTION_FEATURE_CHOICES}
 
 
 def get_all_plans():
-    features = list(Feature.objects.distinct("name").values_list("name", flat=True))
+    features = list(
+        Feature.objects.filter(is_enabled=True)
+        .distinct("name")
+        .values_list("name", flat=True)
+    )
     all_plans = {}
     for feature in features:
         all_plans[feature] = {"name": FEATURES.get(feature), "plans": []}
 
-        feature_plans = Feature.objects.filter(name=feature).order_by("price")
+        feature_plans = Feature.objects.filter(name=feature, is_enabled=True).order_by(
+            "price"
+        )
         for feature_plan in feature_plans:
             all_plans[feature]["plans"].append(
                 {
@@ -64,8 +72,8 @@ def get_best_feature_discount(plan):
     )
 
 
-def get_discount_info(plan, discount):
-    discount = {
+def get_discount_info(plan, discount: FeatureDiscount | UserDiscount):
+    discount_info = {
         "id": plan.id,
         "name": discount.name,
         "description": discount.description,
@@ -90,7 +98,7 @@ def get_discount_info(plan, discount):
         "max_use_count": discount.max_use_count,
     }
 
-    return discount
+    return discount_info
 
 
 def get_best_discount(plan, user):
@@ -102,7 +110,7 @@ def get_best_discount(plan, user):
     elif feature_discount:
         discount = feature_discount
     else:
-        discount = {}
+        discount = None
 
     return discount
 
@@ -115,64 +123,32 @@ def get_plan_discount(plan, user):
     return discount
 
 
-def get_plan_str(plan: Feature):
-    feat = f"feat: {plan.name},"
-    dur = f"dur: {plan.duration},"
-    login = f"login: {plan.login_count},"
-    pr = f"pr: {plan.price},"
-    dis_per = "dis_per: ...,"
-    dis_pr = "dis_pr: ..."
-    if plan.has_discount:
-        dis_per = f"dis_per: {plan.discount_percent},"
-        dis_pr = f"dis_pr: {plan.discounted_price}"
+def add_discount(receipt, discount: FeatureDiscount | UserDiscount, user_code: str):
+    if discount is None:
+        return receipt
+    receipt["discount_type"] = ContentType.objects.get_for_model(type(discount))
+    receipt["discount_id"] = discount.id
+    receipt["discount_object"] = discount
 
-    return " ".join([feat, dur, login, pr, dis_per, dis_pr])
-
-
-def get_discount_str(discount: FeatureDiscount | UserDiscount, user_code: str):
-    if not discount:
-        return
-
-    tp = f"tp: {discount.__class__.__name__},"
-    name = f"name: {discount.name},"
-    dis_per = f"dis_per: {discount.discount_percent},"
-
-    code = "code: ... | ...,"
-    if discount.has_discount_code:
-        code = f"code: {user_code} | {discount.discount_code},"
-
-    st = "st: ...,"
-    if discount.has_start:
-        st = f"st: {jdatetime.datetime.fromgregorian(datetime=discount.start_at, tzinfo=TEHRAN_TZ).strftime("%Y-%m-%d %H:%M:%S")},"
-
-    ex = "ex: ...,"
-    if discount.has_expiry:
-        ex = f"ex: {jdatetime.datetime.fromgregorian(datetime=discount.expire_at, tzinfo=TEHRAN_TZ).strftime("%Y-%m-%d %H:%M:%S")},"
-
-    use = "use: False | ... | ..."
-    if discount.has_max_use_count:
-        use = f"use: True | {discount.used_count} | {discount.max_use_count}"
-
-    return " ".join([tp, name, dis_per, code, st, ex, use])
+    return receipt
 
 
 def calculated_final_price(plan, price, discount, user, code):
-    transaction = {}
-    transaction["user"] = user
-    transaction["tx_id"] = uuid4().hex
-    transaction["plan"] = get_plan_str(plan)
-    transaction["discount"] = get_discount_str(discount, code)
-    transaction["price"] = price
-    new_tx = Transaction(**transaction)
-    new_tx.save()
+    receipt = {}
+    receipt["user"] = user
+    receipt["feature"] = plan
+    receipt = add_discount(receipt, discount, code)
+    receipt["receipt_id"] = uuid4().hex
+    receipt["price"] = price
+    new_receipt = Receipt(**receipt)
+    new_receipt.save()
 
     final_price = {
-        "id": plan.id,
         "name": FEATURES.get(plan.name),
         "duration": plan.duration,
         "login_count": plan.login_count,
         "price": price,
-        "tx_id": new_tx.tx_id,
+        "receipt_id": new_receipt.receipt_id,
     }
 
     return Response(final_price, status=status.HTTP_200_OK)
@@ -240,6 +216,7 @@ class PlanAPIView(APIView):
         user = request.user
         plan = get_object_or_404(Feature, id=plan_id)
         discount = get_plan_discount(plan, user)
+        discount = {} if discount is None else discount
 
         return Response(discount, status=status.HTTP_200_OK)
 

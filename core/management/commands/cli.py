@@ -7,6 +7,8 @@ from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
+from account.tasks import disable_expired_subscription
+
 from domestic_market.utils import get_dollar_price_history
 from domestic_market.tasks import (
     calculate_commodity_mean_domestic,
@@ -280,6 +282,7 @@ class Command(BaseCommand):
                             "all) Run all commands" + Style.RESET_ALL,
                             Fore.BLUE + "1) Clear redis cache",
                             "2) Relpace all arabic letters",
+                            "3) Disable expired subscriptions",
                             Fore.RED + "0) Back" + Style.RESET_ALL,
                             sep="\n",
                         )
@@ -289,10 +292,13 @@ class Command(BaseCommand):
                             case "all":
                                 clear_redis_cache()
                                 replace_all_arabic_letters_in_db()
+                                disable_expired_subscription()
                             case "1":
                                 clear_redis_cache()
                             case "2":
                                 replace_all_arabic_letters_in_db()
+                            case "3":
+                                disable_expired_subscription()
                             case "0":
                                 break
                 case "0":  # EXIT

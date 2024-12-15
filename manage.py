@@ -5,9 +5,22 @@ import os
 import sys
 
 
+def load_env_file(env_file_path=".env"):
+    try:
+        with open(file=env_file_path, mode="r", encoding="utf-8") as env_file:
+            for line in env_file:
+                line = line.replace("\n", "")
+                if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    os.environ[key] = value
+    except Exception as e:
+        print("Loading env vars:")
+        print(e)
+
+
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "samaneh.settings.local")
+    load_env_file()
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

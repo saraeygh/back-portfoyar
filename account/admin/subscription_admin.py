@@ -30,6 +30,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     autocomplete_fields = ("user", "feature")
     list_display = (
         "id",
+        "is_enabled",
         "user",
         "feature",
         "is_active",
@@ -40,7 +41,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display_links = ("user", "feature")
     ordering = ("-updated_at",)
 
-    search_fields = ("id", "user__username", "feature__name")
+    search_fields = ("id", "user__username", "feature__name", "is_enabled")
 
     list_filter = ("feature__name", MyPropertyFilter)
 

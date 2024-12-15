@@ -6,6 +6,7 @@ from account.models import Feature, FeatureDiscount
 class FeatureAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "is_enabled",
         "name",
         "duration",
         "price",
@@ -19,7 +20,7 @@ class FeatureAdmin(admin.ModelAdmin):
 
     search_fields = ("id", "name", "price")
 
-    list_filter = ("name", "duration", "has_discount", "login_count")
+    list_filter = ("name", "duration", "has_discount", "login_count", "is_enabled")
 
     search_fields = ("id", "name")
 

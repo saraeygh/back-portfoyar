@@ -27,6 +27,8 @@ FEATURE_DURATION_CHOICES = [
 
 class Feature(TimeStampMixin, models.Model):
 
+    is_enabled = models.BooleanField(verbose_name="فعال", default=False)
+
     name = models.CharField(
         verbose_name="قابلیت سایت",
         max_length=32,
@@ -115,6 +117,9 @@ class FeatureDiscount(TimeStampMixin, models.Model):
             + jdatetime.timedelta(hours=3, minutes=30)
         ).strftime("%Y-%m-%d %H:%M:%S")
         return shamsi
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.feature.name} - {self.feature.duration}"
 
     class Meta:
         verbose_name = "تخفیف قابلیت سایت"

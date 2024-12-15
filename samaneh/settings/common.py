@@ -1,12 +1,17 @@
 import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEBUG = eval(os.environ.setdefault("DEBUG", "True"))
 
-SECRET_KEY = os.environ.setdefault(
-    "SECRET_KEY", "django-insecure-oi-e(9+%x^#hj=x4y32+!(auwgtj513eccl%dg+!&ldf36uk8-"
-)
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DEBUG = eval(os.environ.get("DEBUG"))
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+
+POSTGRES_DB = os.environ.get("POSTGRES_DB")
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+POSTGRES_SERVICE_NAME = os.environ.get("POSTGRES_SERVICE_NAME")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -170,7 +175,8 @@ if not DEBUG:
 
 DRF_EXCEL_DATE_FORMAT = "yyyy-mm-dd"
 
-REDIS_HOST = os.environ.setdefault("REDIS_SERVICE_NAME", "localhost")
+REDIS_HOST = os.environ.get("REDIS_SERVICE_NAME")
+MONGODB_HOST = os.environ.get("MONGODB_SERVICE_NAME")
 
 CACHES = {
     "default": {

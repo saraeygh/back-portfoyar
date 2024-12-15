@@ -1,5 +1,5 @@
-import os
 from pymongo import MongoClient
+from samaneh.settings.common import MONGODB_HOST
 
 
 class MongodbInterface:
@@ -7,7 +7,7 @@ class MongodbInterface:
         self,
         db_name: str,
         collection_name: str = "not_set",
-        host: str = os.environ.setdefault("MONGODB_SERVICE_NAME", "localhost"),
+        host: str = MONGODB_HOST,
         port: int = 27017,
     ):
         self.client = MongoClient(host=host, port=port)
