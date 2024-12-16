@@ -70,7 +70,8 @@ PUT_OLD_NEW_MAPPING = {
 
 
 def get_last_options():
-    last_options = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
+    last_options = redis_conn.get_list_of_dicts(list_key="option_data")
+    last_options = pd.DataFrame(last_options)
     return last_options
 
 
@@ -156,6 +157,7 @@ def get_call_spreads(spreads):
     spreads = spreads.loc[
         (spreads["call_last_update"] > 90000)
         & (spreads["base_equity_last_update"] > 90000)
+        & (spreads["call_yesterday_price"] > 0)
     ]
 
     spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
@@ -178,6 +180,11 @@ def get_call_spreads(spreads):
         spreads["option_type"] = "اختیار خرید"
 
         spreads.dropna(inplace=True)
+        spreads["last_price"] = spreads["call_last_price"]
+        spreads["last_price_change"] = (
+            (spreads["call_last_price"] - spreads["call_yesterday_price"])
+            / spreads["call_yesterday_price"]
+        ) * 100
         spreads = spreads.rename(columns=CALL_OLD_NEW_MAPPING)
         spreads = spreads[list(CALL_OLD_NEW_MAPPING.values())]
         spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
@@ -200,6 +207,7 @@ def get_put_spreads(spreads):
     spreads = spreads.loc[
         (spreads["put_last_update"] > 90000)
         & (spreads["base_equity_last_update"] > 90000)
+        & (spreads["put_yesterday_price"] > 0)
     ]
 
     spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
@@ -222,6 +230,11 @@ def get_put_spreads(spreads):
         spreads["option_type"] = "اختیار فروش"
 
         spreads.dropna(inplace=True)
+        spreads["last_price"] = spreads["put_last_price"]
+        spreads["last_price_change"] = (
+            (spreads["put_last_price"] - spreads["put_yesterday_price"])
+            / spreads["put_yesterday_price"]
+        ) * 100
         spreads = spreads.rename(columns=PUT_OLD_NEW_MAPPING)
         spreads = spreads[list(PUT_OLD_NEW_MAPPING.values())]
         spreads["last_update"] = spreads.apply(edit_last_update, axis=1)

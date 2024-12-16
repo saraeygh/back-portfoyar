@@ -31,6 +31,7 @@ from .stock_option_volume_change_srz import (
 from .stock_option_price_spread_srz import (
     StockOptionPriceSpreadSerailizer,
     SummaryStockOptionPriceSpreadSerailizer,
+    StockOptionPriceSpreadDashboardSerailizer,
 )
 from .stock_recommended_srz import (
     StockRecommendedSerailizer,

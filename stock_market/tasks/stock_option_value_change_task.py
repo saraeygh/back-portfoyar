@@ -243,9 +243,17 @@ def stock_option_value_change_main():
             last_data["last_price_change"] / last_data["yesterday_price"]
         ) * 100
         last_data = last_data[
-            ["ins_code", "closing_price", "daily_roi", "last_time", "paper_type"]
+            [
+                "ins_code",
+                "closing_price",
+                "daily_roi",
+                "last_time",
+                "paper_type",
+                "last_price",
+            ]
         ]
         options = pd.merge(left=options, right=last_data, on="ins_code", how="left")
+        options["last_price_change"] = options["daily_roi"]
 
         options["link"] = options.apply(add_link, axis=1)
         options["pe"] = options.apply(add_pe, axis=1)

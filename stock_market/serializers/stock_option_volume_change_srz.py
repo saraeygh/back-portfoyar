@@ -54,6 +54,8 @@ class StockOptionValueChangeDashboardSerailizer(serializers.Serializer):
     sector_pe = RoundedFloatField()
     ps = RoundedFloatField()
     market_cap = RoundedFloatField(decimal_places=0)
+    last_price = RoundedFloatField()
+    last_price_change = RoundedFloatField(decimal_places=2)
     chart = serializers.DictField()
 
     def to_representation(self, instance):
