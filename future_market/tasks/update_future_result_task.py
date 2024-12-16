@@ -198,11 +198,11 @@ def add_to_strategy_result(strategy_result, result):
 
 FUTURE_STRATEGIES = {
     "long_future": {
-        "name": "موقعیت لانگ",
+        "name": "لانگ",
         "calculate": long_future_result,
     },
     "short_future": {
-        "name": "موقعیت شورت",
+        "name": "شورت",
         "calculate": short_future_result,
     },
 }
