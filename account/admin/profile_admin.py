@@ -15,6 +15,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "birth_date",
         "created_at_shamsi",
         "updated_at_shamsi",
+        "note",
     )
     list_display_links = (
         "user",
@@ -27,4 +28,4 @@ class ProfileAdmin(admin.ModelAdmin):
 
     search_fields = ("id", "user__username")
 
-    list_filter = ("gender", "max_login", "active_login")
+    list_filter = ("gender", "max_login", "active_login", "note")

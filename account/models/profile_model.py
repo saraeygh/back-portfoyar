@@ -52,6 +52,8 @@ class Profile(TimeStampMixin, models.Model):
 
     birth_date = models.DateField(verbose_name="تاریخ تولد", blank=True, null=True)
 
+    note = models.CharField(verbose_name="توضیحات", max_length=32, default="-")
+
     @admin.display(description="ایجاد")
     def created_at_shamsi(self):
         shamsi = (
