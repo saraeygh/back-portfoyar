@@ -5,7 +5,7 @@ from stock_market.serializers import (
     DashboardStockValueChangeSerailizer,
     BuyOrderRatioSerailizer,
     SellOrderRatioSerailizer,
-    StockOptionValueChangeSerailizer,
+    StockOptionValueChangeDashboardSerailizer,
     StockOptionPriceSpreadSerailizer,
 )
 
@@ -19,8 +19,8 @@ STOCK_MARKET_WATCH_INDICES = {
 }
 
 OPTION_MARKET_WATCH_INDICES = {
-    "call_value_change": StockOptionValueChangeSerailizer,
-    "put_value_change": StockOptionValueChangeSerailizer,
+    "call_value_change": StockOptionValueChangeDashboardSerailizer,
+    "put_value_change": StockOptionValueChangeDashboardSerailizer,
     "option_price_spread": StockOptionPriceSpreadSerailizer,
 }
 

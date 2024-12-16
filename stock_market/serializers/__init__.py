@@ -19,13 +19,14 @@ from .market_roi_srz import (
 )
 from .industry_roi_srz import IndustryROISerailizer
 from .stock_value_change_srz import (
-    SummaryStockValueChangeSerailizer,
     StockValueChangeSerailizer,
+    SummaryStockValueChangeSerailizer,
     DashboardStockValueChangeSerailizer,
 )
 from .stock_option_volume_change_srz import (
     StockOptionValueChangeSerailizer,
     SummaryStockOptionValueChangeSerailizer,
+    StockOptionValueChangeDashboardSerailizer,
 )
 from .stock_option_price_spread_srz import (
     StockOptionPriceSpreadSerailizer,
