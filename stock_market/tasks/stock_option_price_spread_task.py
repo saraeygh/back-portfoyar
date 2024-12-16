@@ -186,7 +186,9 @@ def get_call_spreads(spreads):
             / spreads["call_yesterday_price"]
         ) * 100
         spreads = spreads.rename(columns=CALL_OLD_NEW_MAPPING)
-        spreads = spreads[list(CALL_OLD_NEW_MAPPING.values())]
+        spreads = spreads[
+            list(CALL_OLD_NEW_MAPPING.values()) + ["last_price", "last_price_change"]
+        ]
         spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
         spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
         spreads = spreads.to_dict(orient="records")
@@ -236,7 +238,9 @@ def get_put_spreads(spreads):
             / spreads["put_yesterday_price"]
         ) * 100
         spreads = spreads.rename(columns=PUT_OLD_NEW_MAPPING)
-        spreads = spreads[list(PUT_OLD_NEW_MAPPING.values())]
+        spreads = spreads[
+            list(PUT_OLD_NEW_MAPPING.values()) + ["last_price", "last_price_change"]
+        ]
         spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
         spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
         spreads = spreads.to_dict(orient="records")

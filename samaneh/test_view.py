@@ -62,8 +62,8 @@ class TestView(APIView):
 
         # get_monthly_activity_report_letter()
         # stock_option_value_history()
-        # stock_option_value_change()
-        # stock_option_price_spread()
+        stock_option_value_change()
+        stock_option_price_spread()
         # update_stock_adjusted_history()
         # update_stock_raw_adjusted_history()
         # update_instrument_info()
