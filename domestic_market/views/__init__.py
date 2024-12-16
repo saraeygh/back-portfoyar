@@ -4,7 +4,10 @@ from .get_commodity_list_by_category_apiview import GetCommodityListAPIView
 from .get_producer_list_by_category_apiview import GetProducerListByCommodityAPIView
 from .domestic_price_chart_by_category_apiview import DomesticPriceChartAPIView
 from .domestic_ratio_chart_by_category_apiview import DomesticRatioChartAPIView
-from .mean_deviation_strategy_apiview import MeanDeviationAPIView
+from .mean_deviation_strategy_apiview import (
+    MeanDeviationAPIView,
+    MeanDeviationAPIViewV2,
+)
 from .upload_dollar_price_apiview import UploadDollarPriceAPIView
 from .get_dollar_price_apiview import GetDollarPriceAPIView
 from .get_producer_list_by_producer_apiview import GetProducerListAPIView

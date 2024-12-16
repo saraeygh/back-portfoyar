@@ -12,6 +12,7 @@ from domestic_market.views import (
     GetProducerListByCommodityAPIView,
     GetProducerListAPIView,
     MeanDeviationAPIView,
+    MeanDeviationAPIViewV2,
     UploadDollarPriceAPIView,
     ProducerSellReportAPIView,
     GetCommodityNameListByProducerAPIView,
@@ -54,6 +55,8 @@ by_category_urls = [
 # STRATEGIES
 strategy_urls = [
     path("mean-deviation/", MeanDeviationAPIView.as_view()),
+    # MEAN-DEVIATION NEW VERSION
+    path("top-price-change/", MeanDeviationAPIViewV2.as_view()),
 ]
 
 # REPORTS
