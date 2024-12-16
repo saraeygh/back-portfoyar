@@ -95,3 +95,7 @@ ENV ZP_PAY_REQUEST_URL=https://www.zarinpal.com/pg/rest/WebGate/PaymentRequest.j
 ENV ZP_STARTPAY_URL=https://www.zarinpal.com/pg/StartPay/
 ENV ZP_REDIRECT_FRONTEND_URL=/dashboard/recommended/recommended
 ENV ZP_PAY_VERIFY_URL=https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json
+
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_PASSWORD=6dG]*Q8WT:*0
+ENV ADMIN_FIRST_NAME=ادمین
