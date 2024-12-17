@@ -1,1 +1,1 @@
-from .receipt_model import Transaction, RECEIPT_CREATED, Receipt, ZARINPAL
+from .receipt_model import Receipt, RECEIPT_CREATED, ZARINPAL

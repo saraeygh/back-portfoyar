@@ -10,7 +10,9 @@ from django.contrib import admin
 
 from core.models import TimeStampMixin
 
-from . import Feature
+from . import Feature, SUBSCRIPTION_FEATURE_CHOICES
+
+FEATURES = {feature[0]: feature[1] for feature in SUBSCRIPTION_FEATURE_CHOICES}
 
 
 class Subscription(TimeStampMixin, models.Model):
@@ -34,6 +36,10 @@ class Subscription(TimeStampMixin, models.Model):
     end_at = models.DateField(verbose_name="تاریخ پایان اشتراک")
 
     @property
+    def feature_name(self):
+        return FEATURES.get(self.feature.name, "")
+
+    @property
     @admin.display(boolean=True, description="اعتبار دارد؟")
     def is_active(self):
         today_date = datetime.today().date()
@@ -50,6 +56,8 @@ class Subscription(TimeStampMixin, models.Model):
         remained_days = (sub_end_date - today_date).days
         if remained_days >= 0:
             return remained_days
+        elif remained_days == 0:
+            return 1
         else:
             return 0
 

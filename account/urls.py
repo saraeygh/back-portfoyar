@@ -4,6 +4,7 @@ from core.views import CustomObtainAuthToken
 from account.views import (
     PlansAPIView,
     PlanAPIView,
+    SubscriptionAPIView,
     SignUpAPIView,
     UploadUsersAPIView,
     ProfileAPIView,
@@ -11,6 +12,7 @@ from account.views import (
     UsernameAPIView,
     PasswordAPIView,
     ResetPasswordAPIView,
+    ReceiptAPIView,
 )
 
 
@@ -40,6 +42,8 @@ credential_urls = [
 subscription_urls = [
     path("plans/<int:plan_id>/", PlanAPIView.as_view()),
     path("plans/", PlansAPIView.as_view()),
+    path("subscriptions/", SubscriptionAPIView.as_view()),
+    path("receipts/", ReceiptAPIView.as_view()),
 ]
 
 urlpatterns = (

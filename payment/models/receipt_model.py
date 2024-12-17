@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from core.models import TimeStampMixin
-from account.models import Feature
+from account.models import Feature, SUBSCRIPTION_FEATURE_CHOICES
+
 
 # PRE-DEFINED TRANSACTION DESCRIPTION
 RECEIPT_CREATED = "receipt-created"
@@ -16,6 +17,9 @@ DEFAULT_METHOD = ZARINPAL
 METHOD_CHOICES = [
     (ZARINPAL, "زرین‌پال"),
 ]
+
+FEATURES = {feature[0]: feature[1] for feature in SUBSCRIPTION_FEATURE_CHOICES}
+METHODS = {method[0]: method[1] for method in METHOD_CHOICES}
 
 
 class Receipt(TimeStampMixin, models.Model):
@@ -51,10 +55,7 @@ class Receipt(TimeStampMixin, models.Model):
     price = models.IntegerField(verbose_name="قیمت")
 
     method = models.CharField(
-        verbose_name="روش پرداخت",
-        max_length=16,
-        choices=METHOD_CHOICES,
-        default=DEFAULT_METHOD,
+        verbose_name="روش پرداخت", max_length=16, choices=METHOD_CHOICES, default=""
     )
 
     pay_id = models.CharField(verbose_name="شناسه پرداخت", max_length=128, default="")
@@ -66,45 +67,41 @@ class Receipt(TimeStampMixin, models.Model):
     description = models.CharField(
         verbose_name="توضیحات", max_length=128, default=RECEIPT_CREATED
     )
+
+    @property
+    def feature_name(self):
+        return FEATURES.get(self.feature.name, "")
+
+    @property
+    def feature_duration(self):
+        return self.feature.duration
+
+    @property
+    def feature_login_count(self):
+        return self.feature.login_count
+
+    @property
+    def feature_price(self):
+        return self.feature.price
+
+    @property
+    def feature_discount(self):
+        if self.feature.has_discount:
+            return self.feature.discount_percent
+        return 0
+
+    @property
+    def discount_name(self):
+        return self.discount_object.name
+
+    @property
+    def discount_percent(self):
+        return self.discount_object.discount_percent
+
+    @property
+    def method_name(self):
+        return METHODS.get(self.method, "")
 
     class Meta:
         verbose_name = "رسید تراکنش‌"
         verbose_name_plural = "۱) رسید تراکنش‌ها"
-
-
-class Transaction(TimeStampMixin, models.Model):
-    user = models.ForeignKey(
-        to=User,
-        verbose_name="کاربر",
-        on_delete=models.PROTECT,
-        related_name="transactions",
-    )
-
-    tx_id = models.CharField(verbose_name="شناسه تراکنش", max_length=64)
-
-    plan = models.JSONField(verbose_name="طرح", default=dict)
-
-    discount = models.JSONField(verbose_name="تخفیف", default=dict)
-
-    price = models.IntegerField(verbose_name="قیمت")
-
-    method = models.CharField(
-        verbose_name="روش پرداخت",
-        max_length=16,
-        choices=METHOD_CHOICES,
-        default=DEFAULT_METHOD,
-    )
-
-    pay_id = models.CharField(verbose_name="شناسه پرداخت", max_length=128, default="")
-
-    is_confirmed = models.BooleanField(verbose_name="تایید شده؟", default=False)
-
-    tracking_id = models.CharField(verbose_name="کد رهگیری", max_length=128, default="")
-
-    description = models.CharField(
-        verbose_name="توضیحات", max_length=128, default=RECEIPT_CREATED
-    )
-
-    class Meta:
-        verbose_name = "تراکنش‌"
-        verbose_name_plural = "۲) تراکنش‌ها"
