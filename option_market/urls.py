@@ -7,7 +7,6 @@ from option_market.views import (
     PriceSpreadStrategyAPIView,
     ProfitStatusesAPIView,
     StrategiesAPIView,
-    GetStrategySchemaAPIView,
     OptionPositionsAPIView,
 )
 
@@ -18,7 +17,6 @@ option_strategy_urls = [
         "v2/strategies/<str:risk_level>/<str:profit_status>/",
         StrategiesAPIView.as_view(),
     ),
-    path("v2/strategy-schema/<str:strategy_key>/", GetStrategySchemaAPIView.as_view()),
     #
     path(
         "v2/positions/<str:risk_level>/<str:strategy_key>/",
