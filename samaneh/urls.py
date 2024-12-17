@@ -30,6 +30,6 @@ urlpatterns = [
     path("api/support/", include("support.urls")),
     path("", include("django_prometheus.urls")),
     # STATIC FILES SERVING URL
-    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": STATIC_ROOT}),
-    re_path(r"^strategy-schema/(?P<path>.*)$", serve, {"document_root": SCHEMA_ROOT}),
+    # re_path(r"^static/(?P<path>.*)$", serve, {"document_root": STATIC_ROOT}),
+    # re_path(r"^strategy-schema/(?P<path>.*)$", serve, {"document_root": SCHEMA_ROOT}),
 ] + test_urls
