@@ -1,8 +1,11 @@
+import os
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.static import serve
 
-from samaneh.settings.common import DEBUG, STATIC_ROOT, MEDIA_ROOT
+from samaneh.settings.common import DEBUG, STATIC_ROOT, BASE_DIR
+
+SCHEMA_ROOT = os.path.join(BASE_DIR, "option_market/views/schema")
 
 test_urls = []
 if DEBUG:
@@ -28,5 +31,5 @@ urlpatterns = [
     path("", include("django_prometheus.urls")),
     # STATIC FILES SERVING URL
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": STATIC_ROOT}),
-    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": MEDIA_ROOT}),
+    re_path(r"^strategy-schema/(?P<path>.*)$", serve, {"document_root": SCHEMA_ROOT}),
 ] + test_urls

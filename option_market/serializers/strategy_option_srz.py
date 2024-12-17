@@ -13,7 +13,9 @@ class StrategyOptionSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         request = self.context.get("request")
-        file_url = f"{request.build_absolute_uri("/media/schema/")}{instance.key}.svg"
+        file_url = (
+            f"{request.build_absolute_uri("/strategy-schema/")}{instance.key}.svg"
+        )
         representation["schema"] = file_url
 
         return representation
