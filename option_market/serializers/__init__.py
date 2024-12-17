@@ -1,2 +1,3 @@
 from .symbol_history_srz import SymbolHistorySerializer
 from .price_spread_strategy_srz import PriceSpreadStrategySerializer
+from .strategy_option_srz import StrategyOptionSerializer

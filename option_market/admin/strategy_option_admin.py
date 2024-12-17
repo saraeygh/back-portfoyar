@@ -27,10 +27,6 @@ class StrategyOptionAdmin(admin.ModelAdmin):
 
     list_filter = ("profit_status", "risk_level")
 
-    fieldsets = (
-        ("استراتژی", {"fields": ("name", "key", "profit_status", "risk_level")}),
-    )
-
     @admin.display(description="ایجاد")
     def created_at_shamsi(self, obj: StrategyOption):
         shamsi = (
