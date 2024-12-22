@@ -1,1 +1,1 @@
-from .create_profile_signal import create_profile
+from .after_user_signup_signals import create_profile, create_free_subscription
