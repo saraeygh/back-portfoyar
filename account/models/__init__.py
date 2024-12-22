@@ -5,5 +5,6 @@ from .feature_model import (
     FeatureDiscount,
     FEATURE_DURATION_CHOICES,
     SUBSCRIPTION_FEATURE_CHOICES,
+    ALL_FEATURE,
 )
 from .subscription_model import Subscription, UserDiscount
