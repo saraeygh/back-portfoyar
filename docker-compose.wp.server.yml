@@ -15,8 +15,6 @@ services:
     networks:
       - wordpress
       - test
-    ports:
-      - "8008:80"
 
   db:
     image: docker.arvancloud.ir/mariadb:11.5.2
@@ -45,8 +43,6 @@ services:
     networks:
       - wordpress
       - test
-    ports:
-      - "8080:80"
 
 networks:
   wordpress:
