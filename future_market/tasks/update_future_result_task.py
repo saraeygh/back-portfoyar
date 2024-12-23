@@ -15,12 +15,12 @@ from core.configs import (
 )
 from future_market.models import (
     BaseEquity,
-    FUND_INFO,
-    COMMODITY_INFO,
-    GOLD_INFO,
+    SANDOQ_MARKET,
+    GAVAHI_MARKET,
+    CDC_MARKET,
     ID,
     CONTRACT_CODE,
-    FUTURE_INFO,
+    FUTURE_MARKET,
 )
 from future_market.utils import RENAME_COLUMNS
 from datetime import datetime
@@ -30,10 +30,10 @@ from tqdm import tqdm
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 UNIQUE_IDENTIFIER_COL = {
-    FUND_INFO: ID,
-    COMMODITY_INFO: ID,
-    GOLD_INFO: CONTRACT_CODE,
-    FUTURE_INFO: CONTRACT_CODE,
+    SANDOQ_MARKET: ID,
+    GAVAHI_MARKET: ID,
+    CDC_MARKET: CONTRACT_CODE,
+    FUTURE_MARKET: CONTRACT_CODE,
 }
 
 
@@ -55,17 +55,17 @@ def get_base_equity_row(base_equity):
 
 
 def get_future_derivatives(derivative_symbol):
-    future_derivatives = redis_conn.client.get(name=FUTURE_INFO)
+    future_derivatives = redis_conn.client.get(name=FUTURE_MARKET)
     future_derivatives = json.loads(future_derivatives.decode("utf-8"))
     future_derivatives = pd.DataFrame(future_derivatives)
     future_derivatives = future_derivatives[
-        future_derivatives[UNIQUE_IDENTIFIER_COL.get(FUTURE_INFO)].str.contains(
+        future_derivatives[UNIQUE_IDENTIFIER_COL.get(FUTURE_MARKET)].str.contains(
             derivative_symbol, na=False
         )
     ]
 
     future_derivatives = future_derivatives.rename(
-        columns=RENAME_COLUMNS.get(FUTURE_INFO)
+        columns=RENAME_COLUMNS.get(FUTURE_MARKET)
     )
     future_derivatives = future_derivatives.to_dict(orient="records")
 

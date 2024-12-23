@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+
 from colorama import Fore, Style
 
 from core.utils import RedisInterface, print_task_info
@@ -7,66 +8,77 @@ from core.configs import FUTURE_REDIS_DB
 
 from future_market.models import (
     BaseEquity,
-    FUND_INFO,
-    COMMODITY_INFO,
-    GOLD_INFO,
-    ID,
+    SANDOQ_MARKET,
+    GAVAHI_MARKET,
+    CDC_MARKET,
     CONTRACT_CODE,
+    ID,
 )
+
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
-BASE_EQUITY_SYMBOLS = {
-    "زعفران": "SAF",
-    "لوتوس": "ETC",
-    "شمش": "GB",
-    "كهربا": "KB",
-}
 
-NAME_COL = "name"
-FILTER_BASE_EQUITIES = "filter"
-UNIQUE_IDENTIFIER_COL = "unique_identifier"
+NAME = "name"
+INDEX = "index_col"
+FILTER = "filter"
+UNIQUE_IDENTIFIER = "unique_identifier"
+SYMBOLS = "symbols"
 
 
-def filter_fund_base_equities(all_funds: pd.DataFrame):
+def filter_sandoq_base_equities(all_funds: pd.DataFrame):
     filtered_funds = all_funds[~all_funds["Symbol"].str.contains(r"\d")]
-    filtered_funds = filtered_funds.to_dict(orient="records")
 
     return filtered_funds
 
 
-def filter_commodity_base_equities(all_commodity: pd.DataFrame):
+def filter_gavahi_base_equities(all_commodity: pd.DataFrame):
     filtered_commodity = all_commodity
-    filtered_commodity = filtered_commodity.to_dict(orient="records")
+
     return filtered_commodity
 
 
-def filter_gold_base_equities(all_gold: pd.DataFrame):
+def filter_cdc_base_equities(all_gold: pd.DataFrame):
     filtered_gold = all_gold
-    filtered_gold = filtered_gold.to_dict(orient="records")
+
     return filtered_gold
 
 
 BASE_EQUITY_KEYS = {
-    FUND_INFO: {
-        NAME_COL: "Name",
-        UNIQUE_IDENTIFIER_COL: ID,
-        FILTER_BASE_EQUITIES: filter_fund_base_equities,
+    #
+    SANDOQ_MARKET: {
+        NAME: "Name",
+        INDEX: "Code",
+        UNIQUE_IDENTIFIER: ID,
+        FILTER: filter_sandoq_base_equities,
+        SYMBOLS: {
+            "LOTF": "ETC",  # LOTUS
+            "ROBA": "KB",  # KAHROBA
+            "JAVA": "JZ",  # JAVAHER
+        },
     },
-    COMMODITY_INFO: {
-        NAME_COL: "Name",
-        UNIQUE_IDENTIFIER_COL: ID,
-        FILTER_BASE_EQUITIES: filter_commodity_base_equities,
+    #
+    GAVAHI_MARKET: {
+        NAME: "Name",
+        INDEX: "Code",
+        UNIQUE_IDENTIFIER: ID,
+        FILTER: filter_gavahi_base_equities,
+        SYMBOLS: {
+            "IRK1A": "SAF",  # SAFFRON
+            "IRK1K": "GC",  # GOLD COIN
+        },
     },
-    GOLD_INFO: {
-        NAME_COL: "ContractDescription",
-        UNIQUE_IDENTIFIER_COL: CONTRACT_CODE,
-        FILTER_BASE_EQUITIES: filter_gold_base_equities,
+    #
+    CDC_MARKET: {
+        NAME: "ContractDescription",
+        INDEX: CONTRACT_CODE,
+        UNIQUE_IDENTIFIER: CONTRACT_CODE,
+        FILTER: filter_cdc_base_equities,
+        SYMBOLS: {
+            "CD1GOB": "GB",  # GOLD BAR
+            "CD1SIB": "SIL",  # SILVER BAR
+        },
     },
-}
-
-TO_BE_DELETED = {
-    "SAF": "51200575796028449",
 }
 
 
@@ -74,59 +86,33 @@ def update_base_equity_main():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
-    for name, symbol in BASE_EQUITY_SYMBOLS.items():
-        for base_equity_key, properties in BASE_EQUITY_KEYS.items():
-            try:
-                data = redis_conn.client.get(name=base_equity_key)
-                data = json.loads(data.decode("utf-8"))
-                data = pd.DataFrame(data)
-                data = (properties.get(FILTER_BASE_EQUITIES))(data)
-                for datum in data:
-                    base_equity_name = datum.get(properties.get(NAME_COL))
-                    if name in base_equity_name:
-                        base_equity = BaseEquity.objects.filter(
-                            base_equity_key=base_equity_key,
-                            base_equity_name=base_equity_name,
-                            derivative_symbol=symbol,
-                            unique_identifier=datum.get(
-                                properties.get(UNIQUE_IDENTIFIER_COL)
-                            ),
-                        )
-                        if not base_equity.exists():
-                            BaseEquity.objects.create(
-                                base_equity_key=base_equity_key,
-                                base_equity_name=base_equity_name,
-                                derivative_symbol=symbol,
-                                unique_identifier=datum.get(
-                                    properties.get(UNIQUE_IDENTIFIER_COL)
-                                ),
-                            )
-            except Exception as e:
-                print(Fore.RED)
-                print(e)
-                print(Style.RESET_ALL)
-                continue
-    print(
-        Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
-    )
-
-    print(Fore.BLUE + "Deleting mistaken base equities ..." + Style.RESET_ALL)
-
-    for derivative_symbol, unique_identifier in TO_BE_DELETED.items():
+    for base_equity_key, properties in BASE_EQUITY_KEYS.items():
         try:
-            base_equities = BaseEquity.objects.filter(
-                derivative_symbol=derivative_symbol, unique_identifier=unique_identifier
-            )
-            base_equities.delete()
-        except BaseEquity.DoesNotExist:
-            continue
+            data = redis_conn.client.get(name=base_equity_key)
+            data = json.loads(data.decode("utf-8"))
+            data = pd.DataFrame(data)
+            data = (properties.get(FILTER))(data)
+            symbols = properties.get(SYMBOLS)
+            for index, symbol_code in symbols.items():
+                symbol_rows = data[data[properties.get(INDEX)].str.contains(index)]
+                symbol_rows = symbol_rows.to_dict(orient="records")
+                for row in symbol_rows:
+                    BaseEquity.objects.get_or_create(
+                        base_equity_key=base_equity_key,
+                        base_equity_name=row.get(properties.get(NAME)),
+                        derivative_symbol=symbol_code,
+                        unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
+                    )
+
         except Exception as e:
             print(Fore.RED)
             print(e)
             print(Style.RESET_ALL)
             continue
 
-    print(Fore.GREEN + "Mistaken base equities deleted" + Style.RESET_ALL)
+    print(
+        Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
+    )
 
 
 def update_base_equity():

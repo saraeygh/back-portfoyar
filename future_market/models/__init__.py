@@ -1,10 +1,10 @@
 from .base_equity_model import (
     BaseEquity,
-    FUND_INFO,
-    COMMODITY_INFO,
-    GOLD_INFO,
+    SANDOQ_MARKET,
+    GAVAHI_MARKET,
+    CDC_MARKET,
     ID,
     CONTRACT_CODE,
-    FUTURE_INFO,
-    OPTION_INFO,
+    FUTURE_MARKET,
+    OPTION_MARKET,
 )

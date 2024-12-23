@@ -1,14 +1,15 @@
-from core.models import TimeStampMixin
 from django.db import models
 
+from core.models import TimeStampMixin
+
 # BASE EQUITY KEYS
-FUND_INFO = "updateSandoqMarketsInfo"
-COMMODITY_INFO = "updateGavahiMarketsInfo"
-GOLD_INFO = "updateCDCMarketsInfo"
+SANDOQ_MARKET = "updateSandoqMarketsInfo"
+GAVAHI_MARKET = "updateGavahiMarketsInfo"
+CDC_MARKET = "updateCDCMarketsInfo"
 
 # DERIVATIVE KEYS
-FUTURE_INFO = "updateFutureMarketsInfo"
-OPTION_INFO = "updateMarketsInfo"
+FUTURE_MARKET = "updateFutureMarketsInfo"
+OPTION_MARKET = "updateMarketsInfo"
 
 # BASE EQUITY & DERIVATIVE UNIQUE COLUMNS
 ID = "ID"
@@ -17,12 +18,12 @@ CALL_CONTRACT_ID = "CallContractID"
 PUT_CONTRACT_ID = "PutContractID"
 
 BASE_EQUITY_KEY_CHOICES = [
-    (FUND_INFO, "صندوق‌های کالایی (updateSandoqMarketsInfo)"),
+    (SANDOQ_MARKET, "صندوق‌های کالایی (updateSandoqMarketsInfo)"),
     (
-        COMMODITY_INFO,
+        GAVAHI_MARKET,
         "گواهی سپرده کالایی - غیر شمش و سکه طلا (updateGavahiMarketsInfo)",
     ),
-    (GOLD_INFO, "شمش و سکه طلا (updateCDCMarketsInfo)"),
+    (CDC_MARKET, "شمش و سکه طلا (updateCDCMarketsInfo)"),
 ]
 
 

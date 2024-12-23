@@ -5,7 +5,7 @@ import jdatetime
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, print_task_info
 
-from future_market.models import OPTION_INFO
+from future_market.models import OPTION_MARKET
 from future_market.utils import (
     OPTION_COLUMNS,
     get_options_base_equity_info,
@@ -224,7 +224,7 @@ def shorten_option_symbol(row, col_name):
 
 
 def update_option_result_main():
-    option_data = json.loads(redis_conn.client.get(name=OPTION_INFO))
+    option_data = json.loads(redis_conn.client.get(name=OPTION_MARKET))
     option_data = pd.DataFrame(option_data)
 
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)

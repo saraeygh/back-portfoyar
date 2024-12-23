@@ -3,9 +3,9 @@ import pandas as pd
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface
 from future_market.models import (
-    FUND_INFO,
-    COMMODITY_INFO,
-    GOLD_INFO,
+    SANDOQ_MARKET,
+    GAVAHI_MARKET,
+    CDC_MARKET,
     ID,
     CONTRACT_CODE,
 )
@@ -71,7 +71,7 @@ ORDER_BOOK_COLS = {
 }
 
 BASE_EQUITY_KEYS = {
-    FUND_INFO: {
+    SANDOQ_MARKET: {
         NAME_COL: "Name",
         UNIQUE_IDENTIFIER_COL: ID,
         FILTER_BASE_EQUITIES: filter_fund_base_equities,
@@ -91,7 +91,7 @@ BASE_EQUITY_KEYS = {
             **ORDER_BOOK_COLS,
         },
     },
-    COMMODITY_INFO: {
+    GAVAHI_MARKET: {
         NAME_COL: "Name",
         UNIQUE_IDENTIFIER_COL: ID,
         FILTER_BASE_EQUITIES: filter_commodity_base_equities,
@@ -111,7 +111,7 @@ BASE_EQUITY_KEYS = {
             **ORDER_BOOK_COLS,
         },
     },
-    GOLD_INFO: {
+    CDC_MARKET: {
         NAME_COL: "ContractDescription",
         UNIQUE_IDENTIFIER_COL: CONTRACT_CODE,
         FILTER_BASE_EQUITIES: filter_gold_base_equities,

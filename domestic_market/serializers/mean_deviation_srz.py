@@ -51,7 +51,6 @@ class SummaryDomesticMeanDeviationSerailizer(serializers.Serializer):
     deviation = RoundedFloatField(decimal_places=2)
     commodity_sell_percent = RoundedFloatField(decimal_places=2)
     commodity_value_total = RoundedFloatField(decimal_places=0)
-    unit = serializers.CharField()
 
     def to_representation(self, instance):
         instance["domestic_mean"] = (

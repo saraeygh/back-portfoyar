@@ -1,12 +1,12 @@
 from future_market.models import (
-    FUTURE_INFO,
-    FUND_INFO,
-    COMMODITY_INFO,
-    GOLD_INFO,
+    FUTURE_MARKET,
+    SANDOQ_MARKET,
+    GAVAHI_MARKET,
+    CDC_MARKET,
 )
 
 RENAME_COLUMNS = {
-    FUTURE_INFO: {
+    FUTURE_MARKET: {
         "ContractCode": "contract_code",
         "ContractDescription": "name",
         "AskPrice1": "best_sell_price",
@@ -45,7 +45,7 @@ RENAME_COLUMNS = {
         "TradesValueCurrencyFaDesc": "trades_value_currency_fa",
         "YesterdayOpenInterests": "yesterday_open_interests",
     },
-    FUND_INFO: {
+    SANDOQ_MARKET: {
         "ID": "id",
         "Name": "name",
         "Symbol": "symbol",
@@ -76,7 +76,7 @@ RENAME_COLUMNS = {
         "YesterdayPrice": "yesterday_price",
         "Status": "status",
     },
-    COMMODITY_INFO: {
+    GAVAHI_MARKET: {
         "ID": "id",
         "Name": "name",
         "Symbol": "symbol",
@@ -107,7 +107,7 @@ RENAME_COLUMNS = {
         "YesterdayPrice": "yesterday_price",
         "Status": "status",
     },
-    GOLD_INFO: {
+    CDC_MARKET: {
         "ContractID": "id",
         "ContractCode": "contract_code",
         "ContractDescription": "name",
