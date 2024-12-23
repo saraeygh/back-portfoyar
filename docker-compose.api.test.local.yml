@@ -105,6 +105,49 @@ services:
       - test
     volumes:
       - nginx_logs:/var/log/nginx/
+###############################################################################
+  wordpress:
+    image: docker.arvancloud.ir/wordpress:6.6.2
+    container_name: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: armanadmin
+      WORDPRESS_DB_PASSWORD: arman@wordpress1403!
+      WORDPRESS_DB_NAME: port_foyar_db
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - test
+
+  db:
+    image: docker.arvancloud.ir/mariadb:11.5.2
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
+      MYSQL_DATABASE: port_foyar_db
+      MYSQL_USER: armanadmin
+      MYSQL_PASSWORD: arman@wordpress1403!
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - test
+
+  phpmyadmin:
+    image: docker.arvancloud.ir/phpmyadmin:5.2.1
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
+    depends_on:
+      - db
+    networks:
+      - test
+###############################################################################
 
 networks:
   test:
@@ -118,4 +161,6 @@ volumes:
   ticket_appendix:
   django_logs:
   nginx_logs:
-  
+  #############################################################################
+  wordpress_data:
+  db_data:
