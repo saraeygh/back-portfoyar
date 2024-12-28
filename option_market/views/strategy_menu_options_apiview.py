@@ -28,7 +28,7 @@ class ProfitStatusesAPIView(APIView):
         return Response(profit_status_list, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
+@method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
 class StrategiesAPIView(APIView):
     def get(self, request, risk_level, profit_status):
         if profit_status == "all_profit" and risk_level == "all_risk":

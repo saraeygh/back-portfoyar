@@ -10,21 +10,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_index_as_id
 from core.configs import (
     STOCK_MONGO_DB,
     FIVE_MINUTES_CACHE,
     STOCK_TOP_500_LIMIT,
     STOCK_NA_ROI,
 )
-from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_index_as_id
 
 from stock_market.serializers import MarketROISerailizer, SummaryMarketROISerailizer
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.permissions import HasStockSubscription
 
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockOveralROIAPIView(APIView):
     def get(self, request):
 

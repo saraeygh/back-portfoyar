@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from option_market.serializers import SymbolHistorySerializer
+from option_market.permissions import HasOptionSubscription
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 
@@ -70,7 +71,7 @@ class AssetOptionSymbolsAPIView(APIView):
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasOptionSubscription])
 class SymbolHistoryAPIView(APIView):
     def post(self, request):
         symbol = request.data.get("symbol")

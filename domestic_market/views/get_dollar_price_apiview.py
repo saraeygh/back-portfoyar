@@ -1,9 +1,5 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from core.configs import FIVE_MINUTES_CACHE
-
-from domestic_market.models import DomesticDollarPrice
-from domestic_market.serializers import GetDollarPriceSerializer
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -11,10 +7,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.configs import FIVE_MINUTES_CACHE
+
+from domestic_market.models import DomesticDollarPrice
+from domestic_market.serializers import GetDollarPriceSerializer
+from domestic_market.permissions import HasDomesticSubscription
+
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
 class GetDollarPriceAPIView(APIView):
     def get(self, request):
         try:

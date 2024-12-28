@@ -14,6 +14,7 @@ from core.configs import SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT, STOCK_MONGO_D
 from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.permissions import HasStockSubscription
 from stock_market.serializers import (
     SummaryBuyOrderRatioSerailizer,
     BuyOrderRatioSerailizer,
@@ -22,7 +23,7 @@ from stock_market.serializers import (
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockBuyOrderRatioAPIView(APIView):
     def get(self, request):
         mongo_client = MongodbInterface(

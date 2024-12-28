@@ -10,6 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from core.configs import OPTION_REDIS_DB
 from core.utils import RedisInterface, TABLE_COLS_QP, ALL_TABLE_COLS, STRATEGIES
 
+from option_market.permissions import HasOptionSubscription
+
 PROFIT_SORTING_COLUMN = "monthly_profit"
 BREAK_EVEN_SORTING_COLUMN = "monthly_break_even"
 
@@ -356,7 +358,7 @@ FILTER_DICT = {
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasOptionSubscription])
 class OptionPositionsAPIView(APIView):
     def get(self, request, risk_level: str, strategy_key: str):
 

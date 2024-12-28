@@ -1,7 +1,8 @@
 import pytz
+from datetime import datetime
+
 import jdatetime
 from persiantools.jdatetime import JalaliDateTime
-from datetime import datetime
 
 from django.db import models
 from django.contrib import admin
@@ -9,8 +10,18 @@ from core.models import TimeStampMixin
 
 
 ALL_FEATURE = "all_feature"
+OPTION_FEATURE = "option_feature"
+DOMESTIC_FEATURE = "domestic_feature"
+FUTURE_FEATURE = "future_feature"
+GLOBAL_FEATURE = "global_feature"
+STOCK_FEATURE = "stock_feature"
 SUBSCRIPTION_FEATURE_CHOICES = [
     (ALL_FEATURE, "تمام قابلیت‌های سایت"),
+    (DOMESTIC_FEATURE, "بخش بورس کالای داخلی"),
+    (FUTURE_FEATURE, "بخش ابزارهای مشتقه بورس کالا"),
+    (GLOBAL_FEATURE, "بخش بازارهای جهانی"),
+    (OPTION_FEATURE, "بخش آپشن‌ها"),
+    (STOCK_FEATURE, "بخش تابلوخوانی"),
 ]
 
 ONE_MONTH = 1

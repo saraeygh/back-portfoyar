@@ -1,9 +1,9 @@
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from core.configs import THIRTY_MINUTES_CACHE, STOCK_TOP_100_LIMIT
 from core.utils import (
@@ -14,16 +14,17 @@ from core.utils import (
     get_cache_as_json,
 )
 
+from stock_market.permissions import HasStockSubscription
 from stock_market.models.recommendation_config_model import RELATED_NAMES
+from stock_market.utils import stock_recommendation, get_recommendation_config
 from stock_market.serializers import (
     StockRecommendedSerailizer,
     SummaryStockRecommendedSerailizer,
 )
-from stock_market.utils import stock_recommendation, get_recommendation_config
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockRecommendedAPIView(APIView):
     def get(self, request):
         config = get_recommendation_config(user=request.user)

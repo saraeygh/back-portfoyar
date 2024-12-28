@@ -17,6 +17,7 @@ from core.utils import (
     add_index_as_id,
 )
 
+from global_market.permissions import HasGlobalSubscription
 from global_market.serializers import (
     GlobalMeanDeviationSerailizer,
     SummaryGlobalMeanDeviationSerailizer,
@@ -63,7 +64,7 @@ def get_range_result(collection_name, range_name, table=None):
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasGlobalSubscription])
 class MeanDeviationAPIView(APIView):
     def post(self, request):
         duration = request.data.get("duration")

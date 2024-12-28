@@ -1,4 +1,5 @@
 import pandas as pd
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -9,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.configs import FUTURE_REDIS_DB
 from core.utils import RedisInterface, TABLE_COLS_QP, ALL_TABLE_COLS, STRATEGIES
 
+from future_market.permissions import HasFutureSubscription
 
 PROFIT_SORTING_COLUMN = "monthly_profit"
 BREAK_EVEN_SORTING_COLUMN = "monthly_break_even"
@@ -354,7 +356,7 @@ FILTER_DICT = {
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasFutureSubscription])
 class FutureOptionPositionsAPIView(APIView):
     def get(self, request, risk_level: str, strategy_key: str):
 

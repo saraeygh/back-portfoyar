@@ -1,20 +1,20 @@
-from core.configs import SIXTY_MINUTES_CACHE
-from domestic_market.serializers import PriceChartSerailizer
-from core.utils import set_json_cache, get_cache_as_json
-from domestic_market.utils import (
-    get_price_chart,
-    get_existing_dollar_prices_dict,
-)
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
+from core.configs import SIXTY_MINUTES_CACHE
+from core.utils import set_json_cache, get_cache_as_json
+
+from domestic_market.serializers import PriceChartSerailizer
+from domestic_market.utils import get_price_chart, get_existing_dollar_prices_dict
+from domestic_market.permissions import HasDomesticSubscription
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
 class DomesticPriceChartAPIView(APIView):
     def post(self, request):
         industry_id = request.data.get("industry_id")

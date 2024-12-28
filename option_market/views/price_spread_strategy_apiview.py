@@ -15,9 +15,11 @@ from stock_market.serializers import (
     SummaryStockOptionPriceSpreadSerailizer,
 )
 
+from option_market.permissions import HasOptionSubscription
+
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasOptionSubscription])
 class PriceSpreadStrategyAPIView(APIView):
     def post(self, request):
 

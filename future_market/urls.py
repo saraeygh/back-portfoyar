@@ -5,6 +5,7 @@ from future_market.views import (
     FutureOptionPositionsAPIView,
     FuturePositionsAPIView,
 )
+
 from option_market.views import ProfitStatusesAPIView, StrategiesAPIView
 
 future_urls = [

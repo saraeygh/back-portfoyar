@@ -15,11 +15,12 @@ from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_inde
 
 from stock_market.serializers import MarketROISerailizer, SummaryMarketROISerailizer
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.permissions import HasStockSubscription
 
 
 @method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockIndustryInstrumentROIAPIView(APIView):
     def get(self, request, industry_id):
 

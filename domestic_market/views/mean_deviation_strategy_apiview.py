@@ -1,10 +1,11 @@
 import pandas as pd
+
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from core.configs import SIX_HOURS_CACHE, DOMESTIC_MONGO_DB, COMMODITY_TOP_200_LIMIT
 from core.utils import (
@@ -16,6 +17,7 @@ from core.utils import (
     add_index_as_id,
 )
 
+from domestic_market.permissions import HasDomesticSubscription
 from domestic_market.serializers import (
     DomesticMeanDeviationSerailizer,
     SummaryDomesticMeanDeviationSerailizer,
@@ -65,7 +67,7 @@ def get_range_result(collection_name, range_name, table=None):
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
 class MeanDeviationAPIView(APIView):
     def post(self, request):
         duration = request.data.get("duration")
@@ -150,7 +152,7 @@ def get_range_result_v2(collection_name, price_changes, table=None):
 
 
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
 class MeanDeviationAPIViewV2(APIView):
     def get(self, request):
         table = request.query_params.get(TABLE_COLS_QP)

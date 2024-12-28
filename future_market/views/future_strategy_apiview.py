@@ -1,13 +1,13 @@
 import pandas as pd
+
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE, FUTURE_REDIS_DB
 from core.utils import (
@@ -19,7 +19,9 @@ from core.utils import (
     replace_arabic_letters_pd,
     add_index_as_id,
 )
+
 from future_market.tasks import FUTURE_STRATEGIES
+from future_market.permissions import HasFutureSubscription
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
@@ -82,10 +84,16 @@ def get_strategy_result_from_redis(strategy_key, table):
     return positions
 
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 @method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
 class FuturePositionsAPIView(APIView):
+    def get_authenticators(self):
+        return [TokenAuthentication()]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAuthenticated()]
+        return [IsAuthenticated(), HasFutureSubscription()]
+
     def get(self, request):
         future_strategy_list = list()
         for future_strategy_key, properties in FUTURE_STRATEGIES.items():

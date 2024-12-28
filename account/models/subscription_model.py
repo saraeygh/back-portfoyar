@@ -1,7 +1,7 @@
+from datetime import datetime
+
 import pytz
 import jdatetime
-
-from datetime import datetime
 from persiantools.jdatetime import JalaliDateTime, JalaliDate
 
 from django.contrib.auth.models import User
@@ -35,6 +35,8 @@ class Subscription(TimeStampMixin, models.Model):
     start_at = models.DateField(verbose_name="تاریخ شروع اشتراک")
     end_at = models.DateField(verbose_name="تاریخ پایان اشتراک")
 
+    desc = models.CharField(verbose_name="توضیحات", max_length=64, default="paid")
+
     @property
     def feature_name(self):
         return FEATURES.get(self.feature.name, "")
@@ -54,7 +56,7 @@ class Subscription(TimeStampMixin, models.Model):
         today_date = datetime.today().date()
         sub_end_date = self.end_at
         remained_days = (sub_end_date - today_date).days
-        if remained_days >= 0:
+        if remained_days > 0:
             return remained_days
         elif remained_days == 0:
             return 1

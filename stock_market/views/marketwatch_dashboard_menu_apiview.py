@@ -47,7 +47,7 @@ class StockDashboardAPIView(APIView):
         return Response(result, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
+@method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 class OptionDashboardAPIView(APIView):
     def get(self, request):
 

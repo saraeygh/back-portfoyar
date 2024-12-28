@@ -14,6 +14,7 @@ from core.configs import STOCK_MONGO_DB, FIVE_MINUTES_CACHE, STOCK_TOP_500_LIMIT
 from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.permissions import HasStockSubscription
 from stock_market.serializers import (
     SummaryStockValueChangeSerailizer,
     StockValueChangeSerailizer,
@@ -22,7 +23,7 @@ from stock_market.serializers import (
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockValueChangeAPIView(APIView):
     def get(self, request):
 

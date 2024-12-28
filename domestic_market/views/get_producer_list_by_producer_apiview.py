@@ -2,17 +2,15 @@ import pandas as pd
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from core.utils import MongodbInterface
-from core.configs import (
-    SIXTY_MINUTES_CACHE,
-    DOMESTIC_MONGO_DB,
-)
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
+from core.utils import MongodbInterface
+from core.configs import SIXTY_MINUTES_CACHE, DOMESTIC_MONGO_DB
 
 
 @method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")

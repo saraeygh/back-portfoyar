@@ -1,9 +1,6 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from core.configs import THIRTY_MINUTES_CACHE, DOMESTIC_MONGO_DB
-
-from core.utils import MongodbInterface
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -11,10 +8,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.utils import MongodbInterface
+from core.configs import THIRTY_MINUTES_CACHE, DOMESTIC_MONGO_DB
+
+from domestic_market.permissions import HasDomesticSubscription
+
 
 @method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
 class ProducerSellReportAPIView(APIView):
     def get(self, request, company_id):
 

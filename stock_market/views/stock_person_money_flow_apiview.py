@@ -4,16 +4,17 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
 from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
+from stock_market.permissions import HasStockSubscription
 from stock_market.serializers import (
     SummaryPersonMoneyFlowSerailizer,
     PersonMoneyFlowSerailizer,
@@ -22,7 +23,7 @@ from stock_market.serializers import (
 
 @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, HasStockSubscription])
 class StockPersonMoneyFlowAPIView(APIView):
     def get(self, request):
         mongo_client = MongodbInterface(
