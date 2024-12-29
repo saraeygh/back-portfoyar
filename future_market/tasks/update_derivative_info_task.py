@@ -3,7 +3,7 @@ import json
 import requests
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, print_task_info
+from core.utils import RedisInterface, print_task_info, send_task_fail_success_email
 from core.configs import FUTURE_REDIS_DB
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
@@ -86,9 +86,21 @@ def update_info():
             continue
 
 
-def update_derivative_info():
+def update_derivative_info_main():
     is_running = redis_conn.client.get(name=IS_RUNNING)
 
     if is_running is None:
         print_task_info(name=__name__)
         update_info()
+
+
+def update_derivative_info():
+    TASK_NAME = update_derivative_info.__name__
+    print_task_info(name=TASK_NAME)
+
+    try:
+        update_derivative_info_main()
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
+
+    print_task_info(color="GREEN", name=TASK_NAME)

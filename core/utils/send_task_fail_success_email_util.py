@@ -1,3 +1,4 @@
+import traceback
 import smtplib
 
 from email.mime.text import MIMEText
@@ -13,13 +14,26 @@ from core.configs import (
     EMAIL_TO,
 )
 
+SUCCESS_BODY = "SUCCESS"
 
-def send_task_fail_email(task_name: str, html_body: str):
+
+def get_exception_detail(exception):
+    if exception == SUCCESS_BODY:
+        return exception
+
+    exception_details = "".join(
+        traceback.format_exception(type(exception), exception, exception.__traceback__)
+    )
+    return exception_details
+
+
+def send_task_fail_success_email(task_name: str = "", exception: str = "SUCCESS"):
     message = MIMEMultipart()
     message["From"] = EMAIL_HOST_USER
     message["To"] = EMAIL_TO
     message["Subject"] = task_name
 
+    html_body = get_exception_detail(exception)
     message.attach(MIMEText(html_body, "html", "utf-8"))
     text = message.as_string()
 

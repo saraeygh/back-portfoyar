@@ -7,6 +7,7 @@ from core.utils import (
     replace_arabic_letters,
     get_deviation_percent,
     print_task_info,
+    send_task_fail_success_email,
 )
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
@@ -149,8 +150,13 @@ def update_instrument_info_main():
 
 
 def update_instrument_info():
-    print_task_info(name=__name__)
+    TASK_NAME = update_instrument_info.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_instrument_info_main()
+    try:
+        update_instrument_info_main()
+        send_task_fail_success_email(task_name=TASK_NAME)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

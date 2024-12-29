@@ -1,10 +1,15 @@
 import json
 import pandas as pd
+from datetime import datetime
+import jdatetime
+from tqdm import tqdm
+
 from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
     get_deviation_percent,
     print_task_info,
+    send_task_fail_success_email,
 )
 
 from core.models import FeatureToggle
@@ -23,9 +28,6 @@ from future_market.models import (
     FUTURE_MARKET,
 )
 from future_market.utils import RENAME_COLUMNS
-from datetime import datetime
-import jdatetime
-from tqdm import tqdm
 
 redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
@@ -244,8 +246,12 @@ def update_future_main():
 
 
 def update_future():
-    print_task_info(name=__name__)
+    TASK_NAME = update_future.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_future_main()
+    try:
+        update_future_main()
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

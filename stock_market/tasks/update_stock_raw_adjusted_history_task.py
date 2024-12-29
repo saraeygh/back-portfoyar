@@ -2,7 +2,7 @@ from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
 
-from core.utils import get_http_response, print_task_info
+from core.utils import get_http_response, print_task_info, send_task_fail_success_email
 
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
@@ -81,8 +81,13 @@ def update_stock_raw_adjusted_history_main():
 
 
 def update_stock_raw_adjusted_history():
-    print_task_info(name=__name__)
+    TASK_NAME = update_stock_raw_adjusted_history.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_stock_raw_adjusted_history_main()
+    try:
+        update_stock_raw_adjusted_history_main()
+        send_task_fail_success_email(task_name=TASK_NAME)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

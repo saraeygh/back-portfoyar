@@ -3,7 +3,7 @@ import jdatetime
 from tqdm import trange
 
 from django.utils import timezone
-from core.utils import get_http_response, print_task_info
+from core.utils import get_http_response, print_task_info, send_task_fail_success_email
 from core.configs import FA_TO_EN_TRANSLATION_TABLE
 
 
@@ -136,8 +136,13 @@ def get_monthly_activity_report_letter_main():
 
 
 def get_monthly_activity_report_letter():
-    print_task_info(name=__name__)
+    TASK_NAME = get_monthly_activity_report_letter.__name__
+    print_task_info(name=TASK_NAME)
 
-    get_monthly_activity_report_letter_main()
+    try:
+        get_monthly_activity_report_letter_main()
+        send_task_fail_success_email(task_name=TASK_NAME)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

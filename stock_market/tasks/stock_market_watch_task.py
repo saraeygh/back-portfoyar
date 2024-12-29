@@ -3,7 +3,12 @@ import numpy as np
 import jdatetime
 from tqdm import tqdm
 
-from core.utils import RedisInterface, MongodbInterface, print_task_info
+from core.utils import (
+    RedisInterface,
+    MongodbInterface,
+    print_task_info,
+    send_task_fail_success_email,
+)
 from core.configs import (
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
@@ -216,8 +221,12 @@ def update_market_watch_indices_main():
 
 
 def update_market_watch_indices():
-    print_task_info(name=__name__)
+    TASK_NAME = update_market_watch_indices.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_market_watch_indices_main()
+    try:
+        update_market_watch_indices_main()
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

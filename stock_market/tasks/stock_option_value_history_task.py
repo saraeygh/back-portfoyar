@@ -5,7 +5,12 @@ import jdatetime as jdt
 
 from django.db.models import Q
 
-from core.utils import MongodbInterface, RedisInterface, print_task_info
+from core.utils import (
+    MongodbInterface,
+    RedisInterface,
+    print_task_info,
+    send_task_fail_success_email,
+)
 from core.configs import (
     STOCK_VALUE_CHANGE_DURATION,
     STOCK_MONGO_DB,
@@ -117,8 +122,13 @@ def stock_option_value_history_main():
 
 
 def stock_option_value_history():
-    print_task_info(name=__name__)
+    TASK_NAME = stock_option_value_history.__name__
+    print_task_info(name=TASK_NAME)
 
-    stock_option_value_history_main()
+    try:
+        stock_option_value_history_main()
+        send_task_fail_success_email(task_name=TASK_NAME)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

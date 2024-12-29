@@ -6,6 +6,7 @@ from core.utils import (
     get_http_response,
     replace_arabic_letters_pd,
     print_task_info,
+    send_task_fail_success_email,
 )
 from core.configs import (
     MARKET_WATCH_URL,
@@ -68,48 +69,53 @@ def get_additional_info():
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-def update_market_watch_main():
-    additional_info = get_additional_info()
-    market_watch = get_market_watch()
-    market_watch = pd.merge(
-        left=market_watch, right=additional_info, on="ins_code", how="left"
-    )
-    del additional_info
+def update_market_watch_main(run_mode):
+    if run_mode == MANUAL_MODE or is_market_open():
 
-    client_type = get_client_type()
-    market_watch = pd.merge(
-        left=market_watch, right=client_type, on="ins_code", how="left"
-    )
-    del client_type
-    market_watch.dropna(inplace=True)
+        additional_info = get_additional_info()
+        market_watch = get_market_watch()
+        market_watch = pd.merge(
+            left=market_watch, right=additional_info, on="ins_code", how="left"
+        )
+        del additional_info
 
-    if market_watch.empty:
-        print(Fore.RED + "No market watch data!" + Style.RESET_ALL)
-        return
+        client_type = get_client_type()
+        market_watch = pd.merge(
+            left=market_watch, right=client_type, on="ins_code", how="left"
+        )
+        del client_type
+        market_watch.dropna(inplace=True)
 
-    market_watch["name"] = market_watch.apply(
-        replace_arabic_letters_pd, axis=1, args=("name",)
-    )
-    market_watch["symbol"] = market_watch.apply(
-        replace_arabic_letters_pd, axis=1, args=("symbol",)
-    )
+        if market_watch.empty:
+            print(Fore.RED + "No market watch data!" + Style.RESET_ALL)
+            return
 
-    market_watch["market_type"] = market_watch["market_type"].astype(int)
-    market_watch["paper_type"] = market_watch["paper_type"].astype(int)
+        market_watch["name"] = market_watch.apply(
+            replace_arabic_letters_pd, axis=1, args=("name",)
+        )
+        market_watch["symbol"] = market_watch.apply(
+            replace_arabic_letters_pd, axis=1, args=("symbol",)
+        )
 
-    market_watch = market_watch.to_dict(orient="records")
-    redis_conn.bulk_push_list_of_dicts(
-        list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
-    )
+        market_watch["market_type"] = market_watch["market_type"].astype(int)
+        market_watch["paper_type"] = market_watch["paper_type"].astype(int)
+
+        market_watch = market_watch.to_dict(orient="records")
+        redis_conn.bulk_push_list_of_dicts(
+            list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
+        )
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):
-    print_task_info(name=__name__)
+    TASK_NAME = update_market_watch.__name__
+    print_task_info(name=TASK_NAME)
 
-    if run_mode == MANUAL_MODE or is_market_open():
-        update_market_watch_main()
+    try:
+        update_market_watch_main(run_mode)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
+
+    print_task_info(color="GREEN", name=TASK_NAME)
 
     if run_mode == MANUAL_MODE:
         update_market_watch_indices()
-
-    print_task_info(color="GREEN", name=__name__)

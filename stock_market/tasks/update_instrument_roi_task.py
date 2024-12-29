@@ -6,7 +6,12 @@ from core.configs import (
     STOCK_NA_ROI,
     AUTO_MODE,
 )
-from core.utils import MongodbInterface, get_deviation_percent, print_task_info
+from core.utils import (
+    MongodbInterface,
+    get_deviation_percent,
+    print_task_info,
+    send_task_fail_success_email,
+)
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,
@@ -186,8 +191,12 @@ def update_instrument_roi_main():
 
 
 def update_instrument_roi(run_mode: str = AUTO_MODE):
-    print_task_info(name=__name__)
+    TASK_NAME = update_instrument_roi.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_instrument_roi_main()
+    try:
+        update_instrument_roi_main()
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

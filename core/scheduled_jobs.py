@@ -1,5 +1,12 @@
 import os
 import psutil
+
+from colorama import Fore, Style
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+
 from samaneh.settings.common import (
     POSTGRES_DB,
     POSTGRES_USER,
@@ -7,11 +14,7 @@ from samaneh.settings.common import (
     POSTGRES_SERVICE_NAME,
 )
 
-from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-
-from core.configs import TEHRAN_TZ
+from core.configs import TEHRAN_TZ, MGT_FOR_DAILY_TASKS
 
 from account.tasks import disable_expired_subscription
 
@@ -51,10 +54,6 @@ from stock_market.tasks import (
 )
 
 from global_market.tasks import calculate_commodity_means_global
-
-from colorama import Fore, Style
-
-MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
 
 
 def get_scheduler():
@@ -237,6 +236,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         hour="18",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -396,6 +396,7 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="*",
         hour="7",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler

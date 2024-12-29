@@ -3,7 +3,7 @@ import pandas as pd
 
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, print_task_info
+from core.utils import RedisInterface, print_task_info, send_task_fail_success_email
 from core.configs import FUTURE_REDIS_DB
 
 from future_market.models import (
@@ -116,8 +116,13 @@ def update_base_equity_main():
 
 
 def update_base_equity():
-    print_task_info(name=__name__)
+    TASK_NAME = update_base_equity.__name__
+    print_task_info(name=TASK_NAME)
 
-    update_base_equity_main()
+    try:
+        update_base_equity_main()
+        send_task_fail_success_email(task_name=TASK_NAME)
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)

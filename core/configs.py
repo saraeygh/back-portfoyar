@@ -24,6 +24,7 @@ BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
 LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
+MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
 
 
 ######################################################## ACCOUNT APP

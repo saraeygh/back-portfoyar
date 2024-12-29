@@ -1,5 +1,5 @@
-import jdatetime
 import pandas as pd
+import jdatetime
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -8,7 +8,12 @@ from core.configs import (
     STOCK_REDIS_DB,
     AUTO_MODE,
 )
-from core.utils import RedisInterface, MongodbInterface, print_task_info
+from core.utils import (
+    RedisInterface,
+    MongodbInterface,
+    print_task_info,
+    send_task_fail_success_email,
+)
 from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
 
 
@@ -88,8 +93,12 @@ def stock_value_change_main():
 
 
 def stock_value_change(run_mode: str = AUTO_MODE):
-    print_task_info(name=__name__)
+    TASK_NAME = stock_value_change.__name__
+    print_task_info(name=TASK_NAME)
 
-    stock_value_change_main()
+    try:
+        stock_value_change_main()
+    except Exception as e:
+        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
 
-    print_task_info(color="GREEN", name=__name__)
+    print_task_info(color="GREEN", name=TASK_NAME)
