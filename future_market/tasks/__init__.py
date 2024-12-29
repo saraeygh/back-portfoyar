@@ -1,3 +1,4 @@
+from .check_active_contracts_task import check_active_contracts
 from .update_derivative_info_task import update_derivative_info
 from .update_base_equity_task import update_base_equity
 from .update_future_result_task import update_future, FUTURE_STRATEGIES

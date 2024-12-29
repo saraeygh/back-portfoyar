@@ -25,6 +25,7 @@ from future_market.tasks import (
     update_base_equity,
     update_future,
     update_option_result,
+    check_active_contracts,
 )
 from global_market.tasks import calculate_commodity_means_global
 
@@ -253,6 +254,7 @@ def future_cli(clear_cmd):
             "2) Update base equity",
             "3) Update future result",
             "4) Update option result",
+            "5) Check active contracts",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -263,6 +265,7 @@ def future_cli(clear_cmd):
                 update_base_equity()
                 update_future()
                 update_option_result()
+                check_active_contracts()
             case "1":
                 update_derivative_info()
             case "2":
@@ -271,6 +274,8 @@ def future_cli(clear_cmd):
                 update_future()
             case "4":
                 update_option_result()
+            case "5":
+                check_active_contracts()
             case "0":
                 break
 

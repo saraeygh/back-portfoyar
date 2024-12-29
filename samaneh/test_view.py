@@ -2,9 +2,13 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
+from future_market.tasks import check_active_contracts
+
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
+
+        check_active_contracts()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 

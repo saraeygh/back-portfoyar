@@ -31,6 +31,7 @@ from future_market.tasks import (
     update_base_equity,
     update_future,
     update_option_result,
+    check_active_contracts,
 )
 
 from option_market.tasks import update_option_data_from_tse, get_option_history
@@ -228,6 +229,14 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
         second="*/45",
+    )
+
+    scheduler.add_job(
+        func=check_active_contracts,
+        id="check_active_contracts_task",
+        replace_existing=True,
+        trigger="cron",
+        hour="18",
     )
 
     return scheduler
