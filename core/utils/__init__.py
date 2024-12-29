@@ -1,6 +1,7 @@
 TABLE_COLS_QP = "table"
 ALL_TABLE_COLS = "all"
-from .pring_task_info_util import print_task_info
+from .send_task_fail_success_email_util import send_task_fail_success_email
+from .run_task_util import print_task_info, run_main_task
 from .redis_interface_util import RedisInterface
 from .mongodb_interface_util import MongodbInterface
 from .send_upload_error_file_email_util import send_upload_error_file_email
@@ -29,4 +30,3 @@ from .create_profile_for_users_with_no_profile_util import (
 )
 from .get_deviation_percent_util import get_deviation_percent
 from .persian_numbers_to_english_util import persian_numbers_to_english
-from .send_task_fail_success_email_util import send_task_fail_success_email

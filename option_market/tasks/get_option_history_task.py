@@ -7,8 +7,7 @@ from core.utils import (
     MongodbInterface,
     RedisInterface,
     get_http_response,
-    print_task_info,
-    send_task_fail_success_email,
+    run_main_task,
 )
 from stock_market.utils import TSETMC_REQUEST_HEADERS
 
@@ -133,13 +132,8 @@ def get_option_history_main():
 
 
 def get_option_history():
-    TASK_NAME = get_option_history.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        get_option_history_main()
-        send_task_fail_success_email(task_name=TASK_NAME)
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=get_option_history_main,
+        daily=True,
+    )

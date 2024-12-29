@@ -1,6 +1,6 @@
 import pandas as pd
 
-from core.utils import RedisInterface, print_task_info, send_task_fail_success_email
+from core.utils import RedisInterface, run_main_task
 from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
 from core.utils import get_http_response, replace_arabic_letters_pd
 
@@ -167,12 +167,7 @@ def update_option_data_from_tse_main(run_mode):
 
 
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):
-    TASK_NAME = update_option_data_from_tse.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        update_option_data_from_tse_main(run_mode)
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=update_option_data_from_tse_main,
+    )

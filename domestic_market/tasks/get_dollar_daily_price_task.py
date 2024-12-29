@@ -2,7 +2,7 @@ from datetime import datetime
 import jdatetime
 from bs4 import BeautifulSoup
 
-from core.utils import get_http_response, print_task_info, send_task_fail_success_email
+from core.utils import get_http_response, run_main_task
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
 
@@ -70,13 +70,8 @@ def get_dollar_daily_price_main():
         return today_price
 
 
-def get_dollar_daily_price() -> None:
-    TASK_NAME = get_dollar_daily_price.__name__
-    print_task_info(name=TASK_NAME)
+def get_dollar_daily_price():
 
-    try:
-        get_dollar_daily_price_main()
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=get_dollar_daily_price_main,
+    )

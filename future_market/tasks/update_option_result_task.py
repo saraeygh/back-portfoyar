@@ -3,7 +3,7 @@ import pandas as pd
 import jdatetime
 
 from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface, print_task_info, send_task_fail_success_email
+from core.utils import RedisInterface, run_main_task
 
 from future_market.models import OPTION_MARKET
 from future_market.utils import (
@@ -267,12 +267,7 @@ def update_option_result_main():
 
 
 def update_option_result():
-    TASK_NAME = update_option_result.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        update_option_result_main()
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=update_option_result_main,
+    )

@@ -5,8 +5,7 @@ from core.utils import (
     RedisInterface,
     get_http_response,
     replace_arabic_letters_pd,
-    print_task_info,
-    send_task_fail_success_email,
+    run_main_task,
 )
 from core.configs import (
     MARKET_WATCH_URL,
@@ -107,15 +106,11 @@ def update_market_watch_main(run_mode):
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):
-    TASK_NAME = update_market_watch.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        update_market_watch_main(run_mode)
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=update_market_watch_main,
+        kw_args={"run_mode": run_mode},
+    )
 
     if run_mode == MANUAL_MODE:
         update_market_watch_indices()

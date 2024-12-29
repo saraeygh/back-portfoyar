@@ -5,12 +5,7 @@ from tqdm import tqdm
 
 from django.db.models import Sum, Avg
 
-from core.utils import (
-    MongodbInterface,
-    get_deviation_percent,
-    print_task_info,
-    send_task_fail_success_email,
-)
+from core.utils import MongodbInterface, get_deviation_percent, run_main_task
 from core.configs import DOMESTIC_MONGO_DB
 
 from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRelation
@@ -136,13 +131,8 @@ def calculate_commodity_mean_domestic_main():
 
 
 def calculate_commodity_mean_domestic():
-    TASK_NAME = calculate_commodity_mean_domestic.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        calculate_commodity_mean_domestic_main()
-        send_task_fail_success_email(task_name=TASK_NAME)
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=calculate_commodity_mean_domestic_main,
+        daily=True,
+    )

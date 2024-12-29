@@ -12,8 +12,7 @@ from core.utils import (
     RedisInterface,
     MongodbInterface,
     get_deviation_percent,
-    print_task_info,
-    send_task_fail_success_email,
+    run_main_task,
 )
 
 from option_market.utils import (
@@ -336,12 +335,8 @@ def stock_option_price_spread_main():
 
 
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
-    TASK_NAME = stock_option_price_spread.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        stock_option_price_spread_main()
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=stock_option_price_spread_main,
+        kw_args={"run_mode": run_mode},
+    )

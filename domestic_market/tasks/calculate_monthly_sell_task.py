@@ -2,7 +2,7 @@ import jdatetime
 from tqdm import trange
 
 from django.db.models import Avg, Sum, Min, Max
-from core.utils import print_task_info, send_task_fail_success_email
+from core.utils import run_main_task
 
 from domestic_market.models import (
     DomesticTrade,
@@ -267,13 +267,8 @@ def calculate_monthly_sell_domestic_main():
 
 
 def calculate_monthly_sell_domestic():
-    TASK_NAME = calculate_monthly_sell_domestic.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        calculate_monthly_sell_domestic_main()
-        send_task_fail_success_email(task_name=TASK_NAME)
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=calculate_monthly_sell_domestic_main,
+        daily=True,
+    )

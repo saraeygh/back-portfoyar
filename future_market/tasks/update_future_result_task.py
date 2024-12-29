@@ -8,8 +8,7 @@ from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
     get_deviation_percent,
-    print_task_info,
-    send_task_fail_success_email,
+    run_main_task,
 )
 
 from core.models import FeatureToggle
@@ -246,12 +245,8 @@ def update_future_main():
 
 
 def update_future():
-    TASK_NAME = update_future.__name__
-    print_task_info(name=TASK_NAME)
 
-    try:
-        update_future_main()
-    except Exception as e:
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+    run_main_task(
+        main_task=update_future_main,
+        daily=True,
+    )
