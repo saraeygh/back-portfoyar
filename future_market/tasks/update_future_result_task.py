@@ -248,5 +248,4 @@ def update_future():
 
     run_main_task(
         main_task=update_future_main,
-        daily=True,
     )
