@@ -8,4 +8,4 @@ from .get_transit_util import get_transit_dict
 from .populate_transit_util import populate_transit
 from .populate_trade_util import populate_trade
 from .populate_global_market_util import populate_global_market_db
-from .get_price_chart_util import get_price_chart
+from .get_price_ratio_chart_util import get_price_chart, get_ratio_chart

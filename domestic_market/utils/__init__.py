@@ -3,7 +3,10 @@ from .populate_domestic_market_producer_util import populate_domestic_market_pro
 from .populate_domestic_market_trade_util import populate_domestic_market_trade
 from .get_existing_dollar_prices_util import get_existing_dollar_prices_dict
 from .get_price_chart_util import get_price_chart
-from .get_price_chart_by_producer_util import get_price_chart_by_producer
+from .get_price_ratio_chart_util import (
+    get_price_chart_by_producer,
+    get_ratio_chart,
+)
 from .get_dollar_price_history_util import get_dollar_price_history
 from .add_value_to_name_util import add_value_to_name
 from .get_dollar_latest_price_util import get_dollar_last_price

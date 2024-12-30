@@ -39,7 +39,6 @@ chart_urls = [
     path("ratio-chart/", GlobalRatioChartAPIView.as_view()),
 ]
 
-
 strategy_urls = [
     path("mean-deviation/", MeanDeviationAPIView.as_view()),
     # MEAN-DEVIATION NEW VERSION
