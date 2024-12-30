@@ -189,5 +189,4 @@ def update_instrument_roi(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=update_instrument_roi_main,
-        kw_args={"run_mode": run_mode},
     )

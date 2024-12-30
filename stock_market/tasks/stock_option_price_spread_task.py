@@ -160,10 +160,12 @@ def get_call_spreads(spreads):
         & (spreads["call_yesterday_price"] > 0)
     ]
 
-    spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
-    spreads = spreads[abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION]
-
     if not spreads.empty:
+        spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
+        spreads = spreads[
+            abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION
+        ]
+
         spreads["strike_premium"] = spreads.apply(
             add_strike_premium, axis=1, args=(CALL_OPTION,)
         )
@@ -212,10 +214,12 @@ def get_put_spreads(spreads):
         & (spreads["put_yesterday_price"] > 0)
     ]
 
-    spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
-    spreads = spreads[abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION]
-
     if not spreads.empty:
+        spreads["strike_deviation"] = spreads.apply(strike_deviation, axis=1)
+        spreads = spreads[
+            abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION
+        ]
+
         spreads["strike_premium"] = spreads.apply(
             add_strike_premium, axis=1, args=(PUT_OPTION,)
         )
@@ -334,9 +338,8 @@ def stock_option_price_spread_main():
         mongo_client.insert_docs_into_collection(documents=last_spreads)
 
 
-def stock_option_price_spread(run_mode: str = AUTO_MODE):
+def stock_option_price_spread():
 
     run_main_task(
         main_task=stock_option_price_spread_main,
-        kw_args={"run_mode": run_mode},
     )

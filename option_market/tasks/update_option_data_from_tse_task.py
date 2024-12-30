@@ -170,4 +170,5 @@ def update_option_data_from_tse(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=update_option_data_from_tse_main,
+        kw_args={"run_mode": run_mode},
     )

@@ -275,5 +275,4 @@ def stock_option_value_change(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=stock_option_value_change_main,
-        kw_args={"run_mode": run_mode},
     )

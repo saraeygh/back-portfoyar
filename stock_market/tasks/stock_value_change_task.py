@@ -87,10 +87,8 @@ def stock_value_change_main():
     mongo_client.insert_docs_into_collection(documents=value_change)
 
 
-def stock_value_change(run_mode: str = AUTO_MODE):
+def stock_value_change():
 
     run_main_task(
         main_task=stock_value_change_main,
-        kw_args={"run_mode": run_mode},
-        daily=True,
     )

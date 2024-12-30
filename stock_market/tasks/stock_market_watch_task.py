@@ -26,7 +26,7 @@ def get_time(row):
 
 
 def calculate_buy_order_value(row):
-    buy_orders = row.get("order_book")
+    buy_orders = row.get("order_book", [])
     total_buy_value = 0
     for order_row in buy_orders:
         try:
