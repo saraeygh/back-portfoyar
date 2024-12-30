@@ -7,6 +7,7 @@ from global_market.views import (
     GlobalPriceChartAPIView,
     GlobalRatioChartAPIView,
     MeanDeviationAPIView,
+    MeanDeviationAPIViewV2,
     RelatedStockAPIView,
     UploadXLSXDataAPIView,
     UploadRelationAPIView,
@@ -41,6 +42,8 @@ chart_urls = [
 
 strategy_urls = [
     path("mean-deviation/", MeanDeviationAPIView.as_view()),
+    # MEAN-DEVIATION NEW VERSION
+    path("top-price-change/", MeanDeviationAPIViewV2.as_view()),
     path("related-stock/", RelatedStockAPIView.as_view()),
 ]
 

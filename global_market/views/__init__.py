@@ -5,6 +5,9 @@ from .get_commodity_list_apiview import GetCommodityListAPIView
 from .get_transit_list_apiview import GetTransitListAPIView
 from .global_price_chart_apiview import GlobalPriceChartAPIView
 from .global_ratio_chart_apiview import GlobalRatioChartAPIView
-from .mean_deviation_strategy_apiview import MeanDeviationAPIView
+from .mean_deviation_strategy_apiview import (
+    MeanDeviationAPIView,
+    MeanDeviationAPIViewV2,
+)
 from .upload_relation_apiview import UploadRelationAPIView
 from .related_stock_apiview import RelatedStockAPIView
