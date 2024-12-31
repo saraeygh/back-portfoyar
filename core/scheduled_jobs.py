@@ -113,7 +113,7 @@ def add_core_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-17",
+        hour="9-17",
         minute="*/5",
     )
 
@@ -249,7 +249,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         second="*/40",
     )
 
@@ -275,7 +275,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         second="*/20",
     )
 
@@ -285,7 +285,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         second="*/55",
     )
 
@@ -317,7 +317,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         minute="*/5",
     )
 
@@ -338,7 +338,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         minute="*/1",
     )
 
@@ -359,7 +359,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         minute="*/5",
     )
 
@@ -369,7 +369,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="8-15",
+        hour="9-15",
         minute="*/1",
     )
 
