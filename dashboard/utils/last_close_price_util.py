@@ -1,5 +1,6 @@
 from pytz import timezone
-import jdatetime
+import jdatetime as jdt
+
 from core.utils import RedisInterface, MongodbInterface
 from core.configs import STOCK_REDIS_DB, DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION
 
@@ -42,15 +43,13 @@ def add_close_price_change(row):
 
 
 def check_date():
-    today_datetime = jdatetime.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
     date = today_datetime.strftime("%Y-%m-%d")
     time = today_datetime.strftime("%H:%M")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
-    if one_doc:
-        doc_date = one_doc.get("date")
-        if date != doc_date:
-            mongo_conn.collection.delete_many({})
+    if one_doc and one_doc["date"] != date:
+        mongo_conn.collection.delete_many({})
 
     return date, time
 

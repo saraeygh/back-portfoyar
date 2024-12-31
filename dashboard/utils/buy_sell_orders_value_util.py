@@ -1,6 +1,7 @@
 from pytz import timezone
+
 import pandas as pd
-import jdatetime
+import jdatetime as jdt
 
 from core.utils import RedisInterface, MongodbInterface
 from core.configs import (
@@ -42,19 +43,18 @@ def add_sell_value(row):
     order_book.rename(columns=TSE_ORDER_BOOK, inplace=True)
     order_book["sell_value"] = order_book["sell_volume"] * order_book["sell_price"]
     sell_value = order_book["sell_value"].sum()
+
     return sell_value
 
 
 def check_date():
-    today_datetime = jdatetime.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
     date = today_datetime.strftime("%Y-%m-%d")
     time = today_datetime.strftime("%H:%M")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
-    if one_doc:
-        doc_date = one_doc.get("date")
-        if date != doc_date:
-            mongo_conn.collection.delete_many({})
+    if one_doc and one_doc["date"] != date:
+        mongo_conn.collection.delete_many({})
 
     return date, time
 

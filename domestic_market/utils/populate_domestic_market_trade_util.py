@@ -1,65 +1,72 @@
-from difflib import SequenceMatcher
 import json
-import time
 from datetime import datetime, timedelta
+
 from tqdm import tqdm
-import jdatetime
-import pandas as pd
+import jdatetime as jdt
+from colorama import Fore, Style
+
+from core.utils import get_http_response, get_deviation_percent
+
 from domestic_market.models import (
     DomesticCommodity,
     DomesticProducer,
     DomesticTrade,
     DomesticTradesHistoryFetch,
 )
-from core.utils import get_http_response, get_deviation_percent
-from colorama import Fore, Style
 
 TRADES_HISTORY_TIME_PERIOD = 90
 FIRST_TRADE_DATE_STR = "1380/01/01"
 
+HEADERS = {
+    "Host": "www.ime.co.ir",
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0",
+    "Accept": "text/plain, */*; q=0.01",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Content-Type": "application/json; charset=utf-8",
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Length": "119",
+    "Origin": "https://www.ime.co.ir",
+    "Connection": "keep-alive",
+    "Referer": "https://www.ime.co.ir/offer-stat.html",
+    "Cookie": "ASP.NET_SessionId=zebwrt1sbsuvpw30ze4wgub3; SiteBikeLoadBanacer=9609d25e7d6e5b16cafdd45c3cf1d1ebdb204366ac7135985c4cd71dffa8dd38",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "TE": "trailers",
+}
 
-def get_producer_id(producer_name, producer_names_list):
-    ratios = []
-    for name in producer_names_list:
-        ratio = SequenceMatcher(None, producer_name, name).ratio()
-        ratios.append(ratio)
+URL = "https://www.ime.co.ir/subsystems/ime/services/home/imedata.asmx/GetAmareMoamelatList"
 
-    max_ratio = max(ratios)
-    max_ratio_index = ratios.index(max_ratio)
-    matched_name = producer_names_list[max_ratio_index]
 
-    producer_id = DomesticProducer.objects.filter(name=matched_name).first().id
+def get_date_str_from_gregorian(date_obj):
+    return jdt.date.fromgregorian(date=date_obj, locale="fa_IR").strftime("%Y/%m/%d")
 
-    return producer_id
+
+def get_gregorian_trade_obj(date_str):
+    year, month, day = map(int, date_str.split("/"))
+    return jdt.date(year=year, month=month, day=day).togregorian()
+
+
+def get_producer(producer_name):
+    producer = DomesticProducer.objects.filter(name=producer_name)
+    if producer.count() == 0:
+        return None
+    if producer.count() == 1:
+        return producer.first()
+    else:
+        return producer.order_by("code").last()
 
 
 def last_trade_date():
-    return (
-        DomesticTrade.objects.order_by("trade_date")
-        .values_list("trade_date", flat=True)
-        .last()
-    )
+    last_trade = DomesticTrade.objects.order_by("trade_date").last()
+    if last_trade:
+        return last_trade.trade_date
+
+    return None
 
 
 def get_trades_between_dates(start_date: str, end_date: str):
-    HEADERS = {
-        "Host": "www.ime.co.ir",
-        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0",
-        "Accept": "text/plain, */*; q=0.01",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Content-Type": "application/json; charset=utf-8",
-        "X-Requested-With": "XMLHttpRequest",
-        "Content-Length": "119",
-        "Origin": "https://www.ime.co.ir",
-        "Connection": "keep-alive",
-        "Referer": "https://www.ime.co.ir/offer-stat.html",
-        "Cookie": "ASP.NET_SessionId=zebwrt1sbsuvpw30ze4wgub3; SiteBikeLoadBanacer=9609d25e7d6e5b16cafdd45c3cf1d1ebdb204366ac7135985c4cd71dffa8dd38",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-        "TE": "trailers",
-    }
     PAYLOAD = {
         "Language": 8,
         "fari": "false",
@@ -70,8 +77,6 @@ def get_trades_between_dates(start_date: str, end_date: str):
         "SubCat": 0,
         "Producer": 0,
     }
-
-    URL = "https://www.ime.co.ir/subsystems/ime/services/home/imedata.asmx/GetAmareMoamelatList"
 
     print(
         Fore.BLUE
@@ -91,22 +96,18 @@ def get_trades_between_dates(start_date: str, end_date: str):
 
     except Exception:
         year, month, day = map(int, end_date.split("/"))
-        start_date_obj = jdatetime.date(year=year, month=month, day=day)
-        start_date_str = str(start_date_obj).replace("-", "/")
+        start_obj = jdt.date(year=year, month=month, day=day)
+        start_str = start_obj.strftime("%Y/%m/%d")
 
-        end_date_obj = start_date_obj + jdatetime.timedelta(
-            days=TRADES_HISTORY_TIME_PERIOD
-        )
-        end_date_str = str(end_date_obj).replace("-", "/")
+        end_obj = start_obj + jdt.timedelta(days=TRADES_HISTORY_TIME_PERIOD)
+        end_str = end_obj.strftime("%Y/%m/%d")
 
-        return get_trades_between_dates(
-            start_date=start_date_str, end_date=end_date_str
-        )
+        return get_trades_between_dates(start_date=start_str, end_date=end_str)
 
     return trade_list_of_dict
 
 
-def populate_trades_between_dates(start_date: str, end_date: str, producer_names: list):
+def populate_trades_between_dates(start_date: str, end_date: str):
     new_trade_history = DomesticTradesHistoryFetch(
         start_date=start_date, end_date=end_date, request_sent=True
     )
@@ -121,46 +122,29 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
     new_trade_history.start_populating_db = True
     new_trade_history.save()
 
-    trades_list_of_dict_df = pd.DataFrame(trades_list_of_dict)
-    if trades_list_of_dict_df.empty:
-        trades_list_of_dict_df = []
-    else:
-
-        trades_list_of_dict_df = trades_list_of_dict_df[
-            trades_list_of_dict_df["Quantity"] != 0
-        ]
-        trades_list_of_dict = trades_list_of_dict_df.to_dict(orient="records")
-
     trades_bulk_list = []
     for trade in tqdm(
-        trades_list_of_dict,
-        desc=f"Domestic {start_date} to {end_date}",
-        ncols=10,
+        trades_list_of_dict, desc=f"Domestic {start_date} to {end_date}", ncols=10
     ):
-        _, _, commodity_code = map(int, trade.get("Category").split("-"))
-        if DomesticCommodity.objects.filter(code=commodity_code).exists():
-            commodity_id = (
-                DomesticCommodity.objects.filter(code=commodity_code).first().id
-            )
-        else:
+        if trade["Quantity"] <= 0:
             continue
 
-        producer_name = trade.get("ProducerName")
-        producer_id = get_producer_id(
-            producer_name=producer_name, producer_names_list=producer_names
-        )
+        _, _, commodity_code = map(int, trade.get("Category").split("-"))
+        try:
+            commodity = DomesticCommodity.objects.get(code=commodity_code)
+        except DomesticCommodity.DoesNotExist:
+            continue
 
-        year, month, day = map(int, trade.get("date").split("/"))
-        trade_date = jdatetime.date(year=year, month=month, day=day).togregorian()
+        producer = get_producer(trade["ProducerName"])
+        if producer is None:
+            continue
+
+        trade_date = get_gregorian_trade_obj(trade.get("date"))
 
         try:
-            year, month, day = map(int, trade.get("DeliveryDate").split("/"))
-        except Exception as e:
-            print(Fore.RED)
-            print(e)
-            print(Style.RESET_ALL)
-            continue
-        delivery_date = jdatetime.date(year=year, month=month, day=day).togregorian()
+            delivery_date = get_gregorian_trade_obj(trade.get("DeliveryDate"))
+        except Exception:
+            delivery_date = get_gregorian_trade_obj(trade.get("date"))
 
         base_price = trade.get("ArzeBasePrice")
         close_price = trade.get("Price")
@@ -170,8 +154,8 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
             competition = get_deviation_percent(close_price, base_price)
 
         new_trade = DomesticTrade(
-            commodity_id=commodity_id,
-            producer_id=producer_id,
+            commodity=commodity,
+            producer=producer,
             trade_date=trade_date,
             delivery_date=delivery_date,
             base_price=base_price,
@@ -209,56 +193,30 @@ def populate_trades_between_dates(start_date: str, end_date: str, producer_names
 
 
 def populate_domestic_market_trade():
-    db_producer_names = DomesticProducer.objects.all().values("name")
-    db_producer_names = [producer_name["name"] for producer_name in db_producer_names]
-
     today_date_obj = datetime.today().date()
-
     last_date_obj = last_trade_date()
+
     if last_date_obj is None:
-        start_date_str = FIRST_TRADE_DATE_STR
-        year, month, day = map(int, start_date_str.split("/"))
-        last_date_obj = jdatetime.date(year=year, month=month, day=day).togregorian()
+        start_str = FIRST_TRADE_DATE_STR
+        last_date_obj = get_gregorian_trade_obj(start_str)
     else:
-        start_date_str = str(
-            jdatetime.date.fromgregorian(date=last_date_obj, locale="fa_IR")
-        ).replace("-", "/")
+        start_str = get_date_str_from_gregorian(last_date_obj)
 
-    end_date_str = str(
-        jdatetime.date.fromgregorian(date=today_date_obj, locale="fa_IR")
-    ).replace("-", "/")
+    end_str = get_date_str_from_gregorian(today_date_obj)
 
-    if (
-        timedelta(days=0)
-        <= today_date_obj - last_date_obj
-        < timedelta(days=TRADES_HISTORY_TIME_PERIOD)
-    ):
-        populate_trades_between_dates(
-            start_date=start_date_str,
-            end_date=end_date_str,
-            producer_names=db_producer_names,
-        )
+    trade_history_duration = (today_date_obj - last_date_obj).days
+    if 0 <= trade_history_duration < TRADES_HISTORY_TIME_PERIOD:
+        populate_trades_between_dates(start_date=start_str, end_date=end_str)
 
     else:
-        iter_num = (
-            ((today_date_obj - last_date_obj).days) // TRADES_HISTORY_TIME_PERIOD
-        ) + 1
-        start_date_obj = last_date_obj
+        iter_num = (trade_history_duration // TRADES_HISTORY_TIME_PERIOD) + 1
+        start_obj = last_date_obj
         for _ in range(iter_num):
-            end_date_obj = start_date_obj + timedelta(days=TRADES_HISTORY_TIME_PERIOD)
+            end_obj = start_obj + timedelta(days=TRADES_HISTORY_TIME_PERIOD)
 
-            start_date_str = str(
-                jdatetime.date.fromgregorian(date=start_date_obj, locale="fa_IR")
-            ).replace("-", "/")
+            start_str = get_date_str_from_gregorian(start_obj)
+            end_str = get_date_str_from_gregorian(end_obj)
 
-            end_date_str = str(
-                jdatetime.date.fromgregorian(date=end_date_obj, locale="fa_IR")
-            ).replace("-", "/")
+            populate_trades_between_dates(start_date=start_str, end_date=end_str)
 
-            populate_trades_between_dates(
-                start_date=start_date_str,
-                end_date=end_date_str,
-                producer_names=db_producer_names,
-            )
-
-            start_date_obj = end_date_obj
+            start_obj = end_obj
