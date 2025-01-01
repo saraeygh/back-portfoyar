@@ -1,4 +1,5 @@
 import pandas as pd
+from colorama import Fore, Style
 
 from core.utils import RedisInterface, run_main_task
 from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
@@ -20,7 +21,6 @@ from option_market.utils import (
     convert_int_date_to_str_date,
 )
 
-from colorama import Fore, Style
 
 redis_conn = RedisInterface(db=OPTION_REDIS_DB)
 

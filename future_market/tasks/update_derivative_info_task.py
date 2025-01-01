@@ -65,7 +65,7 @@ def update_info():
     for data in event_stream:
         try:
             data = json.loads(data.decode("utf-8").split("data:")[1])
-            data = data.get("M")
+            data = data.get("M", [])
             for datum in data:
                 key: str = datum.get("M")
                 value = datum.get("A")
@@ -82,8 +82,11 @@ def update_info():
                         + f" {key}"
                         + Style.RESET_ALL,
                     )
-        except Exception:
+        except (json.decoder.JSONDecodeError, IndexError):
             continue
+        except Exception as e:
+            print(Fore.RED + f"{e}" + Style.RESET_ALL)
+            raise e
 
 
 def update_derivative_info_main():

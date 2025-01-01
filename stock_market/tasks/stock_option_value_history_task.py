@@ -75,30 +75,25 @@ def stock_option_value_history_main():
                     "history": [],
                 },
             }
-            try:
-                base_equity_options: pd.DataFrame = options.loc[
-                    options["base_equity_symbol"] == base_equity
-                ]
+            base_equity_options: pd.DataFrame = options.loc[
+                options["base_equity_symbol"] == base_equity
+            ]
 
-                trade_dates = sorted(
-                    base_equity_options["trade_date"].unique().tolist()
-                )
-                for trade_date in trade_dates:
-                    trade_date_options: pd.DataFrame = base_equity_options.loc[
-                        options["trade_date"] == trade_date
-                    ]
-                    new_history = {
-                        "x": str(jdt.date.fromgregorian(date=trade_date)),
-                        "y": round(
-                            float(trade_date_options["value"].mean())
-                            / RIAL_TO_MILLION_TOMAN,
-                            3,
-                        ),
-                    }
-                    base_equity_value_history["chart"]["history"].append(new_history)
-                option_value_mean_history.append(base_equity_value_history)
-            except Exception:
-                continue
+            trade_dates = sorted(base_equity_options["trade_date"].unique().tolist())
+            for trade_date in trade_dates:
+                trade_date_options: pd.DataFrame = base_equity_options.loc[
+                    options["trade_date"] == trade_date
+                ]
+                new_history = {
+                    "x": str(jdt.date.fromgregorian(date=trade_date)),
+                    "y": round(
+                        float(trade_date_options["value"].mean())
+                        / RIAL_TO_MILLION_TOMAN,
+                        3,
+                    ),
+                }
+                base_equity_value_history["chart"]["history"].append(new_history)
+            option_value_mean_history.append(base_equity_value_history)
 
         if option_value_mean_history:
             if option_type == CALL_OPTION:

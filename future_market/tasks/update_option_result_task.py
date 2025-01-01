@@ -180,6 +180,7 @@ def add_base_equity_order_book(row):
 def add_symbol_to_option_data(row):
     contract_code = str(row.get("CallContractCode"))
     symbol = contract_code[0:2]
+
     return symbol
 
 
@@ -205,6 +206,7 @@ def change_str_last_update_to_int(row, col_name):
     try:
         last_update = str(row.get(col_name))
         last_update = int(last_update.replace(":", ""))
+        pass
     except Exception:
         last_update = 0
 
@@ -212,15 +214,12 @@ def change_str_last_update_to_int(row, col_name):
 
 
 def shorten_option_symbol(row, col_name):
-    try:
-        shortened_option_symbol = str(row.get(col_name))
-        for to_replace, replacement in REPLACE_SYMBOL_DICT.items():
-            shortened_option_symbol = shortened_option_symbol.replace(
-                to_replace, replacement
-            )
-        return shortened_option_symbol
-    except Exception:
-        return str(row.get(col_name))
+    shortened_option_symbol = str(row.get(col_name))
+    for to_replace, replacement in REPLACE_SYMBOL_DICT.items():
+        shortened_option_symbol = shortened_option_symbol.replace(
+            to_replace, replacement
+        )
+    return shortened_option_symbol
 
 
 def update_option_result_main():

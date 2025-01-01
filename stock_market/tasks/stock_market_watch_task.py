@@ -5,6 +5,8 @@ from tqdm import tqdm
 
 from core.utils import RedisInterface, MongodbInterface, run_main_task
 from core.configs import (
+    AUTO_MODE,
+    MANUAL_MODE,
     TO_MILLION,
     RIAL_TO_BILLION_TOMAN,
     STOCK_MONGO_DB,
@@ -13,7 +15,11 @@ from core.configs import (
     STOCK_REDIS_DB,
 )
 
-from stock_market.utils import MAIN_PAPER_TYPE_DICT, get_market_watch_data_from_redis
+from stock_market.utils import (
+    MAIN_PAPER_TYPE_DICT,
+    get_market_watch_data_from_redis,
+    is_market_open,
+)
 
 
 def get_time(row):
@@ -156,67 +162,79 @@ def get_history(row, index_name):
 redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 
-def update_market_watch_indices_main():
-    market_watch = update_market_watch_data(get_market_watch_data_from_redis())
+def update_market_watch_indices_main(run_mode):
+    if run_mode == MANUAL_MODE or is_market_open():
+        market_watch = update_market_watch_data(get_market_watch_data_from_redis())
 
-    if market_watch.empty:
-        return
+        if market_watch.empty:
+            return
 
-    market_watch.drop_duplicates(subset=["symbol"], keep="last", inplace=True)
+        market_watch.drop_duplicates(subset=["symbol"], keep="last", inplace=True)
 
-    common_columns = [
-        "ins_code",
-        "link",
-        "symbol",
-        "name",
-        "last_time",
-        "last_date",
-        "trade_count",
-        "volume",
-        "value",
-        "closing_price",
-        "closing_price_change",
-        "last_price",
-        "last_price_change",
-        "market_type",
-        "paper_type",
-    ]
-    index_list = ["buy_pressure", "money_flow", "buy_value", "buy_ratio", "sell_ratio"]
-    for index_name in tqdm(index_list, desc="Update indices", ncols=10):
-        index_columns = common_columns + [index_name]
-        index_df = market_watch[index_columns]
+        common_columns = [
+            "ins_code",
+            "link",
+            "symbol",
+            "name",
+            "last_time",
+            "last_date",
+            "trade_count",
+            "volume",
+            "value",
+            "closing_price",
+            "closing_price_change",
+            "last_price",
+            "last_price_change",
+            "market_type",
+            "paper_type",
+        ]
+        index_list = [
+            "buy_pressure",
+            "money_flow",
+            "buy_value",
+            "buy_ratio",
+            "sell_ratio",
+        ]
+        for index_name in tqdm(index_list, desc="Update indices", ncols=10):
+            index_columns = common_columns + [index_name]
+            index_df = market_watch[index_columns]
 
-        index_df.loc[:, :] = index_df.replace([np.inf, -np.inf], np.nan)
-        index_df = index_df.dropna()
+            index_df.loc[:, :] = index_df.replace([np.inf, -np.inf], np.nan)
+            index_df = index_df.dropna()
 
-        mongo_client = MongodbInterface(
-            db_name=STOCK_MONGO_DB, collection_name=index_name
-        )
-        history_df = list(mongo_client.collection.find({}, {"_id": 0}))
-        history_df = pd.DataFrame(history_df)
-        if history_df.empty:
-            index_df["history"] = NO_DAILY_HISTORY
-            index_df["last_history_date"] = NO_HISTORY_DATE
-        else:
-            history_df = history_df[["ins_code", "history", "last_date"]]
-            history_df = history_df.rename(columns={"last_date": "last_history_date"})
-            index_df = index_df.merge(right=history_df, on="ins_code", how="left")
+            mongo_client = MongodbInterface(
+                db_name=STOCK_MONGO_DB, collection_name=index_name
+            )
+            history_df = list(mongo_client.collection.find({}, {"_id": 0}))
+            history_df = pd.DataFrame(history_df)
+            if history_df.empty:
+                index_df["history"] = NO_DAILY_HISTORY
+                index_df["last_history_date"] = NO_HISTORY_DATE
+            else:
+                history_df = history_df[["ins_code", "history", "last_date"]]
+                history_df = history_df.rename(
+                    columns={"last_date": "last_history_date"}
+                )
+                index_df = index_df.merge(right=history_df, on="ins_code", how="left")
 
-        index_df["history"] = index_df["history"].replace(np.nan, NO_DAILY_HISTORY)
-        index_df["last_history_date"] = index_df["last_history_date"].replace(
-            np.nan, NO_HISTORY_DATE
-        )
+            index_df["history"] = index_df["history"].replace(np.nan, NO_DAILY_HISTORY)
+            index_df["last_history_date"] = index_df["last_history_date"].replace(
+                np.nan, NO_HISTORY_DATE
+            )
 
-        index_df["history"] = index_df.apply(check_update_status, axis=1)
-        index_df["history"] = index_df.apply(get_history, axis=1, args=(index_name,))
-        index_df.drop("last_history_date", axis=1, inplace=True)
-        index_df = index_df.to_dict(orient="records")
+            index_df["history"] = index_df.apply(check_update_status, axis=1)
+            index_df["history"] = index_df.apply(
+                get_history, axis=1, args=(index_name,)
+            )
+            index_df.drop("last_history_date", axis=1, inplace=True)
+            index_df = index_df.to_dict(orient="records")
 
-        mongo_client.insert_docs_into_collection(documents=index_df)
+            mongo_client.insert_docs_into_collection(documents=index_df)
 
 
-def update_market_watch_indices():
+def update_market_watch_indices(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=update_market_watch_indices_main,
+        kw_args={"run_mode": run_mode},
     )

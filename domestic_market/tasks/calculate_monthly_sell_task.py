@@ -1,7 +1,8 @@
-import jdatetime
+import jdatetime as jdt
 from tqdm import trange
 
 from django.db.models import Avg, Sum, Min, Max
+
 from core.utils import run_main_task
 
 from domestic_market.models import (
@@ -10,22 +11,18 @@ from domestic_market.models import (
 )
 
 
-def calculate_end_date(start_date: jdatetime.date):
+def calculate_end_date(start_date: jdt.date):
     end_date_month = start_date.month + 1 if start_date.month < 12 else 1
-
     end_date_year = start_date.year + 1 if end_date_month == 1 else start_date.year
-
-    end_date = jdatetime.date(end_date_year, end_date_month, 1) - jdatetime.timedelta(
-        days=1
-    )
+    end_date = jdt.date(end_date_year, end_date_month, 1) - jdt.timedelta(days=1)
 
     return end_date
 
 
 def calculate_month_sell(start_date, end_date):
     bulk_monthly_list = []
-    start_date_gregorian = jdatetime.date.togregorian(start_date)
-    end_date_gregorian = jdatetime.date.togregorian(end_date)
+    start_date_gregorian = jdt.date.togregorian(start_date)
+    end_date_gregorian = jdt.date.togregorian(end_date)
 
     trades = DomesticTrade.objects.filter(
         trade_date__range=(start_date_gregorian, end_date_gregorian)
@@ -41,7 +38,6 @@ def calculate_month_sell(start_date, end_date):
         )
 
         for commodity_name in commodities_name_list:
-
             exclude_in_advance_trades = (
                 trades.filter(producer_id=producer_id)
                 .filter(commodity_name=commodity_name)
@@ -195,6 +191,7 @@ def calculate_month_sell(start_date, end_date):
                 previous_monthly_sell = previous_monthly_sell.first()
                 previous_monthly_sell.min_value = monthly_sell["min_value"]
                 previous_monthly_sell.max_value = monthly_sell["max_value"]
+                previous_monthly_sell.mean_value = monthly_sell["mean_value"]
                 previous_monthly_sell.total_value = monthly_sell["total_value"]
 
                 previous_monthly_sell.monthly_min_base_price = monthly_sell[
@@ -231,30 +228,26 @@ def calculate_month_sell(start_date, end_date):
                 pass
 
     if bulk_monthly_list:
-        bulk_created_list = DomesticMonthlySell.objects.bulk_create(bulk_monthly_list)
-    else:
-        bulk_created_list = []
-
-    return bulk_created_list
+        DomesticMonthlySell.objects.bulk_create(bulk_monthly_list)
 
 
 def calculate_monthly_sell_domestic_main():
     if DomesticMonthlySell.objects.exists():
         last_monthly_sell_date = DomesticMonthlySell.objects.last().start_date
-        last_monthly_sell_date = jdatetime.date.fromgregorian(
+        last_monthly_sell_date = jdt.date.fromgregorian(
             date=last_monthly_sell_date, locale="fa_IR"
         )
-        start_date = jdatetime.date(
+        start_date = jdt.date(
             last_monthly_sell_date.year, last_monthly_sell_date.month, 1
         )
     elif DomesticTrade.objects.exists():
         first_trade = DomesticTrade.objects.first().trade_date
-        first_trade = jdatetime.date.fromgregorian(date=first_trade, locale="fa_IR")
-        start_date = jdatetime.date(first_trade.year, first_trade.month, 1)
+        first_trade = jdt.date.fromgregorian(date=first_trade, locale="fa_IR")
+        start_date = jdt.date(first_trade.year, first_trade.month, 1)
     else:
         return
 
-    today_date = jdatetime.date.today()
+    today_date = jdt.date.today()
     duration = today_date - start_date
     iter_num = (duration.days // 30) + 1
 
@@ -263,7 +256,7 @@ def calculate_monthly_sell_domestic_main():
 
         calculate_month_sell(start_date=start_date, end_date=end_date)
 
-        start_date = end_date + jdatetime.timedelta(days=1)
+        start_date = end_date + jdt.timedelta(days=1)
 
 
 def calculate_monthly_sell_domestic():

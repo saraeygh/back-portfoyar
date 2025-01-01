@@ -27,8 +27,10 @@ SYMBOLS = "symbols"
 
 
 def filter_sandoq_base_equities(all_funds: pd.DataFrame):
-    filtered_funds = all_funds[~all_funds["Symbol"].str.contains(r"\d")]
+    if all_funds.empty:
+        return all_funds
 
+    filtered_funds = all_funds[~all_funds["Symbol"].str.contains(r"\d")]
     return filtered_funds
 
 
@@ -87,28 +89,28 @@ def update_base_equity_main():
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
-        try:
-            data = redis_conn.client.get(name=base_equity_key)
-            data = json.loads(data.decode("utf-8"))
-            data = pd.DataFrame(data)
-            data = (properties.get(FILTER))(data)
-            symbols = properties.get(SYMBOLS)
-            for index, symbol_code in symbols.items():
-                symbol_rows = data[data[properties.get(INDEX)].str.contains(index)]
-                symbol_rows = symbol_rows.to_dict(orient="records")
-                for row in symbol_rows:
-                    BaseEquity.objects.get_or_create(
-                        base_equity_key=base_equity_key,
-                        base_equity_name=row.get(properties.get(NAME)),
-                        derivative_symbol=symbol_code,
-                        unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
-                    )
-
-        except Exception as e:
-            print(Fore.RED)
-            print(e)
-            print(Style.RESET_ALL)
+        data = redis_conn.client.get(name=base_equity_key)
+        if data is None:
             continue
+        data = json.loads(data.decode("utf-8"))
+        data = pd.DataFrame(data)
+        data = (properties.get(FILTER))(data)
+        symbols = properties.get(SYMBOLS)
+        for index, symbol_code in symbols.items():
+            symbol_rows: pd.DataFrame = data[
+                data[properties.get(INDEX)].str.contains(index)
+            ]
+            if symbol_rows.empty:
+                continue
+
+            symbol_rows = symbol_rows.to_dict(orient="records")
+            for row in symbol_rows:
+                BaseEquity.objects.get_or_create(
+                    base_equity_key=base_equity_key,
+                    base_equity_name=row.get(properties.get(NAME)),
+                    derivative_symbol=symbol_code,
+                    unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
+                )
 
     print(
         Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL

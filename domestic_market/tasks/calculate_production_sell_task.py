@@ -1,5 +1,5 @@
-import jdatetime
 from tqdm import tqdm
+import jdatetime as jdt
 
 from django.db.models import Sum
 
@@ -9,23 +9,12 @@ from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_BILLION_TOMAN
 from domestic_market.models import DomesticMonthlySell
 
 
-def calculate_end_date(start_date: jdatetime.date):
+def calculate_next_start_date(start_date: jdt.date):
     end_date_month = start_date.month + 1 if start_date.month < 12 else 1
-
     end_date_year = start_date.year + 1 if end_date_month == 1 else start_date.year
-
-    end_date = jdatetime.date(end_date_year, end_date_month, 1) - jdatetime.timedelta(
-        days=1
-    )
+    end_date = jdt.date(end_date_year, end_date_month, 1)
 
     return end_date
-
-
-def next_month_start_date(start_date: jdatetime.date):
-    end_date = calculate_end_date(start_date=start_date)
-    next_start_date = end_date + jdatetime.timedelta(days=1)
-
-    return next_start_date
 
 
 def calculate_producer_production_sell(start_year: int, producer_id: int):
@@ -48,12 +37,12 @@ def calculate_producer_production_sell(start_year: int, producer_id: int):
     production_sell = dict()
     production_sell["producer_id"] = producer_id
     production_sell["report"] = list()
-    for month in range(1, 13):
+    for month in list(month_name_dict.keys()):
         month_report = {}
         month_report["month"] = month_name_dict.get(month)
-        for year in range(start_year, start_year + 2):
-            month_start_date = jdatetime.date(year=year, month=month, day=1)
-            month_start_date_gregorian = jdatetime.date.togregorian(month_start_date)
+        for year in [start_year, start_year + 1]:
+            month_start_date = jdt.date(year=year, month=month, day=1)
+            month_start_date_gregorian = jdt.date.togregorian(month_start_date)
 
             month_production_sell = (
                 DomesticMonthlySell.objects.filter(producer_id=producer_id)
@@ -67,8 +56,7 @@ def calculate_producer_production_sell(start_year: int, producer_id: int):
             dict_key = f"{year}"
             month_report[dict_key] = month_production_sell
 
-            month_end_date = calculate_end_date(start_date=month_start_date)
-            month_start_date = month_end_date + jdatetime.timedelta(days=1)
+            month_start_date = calculate_next_start_date(start_date=month_start_date)
 
         production_sell["report"].append(month_report)
 
@@ -80,7 +68,7 @@ def calculate_production_sell_domestic_main():
         "producer", flat=True
     )
 
-    current_date = jdatetime.date.today()
+    current_date = jdt.date.today()
     start_year = current_date.year - 1
 
     production_sell_list = []

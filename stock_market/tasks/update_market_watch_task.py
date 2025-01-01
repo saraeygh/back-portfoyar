@@ -70,7 +70,6 @@ redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 
 def update_market_watch_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
-
         additional_info = get_additional_info()
         market_watch = get_market_watch()
         market_watch = pd.merge(

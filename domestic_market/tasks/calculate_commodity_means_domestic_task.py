@@ -1,14 +1,21 @@
 from datetime import datetime, timedelta
-
-import jdatetime
+import pandas as pd
+import jdatetime as jdt
 from tqdm import tqdm
 
-from django.db.models import Sum, Avg
+from django.db.models import Sum
 
 from core.utils import MongodbInterface, get_deviation_percent, run_main_task
-from core.configs import DOMESTIC_MONGO_DB
+from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_MILLION_TOMAN
 
 from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRelation
+
+
+def date_obj_to_str(row):
+    trade_date = row.get("trade_date")
+    trade_date = jdt.date.fromgregorian(date=trade_date).strftime("%Y-%m-%d")
+
+    return trade_date
 
 
 def calculate_mean(duration: int, collection_name: str, producer_id_list):
@@ -30,23 +37,26 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
             )
         )
         for commodity_name in commodity_name_list:
-            commodity_trades_in_range = producer_trades_in_range.filter(
-                commodity_name=commodity_name
+            commodity_trades_in_range = (
+                producer_trades_in_range.filter(commodity_name=commodity_name)
+                .distinct("trade_date")
+                .order_by("trade_date")
             )
             if commodity_trades_in_range.count() < 2:
                 continue
 
-            commodity_last_trade = commodity_trades_in_range.order_by(
-                "-trade_date"
-            ).first()
-
-            domestic_mean = commodity_trades_in_range.exclude(
-                id=commodity_last_trade.id
+            history = pd.DataFrame(
+                commodity_trades_in_range.values("id", "trade_date", "close_price")
             )
+            commodity_last_trade = history.iloc[-1]
+            domestic_mean = history.iloc[:-1]["close_price"].mean()
 
-            domestic_mean = (domestic_mean.aggregate(domestic_mean=Avg("close_price")))[
-                "domestic_mean"
-            ]
+            history["trade_date"] = history.apply(date_obj_to_str, axis=1)
+            history.rename(
+                columns={"trade_date": "x", "close_price": "y"}, inplace=True
+            )
+            history["y"] = history["y"] / HEZAR_RIAL_TO_MILLION_TOMAN
+            history = history.to_dict(orient="records")
 
             try:
                 producer_value_total = (
@@ -71,16 +81,17 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
                 ) * 100
 
                 deviation = get_deviation_percent(
-                    commodity_last_trade.close_price, domestic_mean
+                    commodity_last_trade["close_price"], domestic_mean
                 )
 
             except (ZeroDivisionError, TypeError):
                 continue
 
-            shamsi_date = jdatetime.date.fromgregorian(
-                date=commodity_last_trade.trade_date, locale="fa_IR"
+            shamsi_date = jdt.date.fromgregorian(
+                date=commodity_last_trade["trade_date"], locale="fa_IR"
             )
-
+            id = commodity_last_trade["id"]
+            commodity_last_trade = DomesticTrade.objects.get(id=id)
             link = ""
             symbol = ""
             related_stock = DomesticRelation.objects.filter(
@@ -106,6 +117,12 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
                 "commodity_value_total": commodity_value_total,
                 "producer_value_total": producer_value_total,
                 "unit": commodity_last_trade.unit,
+                "chart": {
+                    "x_title": "تاریخ",
+                    "y_title": "قیمت (میلیون تومان)",
+                    "chart_title": f"روند تغییرات قیمت {commodity_name} در بازه انتخابی",
+                    "history": history,
+                },
             }
             mean_list.append(new_record)
 

@@ -143,7 +143,6 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
-    ###########################################################################
     scheduler.add_job(
         func=calculate_monthly_sell_domestic,
         id="calculate_monthly_sell_domestic_task",

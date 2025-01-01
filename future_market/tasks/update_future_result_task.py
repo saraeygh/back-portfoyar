@@ -76,31 +76,25 @@ def get_future_derivatives(derivative_symbol):
 def get_total_and_monthly_spread(
     open_position_price, base_equity_last_price, expiration, monthly_interest_rate
 ):
-    try:
-        total_spread = get_deviation_percent(
-            open_position_price, base_equity_last_price
-        )
-        expiration_date = datetime.fromisoformat(expiration).date()
-        today_date = datetime.now().date()
-        remained_day = (expiration_date - today_date).days
-        monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
-        spreads = {
-            "total_spread": total_spread,
-            "remained_day": remained_day,
-            "monthly_spread": monthly_spread,
-            "expiration_date": str(jdatetime.date.fromgregorian(date=expiration_date)),
-        }
-        return spreads
-
-    except Exception:
-        return None
+    total_spread = get_deviation_percent(open_position_price, base_equity_last_price)
+    expiration_date = datetime.fromisoformat(expiration).date()
+    today_date = datetime.now().date()
+    remained_day = (expiration_date - today_date).days
+    monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
+    spreads = {
+        "total_spread": total_spread,
+        "remained_day": remained_day,
+        "monthly_spread": monthly_spread,
+        "expiration_date": str(jdatetime.date.fromgregorian(date=expiration_date)),
+    }
+    return spreads
 
 
 def long_future_result(
     base_equity_row: dict, future_derivatives: list, monthly_interest_rate: float
 ):
     base_equity_last_price = base_equity_row.get("close")
-    if base_equity_last_price == 0:
+    if base_equity_last_price < 2:
         return []
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -108,7 +102,7 @@ def long_future_result(
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_sell_price")
-        if open_position_price == 0:
+        if open_position_price < 2:
             continue
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
@@ -146,7 +140,7 @@ def short_future_result(
     base_equity_row: list, future_derivatives: list, monthly_interest_rate: float
 ):
     base_equity_last_price = base_equity_row.get("close")
-    if base_equity_last_price == 0:
+    if base_equity_last_price < 2:
         return []
     contract_size = base_equity_row.get("contract_size", 1)
     base_equity_last_price = base_equity_last_price * contract_size
@@ -154,7 +148,7 @@ def short_future_result(
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_buy_price")
-        if open_position_price == 0:
+        if open_position_price < 2:
             continue
         expiration_date = row.get("expiration_date")
         spreads = get_total_and_monthly_spread(
@@ -210,34 +204,24 @@ FUTURE_STRATEGIES = {
 
 
 def update_future_main():
-    try:
-        monthly_interest_rate = FeatureToggle.objects.get(
-            name=MONTHLY_INTEREST_RATE["name"]
-        )
-        monthly_interest_rate = float(monthly_interest_rate.value)
-    except Exception:
-        monthly_interest_rate = 0
+    monthly_interest_rate = float(
+        FeatureToggle.objects.get(name=MONTHLY_INTEREST_RATE["name"]).value
+    )
 
     base_equities = BaseEquity.objects.all()
     for strategy_key, properties in FUTURE_STRATEGIES.items():
 
         strategy_result = list()
         for base_equity in tqdm(base_equities, desc=f"{strategy_key} result", ncols=10):
-            try:
-                base_equity_row = get_base_equity_row(base_equity)
-                future_derivatives = get_future_derivatives(
-                    base_equity.derivative_symbol
-                )
+            base_equity_row = get_base_equity_row(base_equity)
+            future_derivatives = get_future_derivatives(base_equity.derivative_symbol)
 
-                calculate_result = properties.get("calculate")
-                result = calculate_result(
-                    base_equity_row, future_derivatives, monthly_interest_rate
-                )
+            calculate_result = properties.get("calculate")
+            result = calculate_result(
+                base_equity_row, future_derivatives, monthly_interest_rate
+            )
 
-                strategy_result = add_to_strategy_result(strategy_result, result)
-
-            except Exception:
-                continue
+            strategy_result = add_to_strategy_result(strategy_result, result)
 
         if strategy_result:
             serialized_data = json.dumps(strategy_result)

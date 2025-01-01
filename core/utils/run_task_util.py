@@ -74,6 +74,8 @@ def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
         if daily:
             send_task_fail_success_email(task_name=TASK_NAME)
     except Exception as e:
+        print(Fore.RED + f"{e}" + Style.RESET_ALL)
         send_task_fail_success_email(task_name=TASK_NAME, exception=e)
+        return
 
     print_task_info(color="GREEN", name=TASK_NAME)

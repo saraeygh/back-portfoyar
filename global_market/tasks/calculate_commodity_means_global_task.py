@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-import jdatetime
+import pandas as pd
+import jdatetime as jdt
 from tqdm import tqdm
 
 from django.db.models import Avg
@@ -8,6 +9,13 @@ from core.utils import MongodbInterface, get_deviation_percent, run_main_task
 from core.configs import GLOBAL_MONGO_DB
 
 from global_market.models import GlobalCommodity, GlobalTrade
+
+
+def date_obj_to_str(row):
+    trade_date = row.get("trade_date")
+    trade_date = jdt.date.fromgregorian(date=trade_date).strftime("%Y-%m-%d")
+
+    return trade_date
 
 
 def calculate_mean(duration: int, collection_name: str, commodity_id_list):
@@ -51,6 +59,14 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
             except (ZeroDivisionError, TypeError):
                 continue
 
+            history = pd.DataFrame(
+                transit_trades_in_range.values("trade_date", "price")
+            )
+            history["trade_date"] = history.apply(date_obj_to_str, axis=1)
+            history.rename(columns={"trade_date": "x", "price": "y"}, inplace=True)
+            history["y"] = history["y"].astype(float)
+            history = history.to_dict(orient="records")
+
             new_record = {
                 "industry": transit_last_trade.commodity.commodity_type.industry.name,
                 "commodity_type": transit_last_trade.commodity.commodity_type.name,
@@ -58,10 +74,16 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
                 "transit": transit_last_trade.transit.transit_type,
                 "global_mean": float(global_mean),
                 "last_price_date": str(
-                    jdatetime.date.fromgregorian(date=transit_last_trade.trade_date)
+                    jdt.date.fromgregorian(date=transit_last_trade.trade_date)
                 ),
                 "global_last_price": float(transit_last_trade.price),
                 "deviation": float(deviation),
+                "chart": {
+                    "x_title": "تاریخ",
+                    "y_title": "قیمت (دلار)",
+                    "chart_title": f"روند تغییرات قیمت {transit_last_trade.commodity.name} در بازه انتخابی",
+                    "history": history,
+                },
             }
 
             mean_list.append(new_record)

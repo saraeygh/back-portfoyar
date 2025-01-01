@@ -5,12 +5,14 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
     STOCK_NA_ROI,
     AUTO_MODE,
+    MANUAL_MODE,
 )
 from core.utils import MongodbInterface, get_deviation_percent, run_main_task
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,
     get_market_watch_data_from_redis,
+    is_market_open,
 )
 
 
@@ -152,41 +154,43 @@ def calculate_industry_duration_roi(durations: dict):
         mongo_client.insert_docs_into_collection(documents=industry_roi_list)
 
 
-def update_instrument_roi_main():
-    mongo_client = MongodbInterface(
-        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
-    )
-    instrument_info = mongo_client.collection.find({}, {"_id": 0})
-    instrument_info = pd.DataFrame(instrument_info)
+def update_instrument_roi_main(run_mode):
+    if run_mode == MANUAL_MODE or is_market_open():
+        mongo_client = MongodbInterface(
+            db_name=STOCK_MONGO_DB, collection_name="instrument_info"
+        )
+        instrument_info = mongo_client.collection.find({}, {"_id": 0})
+        instrument_info = pd.DataFrame(instrument_info)
 
-    last_data = get_market_watch_data_from_redis()
-    if last_data.empty:
-        return
+        last_data = get_market_watch_data_from_redis()
+        if last_data.empty:
+            return
 
-    last_data["daily_roi"] = (
-        last_data["last_price_change"] / last_data["yesterday_price"]
-    ) * 100
-    last_data["close_mean"] = last_data["closing_price"]
-    last_data = last_data[["ins_code", "daily_roi", "close_mean"]]
+        last_data["daily_roi"] = (
+            last_data["last_price_change"] / last_data["yesterday_price"]
+        ) * 100
+        last_data["close_mean"] = last_data["closing_price"]
+        last_data = last_data[["ins_code", "daily_roi", "close_mean"]]
 
-    instrument_info = pd.merge(left=instrument_info, right=last_data, on="ins_code")
+        instrument_info = pd.merge(left=instrument_info, right=last_data, on="ins_code")
 
-    durations = {
-        7: "weekly_roi",
-        30: "monthly_roi",
-        90: "quarterly_roi",
-        180: "half_yearly_roi",
-        365: "yearly_roi",
-        1095: "three_years_roi",
-    }
+        durations = {
+            7: "weekly_roi",
+            30: "monthly_roi",
+            90: "quarterly_roi",
+            180: "half_yearly_roi",
+            365: "yearly_roi",
+            1095: "three_years_roi",
+        }
 
-    update_instrument_duration_roi(instrument_info=instrument_info)
+        update_instrument_duration_roi(instrument_info=instrument_info)
 
-    calculate_industry_duration_roi(durations=durations)
+        calculate_industry_duration_roi(durations=durations)
 
 
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=update_instrument_roi_main,
+        kw_args={"run_mode": run_mode},
     )

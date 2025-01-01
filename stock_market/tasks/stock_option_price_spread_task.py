@@ -6,6 +6,7 @@ from core.configs import (
     STOCK_MONGO_DB,
     OPTION_REDIS_DB,
     AUTO_MODE,
+    MANUAL_MODE,
     RIAL_TO_MILLION_TOMAN,
 )
 from core.utils import (
@@ -21,7 +22,7 @@ from option_market.utils import (
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
 )
-from stock_market.utils import CALL_OPTION, PUT_OPTION
+from stock_market.utils import CALL_OPTION, PUT_OPTION, is_market_open
 
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
@@ -319,27 +320,29 @@ def add_spread_history(mongo_client, last_spreads):
     return last_spreads
 
 
-def stock_option_price_spread_main():
-    spreads = get_last_options()
-    last_spreads = pd.DataFrame()
-    if not spreads.empty:
-        call_spreads = get_call_spreads(spreads)
-        put_spreads = get_put_spreads(spreads)
-        last_spreads = pd.DataFrame(call_spreads + put_spreads)
+def stock_option_price_spread_main(run_mode):
+    if run_mode == MANUAL_MODE or is_market_open():
+        spreads = get_last_options()
+        last_spreads = pd.DataFrame()
+        if not spreads.empty:
+            call_spreads = get_call_spreads(spreads)
+            put_spreads = get_put_spreads(spreads)
+            last_spreads = pd.DataFrame(call_spreads + put_spreads)
 
-    if not last_spreads.empty:
-        mongo_client = MongodbInterface(
-            db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
-        )
-        last_spreads["date"], _ = check_date(mongo_client)
-        last_spreads = add_spread_history(mongo_client, last_spreads)
+        if not last_spreads.empty:
+            mongo_client = MongodbInterface(
+                db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
+            )
+            last_spreads["date"], _ = check_date(mongo_client)
+            last_spreads = add_spread_history(mongo_client, last_spreads)
 
-        last_spreads = last_spreads.to_dict(orient="records")
-        mongo_client.insert_docs_into_collection(documents=last_spreads)
+            last_spreads = last_spreads.to_dict(orient="records")
+            mongo_client.insert_docs_into_collection(documents=last_spreads)
 
 
-def stock_option_price_spread():
+def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
     run_main_task(
         main_task=stock_option_price_spread_main,
+        kw_args={"run_mode": run_mode},
     )

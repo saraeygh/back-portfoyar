@@ -1,6 +1,7 @@
 import pandas as pd
 import jdatetime
 from tqdm import tqdm
+from colorama import Fore, Style
 
 from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
 from core.utils import (
@@ -116,7 +117,8 @@ def get_update_history(instrument, instrument_type):
             }
         )
 
-    except Exception:
+    except Exception as e:
+        print(Fore.RED + f"{e}" + Style.RESET_ALL)
         return
 
 

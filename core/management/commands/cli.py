@@ -208,13 +208,13 @@ def stock_cli(clear_cmd):
         match cmd:
             case "all":
                 update_market_watch(MANUAL_MODE)
-                update_market_watch_indices()
+                update_market_watch_indices(MANUAL_MODE)
                 update_instrument_info()
                 update_instrument_roi(MANUAL_MODE)
                 update_stock_raw_adjusted_history()
                 stock_value_history()
                 stock_option_value_change(MANUAL_MODE)
-                stock_option_price_spread()
+                stock_option_price_spread(MANUAL_MODE)
                 get_monthly_activity_report_letter()
             case "1":
                 get_monthly_activity_report_letter()
@@ -233,7 +233,7 @@ def stock_cli(clear_cmd):
             case "8":
                 stock_option_value_change(MANUAL_MODE)
             case "9":
-                stock_option_price_spread()
+                stock_option_price_spread(MANUAL_MODE)
             case "10":
                 update_stock_adjusted_history()
             case "0":
