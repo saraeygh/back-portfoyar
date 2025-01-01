@@ -52,7 +52,9 @@ def get_base_equity_row(base_equity):
     )
     base_equity_row = base_equity_row.to_dict(orient="records")
 
-    return base_equity_row[0]
+    if base_equity_row:
+        return base_equity_row[0]
+    return []
 
 
 def get_future_derivatives(derivative_symbol):
@@ -214,6 +216,8 @@ def update_future_main():
         strategy_result = list()
         for base_equity in tqdm(base_equities, desc=f"{strategy_key} result", ncols=10):
             base_equity_row = get_base_equity_row(base_equity)
+            if not base_equity_row:
+                continue
             future_derivatives = get_future_derivatives(base_equity.derivative_symbol)
 
             calculate_result = properties.get("calculate")

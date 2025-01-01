@@ -1,13 +1,15 @@
 from django.shortcuts import get_object_or_404
-from favorite.models import StockFavoriteROIGroup, ROIGroupInstrument
-from favorite.utils import get_instrument_roi
-from stock_market.serializers import FavoriteGroupMarketROISerailizer
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from stock_market.serializers import FavoriteGroupMarketROISerailizer
+
+from favorite.models import StockFavoriteROIGroup, ROIGroupInstrument
+from favorite.utils import get_instrument_roi
 
 
 @authentication_classes([TokenAuthentication])
@@ -35,4 +37,6 @@ class StockFavoriteROIInstrumentAPIView(APIView):
             instrument.delete()
             return Response({"message": "با موفقیت حذف شد."}, status=status.HTTP_200_OK)
 
-        return Response({"message": "این نماد وجود ندارد."}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "این نماد وجود ندارد."}, status=status.HTTP_400_BAD_REQUEST
+        )

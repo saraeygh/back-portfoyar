@@ -25,6 +25,7 @@ from .used_dicts_util import (
     MARKET_WATCH_COLS,
     INDIVIDUAL_LEGAL_COLS,
     FUND_PAPER,
+    OPTION_PAPER,
 )
 from .update_stock_raw_history_util import update_stock_raw_history
 from .update_stock_adjsuted_history_util import (
