@@ -11,7 +11,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 
 from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE
-from core.utils import MongodbInterface, TABLE_COLS_QP, ALL_TABLE_COLS, add_index_as_id
+from core.utils import (
+    MongodbInterface,
+    TABLE_COLS_QP,
+    ALL_TABLE_COLS,
+    SUMMARY_TABLE_COLS,
+    add_index_as_id,
+)
 
 from stock_market.permissions import HasStockSubscription
 from stock_market.serializers import (
@@ -53,8 +59,8 @@ class StockCallValueChangeAPIView(APIView):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        table = request.query_params.get(TABLE_COLS_QP)
-        if table and table == ALL_TABLE_COLS:
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
+        if table == ALL_TABLE_COLS:
             results = StockOptionValueChangeSerailizer(results, many=True)
         else:
             results = SummaryStockOptionValueChangeSerailizer(results, many=True)

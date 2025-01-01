@@ -12,6 +12,7 @@ from core.utils import (
     MongodbInterface,
     TABLE_COLS_QP,
     ALL_TABLE_COLS,
+    SUMMARY_TABLE_COLS,
     set_json_cache,
     get_cache_as_json,
     add_index_as_id,
@@ -56,7 +57,7 @@ def get_range_result(collection_name, range_name, table=None):
     range_result["id"] = range_result.apply(add_index_as_id, axis=1)
     range_result = range_result.to_dict(orient="records")
 
-    if table and table == ALL_TABLE_COLS:
+    if table == ALL_TABLE_COLS:
         range_result = DomesticMeanDeviationSerailizer(range_result, many=True)
     else:
         range_result = SummaryDomesticMeanDeviationSerailizer(range_result, many=True)
@@ -79,7 +80,7 @@ class MeanDeviationAPIView(APIView):
             365: "one_year_mean",
         }
 
-        table = request.query_params.get(TABLE_COLS_QP)
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
         cache_key = f"DOMESTIC_MEAN_DEVIATION_duration_{duration}_{str(table)}"
         cache_response = get_cache_as_json(cache_key)
 
@@ -141,7 +142,7 @@ def get_range_result_v2(collection_name, price_changes, table=None):
     range_result["id"] = range_result.apply(add_index_as_id, axis=1)
     range_result = range_result.to_dict(orient="records")
 
-    if table and table == ALL_TABLE_COLS:
+    if table == ALL_TABLE_COLS:
         range_result = DomesticMeanDeviationSerailizer(range_result, many=True)
     else:
         range_result = SummaryDomesticMeanDeviationSerailizer(range_result, many=True)
@@ -155,7 +156,7 @@ def get_range_result_v2(collection_name, price_changes, table=None):
 @permission_classes([IsAuthenticated, HasDomesticSubscription])
 class MeanDeviationAPIViewV2(APIView):
     def get(self, request):
-        table = request.query_params.get(TABLE_COLS_QP)
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
         duration = int(request.query_params.get("duration", 7))
         price_changes = request.query_params.get("price_changes", PRICE_CHANGES_POS)
 

@@ -8,7 +8,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.configs import STOCK_MONGO_DB
-from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
+from core.utils import (
+    MongodbInterface,
+    ALL_TABLE_COLS,
+    TABLE_COLS_QP,
+    SUMMARY_TABLE_COLS,
+    add_index_as_id,
+)
 
 from stock_market.serializers import (
     StockOptionPriceSpreadSerailizer,
@@ -43,8 +49,8 @@ class PriceSpreadStrategyAPIView(APIView):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        table = request.query_params.get(TABLE_COLS_QP)
-        if table and table == ALL_TABLE_COLS:
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
+        if table == ALL_TABLE_COLS:
             results = StockOptionPriceSpreadSerailizer(results, many=True)
         else:
             results = SummaryStockOptionPriceSpreadSerailizer(results, many=True)

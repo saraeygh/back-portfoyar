@@ -1,5 +1,6 @@
 TABLE_COLS_QP = "table"
 ALL_TABLE_COLS = "all"
+SUMMARY_TABLE_COLS = "summary"
 from .send_task_fail_success_email_util import send_task_fail_success_email
 from .run_task_util import print_task_info, run_main_task
 from .redis_interface_util import RedisInterface

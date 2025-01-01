@@ -14,6 +14,7 @@ from core.utils import (
     RedisInterface,
     TABLE_COLS_QP,
     ALL_TABLE_COLS,
+    SUMMARY_TABLE_COLS,
     set_json_cache,
     get_cache_as_json,
     replace_arabic_letters_pd,
@@ -61,7 +62,7 @@ def sort_strategy_result(positions, sort_column, strategy_key, table):
             replace_arabic_letters_pd, args=("base_equity_name",), axis=1
         )
 
-        if table and table == ALL_TABLE_COLS:
+        if table == ALL_TABLE_COLS:
             pass
         else:
             if strategy_key == "long_future":
@@ -106,7 +107,7 @@ class FuturePositionsAPIView(APIView):
     def post(self, request):
         strategy_key = request.data.get("strategy_key")
 
-        table = request.query_params.get(TABLE_COLS_QP)
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
         cache_key = f"FUTURE_POSITIONS_k_{strategy_key}_{str(table)}"
         cache_response = get_cache_as_json(cache_key)
 

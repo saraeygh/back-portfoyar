@@ -14,6 +14,7 @@ from core.utils import (
     MongodbInterface,
     TABLE_COLS_QP,
     ALL_TABLE_COLS,
+    SUMMARY_TABLE_COLS,
     set_json_cache,
     get_cache_as_json,
 )
@@ -66,8 +67,8 @@ class RelatedStockAPIView(APIView):
             related_stock.dropna(inplace=True)
             related_stock = related_stock.to_dict(orient="records")
 
-            table = request.query_params.get(TABLE_COLS_QP)
-            if table and table == ALL_TABLE_COLS:
+            table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
+            if table == ALL_TABLE_COLS:
                 related_stock = MarketROISerailizer(related_stock, many=True)
             else:
                 related_stock = SummaryMarketROISerailizer(related_stock, many=True)

@@ -11,7 +11,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.configs import STOCK_MONGO_DB, SIXTY_SECONDS_CACHE, STOCK_TOP_500_LIMIT
-from core.utils import MongodbInterface, ALL_TABLE_COLS, TABLE_COLS_QP, add_index_as_id
+from core.utils import (
+    MongodbInterface,
+    ALL_TABLE_COLS,
+    TABLE_COLS_QP,
+    SUMMARY_TABLE_COLS,
+    add_index_as_id,
+)
 
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 from stock_market.permissions import HasStockSubscription
@@ -47,8 +53,8 @@ class StockPersonBuyValueAPIView(APIView):
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
 
-        table = request.query_params.get(TABLE_COLS_QP)
-        if table and table == ALL_TABLE_COLS:
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
+        if table == ALL_TABLE_COLS:
             results = PersonBuyValueSerailizer(results, many=True)
         else:
             results = SummaryPersonBuyValueSerailizer(results, many=True)

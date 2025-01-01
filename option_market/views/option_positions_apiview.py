@@ -8,7 +8,13 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from core.configs import OPTION_REDIS_DB
-from core.utils import RedisInterface, TABLE_COLS_QP, ALL_TABLE_COLS, STRATEGIES
+from core.utils import (
+    RedisInterface,
+    TABLE_COLS_QP,
+    ALL_TABLE_COLS,
+    STRATEGIES,
+    SUMMARY_TABLE_COLS,
+)
 
 from option_market.permissions import HasOptionSubscription
 
@@ -47,7 +53,7 @@ def get_strategy_result_from_redis(strategy_key, table=None):
     strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
 
     strategy_result = pd.DataFrame(strategy_result)
-    if table and table == ALL_TABLE_COLS:
+    if table == ALL_TABLE_COLS:
         pass
     else:
         strategy_result = drop_unwanted_cols(strategy_result, strategy_key)
@@ -362,7 +368,7 @@ FILTER_DICT = {
 class OptionPositionsAPIView(APIView):
     def get(self, request, risk_level: str, strategy_key: str):
 
-        table = request.query_params.get(TABLE_COLS_QP)
+        table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
         if risk_level == "all_risk":
             strategy_result = get_strategy_result_from_redis(strategy_key, table)
             strategy_result = strategy_result.to_dict(orient="records")
