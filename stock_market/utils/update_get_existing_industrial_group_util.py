@@ -1,9 +1,12 @@
 import pandas as pd
 
-from core.utils import get_http_response, replace_all_arabic_letters_in_db
+from core.utils import (
+    TSETMC_REQUEST_HEADERS,
+    get_http_response,
+    replace_all_arabic_letters_in_db,
+)
 
 from stock_market.models import StockIndustrialGroup
-from .used_dicts_util import TSETMC_REQUEST_HEADERS
 
 
 URL = "https://cdn.tsetmc.com/api/StaticData/GetStaticData"

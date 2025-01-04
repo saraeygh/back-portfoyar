@@ -3,10 +3,9 @@ from tqdm import tqdm
 import pandas as pd
 from colorama import Fore, Style
 
-from core.utils import get_http_response, run_main_task
+from core.utils import TSETMC_REQUEST_HEADERS, get_http_response, run_main_task
 
 from stock_market.utils import (
-    TSETMC_REQUEST_HEADERS,
     HISTORY_COLUMN_RENAME,
     update_get_existing_industrial_group,
     update_get_existing_instrument,

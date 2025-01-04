@@ -1,8 +1,11 @@
 import pandas as pd
 
-from . import TSETMC_REQUEST_HEADERS
-from core.utils import get_http_response, replace_arabic_letters_pd
-from core.utils import RedisInterface
+from core.utils import (
+    RedisInterface,
+    TSETMC_REQUEST_HEADERS,
+    get_http_response,
+    replace_arabic_letters_pd,
+)
 from core.configs import STOCK_REDIS_DB, MARKET_WATCH_REDIS_KEY
 
 

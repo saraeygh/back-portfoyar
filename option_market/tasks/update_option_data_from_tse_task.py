@@ -1,15 +1,16 @@
 import pandas as pd
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, run_main_task
-from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
-from core.utils import get_http_response, replace_arabic_letters_pd
-
-from stock_market.utils import (
+from core.utils import (
+    RedisInterface,
     TSETMC_REQUEST_HEADERS,
-    get_last_market_watch_data,
-    is_market_open,
+    run_main_task,
+    get_http_response,
+    replace_arabic_letters_pd,
 )
+from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
+
+from stock_market.utils import get_last_market_watch_data, is_market_open
 
 from option_market.utils import (
     COMMON_OPTION_COLUMN,

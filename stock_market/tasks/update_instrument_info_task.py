@@ -5,6 +5,7 @@ from tqdm import tqdm
 from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import (
     MongodbInterface,
+    TSETMC_REQUEST_HEADERS,
     get_http_response,
     replace_arabic_letters,
     get_deviation_percent,
@@ -12,7 +13,6 @@ from core.utils import (
 )
 
 from stock_market.utils import (
-    TSETMC_REQUEST_HEADERS,
     MAIN_MARKET_TYPE_DICT,
     ALL_PAPER_TYPE_DICT,
     remove_expired_instruments,

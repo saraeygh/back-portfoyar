@@ -69,26 +69,6 @@ NO_DAILY_HISTORY = "NDH"
 NO_HISTORY_DATE = "NHD"
 STOCK_VALUE_CHANGE_DURATION = 30  # DAYS
 STOCK_OPTION_STRIKE_DEVIATION = 5  # PERCENT
-DEFAULT_RECOMMENDATION_CONFIG_NAME = "portfoyar_admin_default_recommendation_configs"
-MARKET_WATCH_URL = (
-    "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?"
-    "market=0&"
-    "industrialGroup=&"
-    "paperTypes[0]=1&"
-    "paperTypes[1]=2&"
-    "paperTypes[2]=3&"
-    "paperTypes[3]=4&"
-    "paperTypes[4]=5&"
-    "paperTypes[5]=6&"
-    "paperTypes[6]=7&"
-    "paperTypes[7]=8&"
-    "paperTypes[8]=9&"
-    "showTraded=true&"
-    "withBestLimits=true&"
-    "hEven=0&"
-    "RefID=0"
-)
-CLIENT_TYPE_URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
 
 ######################################################## COMMON
 # DOMESTIC & GLOBAL MEAN DEVIATION

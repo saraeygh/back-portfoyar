@@ -9,4 +9,3 @@ from .get_price_ratio_chart_util import (
 )
 from .get_dollar_price_history_util import get_dollar_price_history
 from .add_value_to_name_util import add_value_to_name
-from .get_dollar_latest_price_util import get_dollar_last_price

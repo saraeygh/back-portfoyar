@@ -40,10 +40,10 @@ SUCCESS_BODY = "SUCCESS"
 
 
 def get_exception_detail(exception):
-    response = get_http_response(req_url="https://api.ipify.org?format=text")
     public_ip = "UNKNOWN: "
+    response = get_http_response(req_url="https://api.ipify.org?format=json")
     if response:
-        public_ip = f"{response.text}: "
+        public_ip = f"{response.json().get("ip")}: "
 
     if exception == SUCCESS_BODY:
         exception_details = exception

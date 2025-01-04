@@ -17,7 +17,7 @@ IS_NOT_ACTIVE = "غیرفعال"
 def check_active_contracts_main():
 
     ACTIVE_CONTRACTS_URL = "https://www.ime.co.ir/list-gharardad-hayeati.html"
-    response = get_http_response(req_url=ACTIVE_CONTRACTS_URL, req_headers={})
+    response = get_http_response(req_url=ACTIVE_CONTRACTS_URL)
     contracts_table = (pd.read_html(response.text))[0]
     contracts_table.rename(columns=RENAME_COLS, inplace=True)
 

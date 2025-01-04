@@ -7,10 +7,10 @@ from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
 from core.utils import (
     MongodbInterface,
     RedisInterface,
+    TSETMC_REQUEST_HEADERS,
     get_http_response,
     run_main_task,
 )
-from stock_market.utils import TSETMC_REQUEST_HEADERS
 
 
 UNNECESSARY_COLUMNS = [

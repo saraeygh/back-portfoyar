@@ -1,6 +1,3 @@
-TABLE_COLS_QP = "table"
-ALL_TABLE_COLS = "all"
-SUMMARY_TABLE_COLS = "summary"
 from .get_http_response_util import get_http_response
 from .run_task_util import print_task_info, run_main_task
 from .redis_interface_util import RedisInterface
@@ -30,3 +27,43 @@ from .create_profile_for_users_with_no_profile_util import (
 )
 from .get_deviation_percent_util import get_deviation_percent
 from .persian_numbers_to_english_util import persian_numbers_to_english
+
+TABLE_COLS_QP = "table"
+ALL_TABLE_COLS = "all"
+SUMMARY_TABLE_COLS = "summary"
+
+CLIENT_TYPE_URL = "https://cdn.tsetmc.com/api/ClientType/GetClientTypeAll"
+MARKET_WATCH_URL = (
+    "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?"
+    "market=0&"
+    "industrialGroup=&"
+    "paperTypes[0]=1&"
+    "paperTypes[1]=2&"
+    "paperTypes[2]=3&"
+    "paperTypes[3]=4&"
+    "paperTypes[4]=5&"
+    "paperTypes[5]=6&"
+    "paperTypes[6]=7&"
+    "paperTypes[7]=8&"
+    "paperTypes[8]=9&"
+    "showTraded=true&"
+    "withBestLimits=true&"
+    "hEven=0&"
+    "RefID=0"
+)
+
+
+TSETMC_REQUEST_HEADERS = {
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Connection": "keep-alive",
+    "Host": "cdn.tsetmc.com",
+    "Origin": "https://main.tsetmc.com",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "Linux",
+}

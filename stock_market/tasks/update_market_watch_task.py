@@ -3,22 +3,17 @@ from colorama import Fore, Style
 
 from core.utils import (
     RedisInterface,
+    MARKET_WATCH_URL,
+    CLIENT_TYPE_URL,
+    TSETMC_REQUEST_HEADERS,
     get_http_response,
     replace_arabic_letters_pd,
     run_main_task,
 )
-from core.configs import (
-    MARKET_WATCH_URL,
-    CLIENT_TYPE_URL,
-    STOCK_REDIS_DB,
-    MARKET_WATCH_REDIS_KEY,
-    AUTO_MODE,
-    MANUAL_MODE,
-)
+from core.configs import STOCK_REDIS_DB, MARKET_WATCH_REDIS_KEY, AUTO_MODE, MANUAL_MODE
 
 from stock_market.models import StockInstrument
 from stock_market.utils import (
-    TSETMC_REQUEST_HEADERS,
     MARKET_WATCH_COLS,
     INDIVIDUAL_LEGAL_COLS,
     is_market_open,

@@ -1,9 +1,7 @@
-from core.utils import get_http_response
-
+from core.utils import MARKET_STATE, TSETMC_REQUEST_HEADERS, get_http_response
 from core.models import FeatureToggle, ACTIVE
-from core.utils import MARKET_STATE
 
-from . import MAIN_MARKET_TYPE_DICT, TSETMC_REQUEST_HEADERS
+from . import MAIN_MARKET_TYPE_DICT
 
 
 def get_market_state(market):

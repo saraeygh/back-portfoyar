@@ -1,16 +1,16 @@
 from datetime import datetime
-import requests
 import jdatetime
 
 from bs4 import BeautifulSoup
 
-from core.utils import run_main_task
+from core.utils import run_main_task, get_http_response
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
 
 
 def get_dollar_price_bs(URL: str):
-    response = requests.get(URL, timeout=20)
+
+    response = get_http_response(req_url=URL)
     response = response.text
     soup = BeautifulSoup(response, "html.parser")
     soup = soup.find_all("td")

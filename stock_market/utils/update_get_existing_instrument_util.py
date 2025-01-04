@@ -1,10 +1,10 @@
-from core.utils import get_http_response, replace_all_arabic_letters_in_db
-from stock_market.models import StockInstrument, StockIndustrialGroup
-from .used_dicts_util import (
+from core.utils import (
     TSETMC_REQUEST_HEADERS,
-    ALL_PAPER_TYPE_DICT,
-    MAIN_MARKET_TYPE_DICT,
+    get_http_response,
+    replace_all_arabic_letters_in_db,
 )
+from stock_market.models import StockInstrument, StockIndustrialGroup
+from .used_dicts_util import ALL_PAPER_TYPE_DICT, MAIN_MARKET_TYPE_DICT
 
 
 def update_get_existing_instrument():
