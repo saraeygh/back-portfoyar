@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import pandas as pd
+from tqdm import tqdm
+
 from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import (
     MongodbInterface,
@@ -8,16 +10,17 @@ from core.utils import (
     get_deviation_percent,
     run_main_task,
 )
+
 from stock_market.utils import (
     TSETMC_REQUEST_HEADERS,
     MAIN_MARKET_TYPE_DICT,
     ALL_PAPER_TYPE_DICT,
+    remove_expired_instruments,
 )
 from stock_market.utils import (
     update_get_existing_industrial_group,
     update_get_existing_instrument,
 )
-from tqdm import tqdm
 
 
 mongo_client = MongodbInterface(
@@ -48,7 +51,7 @@ def get_historical_roi(ins_code):
     full_history = mongo_client.collection.find_one(query_filter, {"_id": 0})
     if full_history is None:
         return historical_roi
-    full_history = pd.DataFrame(full_history["adjusted_history"])
+    full_history = pd.DataFrame(full_history.get("adjusted_history", []))
     if full_history.empty:
         return historical_roi
 
@@ -86,16 +89,15 @@ def get_historical_roi(ins_code):
 
 
 def update_instrument_info_main():
-    existing_industrial_group = update_get_existing_industrial_group()
-    existing_instruments = update_get_existing_instrument(existing_industrial_group)
+    update_get_existing_industrial_group()
+    update_get_existing_instrument()
 
     documents = list()
-    for ins_code, ins_obj in tqdm(
-        existing_instruments.items(), desc="Instrument info", ncols=10
-    ):
+    all_instruments = remove_expired_instruments()
+    for ins_obj in tqdm(all_instruments, desc="Instrument info", ncols=10):
         market_id = ins_obj.market_type
         paper_id = ins_obj.paper_type
-        URL = f"https://cdn.tsetmc.com/api/Instrument/GetInstrumentInfo/{ins_code}"
+        URL = f"https://cdn.tsetmc.com/api/Instrument/GetInstrumentInfo/{ins_obj.ins_code}"
 
         instrument_info = get_http_response(
             req_url=URL, req_headers=TSETMC_REQUEST_HEADERS
@@ -105,7 +107,7 @@ def update_instrument_info_main():
             instrument_info = instrument_info.get("instrumentInfo")
 
             info = {
-                "ins_code": ins_code,
+                "ins_code": ins_obj.ins_code,
                 "symbol": replace_arabic_letters(instrument_info.get("lVal18AFC")),
                 "name": replace_arabic_letters(instrument_info.get("lVal30")),
                 "last_update": instrument_info.get("dEven"),
@@ -140,7 +142,7 @@ def update_instrument_info_main():
         except Exception:
             continue
 
-        historical_roi = get_historical_roi(ins_code)
+        historical_roi = get_historical_roi(ins_obj.ins_code)
         info.update(historical_roi)
         documents.append(info)
 
