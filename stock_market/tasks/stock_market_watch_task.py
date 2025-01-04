@@ -119,6 +119,12 @@ def update_market_watch_data(market_watch: pd.DataFrame):
     market_watch["volume"] = market_watch["volume"] / TO_MILLION
     market_watch["base_volume"] = market_watch["base_volume"] / TO_MILLION
     market_watch["value"] = market_watch["value"] / RIAL_TO_BILLION_TOMAN
+    market_watch["buy_order_value"] = (
+        market_watch["buy_order_value"] / RIAL_TO_BILLION_TOMAN
+    )
+    market_watch["sell_order_value"] = (
+        market_watch["sell_order_value"] / RIAL_TO_BILLION_TOMAN
+    )
     market_watch["last_price_change"] = (
         market_watch["last_price_change"] / market_watch["yesterday_price"]
     ) * 100
@@ -187,6 +193,8 @@ def update_market_watch_indices_main(run_mode):
             "last_price_change",
             "market_type",
             "paper_type",
+            "buy_order_value",
+            "sell_order_value",
         ]
         index_list = [
             "buy_pressure",

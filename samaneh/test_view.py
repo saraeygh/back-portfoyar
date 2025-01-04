@@ -2,13 +2,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from stock_market.utils import remove_expired_instruments
-
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
-        remove_expired_instruments()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 
