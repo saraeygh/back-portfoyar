@@ -242,7 +242,8 @@ def stock_option_value_change_main(run_mode):
             ]
 
             last_data = get_market_watch_data_from_redis()
-
+            if last_data.empty:
+                return
             last_data["daily_roi"] = (
                 last_data["last_price_change"] / last_data["yesterday_price"]
             ) * 100
