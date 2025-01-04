@@ -1,5 +1,6 @@
 import pandas as pd
 
+from django.db.models import Count
 from core.utils import RedisInterface
 from core.configs import OPTION_REDIS_DB
 
@@ -26,7 +27,22 @@ def remove_expired_options():
     deactive_options.delete()
 
 
+def remove_paper_type_updated_instruments():
+    repated_symbols = (
+        StockInstrument.objects.values("symbol")
+        .annotate(symbol_count=Count("symbol"))
+        .filter(symbol_count__gt=1)
+    )
+
+    for repeated_symbol in repated_symbols:
+        duplicate_instances = StockInstrument.objects.filter(
+            symbol=repeated_symbol["symbol"]
+        ).order_by("id")
+        duplicate_instances.exclude(id=duplicate_instances.last().id).delete()
+
+
 def remove_expired_instruments():
     remove_expired_options()
+    remove_paper_type_updated_instruments()
 
     return StockInstrument.objects.all()
