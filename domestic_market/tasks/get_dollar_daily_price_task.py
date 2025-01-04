@@ -1,49 +1,36 @@
 from datetime import datetime
+import requests
 import jdatetime
+
 from bs4 import BeautifulSoup
 
-from core.utils import get_http_response, run_main_task
+from core.utils import run_main_task
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.utils import get_existing_dollar_prices_dict
 
 
-def get_last_dollar_price(dollar: str):
-    if dollar == "azad":
-        last_usd_price = DomesticDollarPrice.objects.last().azad
-    elif dollar == "nima":
-        last_usd_price = DomesticDollarPrice.objects.last().nima
+def get_dollar_price_bs(URL: str):
+    response = requests.get(URL, timeout=20)
+    response = response.text
+    soup = BeautifulSoup(response, "html.parser")
+    soup = soup.find_all("td")
 
-    return last_usd_price
+    for index, td in enumerate(soup):
+        if td.string == "نرخ فعلی":
+            last_price_value = soup[index + 1]
+            break
 
-
-def get_dollar_price_bs(URL: str, dollar: str) -> int:
-
-    response = get_http_response(req_url=URL)
-    try:
-        response = response.text
-        soup = BeautifulSoup(response, "html.parser")
-        soup = soup.find_all("td")
-
-        for index, td in enumerate(soup):
-            if td.string == "نرخ فعلی":
-                last_price_value = soup[index + 1]
-                break
-
-        last_price_value = int((last_price_value.string).replace(",", ""))
-
-    except Exception:
-        last_price_value = get_last_dollar_price(dollar=dollar)
-        return last_price_value
+    last_price_value = int((last_price_value.string).replace(",", ""))
 
     return last_price_value
 
 
 def get_dollar_daily_price_main():
-    AZAD_URL = "https://www.tgju.org/profile/price_dollar_soleymani"
+    AZAD_URL = "https://www.tgju.org/profile/price_dollar_rl"
     NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
 
-    azad_usd_price = get_dollar_price_bs(URL=AZAD_URL, dollar="azad")
-    nima_usd_price = get_dollar_price_bs(URL=NIMA_URL, dollar="nima")
+    azad_usd_price = get_dollar_price_bs(URL=AZAD_URL)
+    nima_usd_price = get_dollar_price_bs(URL=NIMA_URL)
 
     today_price_date = datetime.now().date()
     existing_dollar_prices_dict = get_existing_dollar_prices_dict()
