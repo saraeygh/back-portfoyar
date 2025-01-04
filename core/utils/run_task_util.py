@@ -1,11 +1,14 @@
+import threading
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 import traceback
 import smtplib
 import jdatetime
 from colorama import Fore, Style
 
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
+from core.utils import get_http_response
 from core.configs import (
     EMAIL_HOST,
     EMAIL_PORT,
@@ -37,13 +40,21 @@ SUCCESS_BODY = "SUCCESS"
 
 
 def get_exception_detail(exception):
-    if exception == SUCCESS_BODY:
-        return exception
+    response = get_http_response(req_url="https://api.ipify.org?format=text")
+    public_ip = "UNKNOWN: "
+    if response:
+        public_ip = f"{response.text}: "
 
-    exception_details = "".join(
-        traceback.format_exception(type(exception), exception, exception.__traceback__)
-    )
-    return exception_details
+    if exception == SUCCESS_BODY:
+        exception_details = exception
+    else:
+        exception_details = "".join(
+            traceback.format_exception(
+                type(exception), exception, exception.__traceback__
+            )
+        )
+
+    return public_ip + exception_details
 
 
 def send_task_fail_success_email(task_name: str = "", exception: str = "SUCCESS"):
@@ -72,10 +83,17 @@ def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
     try:
         main_task(**kw_args)
         if daily:
-            send_task_fail_success_email(task_name=TASK_NAME)
+            send_email_thread = threading.Thread(
+                target=send_task_fail_success_email,
+                kwargs={"task_name": TASK_NAME},
+            )
+            send_email_thread.start()
+        print_task_info(color="GREEN", name=TASK_NAME)
+
     except Exception as e:
         print(Fore.RED + f"{e}" + Style.RESET_ALL)
-        send_task_fail_success_email(task_name=TASK_NAME, exception=e)
-        return
-
-    print_task_info(color="GREEN", name=TASK_NAME)
+        send_email_thread = threading.Thread(
+            target=send_task_fail_success_email,
+            kwargs={"task_name": TASK_NAME, "exception": e},
+        )
+        send_email_thread.start()

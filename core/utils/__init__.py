@@ -1,14 +1,13 @@
 TABLE_COLS_QP = "table"
 ALL_TABLE_COLS = "all"
 SUMMARY_TABLE_COLS = "summary"
-from .send_task_fail_success_email_util import send_task_fail_success_email
+from .get_http_response_util import get_http_response
 from .run_task_util import print_task_info, run_main_task
 from .redis_interface_util import RedisInterface
 from .mongodb_interface_util import MongodbInterface
 from .send_upload_error_file_email_util import send_upload_error_file_email
 from .get_set_json_cache_util import set_json_cache, get_cache_as_json
 from .clear_redis_cache_util import clear_redis_cache
-from .get_http_response_util import get_http_response
 from .add_df_index_as_id_util import add_index_as_id
 from .replace_arabic_letters_util import (
     replace_arabic_letters,
