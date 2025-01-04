@@ -23,7 +23,7 @@ def negotiate_connection():
         "connectionData": '[{"name":"marketshub"}]',
         "_": get_now_timestamp_as_str(),
     }
-    response = requests.get(url=negotiate_url, params=params, timeout=15)
+    response = requests.get(url=negotiate_url, params=params, timeout=59)
     print(Fore.GREEN + "Negotiation completed!", Style.RESET_ALL)
     return response.json()
 
@@ -37,7 +37,7 @@ def start_connection(connection_token):
         "connectionData": '[{"name":"marketshub"}]',
         "_": get_now_timestamp_as_str(),
     }
-    response = requests.get(url=start_url, params=params, timeout=15)
+    response = requests.get(url=start_url, params=params, timeout=59)
 
     print(Fore.GREEN + "Got connectionToken!", Style.RESET_ALL)
     return response.text
@@ -52,7 +52,7 @@ def connect_to_events(connection_token):
         "connectionData": '[{"name":"marketshub"}]',
         "tid": "0",
     }
-    response = requests.get(url=sse_url, params=params, stream=True, timeout=15)
+    response = requests.get(url=sse_url, params=params, stream=True, timeout=59)
     print(Fore.GREEN + "Waiting for event responses...", Style.RESET_ALL)
     return response.iter_lines()
 
