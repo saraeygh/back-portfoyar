@@ -28,6 +28,8 @@ from stock_market.serializers import MarketROISerailizer, SummaryMarketROISerail
 from stock_market.utils import MAIN_PAPER_TYPE_DICT
 from stock_market.permissions import HasStockSubscription
 
+SORT_COL = "quarterly_roi"
+
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
@@ -41,7 +43,8 @@ class StockOveralROIAPIView(APIView):
         )
         results = pd.DataFrame(results)
 
-        results = results[(results["quarterly_roi"] != STOCK_NA_ROI)]
+        na_rows = results[(results[SORT_COL] == STOCK_NA_ROI)]
+        results = results[(results[SORT_COL] != STOCK_NA_ROI)]
 
         if results.empty:
             return Response(
@@ -49,7 +52,9 @@ class StockOveralROIAPIView(APIView):
             )
 
         results = results[~results["symbol"].str.contains(r"\d")]
-        results = results.sort_values(by="quarterly_roi", ascending=True)
+        results = results.sort_values(by=SORT_COL, ascending=True)
+        if not na_rows.empty:
+            results = pd.concat([results, na_rows])
         results = results.head(STOCK_TOP_500_LIMIT)
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)

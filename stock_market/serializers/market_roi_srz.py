@@ -49,6 +49,7 @@ class SummaryMarketROISerailizer(serializers.Serializer):
 
     weekly_roi = RoundedFloatField(decimal_places=0)
     monthly_roi = RoundedFloatField(decimal_places=0)
+    quarterly_roi = RoundedFloatField(decimal_places=0)
     half_yearly_roi = RoundedFloatField(decimal_places=0)
     yearly_roi = RoundedFloatField(decimal_places=0)
 
@@ -63,6 +64,8 @@ class SummaryMarketROISerailizer(serializers.Serializer):
             representation["weekly_roi"] = STOCK_NO_ROI_LETTER
         if representation["monthly_roi"] == STOCK_NA_ROI:
             representation["monthly_roi"] = STOCK_NO_ROI_LETTER
+        if representation["quarterly_roi"] == STOCK_NA_ROI:
+            representation["quarterly_roi"] = STOCK_NO_ROI_LETTER
         if representation["half_yearly_roi"] == STOCK_NA_ROI:
             representation["half_yearly_roi"] = STOCK_NO_ROI_LETTER
         if representation["yearly_roi"] == STOCK_NA_ROI:

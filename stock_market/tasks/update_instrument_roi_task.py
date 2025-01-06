@@ -65,22 +65,6 @@ def add_market_cap(row):
     return market_cap
 
 
-def add_duration_roi(row, duration_name):
-    duration_price = row.get(duration_name)
-    last_price = row.get("close_mean")
-
-    if duration_price == 0:
-        roi = STOCK_NA_ROI
-        return roi
-
-    try:
-        roi = get_deviation_percent(last_price, duration_price)
-    except Exception:
-        roi = STOCK_NA_ROI
-
-    return roi
-
-
 def update_instrument_duration_roi(instrument_info: pd.DataFrame):
 
     instrument_info["link"] = instrument_info.apply(add_link, axis=1)
