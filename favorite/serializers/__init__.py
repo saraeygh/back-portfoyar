@@ -15,7 +15,6 @@ from .domestic_favorite_ratio_chart_by_category_srz import (
     DomesticGetFavoriteRatioChartByCategorySerailizer,
 )
 from .domestic_favorite_producer_report_srz import (
-    DomesticAddFavoriteProducerReportSerailizer,
     DomesticGetFavoriteProducerReportSerailizer,
 )
 from .global_favorite_price_chart_srz import (
