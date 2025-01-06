@@ -40,18 +40,26 @@ def get_producer():
 
 
 def populate_producer(producers: list):
-    producer_bulk_list = []
+    producer_bulk_create = []
+    producer_bulk_update = []
     for producer in tqdm(producers, desc="Get producers list", ncols=10):
         name = producer.get("name")
         code = producer.get("code")
         try:
-            DomesticProducer.objects.get(name=name, code=code)
+            ex_producer = DomesticProducer.objects.get(code=code)
+            ex_producer.name = name
+            producer_bulk_update.append(ex_producer)
         except DomesticProducer.DoesNotExist:
             new_producer = DomesticProducer(name=name, code=code)
-            producer_bulk_list.append(new_producer)
+            producer_bulk_create.append(new_producer)
+        except Exception as e:
+            print(e, "CODE: ", code)
 
-    if producer_bulk_list:
-        DomesticProducer.objects.bulk_create(producer_bulk_list)
+    if producer_bulk_create:
+        DomesticProducer.objects.bulk_create(producer_bulk_create)
+
+    if producer_bulk_update:
+        DomesticProducer.objects.bulk_update(producer_bulk_update, fields=["name"])
 
 
 def populate_domestic_market_producer():

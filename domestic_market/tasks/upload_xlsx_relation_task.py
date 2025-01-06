@@ -1,14 +1,17 @@
 import os
 import pandas as pd
-from core.utils import send_upload_error_file_email
+from tqdm import tqdm
+
 from django.core.files.storage import default_storage
+
+from samaneh.settings.common import BASE_DIR
+from core.utils import send_upload_error_file_email
+
 from domestic_market.models import DomesticProducer, DomesticRelation
 from stock_market.models import StockInstrument
-from tqdm import tqdm
-from samaneh.settings.common import BASE_DIR
 
 
-def upload_xlsx_relation(excel_file_name: str) -> None:
+def upload_xlsx_relation(excel_file_name: str):
 
     file_path = f"{BASE_DIR}/media/uploaded_files/{excel_file_name}"
     with default_storage.open(file_path) as excel_file:
@@ -18,10 +21,11 @@ def upload_xlsx_relation(excel_file_name: str) -> None:
     domestic_relation_bulk_list = []
     for _, row in tqdm(relation_df.iterrows(), desc="Relation", ncols=10):
         try:
-            ime_code = int(row.get("ime_code"))
-            ins_code = str(row.get("ins_code"))
-            domestic_producer = DomesticProducer.objects.filter(code=ime_code).first()
-            stock_instrument = StockInstrument.objects.filter(ins_code=ins_code).first()
+            ime_code = int(row.get("ime_code", 0))
+            ins_code = str(row.get("ins_code", 0))
+
+            domestic_producer = DomesticProducer.objects.get(code=ime_code)
+            stock_instrument = StockInstrument.objects.get(ins_code=ins_code)
             domestic_relation = DomesticRelation.objects.filter(
                 domestic_producer=domestic_producer, stock_instrument=stock_instrument
             )
@@ -35,7 +39,7 @@ def upload_xlsx_relation(excel_file_name: str) -> None:
                     stock_instrument=stock_instrument,
                 )
                 domestic_relation_bulk_list.append(domestic_relation)
-        except Exception:
+        except Exception as e:
             error_list_of_dict.append(
                 {
                     "ime_code": row.get("ime_code"),
@@ -43,6 +47,7 @@ def upload_xlsx_relation(excel_file_name: str) -> None:
                     "ins_code": row.get("ins_code"),
                     "stock_name": row.get("stock_name"),
                     "stock_symbol": row.get("stock_symbol"),
+                    "error": str(e),
                 }
             )
             continue
@@ -63,5 +68,7 @@ def upload_xlsx_relation(excel_file_name: str) -> None:
         error_list_df.to_csv(file_path, index=False)
 
         send_upload_error_file_email(
-            file_path=file_path, task_name="ارتباط بازار داخلی"
+            file_path=file_path,
+            task_name="ارتباط بازار داخلی",
+            filename=excel_file_name,
         )
