@@ -50,7 +50,6 @@ class DomesticPriceChartByProducerAPIView(APIView):
                 many=True,
                 context={"existing_dollar_prices": existing_dollar_prices},
             )
-
             set_json_cache(cache_key, price_chart_dict_srz.data, SIXTY_MINUTES_CACHE)
             return Response(price_chart_dict_srz.data, status=status.HTTP_200_OK)
 

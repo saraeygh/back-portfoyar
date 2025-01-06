@@ -61,7 +61,7 @@ strategy_urls = [
 
 # REPORTS
 report_urls = [
-    path("producer-sell/<int:company_id>", ProducerSellReportAPIView.as_view()),
+    path("producer-sell/<int:company_id>/", ProducerSellReportAPIView.as_view()),
 ]
 
 # DOLLAR

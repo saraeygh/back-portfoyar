@@ -38,7 +38,7 @@ market_value_urls = [
 market_roi_urls = [
     path("roi/", StockOveralROIAPIView.as_view()),
     path("industry-roi/", StockIndustryROIAPIView.as_view()),
-    path("roi/<int:industry_id>", StockIndustryInstrumentROIAPIView.as_view()),
+    path("roi/<int:industry_id>/", StockIndustryInstrumentROIAPIView.as_view()),
 ]
 
 option_behavior_urls = [
