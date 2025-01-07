@@ -19,15 +19,15 @@ class DomesticRatioChartAPIView(APIView):
     def post(self, request):
         industry_id_1 = request.data.get("industry1_id")
         commodity_type_id_1 = request.data.get("field1_id")
-        commodity_id_1 = request.data.get("group1_id")
-        producer_id_1 = request.data.get("company1_id")
-        commodity_name_trade_id_1 = request.data.get("commodity1_id")
+        commodity_id_1 = request.data.get("group1_id", None)
+        producer_id_1 = request.data.get("company1_id", None)
+        commodity_name_trade_id_1 = request.data.get("commodity1_id", None)
 
         industry_id_2 = request.data.get("industry2_id")
         commodity_type_id_2 = request.data.get("field2_id")
-        commodity_id_2 = request.data.get("group2_id")
-        producer_id_2 = request.data.get("company2_id")
-        commodity_name_trade_id_2 = request.data.get("commodity2_id")
+        commodity_id_2 = request.data.get("group2_id", None)
+        producer_id_2 = request.data.get("company2_id", None)
+        commodity_name_trade_id_2 = request.data.get("commodity2_id", None)
 
         cache_key = (
             "DOMESTIC_RATIO_CHART"
@@ -42,8 +42,8 @@ class DomesticRatioChartAPIView(APIView):
             f"_p2_{producer_id_2}"
             f"_cn2_{commodity_name_trade_id_2}"
         )
-        cache_response = get_cache_as_json(cache_key)
 
+        cache_response = get_cache_as_json(cache_key)
         if cache_response is None:
             try:
                 plt_1 = get_price_chart(
@@ -63,7 +63,8 @@ class DomesticRatioChartAPIView(APIView):
                 )
             except ValueError:
                 return Response(
-                    {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST
+                    {"message": "هیچ تاریخچه‌ای پیدا نشد"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             ratio_list = get_ratio_chart(plt_1, plt_2)

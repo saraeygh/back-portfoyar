@@ -1,5 +1,8 @@
 from datetime import datetime
 import pytz
+import jdatetime
+from persiantools.jdatetime import JalaliDateTime
+
 from rest_framework import serializers
 from support.models import (
     Ticket,
@@ -8,8 +11,6 @@ from support.models import (
     STATUS_CHOICES,
     UNIT_CHOICES,
 )
-import jdatetime
-from persiantools.jdatetime import JalaliDateTime
 
 FEATURES = {feature[0]: feature[1] for feature in FEATURE_CHOICES}
 STATUSES = {status[0]: status[1] for status in STATUS_CHOICES}
@@ -35,10 +36,10 @@ def get_last_update(last_update):
     diff = now - last_update
     seconds = int(diff.total_seconds())
     minutes = int(seconds / 60)
-    hours = int(seconds / (60 * 60))
-    days = int(seconds / (60 * 60 * 24))
-    months = int(seconds / (60 * 60 * 24 * 30))
-    years = int(seconds / (60 * 60 * 24 * 30 * 12))
+    hours = int(seconds / 3600)  # (60 * 60)
+    days = int(seconds / 86400)  # (60 * 60 * 24)
+    months = int(seconds / 2592000)  # (60 * 60 * 24 * 30)
+    years = int(seconds / 31104000)  # (60 * 60 * 24 * 30 * 12)
 
     if years > 0:
         return f"{years} سال پیش"

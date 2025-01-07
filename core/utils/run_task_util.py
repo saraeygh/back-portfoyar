@@ -23,6 +23,12 @@ BLUE = "BLUE"
 GREEN = "GREEN"
 RED = "RED"
 
+SERVERS = {
+    "178.252.141.50": "LOCAL",
+    "185.105.185.188": "TEST",
+    "188.121.98.119": "PROD",
+}
+
 
 def print_task_info(color: str = BLUE, name: str = ""):
     now = f"⏰ [{jdatetime.datetime.now(tz=TEHRAN_TZ).strftime("%Y/%m/%d %H:%M:%S")}]"
@@ -43,7 +49,8 @@ def get_exception_detail(exception):
     public_ip = "UNKNOWN: "
     response = get_http_response(req_url="https://api.ipify.org?format=json")
     if response:
-        public_ip = f"{response.json().get("ip")}: "
+        public_ip = response.json().get("ip")
+        public_ip = f"{SERVERS.get(public_ip, "UNKNOWN SERVER")} ({public_ip}): "
 
     if exception == SUCCESS_BODY:
         exception_details = exception

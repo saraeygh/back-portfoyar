@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 
 from core.utils import run_main_task, get_http_response
 from domestic_market.models import DomesticDollarPrice
-from domestic_market.utils import get_existing_dollar_prices_dict
 
 
 def get_dollar_price_bs(URL: str):
@@ -33,28 +32,22 @@ def get_dollar_daily_price_main():
     nima_usd_price = get_dollar_price_bs(URL=NIMA_URL)
 
     today_price_date = datetime.now().date()
-    existing_dollar_prices_dict = get_existing_dollar_prices_dict()
-    if today_price_date in existing_dollar_prices_dict:
-        last_dollar_price: DomesticDollarPrice = existing_dollar_prices_dict.get(
-            today_price_date
-        )
+    try:
+        last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
         last_dollar_price.azad = azad_usd_price
         last_dollar_price.nima = nima_usd_price
         last_dollar_price.save()
-
-    else:
+    except DomesticDollarPrice.DoesNotExist:
         today_price_date_shamsi = str(
             jdatetime.date.fromgregorian(date=today_price_date)
         )
 
-        today_price = DomesticDollarPrice.objects.create(
+        DomesticDollarPrice.objects.create(
             date=today_price_date,
             date_shamsi=today_price_date_shamsi,
             azad=azad_usd_price,
             nima=nima_usd_price,
         )
-
-        return today_price
 
 
 def get_dollar_daily_price():

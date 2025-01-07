@@ -1,7 +1,6 @@
 from .populate_domestic_market_category_util import populate_domestic_market_category
 from .populate_domestic_market_producer_util import populate_domestic_market_producer
 from .populate_domestic_market_trade_util import populate_domestic_market_trade
-from .get_existing_dollar_prices_util import get_existing_dollar_prices_dict
 from .get_price_chart_util import get_price_chart
 from .get_price_ratio_chart_util import (
     get_price_chart_by_producer,

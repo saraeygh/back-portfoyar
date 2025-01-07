@@ -62,9 +62,7 @@ class GlobalRatioChartAPIView(APIView):
 
             ratio_list = get_ratio_chart(plt_1, plt_2)
             ratio_list_srz = PriceRatioChartSerailizer(ratio_list, many=True)
-            ###################################################################
-            # set_json_cache(cache_key, ratio_list_srz.data, SIXTY_MINUTES_CACHE)
-            ###################################################################
+            set_json_cache(cache_key, ratio_list_srz.data, SIXTY_MINUTES_CACHE)
             return Response(ratio_list_srz.data, status=status.HTTP_200_OK)
 
         else:

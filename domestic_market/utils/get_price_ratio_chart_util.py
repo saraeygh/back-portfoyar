@@ -1,58 +1,131 @@
 import pandas as pd
+from datetime import datetime as dt
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 
-from domestic_market.models import DomesticTrade
+from core.configs import HEZAR_RIAL_TO_MILLION_TOMAN
+
+from domestic_market.models import DomesticTrade, DomesticDollarPrice
 
 
-def get_price_chart_by_producer(
-    producer_id, commodity_id, commodity_name_trade_id
-) -> list | None:
-    if (
-        producer_id
-        and commodity_id
-        and isinstance(producer_id, int)
-        and isinstance(commodity_id, int)
-    ):
-        trades = (
-            DomesticTrade.objects.filter(producer_id=producer_id)
-            .filter(commodity_id=commodity_id)
-            .exclude(supply_volume=0)
-            .exclude(competition__lt=0)
-            .order_by("trade_date")
-        )
-    else:
-        return None
+def get_commodity_name_trades(trades, commodity_name_trade_id):
+    if commodity_name_trade_id is None:
+        return trades
 
-    if commodity_name_trade_id and isinstance(commodity_name_trade_id, int):
-        commodity_name = get_object_or_404(DomesticTrade, id=commodity_name_trade_id)
-        commodity_name = commodity_name.commodity_name
-        trades = trades.filter(commodity_name=commodity_name)
+    commodity_name = get_object_or_404(DomesticTrade, id=commodity_name_trade_id)
+    commodity_name = commodity_name.commodity_name
+    trades = trades.filter(commodity_name=commodity_name)
 
-    trades_avg_prices = list(
-        trades.values("trade_date", "competition")
-        .annotate(avg_price=Avg("close_price"))
-        .order_by("trade_date")
+    return trades
+
+
+def get_forward_trades(producer_id, commodity_id, commodity_name_trade_id):
+    today = dt.today().date()
+    trades = (
+        DomesticTrade.objects.filter(producer_id=producer_id)
+        .filter(commodity_id=commodity_id)
+        .filter(contract_type__contains="سلف")
+        .exclude(delivery_date__gt=today)
+        .exclude(supply_volume=0)
+        .exclude(competition__lt=0)
     )
 
-    unique_dates = {}
-    for trade in trades_avg_prices:
-        if trade["trade_date"] in unique_dates:
-            last_trade = unique_dates.get(trade["trade_date"])
-            new_avg_price = (last_trade["avg_price"] + trade["avg_price"]) / 2
-            new_competition = (last_trade["competition"] + trade["competition"]) / 2
-            unique_dates[trade["trade_date"]] = {
-                "trade_date": trade["trade_date"],
-                "avg_price": new_avg_price,
-                "competition": new_competition,
-            }
-        else:
-            unique_dates[trade["trade_date"]] = trade
+    trades = get_commodity_name_trades(trades, commodity_name_trade_id)
 
-    trades_avg_prices = list(unique_dates.values())
+    trades_avg_prices = pd.DataFrame(
+        trades.values("trade_date", "competition", "delivery_date").annotate(
+            avg_price=Avg("close_price")
+        )
+    )
+
+    if not trades_avg_prices.empty:
+        trades_avg_prices["trade_date"] = trades_avg_prices["delivery_date"]
+        trades_avg_prices.drop("delivery_date", axis=1, inplace=True)
+
+        trades_avg_prices = trades_avg_prices.groupby(
+            "trade_date", as_index=False
+        ).mean()
 
     return trades_avg_prices
+
+
+def get_non_forward_trades(producer_id, commodity_id, commodity_name_trade_id):
+    trades = (
+        DomesticTrade.objects.filter(producer_id=producer_id)
+        .filter(commodity_id=commodity_id)
+        .exclude(contract_type__contains="سلف")
+        .exclude(supply_volume=0)
+        .exclude(competition__lt=0)
+    )
+
+    trades = get_commodity_name_trades(trades, commodity_name_trade_id)
+
+    trades_avg_prices = pd.DataFrame(
+        trades.values("trade_date", "competition").annotate(
+            avg_price=Avg("close_price")
+        )
+    )
+
+    if not trades_avg_prices.empty:
+        trades_avg_prices = trades_avg_prices.groupby(
+            "trade_date", as_index=False
+        ).mean()
+
+    return trades_avg_prices
+
+
+def get_dollar_history(start, end):
+    dollar_history = pd.DataFrame(
+        DomesticDollarPrice.objects.filter(date__range=(start, end)).values(
+            "date", "azad", "nima"
+        )
+    )
+
+    return dollar_history
+
+
+def get_price_chart_by_producer(producer_id, commodity_id, commodity_name_trade_id):
+    forward = get_forward_trades(producer_id, commodity_id, commodity_name_trade_id)
+
+    non_forward = get_non_forward_trades(
+        producer_id, commodity_id, commodity_name_trade_id
+    )
+
+    price = pd.concat([forward, non_forward])
+    if not price.empty:
+        price.sort_values(by="trade_date", inplace=True, ascending=True)
+
+        start = price.iloc[0]["trade_date"]
+        end = price.iloc[-1]["trade_date"]
+
+        dollar = get_dollar_history(start, end)
+        if not dollar.empty:
+            price = pd.merge(
+                left=price,
+                right=dollar,
+                left_on="trade_date",
+                right_on="date",
+                how="left",
+            )
+            price.drop("date", axis=1, inplace=True)
+
+            price["azad"] = price["azad"].interpolate()
+            price["nima"] = price["nima"].interpolate()
+
+            price["azad"] = price["avg_price"] * 1000 / price["azad"]
+            price["nima"] = price["avg_price"] * 1000 / price["nima"]
+
+        else:
+            price["azad"] = 0
+            price["nima"] = 0
+
+        price["avg_price"] = price["avg_price"] / HEZAR_RIAL_TO_MILLION_TOMAN
+
+    price.dropna(inplace=True)
+    price = price.to_dict(orient="records")
+
+    return price
 
 
 DAYS_DELTA = 7
