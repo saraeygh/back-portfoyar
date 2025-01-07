@@ -1,17 +1,19 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from favorite.models import DomesticFavoriteRatioChartByProducer
-from favorite.serializers import (
-    DomesticGetFavoriteRatioChartByProducerSerailizer,
-    DomesticAddFavoriteRatioChartByProducerSerailizer,
-)
-from favorite.utils import domestic_validate_favorite_by_producer
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from favorite.models import DomesticFavoriteRatioChartByProducer
+from favorite.utils import domestic_validate_favorite_by_producer
+from favorite.serializers import (
+    DomesticGetFavoriteRatioChartByProducerSerailizer,
+    DomesticAddFavoriteRatioChartByProducerSerailizer,
+)
 
 
 @authentication_classes([TokenAuthentication])

@@ -2,13 +2,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from domestic_market.utils import get_dollar_price_history
-
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
-        get_dollar_price_history()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 
@@ -26,5 +22,5 @@ class TestView(APIView):
 # FaraBourse
 # https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/2 # Overview
 # https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/2 # List of indices
-# https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/2/7 # MostVisited
+# https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/2/7 # MostVisitedf
 # https://cdn.tsetmc.com/api/Index/GetInstEffect/0/2/7 # Effects
