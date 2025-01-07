@@ -250,7 +250,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        second="*/40",
+        second="*/15",
     )
 
     scheduler.add_job(
