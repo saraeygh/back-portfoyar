@@ -9,7 +9,7 @@ if DEBUG:
     from .test_view import TestView
 
     test_urls = [
-        path("api/test/", TestView.as_view()),
+        path("api/test", TestView.as_view()),
     ]
 
 urlpatterns = [
