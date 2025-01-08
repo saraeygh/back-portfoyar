@@ -78,7 +78,9 @@ class GetUserTicketsSerailizer(serializers.ModelSerializer):
 
         if instance.file:
             request = self.context.get("request")
-            file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{instance.file}/"
+            file_url = (
+                f"{request.build_absolute_uri("/api/support/appendix/")}{instance.file}"
+            )
             representation["appendix"] = file_url
         else:
             representation["appendix"] = None
@@ -151,7 +153,9 @@ class GetTicketResponseSerailizer(serializers.ModelSerializer):
 
         if instance.file:
             request = self.context.get("request")
-            file_url = f"{request.build_absolute_uri("/api/support/appendix/")}{instance.file}/"
+            file_url = (
+                f"{request.build_absolute_uri("/api/support/appendix/")}{instance.file}"
+            )
             representation["appendix"] = file_url
         else:
             representation["appendix"] = None

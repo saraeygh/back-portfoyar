@@ -9,7 +9,7 @@ if DEBUG:
     from .test_consumer import TestConsumer
 
     ws_test_urls = [
-        path("ws/test/", TestConsumer.as_asgi()),
+        path("ws/test", TestConsumer.as_asgi()),
     ]
 
 ws_urlpatterns = ws_test_urls  # + marketwatch_ws_routes

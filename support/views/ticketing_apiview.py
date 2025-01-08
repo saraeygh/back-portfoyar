@@ -96,7 +96,7 @@ def add_ticket_as_first_response(request, ticket, responses):
     }
     if ticket.file:
         file_url = (
-            f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}/"
+            f"{request.build_absolute_uri("/api/support/appendix/")}{ticket.file}"
         )
         first_response["appendix"] = file_url
     first_response = OrderedDict(sorted(first_response.items()))

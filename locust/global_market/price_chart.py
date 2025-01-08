@@ -11,14 +11,14 @@ class PortfoyarUser(HttpUser):
 
     def on_start(self):
         response = self.client.post(
-            "sign-in/", json={"username": USERNAME, "password": PASSWORD}
+            "sign-in", json={"username": USERNAME, "password": PASSWORD}
         )
         self.token = response.json().get("token")
 
     @task(1)
     def select_industry_commodity_type(self):
         response = self.client.get(
-            "global-market/industry/",
+            "global-market/industry",
             name="select_industry_commodity_type",
             headers={"Authorization": f"token {self.token}"},
         )
@@ -39,7 +39,7 @@ class PortfoyarUser(HttpUser):
     @task(2)
     def select_industry_commodity_type_commodity(self):
         response = self.client.get(
-            "global-market/industry/",
+            "global-market/industry",
             name="select_industry_commodity_type_commodity",
             headers={"Authorization": f"token {self.token}"},
         )
@@ -69,7 +69,7 @@ class PortfoyarUser(HttpUser):
     @task(3)
     def select_industry_commodity_type_commodity_transit(self):
         response = self.client.get(
-            "global-market/industry/",
+            "global-market/industry",
             name="select_industry_commodity_type_commodity_transit",
             headers={"Authorization": f"token {self.token}"},
         )

@@ -231,8 +231,7 @@ class ZarinpalPaymentAPIView(APIView):
             "Description": "اشتراک سامانه پرتفویار",
             "CallbackURL": f"{request.scheme}://{request.get_host()}"
             + ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL
-            + receipt_id
-            + "/",
+            + receipt_id,
         }
 
         if is_valid_phone(user.username):
