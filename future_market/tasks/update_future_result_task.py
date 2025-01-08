@@ -78,10 +78,14 @@ def get_future_derivatives(derivative_symbol):
 def get_total_and_monthly_spread(
     open_position_price, base_equity_last_price, expiration, monthly_interest_rate
 ):
-    total_spread = get_deviation_percent(open_position_price, base_equity_last_price)
-    expiration_date = datetime.fromisoformat(expiration).date()
+    spreads = []
     today_date = datetime.now().date()
+    expiration_date = datetime.fromisoformat(expiration).date()
     remained_day = (expiration_date - today_date).days
+    if remained_day < 1:
+        return spreads
+
+    total_spread = get_deviation_percent(open_position_price, base_equity_last_price)
     monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
     spreads = {
         "total_spread": total_spread,
@@ -89,6 +93,7 @@ def get_total_and_monthly_spread(
         "monthly_spread": monthly_spread,
         "expiration_date": str(jdatetime.date.fromgregorian(date=expiration_date)),
     }
+
     return spreads
 
 
