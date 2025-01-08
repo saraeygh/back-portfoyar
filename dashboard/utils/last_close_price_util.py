@@ -56,23 +56,23 @@ def check_date():
 
 def last_close_price():
     market_watch = get_market_watch_data_from_redis()
-    market_watch = market_watch[~market_watch["symbol"].str.contains(r"\d")]
+    if not market_watch.empty:
+        market_watch = market_watch[~market_watch["symbol"].str.contains(r"\d")]
+        market_watch["last_price_change"] = market_watch.apply(
+            add_last_price_change, axis=1
+        )
+        market_watch["close_price_change"] = market_watch.apply(
+            add_close_price_change, axis=1
+        )
+        market_watch = market_watch[LAST_CLOSE_PRICE_COLUMNS]
+        market_watch["industrial_group"] = market_watch["industrial_group"].astype(int)
 
-    market_watch["last_price_change"] = market_watch.apply(
-        add_last_price_change, axis=1
-    )
-    market_watch["close_price_change"] = market_watch.apply(
-        add_close_price_change, axis=1
-    )
-    market_watch = market_watch[LAST_CLOSE_PRICE_COLUMNS]
-    market_watch["industrial_group"] = market_watch["industrial_group"].astype(int)
+        date, time = check_date()
 
-    date, time = check_date()
+        new_doc = {
+            "date": date,
+            "time": time,
+            "last_close_price": market_watch.to_dict(orient="records"),
+        }
 
-    new_doc = {
-        "date": date,
-        "time": time,
-        "last_close_price": market_watch.to_dict(orient="records"),
-    }
-
-    mongo_conn.collection.insert_one(new_doc)
+        mongo_conn.collection.insert_one(new_doc)

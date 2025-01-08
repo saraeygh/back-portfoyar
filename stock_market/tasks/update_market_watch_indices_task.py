@@ -45,7 +45,7 @@ def calculate_buy_order_value(row):
 
 
 def calculate_sell_order_value(row):
-    sell_orders = row.get("order_book")
+    sell_orders = row.get("order_book", [])
     total_sell_value = 0
     for order_row in sell_orders:
         try:

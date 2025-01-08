@@ -149,6 +149,7 @@ def edit_last_update(row):
 
 
 def get_call_spreads(spreads):
+    results = []
     spreads = spreads[
         list(COMMON_OPTION_COLUMN.values())
         + list(BASE_EQUITY_COLUMNS.values())
@@ -166,43 +167,44 @@ def get_call_spreads(spreads):
         spreads = spreads[
             abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION
         ]
+        if not spreads.empty:
+            spreads["strike_premium"] = spreads.apply(
+                add_strike_premium, axis=1, args=(CALL_OPTION,)
+            )
 
-        spreads["strike_premium"] = spreads.apply(
-            add_strike_premium, axis=1, args=(CALL_OPTION,)
-        )
+            spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
 
-        spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
+            spreads["monthly_price_spread"] = spreads.apply(
+                monthly_price_spread, axis=1
+            )
 
-        spreads["monthly_price_spread"] = spreads.apply(monthly_price_spread, axis=1)
+            spreads["stock_link"] = spreads.apply(add_stock_link, axis=1)
+            spreads["option_link"] = spreads.apply(
+                add_option_link, axis=1, args=(CALL_OPTION,)
+            )
 
-        spreads["stock_link"] = spreads.apply(add_stock_link, axis=1)
-        spreads["option_link"] = spreads.apply(
-            add_option_link, axis=1, args=(CALL_OPTION,)
-        )
+            spreads["option_type"] = "اختیار خرید"
 
-        spreads["option_type"] = "اختیار خرید"
+            spreads.dropna(inplace=True)
+            spreads["last_price"] = spreads["call_last_price"]
+            spreads["last_price_change"] = (
+                (spreads["call_last_price"] - spreads["call_yesterday_price"])
+                / spreads["call_yesterday_price"]
+            ) * 100
+            spreads = spreads.rename(columns=CALL_OLD_NEW_MAPPING)
+            spreads = spreads[
+                list(CALL_OLD_NEW_MAPPING.values())
+                + ["last_price", "last_price_change"]
+            ]
+            spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
+            spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
+            results = spreads.to_dict(orient="records")
 
-        spreads.dropna(inplace=True)
-        spreads["last_price"] = spreads["call_last_price"]
-        spreads["last_price_change"] = (
-            (spreads["call_last_price"] - spreads["call_yesterday_price"])
-            / spreads["call_yesterday_price"]
-        ) * 100
-        spreads = spreads.rename(columns=CALL_OLD_NEW_MAPPING)
-        spreads = spreads[
-            list(CALL_OLD_NEW_MAPPING.values()) + ["last_price", "last_price_change"]
-        ]
-        spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
-        spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
-        spreads = spreads.to_dict(orient="records")
-    else:
-        spreads = pd.DataFrame()
-        spreads = spreads.to_dict(orient="records")
-
-    return spreads
+    return results
 
 
 def get_put_spreads(spreads):
+    results = []
     spreads = spreads[
         list(COMMON_OPTION_COLUMN.values())
         + list(BASE_EQUITY_COLUMNS.values())
@@ -220,40 +222,39 @@ def get_put_spreads(spreads):
         spreads = spreads[
             abs(spreads["strike_deviation"]) < STOCK_OPTION_STRIKE_DEVIATION
         ]
+        if not spreads.empty:
+            spreads["strike_premium"] = spreads.apply(
+                add_strike_premium, axis=1, args=(PUT_OPTION,)
+            )
 
-        spreads["strike_premium"] = spreads.apply(
-            add_strike_premium, axis=1, args=(PUT_OPTION,)
-        )
+            spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
 
-        spreads["price_spread"] = spreads.apply(add_price_spread, axis=1)
+            spreads["monthly_price_spread"] = spreads.apply(
+                monthly_price_spread, axis=1
+            )
 
-        spreads["monthly_price_spread"] = spreads.apply(monthly_price_spread, axis=1)
+            spreads["stock_link"] = spreads.apply(add_stock_link, axis=1)
+            spreads["option_link"] = spreads.apply(
+                add_option_link, axis=1, args=(PUT_OPTION,)
+            )
 
-        spreads["stock_link"] = spreads.apply(add_stock_link, axis=1)
-        spreads["option_link"] = spreads.apply(
-            add_option_link, axis=1, args=(PUT_OPTION,)
-        )
+            spreads["option_type"] = "اختیار فروش"
 
-        spreads["option_type"] = "اختیار فروش"
+            spreads.dropna(inplace=True)
+            spreads["last_price"] = spreads["put_last_price"]
+            spreads["last_price_change"] = (
+                (spreads["put_last_price"] - spreads["put_yesterday_price"])
+                / spreads["put_yesterday_price"]
+            ) * 100
+            spreads = spreads.rename(columns=PUT_OLD_NEW_MAPPING)
+            spreads = spreads[
+                list(PUT_OLD_NEW_MAPPING.values()) + ["last_price", "last_price_change"]
+            ]
+            spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
+            spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
+            results = spreads.to_dict(orient="records")
 
-        spreads.dropna(inplace=True)
-        spreads["last_price"] = spreads["put_last_price"]
-        spreads["last_price_change"] = (
-            (spreads["put_last_price"] - spreads["put_yesterday_price"])
-            / spreads["put_yesterday_price"]
-        ) * 100
-        spreads = spreads.rename(columns=PUT_OLD_NEW_MAPPING)
-        spreads = spreads[
-            list(PUT_OLD_NEW_MAPPING.values()) + ["last_price", "last_price_change"]
-        ]
-        spreads["last_update"] = spreads.apply(edit_last_update, axis=1)
-        spreads["value"] = spreads["value"] / RIAL_TO_MILLION_TOMAN
-        spreads = spreads.to_dict(orient="records")
-    else:
-        spreads = pd.DataFrame()
-        spreads = spreads.to_dict(orient="records")
-
-    return spreads
+    return results
 
 
 def check_date(mongo_client):
