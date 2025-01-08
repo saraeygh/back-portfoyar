@@ -45,6 +45,6 @@ from .short_butterfly_util import short_butterfly
 from .collar_util import collar
 from .conversion_util import conversion
 from .populate_all_option_strategy_util import (
-    populate_all_option_strategy,
-    populate_all_option_strategy_mp,
+    populate_all_option_strategy_sync,
+    populate_all_option_strategy_async,
 )

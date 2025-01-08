@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.utils import RedisInterface, get_deviation_percent
 
 from . import (
     Conversion,
@@ -50,7 +51,9 @@ def add_profits(row, net_profit, profit_factor):
     return profits
 
 
-def conversion(option_data, redis_conn):
+def conversion(option_data, redis_conn: RedisInterface | None = None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
         & (option_data["put_best_sell_price"] > 0)

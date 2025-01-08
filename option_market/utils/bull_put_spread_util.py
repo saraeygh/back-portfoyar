@@ -1,7 +1,9 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import get_deviation_percent
+from colorama import Fore, Style
+
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.utils import RedisInterface, get_deviation_percent
 
 
 from . import (
@@ -15,8 +17,6 @@ from . import (
     filter_rows_with_nan_values,
     get_link_str,
 )
-
-from colorama import Fore, Style
 
 
 REQUIRED_COLUMNS = [
@@ -61,7 +61,8 @@ def add_profits(
     return profits
 
 
-def bull_put_spread(option_data, redis_conn):
+def bull_put_spread(option_data, redis_conn: RedisInterface | None = None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_sell_price"] > 0)
         & (option_data["put_best_buy_price"] > 0)

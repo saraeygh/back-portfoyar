@@ -30,7 +30,7 @@ from future_market.tasks import (
 from global_market.tasks import calculate_commodity_means_global
 
 from option_market.tasks import update_option_data_from_tse, get_option_history
-from option_market.utils import populate_all_option_strategy
+from option_market.utils import populate_all_option_strategy_sync
 
 from stock_market.tasks import (
     update_market_watch,
@@ -168,12 +168,12 @@ def option_cli(clear_cmd):
         match cmd:
             case "all":
                 update_option_data_from_tse(MANUAL_MODE)
-                populate_all_option_strategy()
+                populate_all_option_strategy_sync()
                 get_option_history()
             case "1":
                 update_option_data_from_tse(MANUAL_MODE)
             case "2":
-                populate_all_option_strategy()
+                populate_all_option_strategy_sync()
             case "3":
                 get_option_history()
             case "0":

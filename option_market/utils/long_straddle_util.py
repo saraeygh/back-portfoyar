@@ -1,6 +1,10 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN
+from colorama import Fore, Style
+
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.utils import RedisInterface
+
 from . import (
     AddOption,
     Strategy,
@@ -11,8 +15,6 @@ from . import (
     filter_rows_with_nan_values,
     get_link_str,
 )
-
-from colorama import Fore, Style
 
 
 REQUIRED_COLUMNS = [
@@ -30,7 +32,8 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def long_straddle(option_data, redis_conn):
+def long_straddle(option_data, redis_conn: RedisInterface | None = None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_sell_price"] > 0)
         & (option_data["put_best_sell_price"] > 0)

@@ -1,6 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.utils import RedisInterface
 
 from . import (
     AddOption,
@@ -32,7 +33,8 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def long_strangle(option_data, redis_conn):
+def long_strangle(option_data, redis_conn: RedisInterface | None = None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_sell_price"] > 0)
         & (option_data["call_best_sell_price"] > 0)

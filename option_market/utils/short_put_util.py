@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import get_deviation_percent
+from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.utils import RedisInterface, get_deviation_percent
 
 
 from . import (
@@ -47,7 +47,8 @@ def add_profits(remained_day, base_equity_last_price, strike_price):
     return profits
 
 
-def short_put(option_data, redis_conn):
+def short_put(option_data, redis_conn: RedisInterface | None = None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_buy_price"] > 0)
         & (option_data["put_last_update"] > 90000)

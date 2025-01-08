@@ -1,5 +1,5 @@
+import os
 import multiprocessing
-import time
 
 from core.utils import RedisInterface
 from core.configs import OPTION_REDIS_DB
@@ -26,11 +26,71 @@ from . import (
 )
 
 
-def populate_all_option_strategy():
-    import time
+def populate_all_option_strategy_async():
+    total_cores = os.cpu_count()
+    used_cores = total_cores // 2
+    with multiprocessing.Pool(processes=used_cores) as pool:
+        option_data = get_options(option_types=["option_data"])
+        option_data = option_data[option_data["base_equity_last_price"] > 0]
 
-    start_time = time.perf_counter()  # Start high-resolution timer
+        results = []  # QUEUEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
+        # 1
+        results.append(pool.apply_async(covered_call, args=(option_data,)))
+
+        # # 2
+        results.append(pool.apply_async(conversion, args=(option_data,)))
+
+        # # 3
+        results.append(pool.apply_async(long_call, args=(option_data,)))
+
+        # # 4
+        results.append(pool.apply_async(short_call, args=(option_data,)))
+
+        # # 5
+        results.append(pool.apply_async(long_put, args=(option_data,)))
+
+        # # 6
+        results.append(pool.apply_async(short_put, args=(option_data,)))
+
+        # # 7
+        results.append(pool.apply_async(long_straddle, args=(option_data,)))
+
+        # # 8
+        results.append(pool.apply_async(short_straddle, args=(option_data,)))
+
+        # # 9
+        results.append(pool.apply_async(bull_call_spread, args=(option_data,)))
+
+        # # 10
+        results.append(pool.apply_async(bear_call_spread, args=(option_data,)))
+
+        # # 11
+        results.append(pool.apply_async(bull_put_spread, args=(option_data,)))
+
+        # # 12
+        results.append(pool.apply_async(bear_put_spread, args=(option_data,)))
+
+        # # 13
+        results.append(pool.apply_async(long_strangle, args=(option_data,)))
+
+        # # 14
+        results.append(pool.apply_async(short_strangle, args=(option_data,)))
+
+        # # 15
+        results.append(pool.apply_async(long_butterfly, args=(option_data,)))
+
+        # # 16
+        results.append(pool.apply_async(short_butterfly, args=(option_data,)))
+
+        # # 17
+        results.append(pool.apply_async(collar, args=(option_data,)))
+
+        pool.close()
+        pool.join()
+
+
+def populate_all_option_strategy_sync():
     option_data = get_options(option_types=["option_data"])
     option_data = option_data[option_data["base_equity_last_price"] > 0]
 
@@ -86,80 +146,3 @@ def populate_all_option_strategy():
 
     # 17
     collar(option_data, redis_conn)
-
-    end_time = time.perf_counter()  # Stop high-resolution timer
-    duration = end_time - start_time
-
-    print(f"SYNC completed in {duration:.2f} seconds.")
-
-
-def populate_all_option_strategy_mp():
-
-    start_time = time.perf_counter()
-    ################################
-
-    option_data = get_options(option_types=["option_data"])
-    option_data = option_data[option_data["base_equity_last_price"] > 0]
-
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
-    with multiprocessing.Pool(processes=4) as pool:
-        # 1
-        pool.apply_async(covered_call, args=(option_data, redis_conn))
-
-        # 2
-        pool.apply_async(conversion, args=(option_data, redis_conn))
-
-        # 3
-        pool.apply_async(long_call, args=(option_data, redis_conn))
-
-        # 4
-        pool.apply_async(short_call, args=(option_data, redis_conn))
-
-        # 5
-        pool.apply_async(long_put, args=(option_data, redis_conn))
-
-        # 6
-        pool.apply_async(short_put, args=(option_data, redis_conn))
-
-        # 7
-        pool.apply_async(long_straddle, args=(option_data, redis_conn))
-
-        # 8
-        pool.apply_async(short_straddle, args=(option_data, redis_conn))
-
-        # 9
-        pool.apply_async(bull_call_spread, args=(option_data, redis_conn))
-
-        # 10
-        pool.apply_async(bear_call_spread, args=(option_data, redis_conn))
-
-        # 11
-        pool.apply_async(bull_put_spread, args=(option_data, redis_conn))
-
-        # 12
-        pool.apply_async(bear_put_spread, args=(option_data, redis_conn))
-
-        # 13
-        pool.apply_async(long_strangle, args=(option_data, redis_conn))
-
-        # 14
-        pool.apply_async(short_strangle, args=(option_data, redis_conn))
-
-        # 15
-        pool.apply_async(long_butterfly, args=(option_data, redis_conn))
-
-        # 16
-        pool.apply_async(short_butterfly, args=(option_data, redis_conn))
-
-        # 17
-        pool.apply_async(collar, args=(option_data, redis_conn))
-
-        pool.close()
-        pool.join()
-
-    end_time = time.perf_counter()
-    duration = end_time - start_time
-    ################################
-
-    print(f"ASYNC completed in {duration:.2f} seconds.")

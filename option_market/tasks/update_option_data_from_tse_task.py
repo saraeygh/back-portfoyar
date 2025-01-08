@@ -18,8 +18,8 @@ from option_market.utils import (
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
     TSE_ORDER_BOOK,
-    # populate_all_option_strategy,
-    populate_all_option_strategy_mp,
+    # populate_all_option_strategy_sync,
+    populate_all_option_strategy_async,
     convert_int_date_to_str_date,
 )
 
@@ -165,8 +165,8 @@ def update_option_data_from_tse_main(run_mode):
         )
         print(Fore.BLUE + f"option_data, {len(option_data)} records." + Style.RESET_ALL)
 
-        # populate_all_option_strategy()
-        populate_all_option_strategy_mp()
+        # populate_all_option_strategy_sync()
+        populate_all_option_strategy_async()
 
 
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):

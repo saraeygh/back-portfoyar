@@ -84,6 +84,10 @@ def get_update_history(instrument, instrument_type):
         base_equity_df = base_equity_df.rename(
             columns={"pClosing": "equit_close_price"}
         )
+
+        if option_history_df.empty or base_equity_df.empty:
+            return
+
         option_history_df = pd.merge(
             left=option_history_df, right=base_equity_df, on="dEven", how="left"
         )
@@ -94,8 +98,7 @@ def get_update_history(instrument, instrument_type):
         option_history_df["date"] = option_history_df.apply(
             convert_date, axis=1, args=("date",)
         )
-        expiration_date = convert_date(row=instrument, col_name="end_date")
-        option_history_df["expiration_date"] = expiration_date
+        option_history_df["expiration_date"] = instrument["end_date"]
 
         option_history_df["symbol"] = instrument[f"{instrument_type}_symbol"]
         option_history_df["asset_name"] = instrument["base_equity_symbol"]
