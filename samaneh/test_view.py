@@ -2,13 +2,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from stock_market.tasks import update_market_watch_indices
-
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
-        update_market_watch_indices()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 

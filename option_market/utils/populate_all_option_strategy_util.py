@@ -33,58 +33,27 @@ def populate_all_option_strategy_async():
         option_data = get_options(option_types=["option_data"])
         option_data = option_data[option_data["base_equity_last_price"] > 0]
 
-        results = []  # QUEUEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-        # 1
-        results.append(pool.apply_async(covered_call, args=(option_data,)))
-
-        # # 2
-        results.append(pool.apply_async(conversion, args=(option_data,)))
-
-        # # 3
-        results.append(pool.apply_async(long_call, args=(option_data,)))
-
-        # # 4
-        results.append(pool.apply_async(short_call, args=(option_data,)))
-
-        # # 5
-        results.append(pool.apply_async(long_put, args=(option_data,)))
-
-        # # 6
-        results.append(pool.apply_async(short_put, args=(option_data,)))
-
-        # # 7
-        results.append(pool.apply_async(long_straddle, args=(option_data,)))
-
-        # # 8
-        results.append(pool.apply_async(short_straddle, args=(option_data,)))
-
-        # # 9
-        results.append(pool.apply_async(bull_call_spread, args=(option_data,)))
-
-        # # 10
-        results.append(pool.apply_async(bear_call_spread, args=(option_data,)))
-
-        # # 11
-        results.append(pool.apply_async(bull_put_spread, args=(option_data,)))
-
-        # # 12
-        results.append(pool.apply_async(bear_put_spread, args=(option_data,)))
-
-        # # 13
-        results.append(pool.apply_async(long_strangle, args=(option_data,)))
-
-        # # 14
-        results.append(pool.apply_async(short_strangle, args=(option_data,)))
-
-        # # 15
-        results.append(pool.apply_async(long_butterfly, args=(option_data,)))
-
-        # # 16
-        results.append(pool.apply_async(short_butterfly, args=(option_data,)))
-
-        # # 17
-        results.append(pool.apply_async(collar, args=(option_data,)))
+        STRATEGIES = [
+            covered_call,  # 1
+            conversion,  # 2
+            long_call,  # 3
+            short_call,  # 4
+            long_put,  # 5
+            short_put,  # 6
+            bull_call_spread,  # 7
+            bear_call_spread,  # 8
+            bull_put_spread,  # 9
+            bear_put_spread,  # 10
+            long_straddle,  # 11
+            short_straddle,  # 12
+            long_strangle,  # 13
+            short_strangle,  # 14
+            long_butterfly,  # 15
+            short_butterfly,  # 16
+            collar,  # 17
+        ]
+        for strategy in STRATEGIES:
+            pool.apply_async(strategy, args=(option_data,))
 
         pool.close()
         pool.join()
