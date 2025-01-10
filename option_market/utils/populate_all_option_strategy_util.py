@@ -1,11 +1,9 @@
 import os
 import multiprocessing
 
-from core.utils import RedisInterface
 from core.configs import OPTION_REDIS_DB
 
 from . import (
-    get_options,
     covered_call,
     conversion,
     long_call,
@@ -46,25 +44,17 @@ STRATEGIES = [
 ]
 
 
-def populate_all_option_strategy_async():
+def populate_all_option_strategy_async(option_data):
     total_cores = os.cpu_count()
     used_cores = total_cores // 2
     with multiprocessing.Pool(processes=used_cores) as pool:
-        option_data = get_options(option_types=["option_data"])
-        option_data = option_data[option_data["base_equity_last_price"] > 0]
-
         for strategy in STRATEGIES:
-            pool.apply_async(strategy, args=(option_data,))
+            pool.apply_async(strategy, args=(option_data, OPTION_REDIS_DB))
 
         pool.close()
         pool.join()
 
 
-def populate_all_option_strategy_sync():
-    option_data = get_options(option_types=["option_data"])
-    option_data = option_data[option_data["base_equity_last_price"] > 0]
-
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
+def populate_all_option_strategy_sync(option_data):
     for strategy in STRATEGIES:
-        strategy(option_data, redis_conn)
+        strategy(option_data, OPTION_REDIS_DB)

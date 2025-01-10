@@ -159,14 +159,19 @@ def update_option_data_from_tse_main(run_mode):
             convert_int_date_to_str_date, args=("end_date",), axis=1
         )
 
-        option_data = option_data.to_dict(orient="records")
+        option_data_dict = option_data.to_dict(orient="records")
         redis_conn.bulk_push_list_of_dicts(
-            list_key="option_data", list_of_dicts=option_data
+            list_key="option_data", list_of_dicts=option_data_dict
         )
-        print(Fore.BLUE + f"option_data, {len(option_data)} records." + Style.RESET_ALL)
+        print(
+            Fore.BLUE
+            + f"option_data, {len(option_data_dict)} records."
+            + Style.RESET_ALL
+        )
 
-        # populate_all_option_strategy_sync()
-        populate_all_option_strategy_async()
+        option_data = option_data[option_data["base_equity_last_price"] > 0]
+        # populate_all_option_strategy_sync(option_data)
+        populate_all_option_strategy_async(option_data)
 
 
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):

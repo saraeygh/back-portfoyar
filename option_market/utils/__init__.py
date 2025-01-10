@@ -15,7 +15,6 @@ from .dictionary_collection import (
     TSE_ORDER_BOOK,
 )
 from .convert_int_date_to_str_date_util import convert_int_date_to_str_date
-from .get_options_util import get_options
 from .option_strategy_class_util import (
     Strategy,
     CartesianProduct,

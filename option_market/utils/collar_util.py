@@ -1,6 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN, OPTION_REDIS_DB
+from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import RedisInterface
 
 from . import (
@@ -32,8 +32,8 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def collar(option_data, redis_conn: RedisInterface | None = None):
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+def collar(option_data, redis_db_num: int):
+    redis_conn = RedisInterface(db=redis_db_num)
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
         & (option_data["call_best_sell_price"] > 0)
