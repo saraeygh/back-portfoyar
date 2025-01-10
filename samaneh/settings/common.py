@@ -212,4 +212,4 @@ LOGGING = {
     },
 }
 
-APPEND_SLASH = False
+# APPEND_SLASH = False

@@ -14,36 +14,36 @@ from global_market.views import (
 )
 
 upload_data_urls = [
-    path("upload-data", UploadXLSXDataAPIView.as_view()),
-    path("upload-relation", UploadRelationAPIView.as_view()),
+    path("upload-data/", UploadXLSXDataAPIView.as_view()),
+    path("upload-relation/", UploadRelationAPIView.as_view()),
 ]
 
 industry_urls = [
-    path("industry", GetIndustryListAPIView.as_view()),
+    path("industry/", GetIndustryListAPIView.as_view()),
 ]
 
 commodity_type_urls = [
-    path("commodity-type/<int:industry_id>", GetCommodityTypeListAPIView.as_view()),
+    path("commodity-type/<int:industry_id>/", GetCommodityTypeListAPIView.as_view()),
 ]
 
 commodity_urls = [
-    path("commodity/<int:commodity_type_id>", GetCommodityListAPIView.as_view()),
+    path("commodity/<int:commodity_type_id>/", GetCommodityListAPIView.as_view()),
 ]
 
 transit_urls = [
-    path("transit/<int:commodity_id>", GetTransitListAPIView.as_view()),
+    path("transit/<int:commodity_id>/", GetTransitListAPIView.as_view()),
 ]
 
 chart_urls = [
-    path("price-chart", GlobalPriceChartAPIView.as_view()),
-    path("ratio-chart", GlobalRatioChartAPIView.as_view()),
+    path("price-chart/", GlobalPriceChartAPIView.as_view()),
+    path("ratio-chart/", GlobalRatioChartAPIView.as_view()),
 ]
 
 strategy_urls = [
-    path("mean-deviation", MeanDeviationAPIView.as_view()),
+    path("mean-deviation/", MeanDeviationAPIView.as_view()),
     # MEAN-DEVIATION NEW VERSION
-    path("top-price-change", MeanDeviationAPIViewV2.as_view()),
-    path("related-stock", RelatedStockAPIView.as_view()),
+    path("top-price-change/", MeanDeviationAPIViewV2.as_view()),
+    path("related-stock/", RelatedStockAPIView.as_view()),
 ]
 
 urlpatterns = (
