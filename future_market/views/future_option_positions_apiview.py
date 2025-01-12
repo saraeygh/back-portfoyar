@@ -56,6 +56,23 @@ def get_strategy_result_from_redis(strategy_key, table=None):
         pass
     else:
         strategy_result = drop_unwanted_cols(strategy_result, strategy_key)
+        ###################################################################
+        try:
+            strategy_result.drop(
+                [
+                    "final_profit_fee",
+                    "required_change_fee",
+                    "monthly_profit_fee",
+                    "yearly_profit_fee",
+                    "fee",
+                ],
+                axis=1,
+                inplace=True,
+            )
+        except Exception:
+            pass
+
+        ###################################################################
 
     strategy_result = sort_strategy_result(strategy_result)
 
