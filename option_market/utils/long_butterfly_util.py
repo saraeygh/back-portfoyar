@@ -12,7 +12,7 @@ from . import (
     CALL_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -169,26 +169,22 @@ def long_butterfly(option_data, redis_db_num: int):
                         {
                             "action": "خرید",
                             "link": get_link_str(low_call_buy, "call_ins_code"),
-                            **add_action_detail(low_call_buy, CALL_BUY_COLUMN_MAPPING),
+                            **add_details(low_call_buy, CALL_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(mid_call_sell, "call_ins_code"),
-                            **add_action_detail(
-                                mid_call_sell, CALL_SELL_COLUMN_MAPPING
-                            ),
+                            **add_details(mid_call_sell, CALL_SELL_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(mid_call_sell, "call_ins_code"),
-                            **add_action_detail(
-                                mid_call_sell, CALL_SELL_COLUMN_MAPPING
-                            ),
+                            **add_details(mid_call_sell, CALL_SELL_COLUMN_MAPPING),
                         },
                         {
                             "action": "خرید",
                             "link": get_link_str(high_call_buy, "call_ins_code"),
-                            **add_action_detail(high_call_buy, CALL_BUY_COLUMN_MAPPING),
+                            **add_details(high_call_buy, CALL_BUY_COLUMN_MAPPING),
                         },
                     ],
                 }

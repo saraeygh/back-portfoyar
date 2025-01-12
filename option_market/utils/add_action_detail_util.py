@@ -1,7 +1,8 @@
 from core.configs import (
     OPTION_TRADE_FEE,
-    OPTION_PHYSICAL_SETTLEMENT_FEE,
-    OPTION_LIQUIDATION_SETTLEMENT_FEE,
+    OPTION_SETTLEMENT_FEE,
+    BASE_EQUITY_BUY_FEE,
+    BASE_EQUITY_SELL_FEE,
 )
 
 
@@ -13,7 +14,7 @@ def edit_last_update(last_update):
     return last_update
 
 
-def add_action_detail(row, column_mapping: dict):
+def add_details(row, column_mapping: dict):
     result_dict = {}
     for action_key, row_column in column_mapping.items():
         if action_key == "last_update":
@@ -30,22 +31,38 @@ def add_action_detail(row, column_mapping: dict):
     return result_dict
 
 
-def add_option_fees(row):
+BUY = "buy"
+SELL = "sell"
 
-    cs = float(row.get("contract_size"))
-    strike = float(row.get("strike_price"))
+CALL = "call"
+PUT = "put"
 
-    trade_fee = OPTION_TRADE_FEE * strike
-    liquidation_settlement_fee = strike * cs * OPTION_LIQUIDATION_SETTLEMENT_FEE
-    physical_settlement_fee = strike * cs * OPTION_PHYSICAL_SETTLEMENT_FEE
 
-    fees = {
-        "trade_fee": round(trade_fee, 2),
-        "liquidation_settlement_fee": round(liquidation_settlement_fee, 2),
-        "physical_settlement_fee": round(physical_settlement_fee, 2),
-        "total_fee": round(
-            trade_fee + liquidation_settlement_fee + physical_settlement_fee, 2
-        ),
-    }
+def get_option_with_fee(strike, premium, action, option_type):
+    if action == BUY and option_type == CALL:
+        strike = (1 + OPTION_SETTLEMENT_FEE) * strike
+        premium = (1 + OPTION_TRADE_FEE) * premium
+    elif action == SELL and option_type == CALL:
+        strike = (1 - OPTION_SETTLEMENT_FEE) * strike
+        premium = (1 - OPTION_TRADE_FEE) * premium
+    elif action == BUY and option_type == PUT:
+        strike = (1 - OPTION_SETTLEMENT_FEE) * strike
+        premium = (1 + OPTION_TRADE_FEE) * premium
+    elif action == SELL and option_type == PUT:
+        strike = (1 + OPTION_SETTLEMENT_FEE) * strike
+        premium = (1 - OPTION_TRADE_FEE) * premium
+    else:
+        return strike, premium
 
-    return fees
+    return strike, premium
+
+
+def get_base_equity_with_fee(base_equity_price, action: str = BUY):
+    if action == BUY:
+        base_equity_price = (1 + BASE_EQUITY_BUY_FEE) * base_equity_price
+    elif action == SELL:
+        base_equity_price = (1 - BASE_EQUITY_SELL_FEE) * base_equity_price
+    else:
+        return base_equity_price
+
+    return base_equity_price

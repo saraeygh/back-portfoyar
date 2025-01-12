@@ -9,7 +9,7 @@ from . import (
     CALL_SELL_COLUMN_MAPPING,
     PUT_BUY_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -109,17 +109,17 @@ def conversion(option_data, redis_db_num: int):
                     {
                         "action": "خرید",
                         "link": get_link_str(row, "base_equity_ins_code"),
-                        **add_action_detail(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
+                        **add_details(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
                     },
                     {
                         "action": "فروش",
                         "link": get_link_str(row, "call_ins_code"),
-                        **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
+                        **add_details(row, CALL_SELL_COLUMN_MAPPING),
                     },
                     {
                         "action": "خرید",
                         "link": get_link_str(row, "put_ins_code"),
-                        **add_action_detail(row, PUT_BUY_COLUMN_MAPPING),
+                        **add_details(row, PUT_BUY_COLUMN_MAPPING),
                     },
                 ],
             }

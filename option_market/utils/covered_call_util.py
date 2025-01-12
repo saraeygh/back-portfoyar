@@ -9,10 +9,14 @@ from . import (
     CoveredCall,
     BASE_EQUITY_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
+    SELL,
+    CALL,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
+    get_option_with_fee,
+    get_base_equity_with_fee,
 )
 
 
@@ -27,6 +31,35 @@ REQUIRED_COLUMNS = [
     "base_equity_last_price",
     *list(BASE_EQUITY_BUY_COLUMN_MAPPING.values()),
 ]
+
+
+def add_profits_with_fee(remained_day, strike, premimu, base_equity_price):
+
+    if base_equity_price != 0 and base_equity_price < strike:
+        required_change = get_deviation_percent(strike, base_equity_price)
+    else:
+        required_change = 0
+
+    profits = {
+        "final_profit_fee": 0,
+        "required_change_fee": required_change,
+        "monthly_profit_fee": 0,
+        "yearly_profit_fee": 0,
+    }
+
+    if base_equity_price != premimu:
+        profits["final_profit_fee"] = (
+            (strike / (base_equity_price - premimu)) - 1
+        ) * 100
+
+    if remained_day != 0:
+        profits["monthly_profit_fee"] = (
+            profits["final_profit_fee"] / remained_day
+        ) * 30
+
+    profits["yearly_profit_fee"] = profits["monthly_profit_fee"] * 12
+
+    return profits
 
 
 def add_profits(row):
@@ -109,15 +142,27 @@ def covered_call(option_data, redis_db_num: int):
                     {
                         "link": get_link_str(row, "base_equity_ins_code"),
                         "action": "خرید",
-                        **add_action_detail(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
+                        **add_details(row, BASE_EQUITY_BUY_COLUMN_MAPPING),
                     },
                     {
                         "link": get_link_str(row, "call_ins_code"),
                         "action": "فروش",
-                        **add_action_detail(row, CALL_SELL_COLUMN_MAPPING),
+                        **add_details(row, CALL_SELL_COLUMN_MAPPING),
                     },
                 ],
             }
+
+            ###################################################################
+            remained_day = row.get("remained_day")
+            n_strike, n_premimu = get_option_with_fee(strike, premium, SELL, CALL)
+            base_equity_price = get_base_equity_with_fee(base_equity_last_price)
+            document.update(
+                **add_profits_with_fee(
+                    remained_day, n_strike, n_premimu, base_equity_price
+                )
+            )
+            document["fee"] = document["final_profit"] - document["final_profit_fee"]
+            ###################################################################
 
             result.append(document)
 

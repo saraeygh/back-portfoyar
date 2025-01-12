@@ -11,10 +11,14 @@ from . import (
     CartesianProduct,
     CALL_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
+    CALL,
+    BUY,
+    SELL,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
+    get_option_with_fee,
 )
 
 
@@ -30,6 +34,34 @@ REQUIRED_COLUMNS = [
     "base_equity_symbol",
     "base_equity_last_price",
 ]
+
+
+def add_profits_with_fee(
+    net_profit, profit_factor, remained_day, base_equity_last_price, high_strike
+):
+    if base_equity_last_price != 0 and base_equity_last_price < high_strike:
+        required_change = get_deviation_percent(high_strike, base_equity_last_price)
+    else:
+        required_change = 0
+
+    profits = {
+        "final_profit_fee": 0,
+        "required_change_fee": required_change,
+        "monthly_profit_fee": 0,
+        "yearly_profit_fee": 0,
+    }
+
+    if profit_factor != 0:
+        profits["final_profit_fee"] = (net_profit / profit_factor) * 100
+
+    if remained_day != 0:
+        profits["monthly_profit_fee"] = (
+            profits["final_profit_fee"] / remained_day
+        ) * 30
+
+    profits["yearly_profit_fee"] = profits["monthly_profit_fee"] * 12
+
+    return profits
 
 
 def add_profits(
@@ -149,15 +181,39 @@ def bull_call_spread(option_data, redis_db_num: int):
                         {
                             "action": "خرید",
                             "link": get_link_str(buy_row, "call_ins_code"),
-                            **add_action_detail(buy_row, CALL_BUY_COLUMN_MAPPING),
+                            **add_details(buy_row, CALL_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(sell_row, "call_ins_code"),
-                            **add_action_detail(sell_row, CALL_SELL_COLUMN_MAPPING),
+                            **add_details(sell_row, CALL_SELL_COLUMN_MAPPING),
                         },
                     ],
                 }
+                ###############################################################
+                n_low_strike, n_low_premium = get_option_with_fee(
+                    low_strike, low_premium, BUY, CALL
+                )
+                n_high_strike, n_high_premium = get_option_with_fee(
+                    high_strike, high_premium, SELL, CALL
+                )
+                net_profit = (n_high_strike - n_low_strike) - (
+                    n_low_premium - n_high_premium
+                )
+                profit_factor = -1 * low_premium + high_premium
+                document.update(
+                    **add_profits_with_fee(
+                        net_profit,
+                        abs(profit_factor),
+                        remained_day,
+                        base_equity_last_price,
+                        n_high_strike,
+                    )
+                )
+                document["fee"] = (
+                    document["final_profit"] - document["final_profit_fee"]
+                )
+                ###############################################################
 
                 result.append(document)
 

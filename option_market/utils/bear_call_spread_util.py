@@ -13,7 +13,7 @@ from . import (
     CALL_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -144,12 +144,12 @@ def bear_call_spread(option_data, redis_db_num: int):
                         {
                             "action": "خرید",
                             "link": get_link_str(buy_row, "call_ins_code"),
-                            **add_action_detail(buy_row, CALL_BUY_COLUMN_MAPPING),
+                            **add_details(buy_row, CALL_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(sell_row, "call_ins_code"),
-                            **add_action_detail(sell_row, CALL_SELL_COLUMN_MAPPING),
+                            **add_details(sell_row, CALL_SELL_COLUMN_MAPPING),
                         },
                     ],
                 }

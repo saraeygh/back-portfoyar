@@ -12,7 +12,7 @@ from . import (
     CALL_SELL_COLUMN_MAPPING,
     PUT_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -158,14 +158,12 @@ def short_strangle(option_data, redis_db_num: int):
                         {
                             "action": "فروش",
                             "link": get_link_str(put_sell_row, "put_ins_code"),
-                            **add_action_detail(put_sell_row, PUT_SELL_COLUMN_MAPPING),
+                            **add_details(put_sell_row, PUT_SELL_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(call_sell_row, "call_ins_code"),
-                            **add_action_detail(
-                                call_sell_row, CALL_SELL_COLUMN_MAPPING
-                            ),
+                            **add_details(call_sell_row, CALL_SELL_COLUMN_MAPPING),
                         },
                     ],
                 }

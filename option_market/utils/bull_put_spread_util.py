@@ -13,7 +13,7 @@ from . import (
     PUT_BUY_COLUMN_MAPPING,
     PUT_SELL_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -148,12 +148,12 @@ def bull_put_spread(option_data, redis_db_num: int):
                         {
                             "action": "خرید",
                             "link": get_link_str(buy_row, "put_ins_code"),
-                            **add_action_detail(buy_row, PUT_BUY_COLUMN_MAPPING),
+                            **add_details(buy_row, PUT_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "فروش",
                             "link": get_link_str(sell_row, "put_ins_code"),
-                            **add_action_detail(sell_row, PUT_SELL_COLUMN_MAPPING),
+                            **add_details(sell_row, PUT_SELL_COLUMN_MAPPING),
                         },
                     ],
                 }

@@ -10,7 +10,7 @@ from . import (
     PUT_BUY_COLUMN_MAPPING,
     CALL_BUY_COLUMN_MAPPING,
     get_distinc_end_date_options,
-    add_action_detail,
+    add_details,
     filter_rows_with_nan_values,
     get_link_str,
 )
@@ -116,12 +116,12 @@ def long_strangle(option_data, redis_db_num: int):
                         {
                             "action": "خرید",
                             "link": get_link_str(put_buy_row, "put_ins_code"),
-                            **add_action_detail(put_buy_row, PUT_BUY_COLUMN_MAPPING),
+                            **add_details(put_buy_row, PUT_BUY_COLUMN_MAPPING),
                         },
                         {
                             "action": "خرید",
                             "link": get_link_str(call_buy_row, "call_ins_code"),
-                            **add_action_detail(call_buy_row, CALL_BUY_COLUMN_MAPPING),
+                            **add_details(call_buy_row, CALL_BUY_COLUMN_MAPPING),
                         },
                     ],
                 }

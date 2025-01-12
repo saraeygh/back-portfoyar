@@ -8,7 +8,6 @@ THIRTY_MINUTES_CACHE = 60 * 30  # 30 minutes
 SIXTY_MINUTES_CACHE = 60 * 60  # 60 minutes
 SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
 
-
 ######################################################## REDIS_DBs
 KEY_WITH_EX_REDIS_DB = 1  # CORE
 OPTION_REDIS_DB = 3  # FUTURE
@@ -17,7 +16,6 @@ STOCK_REDIS_DB = 5  # STOCK
 USER_AGENTS_REDIS_DB = 13  # CORE
 ONLINE_USERS_REDIS_DB = 15  # CORE
 
-
 ######################################################## CORE APP
 DASHBOARD_MONGO_DB = "dashboard"
 BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
@@ -25,7 +23,6 @@ LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
 MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
-
 
 ######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"
@@ -40,20 +37,16 @@ CODE_RANGE_MIN = 111111
 CODE_RANGE_MAX = 999999
 PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
 
-
 ######################################################## DOMESTIC APP
 DOMESTIC_MONGO_DB = "domestic"
-
 
 ######################################################## GLOBAL APP
 GLOBAL_MONGO_DB = "global"
 
-
 ######################################################## OPTIONS APP
 OPTION_MONGO_DB = "option"
 OPTION_TRADE_FEE = 0.00103
-OPTION_LIQUIDATION_SETTLEMENT_FEE = 0.0005
-OPTION_PHYSICAL_SETTLEMENT_FEE = 0.0005
+OPTION_SETTLEMENT_FEE = 0.0005
 BASE_EQUITY_BUY_FEE = 0.003712
 BASE_EQUITY_SELL_FEE = 0.0088
 
