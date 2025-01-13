@@ -7,7 +7,7 @@ from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
 )
-from core.utils import MongodbInterface, get_deviation_percent, run_main_task
+from core.utils import MongodbInterface, run_main_task
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,

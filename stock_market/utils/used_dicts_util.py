@@ -18,16 +18,16 @@ COMMODITY_PAPER = 9
 MAIN_PAPER_TYPE_DICT = {
     STOCK_PAPER: "سهام",
     INITIAL_MARKET_PAPER: "بازار پایه فرابورس",
+    FUND_PAPER: "صندوق‌های سرمایه‌گذاری",
+    PRIORITY_PAPER: "حق تقدم",
 }
 
 ALL_PAPER_TYPE_DICT = {
     **MAIN_PAPER_TYPE_DICT,
     ACCOMMODATION_PAPER: "تسهیلات مسکن",
-    PRIORITY_PAPER: "حق تقدم",
     DEBT_PAPER: "اوراق بدهی",
     OPTION_PAPER: "اختیار معامله",
     FUTURE_PAPER: "آتی",
-    FUND_PAPER: "صندوق‌های سرمایه‌گذاری",
     COMMODITY_PAPER: "بورس کالا",
 }
 

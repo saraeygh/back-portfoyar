@@ -2,12 +2,125 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from option_market.tasks import get_option_history
+import os
+from colorama import Fore, Style
+
+from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
+from core.configs import MANUAL_MODE
+
+from account.tasks import disable_expired_subscription
+from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
+
+from domestic_market.utils import get_dollar_price_history
+from domestic_market.tasks import (
+    calculate_commodity_mean_domestic,
+    get_dollar_daily_price,
+    populate_domestic_market_db,
+    calculate_monthly_sell_domestic,
+    calculate_production_sell_domestic,
+    calculate_producers_yearly_value,
+)
+
+from future_market.tasks import (
+    update_derivative_info,
+    update_base_equity,
+    update_future,
+    update_option_result,
+    check_active_contracts,
+)
+from global_market.tasks import calculate_commodity_means_global
+
+from option_market.tasks import update_option_data_from_tse, get_option_history
+
+from stock_market.tasks import (
+    update_market_watch,
+    get_monthly_activity_report_letter,
+    update_stock_raw_adjusted_history,
+    update_instrument_info,
+    update_instrument_roi,
+    stock_value_history,
+    stock_option_value_history,
+    stock_option_value_change,
+    stock_option_price_spread,
+)
+from stock_market.utils import update_stock_adjusted_history
+
+
+from dashboard.tasks import dashboard
+
+
+def main_cli(clear_cmd):
+    print(
+        Style.BRIGHT + "Choose app:",
+        Fore.BLUE + "1) Domestic market",
+        "2) Global market",
+        "3) Option market",
+        "4) Stock market",
+        "5) Future market",
+        "6) Dashboard app",
+        "9) Account app",
+        Fore.RED + "10) Others",
+        Fore.RED + "0) Exit" + Style.RESET_ALL,
+        sep="\n",
+    )
+    cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+    os.system(clear_cmd)
+
+    return cmd
+
+
+TASKS = {
+    # DOMESTIC
+    "11": populate_domestic_market_db,
+    "12": calculate_commodity_mean_domestic,
+    "13": get_dollar_daily_price,
+    "14": calculate_monthly_sell_domestic,
+    "15": calculate_production_sell_domestic,
+    "16": get_dollar_price_history,
+    "17": calculate_producers_yearly_value,
+    # GLOBAL
+    "21": calculate_commodity_means_global,
+    # OPTION
+    "31": update_option_data_from_tse,
+    "32": get_option_history,
+    # STOCK
+    "41": get_monthly_activity_report_letter,
+    "42": update_market_watch,
+    "43": update_stock_raw_adjusted_history,
+    "44": update_instrument_info,
+    "45": update_instrument_roi,
+    "46": stock_value_history,
+    "47": stock_option_value_history,
+    "48": stock_option_value_change,
+    "49": stock_option_price_spread,
+    "491": update_stock_adjusted_history,
+    # FUTURE
+    "51": update_derivative_info,
+    "52": update_base_equity,
+    "53": update_future,
+    "54": update_option_result,
+    "55": check_active_contracts,
+    # DASHBOARD
+    "61": dashboard,
+    # ACCOUNT
+    "71": disable_expired_subscription,
+    "72": create_sub_for_all_no_sub_users,
+    "73": add_days_to_subs,
+    # OTHER
+    "81": clear_redis_cache,
+    "82": replace_all_arabic_letters_in_db,
+}
 
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        get_option_history()
+        task_id = request.data.get("id")
+        manual = request.data.get("manual")
+
+        if manual:
+            TASKS.get(task_id)(MANUAL_MODE)
+        else:
+            TASKS.get(task_id)()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 
