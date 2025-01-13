@@ -61,7 +61,7 @@ ERROR = "ERROR"
 
 def get_task_result_status(exception):
     status = SUCCESS
-    if exception == SUCCESS:
+    if exception != SUCCESS:
         status = ERROR
 
     return status
