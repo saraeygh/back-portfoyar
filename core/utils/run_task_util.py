@@ -23,12 +23,6 @@ BLUE = "BLUE"
 GREEN = "GREEN"
 RED = "RED"
 
-SERVERS = {
-    "178.252.141.50": "LOCAL",
-    "185.105.185.188": "TEST",
-    "188.121.98.119": "PROD",
-}
-
 
 def print_task_info(color: str = BLUE, name: str = ""):
     now = f"⏰ [{jdatetime.datetime.now(tz=TEHRAN_TZ).strftime("%Y/%m/%d %H:%M:%S")}]"
@@ -42,17 +36,40 @@ def print_task_info(color: str = BLUE, name: str = ""):
     return
 
 
-SUCCESS_BODY = "SUCCESS"
+SERVERS = {
+    "178.252.141.50": "LOCAL",
+    "185.105.185.188": "TEST",
+    "188.121.98.119": "PROD",
+}
 
 
-def get_exception_detail(exception):
-    public_ip = "UNKNOWN: "
+def get_host():
+    host_name = "NO_NAME"
+    host_ip = "NO_IP"
+
     response = get_http_response(req_url="https://api.ipify.org?format=json")
     if response:
-        public_ip = response.json().get("ip")
-        public_ip = f"{SERVERS.get(public_ip, "UNKNOWN SERVER")} ({public_ip}): "
+        host_ip = response.json().get("ip")
+        host_name = SERVERS.get(host_ip, host_name)
 
-    if exception == SUCCESS_BODY:
+    return host_name, host_ip
+
+
+SUCCESS = "SUCCESS"
+ERROR = "ERROR"
+
+
+def get_task_result_status(exception):
+    status = SUCCESS
+    if exception == SUCCESS:
+        status = ERROR
+
+    return status
+
+
+def get_exception_detail(exception, host_name, host_ip):
+
+    if exception == SUCCESS:
         exception_details = exception
     else:
         exception_details = "".join(
@@ -61,16 +78,19 @@ def get_exception_detail(exception):
             )
         )
 
-    return public_ip + exception_details
+    return host_name + f"({host_ip})" + ": " + exception_details
 
 
-def send_task_fail_success_email(task_name: str = "", exception: str = "SUCCESS"):
+def send_task_fail_success_email(task_name: str = "", exception: str = SUCCESS):
+    host_name, host_ip = get_host()
+    status = get_task_result_status(exception)
+
     message = MIMEMultipart()
     message["From"] = EMAIL_HOST_USER
     message["To"] = EMAIL_TO
-    message["Subject"] = task_name
+    message["Subject"] = host_name + f" ({status}): " + task_name
 
-    html_body = get_exception_detail(exception)
+    html_body = get_exception_detail(exception, host_name, host_ip)
     message.attach(MIMEText(html_body, "html", "utf-8"))
     text = message.as_string()
 
