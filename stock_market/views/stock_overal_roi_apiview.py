@@ -55,7 +55,6 @@ class StockOveralROIAPIView(APIView):
         results = results.sort_values(by=SORT_COL, ascending=True)
         if not na_rows.empty:
             results = pd.concat([results, na_rows])
-        results = results.head(STOCK_TOP_500_LIMIT)
         results.reset_index(drop=True, inplace=True)
         results["id"] = results.apply(add_index_as_id, axis=1)
         results = results.to_dict(orient="records")
