@@ -18,7 +18,8 @@ from domestic_market.permissions import HasDomesticSubscription
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, HasDomesticSubscription])
 class ProducerSellReportAPIView(APIView):
-    def get(self, request, company_id):
+    def post(self, request):
+        company_id = request.data.get("company_id")
 
         mongo_client = MongodbInterface(
             db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"

@@ -3,13 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-from option_market.utils import populate_all_option_strategy_sync
-
-
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-
-        populate_all_option_strategy_sync()
 
         return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
 
