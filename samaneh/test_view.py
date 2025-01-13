@@ -31,6 +31,7 @@ from future_market.tasks import (
 from global_market.tasks import calculate_commodity_means_global
 
 from option_market.tasks import update_option_data_from_tse, get_option_history
+from option_market.utils import populate_all_option_strategy_sync
 
 from stock_market.tasks import (
     update_market_watch,
@@ -49,26 +50,6 @@ from stock_market.utils import update_stock_adjusted_history
 from dashboard.tasks import dashboard
 
 
-def main_cli(clear_cmd):
-    print(
-        Style.BRIGHT + "Choose app:",
-        Fore.BLUE + "1) Domestic market",
-        "2) Global market",
-        "3) Option market",
-        "4) Stock market",
-        "5) Future market",
-        "6) Dashboard app",
-        "9) Account app",
-        Fore.RED + "10) Others",
-        Fore.RED + "0) Exit" + Style.RESET_ALL,
-        sep="\n",
-    )
-    cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
-    os.system(clear_cmd)
-
-    return cmd
-
-
 TASKS = {
     # DOMESTIC
     "11": populate_domestic_market_db,
@@ -83,6 +64,7 @@ TASKS = {
     # OPTION
     "31": update_option_data_from_tse,
     "32": get_option_history,
+    "33": populate_all_option_strategy_sync,
     # STOCK
     "41": get_monthly_activity_report_letter,
     "42": update_market_watch,

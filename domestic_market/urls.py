@@ -15,6 +15,7 @@ from domestic_market.views import (
     MeanDeviationAPIViewV2,
     UploadDollarPriceAPIView,
     ProducerSellReportAPIView,
+    ProducerSellReportAPIViewV2,
     GetCommodityNameListByProducerAPIView,
     UploadRelationAPIView,
 )
@@ -61,7 +62,8 @@ strategy_urls = [
 
 # REPORTS
 report_urls = [
-    path("producer-sell", ProducerSellReportAPIView.as_view()),
+    path("producer-sell/<int:company_id>", ProducerSellReportAPIView.as_view()),
+    path("producer-sell", ProducerSellReportAPIViewV2.as_view()),
 ]
 
 # DOLLAR

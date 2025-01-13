@@ -18,6 +18,28 @@ from domestic_market.permissions import HasDomesticSubscription
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, HasDomesticSubscription])
 class ProducerSellReportAPIView(APIView):
+    def get(self, request, company_id):
+        mongo_client = MongodbInterface(
+            db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
+        )
+
+        producer_sell_report = list(
+            mongo_client.collection.find({"producer_id": company_id}, {"_id": 0})
+        )
+
+        if producer_sell_report:
+            producer_sell_report = producer_sell_report[0]["report"]
+            return Response(data=producer_sell_report, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                data={"detain": "No resutl"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+@method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated, HasDomesticSubscription])
+class ProducerSellReportAPIViewV2(APIView):
     def post(self, request):
         company_id = request.data.get("company_id")
 

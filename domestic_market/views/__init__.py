@@ -18,7 +18,10 @@ from .domestic_price_chart_by_producer_apiview import (
 from .domestic_ratio_chart_by_producer_apiview import (
     DomesticRatioChartByProducerAPIView,
 )
-from .producer_sell_report_apiview import ProducerSellReportAPIView
+from .producer_sell_report_apiview import (
+    ProducerSellReportAPIView,
+    ProducerSellReportAPIViewV2,
+)
 from .get_commodity_name_list_by_producer_apiview import (
     GetCommodityNameListByProducerAPIView,
 )

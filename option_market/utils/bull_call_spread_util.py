@@ -200,7 +200,7 @@ def bull_call_spread(option_data, redis_db_num: int):
                 net_profit = (n_high_strike - n_low_strike) - (
                     n_low_premium - n_high_premium
                 )
-                profit_factor = -1 * low_premium + high_premium
+                profit_factor = -1 * n_low_premium + n_high_premium
                 document.update(
                     **add_profits_with_fee(
                         net_profit,
@@ -210,9 +210,13 @@ def bull_call_spread(option_data, redis_db_num: int):
                         n_high_strike,
                     )
                 )
-                document["fee"] = (
-                    document["final_profit"] - document["final_profit_fee"]
+                s = (
+                    (n_low_strike - low_strike)
+                    + (high_strike - n_high_strike)
+                    + (n_low_premium - low_premium)
+                    + (high_premium - n_high_premium)
                 )
+                document["fee"] = (s / abs(n_high_premium - n_low_premium)) * 100
                 ###############################################################
 
                 result.append(document)
