@@ -125,6 +125,28 @@ def get_update_history(instrument, instrument_type):
         return
 
 
+def convert_to_date(row):
+    expiration_date = row.get("history")[0]["expiration_date"]
+    year, month, day = map(int, expiration_date.split("/"))
+    expiration_date = jdatetime.date(year=year, month=month, day=day)
+
+    return expiration_date
+
+
+def remove_expired_options_history():
+    mongodb_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
+    history = pd.DataFrame(list(mongodb_conn.collection.find({}, {"_id": 0})))
+
+    history["expiration_date"] = history.apply(convert_to_date, axis=1)
+    today_date = jdatetime.datetime.now().date()
+
+    history = history[history["expiration_date"] >= today_date]
+    history.drop(["expiration_date"], axis=1, inplace=True)
+    history = history.to_dict(orient="records")
+    if history:
+        mongodb_conn.insert_docs_into_collection(documents=history)
+
+
 def get_option_history_main():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
@@ -134,6 +156,8 @@ def get_option_history_main():
     ):
         get_update_history(instrument=instrument, instrument_type="put")
         get_update_history(instrument=instrument, instrument_type="call")
+
+    remove_expired_options_history()
 
 
 def get_option_history():
