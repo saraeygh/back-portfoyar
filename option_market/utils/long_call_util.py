@@ -1,5 +1,8 @@
 from uuid import uuid4
 from tqdm import tqdm
+
+from colorama import Fore, Style
+
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import RedisInterface, get_deviation_percent
 
@@ -11,9 +14,8 @@ from . import (
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
+    get_fee_percent,
 )
-
-from colorama import Fore, Style
 
 
 REQUIRED_COLUMNS = [
@@ -41,7 +43,14 @@ def add_break_even(row):
         "monthly_break_even": 0,
         "yearly_break_even": 0,
         "leverage": 0,
+        "fee": 0,
     }
+    break_even = get_fee_percent(
+        break_even,
+        strike_sum=strike_price,
+        premium_sum=call_premium,
+        net_pay=call_premium,
+    )
 
     try:
         break_even["final_break_even"] = get_deviation_percent(

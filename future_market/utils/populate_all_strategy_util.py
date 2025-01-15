@@ -2,6 +2,7 @@ from core.configs import FUTURE_REDIS_DB
 
 from option_market.utils import (
     covered_call,
+    conversion,
     long_call,
     short_call,
     long_put,
@@ -17,7 +18,6 @@ from option_market.utils import (
     long_butterfly,
     short_butterfly,
     collar,
-    conversion,
 )
 
 

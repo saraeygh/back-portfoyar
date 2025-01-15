@@ -31,7 +31,7 @@ from .get_profits_fee_util import (
     PUT,
     BUY,
     SELL,
-    add_fee,
+    add_option_fee,
     get_profits,
     add_base_equity_fee,
     get_fee_percent,

@@ -1,5 +1,8 @@
 from uuid import uuid4
 from tqdm import tqdm
+
+from colorama import Fore, Style
+
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import RedisInterface
 
@@ -8,13 +11,19 @@ from . import (
     BASE_EQUITY_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
     PUT_BUY_COLUMN_MAPPING,
+    CALL,
+    SELL,
+    PUT,
+    BUY,
     get_distinc_end_date_options,
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
+    add_option_fee,
+    add_base_equity_fee,
+    get_profits,
+    get_fee_percent,
 )
-
-from colorama import Fore, Style
 
 
 REQUIRED_COLUMNS = [
@@ -32,21 +41,33 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def add_profits(row, net_profit, profit_factor):
-    remained_day = row.get("remained_day")
-
+def add_profits_with_fee(
+    remained_day, strike, call_premium, put_premium, base_equity_price
+):
     profits = {
-        "final_profit": (net_profit / profit_factor) * 100,
+        "final_profit": 0,
         "required_change": 0,
         "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
+        "fee": 0,
     }
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    n_strike, n_call_premium = add_option_fee(strike, call_premium, SELL, CALL)
+    n_strike, n_put_premium = add_option_fee(strike, put_premium, BUY, PUT)
+    n_base_equity_price = add_base_equity_fee(base_equity_price, BUY)
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    net_in = n_call_premium - n_put_premium - n_base_equity_price + n_strike
+    net_out = abs(n_call_premium - n_put_premium - n_base_equity_price)
+    profits = get_profits(profits, net_in, net_out, remained_day)
+
+    profits = get_fee_percent(
+        profits,
+        strike_sum=strike,
+        premium_sum=sum([call_premium, put_premium]),
+        base_equity=[BUY, base_equity_price],
+        net_pay=net_out,
+    )
 
     return profits
 
@@ -76,13 +97,13 @@ def conversion(option_data, redis_db_num: int):
             put_premium = float(row.get("put_best_sell_price"))
             base_equity_last_price = float(row.get("base_equity_last_price"))
 
-            covered_call_strategy = Conversion(
+            conversion_strategy = Conversion(
                 strike=strike,
                 call_premium=call_premium,
                 put_premium=put_premium,
                 asset_price=base_equity_last_price,
             )
-            coordinates = covered_call_strategy.get_coordinate()
+            coordinates = conversion_strategy.get_coordinate()
 
             profit_factor = call_premium - put_premium - base_equity_last_price
             document = {
@@ -98,8 +119,12 @@ def conversion(option_data, redis_db_num: int):
                 "put_buy_symbol": row.get("put_symbol"),
                 "put_best_sell_price": put_premium,
                 "put_value": row.get("put_value") / RIAL_TO_BILLION_TOMAN,
-                **add_profits(
-                    row, covered_call_strategy.net_profit, abs(profit_factor)
+                **add_profits_with_fee(
+                    row.get("remained_day"),
+                    strike,
+                    call_premium,
+                    put_premium,
+                    base_equity_last_price,
                 ),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,

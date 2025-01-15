@@ -18,7 +18,7 @@ from . import (
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
-    add_fee,
+    add_option_fee,
     get_profits,
     get_fee_percent,
 )
@@ -43,8 +43,8 @@ def add_profits_with_fee(
     low_premium,
     high_strike,
     high_premium,
-    remained_day,
     base_equity_last_price,
+    remained_day,
 ):
     profits = {
         "final_profit": 0,
@@ -60,8 +60,10 @@ def add_profits_with_fee(
             high_strike, base_equity_last_price
         )
 
-    n_low_strike, n_low_premium = add_fee(low_strike, low_premium, BUY, CALL)
-    n_high_strike, n_high_premium = add_fee(high_strike, high_premium, SELL, CALL)
+    n_low_strike, n_low_premium = add_option_fee(low_strike, low_premium, BUY, CALL)
+    n_high_strike, n_high_premium = add_option_fee(
+        high_strike, high_premium, SELL, CALL
+    )
 
     net_profit = (n_high_strike - n_low_strike) - (n_low_premium - n_high_premium)
     net_pay = abs(n_high_premium - n_low_premium)
@@ -148,16 +150,14 @@ def bull_call_spread(option_data, redis_db_num: int):
                     "call_sell_strike": high_strike,
                     "call_sell_value": sell_row.get("call_value")
                     / RIAL_TO_BILLION_TOMAN,
-                    ###########################################################
                     **add_profits_with_fee(
                         low_strike=low_strike,
                         low_premium=low_premium,
                         high_strike=high_strike,
                         high_premium=high_premium,
-                        remained_day=remained_day,
                         base_equity_last_price=base_equity_last_price,
+                        remained_day=remained_day,
                     ),
-                    ###########################################################
                     "end_date": row.get("end_date"),
                     "profit_factor": profit_factor,
                     "strike_price_deviation": max(

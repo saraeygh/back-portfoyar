@@ -9,13 +9,16 @@ from . import (
     CoveredCall,
     BASE_EQUITY_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
+    BUY,
     SELL,
     CALL,
     get_distinc_end_date_options,
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
-    add_fee,
+    get_profits,
+    get_fee_percent,
+    add_option_fee,
     add_base_equity_fee,
 )
 
@@ -33,63 +36,33 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def add_profits_with_fee(remained_day, strike, premimu, base_equity_price):
-
-    if base_equity_price != 0 and base_equity_price < strike:
-        required_change = get_deviation_percent(strike, base_equity_price)
-    else:
-        required_change = 0
-
-    profits = {
-        "final_profit_fee": 0,
-        "required_change_fee": required_change,
-        "monthly_profit_fee": 0,
-        "yearly_profit_fee": 0,
-    }
-
-    if base_equity_price != premimu:
-        profits["final_profit_fee"] = (
-            (strike / (base_equity_price - premimu)) - 1
-        ) * 100
-
-    if remained_day != 0:
-        profits["monthly_profit_fee"] = (
-            profits["final_profit_fee"] / remained_day
-        ) * 30
-
-    profits["yearly_profit_fee"] = profits["monthly_profit_fee"] * 12
-
-    return profits
-
-
-def add_profits(row):
-    remained_day = row.get("remained_day")
-    strike_price = float(row.get("strike_price"))
-    call_premium = float(row.get("call_best_buy_price"))
-    base_equity_last_price = float(row.get("base_equity_last_price"))
-
-    if base_equity_last_price != 0 and base_equity_last_price < strike_price:
-        required_change = get_deviation_percent(strike_price, base_equity_last_price)
-    else:
-        required_change = 0
-
+def add_profits_with_fee(remained_day, strike, premium, base_equity_price):
     profits = {
         "final_profit": 0,
-        "required_change": required_change,
+        "required_change": 0,
         "remained_day": remained_day,
         "monthly_profit": 0,
         "yearly_profit": 0,
+        "fee": 0,
     }
 
-    if base_equity_last_price != call_premium:
-        profits["final_profit"] = (
-            (strike_price / (base_equity_last_price - call_premium)) - 1
-        ) * 100
+    if base_equity_price != 0 and base_equity_price < strike:
+        profits["required_change"] = get_deviation_percent(strike, base_equity_price)
 
-    if remained_day != 0:
-        profits["monthly_profit"] = (profits["final_profit"] / remained_day) * 30
+    n_strike, n_premium = add_option_fee(strike, premium, SELL, CALL)
+    n_base_equity_price = add_base_equity_fee(base_equity_price, BUY)
 
-    profits["yearly_profit"] = profits["monthly_profit"] * 12
+    net_in = n_strike - (n_base_equity_price - n_premium)
+    net_out = n_base_equity_price - n_premium
+    profits = get_profits(profits, net_in, net_out, remained_day)
+
+    profits = get_fee_percent(
+        profits,
+        strike_sum=strike,
+        premium_sum=premium,
+        base_equity=[BUY, base_equity_price],
+        net_pay=net_out,
+    )
 
     return profits
 
@@ -133,7 +106,12 @@ def covered_call(option_data, redis_db_num: int):
                 "call_best_buy_price": premium,
                 "strike_price": strike,
                 "call_value": row.get("call_value") / RIAL_TO_BILLION_TOMAN,
-                **add_profits(row),
+                **add_profits_with_fee(
+                    row.get("remained_day"),
+                    strike,
+                    premium,
+                    base_equity_last_price,
+                ),
                 "end_date": row.get("end_date"),
                 "profit_factor": profit_factor,
                 "strike_price_deviation": ((strike / base_equity_last_price) - 1),
@@ -151,18 +129,6 @@ def covered_call(option_data, redis_db_num: int):
                     },
                 ],
             }
-
-            ###################################################################
-            remained_day = row.get("remained_day")
-            n_strike, n_premimu = add_fee(strike, premium, SELL, CALL)
-            base_equity_price = add_base_equity_fee(base_equity_last_price)
-            document.update(
-                **add_profits_with_fee(
-                    remained_day, n_strike, n_premimu, base_equity_price
-                )
-            )
-            document["fee"] = document["final_profit"] - document["final_profit_fee"]
-            ###################################################################
 
             result.append(document)
 
