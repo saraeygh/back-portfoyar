@@ -1,5 +1,11 @@
 from django.contrib import admin
-from account.models import Subscription, UserDiscount
+from django.contrib.messages import success
+from account.models import (
+    Subscription,
+    DisabledSubscription,
+    UserDiscount,
+    DisabledUserDiscount,
+)
 
 
 class MyPropertyFilter(admin.SimpleListFilter):
@@ -27,6 +33,10 @@ class MyPropertyFilter(admin.SimpleListFilter):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_enabled=True)
+
     autocomplete_fields = ("user", "feature")
     list_display = (
         "id",
@@ -46,9 +56,53 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     list_filter = ("feature__name", MyPropertyFilter)
 
+    def delete_queryset(self, request, queryset):
+        for feature_discount in queryset:
+            feature_discount.is_enabled = False
+            feature_discount.save()
+
+        success(request, "تخفیف‌های انتخاب شده با موفقیت غیرفعال شدند")
+
+
+@admin.register(DisabledSubscription)
+class DisabledSubscriptionAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_enabled=False)
+
+    autocomplete_fields = ("user", "feature")
+    list_display = (
+        "id",
+        "is_enabled",
+        "user",
+        "feature",
+        "is_active",
+        "remained_days",
+        "start_at_shamsi",
+        "end_at_shamsi",
+        "desc",
+    )
+    list_display_links = ("user", "feature")
+    ordering = ("-updated_at",)
+
+    search_fields = ("id", "user__username", "feature__name", "is_enabled")
+
+    list_filter = ("feature__name", MyPropertyFilter)
+
+    def delete_queryset(self, request, queryset):
+        for feature_discount in queryset:
+            feature_discount.is_enabled = False
+            feature_discount.save()
+
+        success(request, "تخفیف‌های انتخاب شده با موفقیت غیرفعال شدند")
+
 
 @admin.register(UserDiscount)
 class UserDiscountAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_enabled=True)
+
     autocomplete_fields = ("user", "feature")
     list_display = (
         "id",
@@ -79,3 +133,55 @@ class UserDiscountAdmin(admin.ModelAdmin):
         "has_expiry",
         "has_max_use_count",
     )
+
+    def delete_queryset(self, request, queryset):
+        for feature_discount in queryset:
+            feature_discount.is_enabled = False
+            feature_discount.save()
+
+        success(request, "تخفیف‌های انتخاب شده با موفقیت غیرفعال شدند")
+
+
+@admin.register(DisabledUserDiscount)
+class DisabledUserDiscountAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_enabled=False)
+
+    autocomplete_fields = ("user", "feature")
+    list_display = (
+        "id",
+        "user",
+        "feature",
+        "name",
+        "is_enabled",
+        "discount_percent",
+        "has_discount_code",
+        "discount_code",
+        "has_start",
+        "start_at_shamsi",
+        "has_expiry",
+        "expire_at_shamsi",
+        "has_max_use_count",
+        "used_count",
+        "max_use_count",
+    )
+    list_display_links = ("name",)
+    ordering = ("-updated_at",)
+
+    search_fields = ("id", "name", "discount_code")
+
+    list_filter = (
+        "is_enabled",
+        "has_discount_code",
+        "has_start",
+        "has_expiry",
+        "has_max_use_count",
+    )
+
+    def delete_queryset(self, request, queryset):
+        for feature_discount in queryset:
+            feature_discount.is_enabled = False
+            feature_discount.save()
+
+        success(request, "تخفیف‌های انتخاب شده با موفقیت غیرفعال شدند")

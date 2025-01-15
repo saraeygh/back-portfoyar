@@ -2,7 +2,9 @@ from .profile_model import Profile
 
 from .feature_model import (
     Feature,
+    DisabledFeature,
     FeatureDiscount,
+    DisabledFeatureDiscount,
     FEATURE_DURATION_CHOICES,
     SUBSCRIPTION_FEATURE_CHOICES,
     ALL_FEATURE,
@@ -13,4 +15,9 @@ from .feature_model import (
     STOCK_FEATURE,
 )
 
-from .subscription_model import Subscription, UserDiscount
+from .subscription_model import (
+    Subscription,
+    DisabledSubscription,
+    UserDiscount,
+    DisabledUserDiscount,
+)

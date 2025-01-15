@@ -75,6 +75,13 @@ class Feature(TimeStampMixin, models.Model):
         verbose_name_plural = "۲) قابلیت‌های سایت"
 
 
+class DisabledFeature(Feature):
+    class Meta:
+        proxy = True
+        verbose_name = "قابلیت سایت (غیرفعال)"
+        verbose_name_plural = "۲) قابلیت‌های سایت (غیرفعال)"
+
+
 class FeatureDiscount(TimeStampMixin, models.Model):
 
     feature = models.ForeignKey(
@@ -135,3 +142,10 @@ class FeatureDiscount(TimeStampMixin, models.Model):
     class Meta:
         verbose_name = "تخفیف قابلیت سایت"
         verbose_name_plural = "۳) تخفیف‌های قابلیت‌های سایت"
+
+
+class DisabledFeatureDiscount(FeatureDiscount):
+    class Meta:
+        proxy = True
+        verbose_name = "تخفیف قابلیت سایت (غیرفعال)"
+        verbose_name_plural = "۳) تخفیف‌های قابلیت‌های سایت (غیرفعال)"

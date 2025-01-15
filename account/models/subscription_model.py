@@ -78,6 +78,13 @@ class Subscription(TimeStampMixin, models.Model):
         verbose_name_plural = "۵) اشتراک‌ها"
 
 
+class DisabledSubscription(Subscription):
+    class Meta:
+        proxy = True
+        verbose_name = "اشتراک (غیرفعال)"
+        verbose_name_plural = "۵) اشتراک‌ها (غیرفعال)"
+
+
 class UserDiscount(TimeStampMixin, models.Model):
     user = models.ForeignKey(
         verbose_name="کاربر",
@@ -141,3 +148,10 @@ class UserDiscount(TimeStampMixin, models.Model):
     class Meta:
         verbose_name = "تخفیف کاربر"
         verbose_name_plural = "۴) تخفیف‌های کاربران"
+
+
+class DisabledUserDiscount(UserDiscount):
+    class Meta:
+        proxy = True
+        verbose_name = "تخفیف کاربر (غیرفعال)"
+        verbose_name_plural = "۴) تخفیف‌های کاربران (غیرفعال)"
