@@ -15,8 +15,8 @@ from . import (
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
-    get_option_with_fee,
-    get_base_equity_with_fee,
+    add_fee,
+    add_base_equity_fee,
 )
 
 
@@ -154,8 +154,8 @@ def covered_call(option_data, redis_db_num: int):
 
             ###################################################################
             remained_day = row.get("remained_day")
-            n_strike, n_premimu = get_option_with_fee(strike, premium, SELL, CALL)
-            base_equity_price = get_base_equity_with_fee(base_equity_last_price)
+            n_strike, n_premimu = add_fee(strike, premium, SELL, CALL)
+            base_equity_price = add_base_equity_fee(base_equity_last_price)
             document.update(
                 **add_profits_with_fee(
                     remained_day, n_strike, n_premimu, base_equity_price

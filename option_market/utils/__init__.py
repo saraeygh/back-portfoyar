@@ -25,14 +25,16 @@ from .option_strategy_class_util import (
     get_distinc_end_date_options,
 )
 from .get_link_str_util import get_link_str
-from .add_action_detail_util import (
-    BUY,
-    SELL,
+from .add_action_detail_util import add_details
+from .get_profits_fee_util import (
     CALL,
     PUT,
-    add_details,
-    get_option_with_fee,
-    get_base_equity_with_fee,
+    BUY,
+    SELL,
+    add_fee,
+    get_profits,
+    add_base_equity_fee,
+    get_fee_percent,
 )
 from .covered_call_util import covered_call
 from .long_call_util import long_call
