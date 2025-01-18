@@ -1,5 +1,6 @@
 from .base_equity_model import (
-    BaseEquity,
+    FutureBaseEquity,
+    OptionBaseEquity,
     SANDOQ_MARKET,
     GAVAHI_MARKET,
     CDC_MARKET,

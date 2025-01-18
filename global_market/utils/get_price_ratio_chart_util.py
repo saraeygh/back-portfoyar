@@ -11,12 +11,14 @@ def get_price_chart(
     commodity_id,
     transit_id,
 ) -> list | None:
-    if industry_id and isinstance(industry_id, int):
+    if (
+        isinstance(industry_id, int)
+        and industry_id != 0
+        and isinstance(commodity_type_id, int)
+        and commodity_type_id != 0
+    ):
         industry = get_object_or_404(GlobalIndustry, id=industry_id)
-    else:
-        return None
 
-    if commodity_type_id and isinstance(commodity_type_id, int):
         commodity_types = list(industry.commodity_types.filter(id=commodity_type_id))
         commodities_list = list(
             GlobalCommodity.objects.filter(commodity_type__in=commodity_types)
@@ -24,16 +26,15 @@ def get_price_chart(
     else:
         return None
 
-    if commodity_id and isinstance(commodity_id, int):
+    trades = GlobalTrade.objects.filter(commodity__in=commodities_list).order_by(
+        "trade_date"
+    )
+    if isinstance(commodity_id, int) and commodity_id != 0:
         trades = GlobalTrade.objects.filter(commodity_id=commodity_id).order_by(
             "trade_date"
         )
-    else:
-        trades = GlobalTrade.objects.filter(commodity__in=commodities_list).order_by(
-            "trade_date"
-        )
 
-    if transit_id and isinstance(transit_id, int):
+    if isinstance(transit_id, int) and transit_id != 0:
         trades = trades.filter(transit_id=transit_id).order_by("trade_date")
 
     trades_avg_prices = list(

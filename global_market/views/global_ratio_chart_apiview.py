@@ -9,7 +9,7 @@ from core.configs import SIXTY_MINUTES_CACHE
 from core.utils import set_json_cache, get_cache_as_json
 
 from global_market.utils import get_price_chart, get_ratio_chart
-from global_market.serializers import PriceRatioChartSerailizer
+from global_market.serializers import PriceRatioChartSerializer
 from global_market.permissions import HasGlobalSubscription
 
 
@@ -61,7 +61,7 @@ class GlobalRatioChartAPIView(APIView):
                 )
 
             ratio_list = get_ratio_chart(plt_1, plt_2)
-            ratio_list_srz = PriceRatioChartSerailizer(ratio_list, many=True)
+            ratio_list_srz = PriceRatioChartSerializer(ratio_list, many=True)
             set_json_cache(cache_key, ratio_list_srz.data, SIXTY_MINUTES_CACHE)
             return Response(ratio_list_srz.data, status=status.HTTP_200_OK)
 

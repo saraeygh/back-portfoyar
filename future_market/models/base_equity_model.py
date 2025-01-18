@@ -27,7 +27,7 @@ BASE_EQUITY_KEY_CHOICES = [
 ]
 
 
-class BaseEquity(TimeStampMixin, models.Model):
+class FutureBaseEquity(TimeStampMixin, models.Model):
 
     base_equity_key = models.CharField(
         verbose_name="دسته‌بندی", max_length=100, choices=BASE_EQUITY_KEY_CHOICES
@@ -47,5 +47,29 @@ class BaseEquity(TimeStampMixin, models.Model):
         return str(self.base_equity_name)
 
     class Meta:
-        verbose_name = "دارایی پایه"
-        verbose_name_plural = "۱) دارایی‌های پایه"
+        verbose_name = "دارایی پایه آتی"
+        verbose_name_plural = "۱) (آتی) دارایی‌های پایه"
+
+
+class OptionBaseEquity(TimeStampMixin, models.Model):
+
+    base_equity_key = models.CharField(
+        verbose_name="دسته‌بندی", max_length=64, choices=BASE_EQUITY_KEY_CHOICES
+    )
+
+    base_equity_name = models.CharField(verbose_name="نام دارایی پایه", max_length=128)
+
+    derivative_symbol = models.CharField(
+        verbose_name="نماد قرارداد مشتقه", max_length=32
+    )
+
+    unique_identifier = models.CharField(
+        verbose_name="شناسه", max_length=128, blank=True, null=True
+    )
+
+    def __str__(self) -> str:
+        return str(self.base_equity_name)
+
+    class Meta:
+        verbose_name = "دارایی پایه آپشن"
+        verbose_name_plural = "۱) (آپشن) دارایی‌های پایه"

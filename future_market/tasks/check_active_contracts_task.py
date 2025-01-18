@@ -1,20 +1,21 @@
 import pandas as pd
 
 from core.utils import get_http_response, run_main_task
-from future_market.models import BaseEquity
+from future_market.models import FutureBaseEquity
 
 ACTIVE_STATUS = "active_status"
 SYMBOL = "symbol"
+NAME = "name"
 RENAME_COLS = {
     "وضعیت": ACTIVE_STATUS,
     "نماد معاملاتی": SYMBOL,
+    "دارایی پایه": NAME,
 }
 
 IS_ACTIVE = "فعال"
-IS_NOT_ACTIVE = "غیرفعال"
 
 
-def check_active_contracts_main():
+def check_future_active_contracts_main():
 
     ACTIVE_CONTRACTS_URL = "https://www.ime.co.ir/list-gharardad-hayeati.html"
     response = get_http_response(req_url=ACTIVE_CONTRACTS_URL)
@@ -25,13 +26,11 @@ def check_active_contracts_main():
         contracts_table[contracts_table[ACTIVE_STATUS] == IS_ACTIVE][SYMBOL].to_list()
     )
     not_active_contracts = set(
-        contracts_table[contracts_table[ACTIVE_STATUS] == IS_NOT_ACTIVE][
-            SYMBOL
-        ].to_list()
+        contracts_table[contracts_table[ACTIVE_STATUS] != IS_ACTIVE][SYMBOL].to_list()
     )
 
     active_base_equities = set(
-        BaseEquity.objects.all().values_list("derivative_symbol", flat=True)
+        FutureBaseEquity.objects.all().values_list("derivative_symbol", flat=True)
     )
 
     not_added_contracts = active_contracts - active_base_equities
@@ -43,9 +42,44 @@ def check_active_contracts_main():
         raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
 
 
-def check_active_contracts():
+def check_future_active_contracts():
 
     run_main_task(
-        main_task=check_active_contracts_main,
+        main_task=check_future_active_contracts_main,
+        daily=True,
+    )
+
+
+def check_option_active_contracts_main():
+
+    ACTIVE_CONTRACTS_URL = "https://www.ime.co.ir/ekhtiarm.html"
+    response = get_http_response(req_url=ACTIVE_CONTRACTS_URL)
+    contracts_table = (pd.read_html(response.text))[0]
+    contracts_table.rename(columns=RENAME_COLS, inplace=True)
+
+    active_contracts = set(
+        contracts_table[contracts_table[ACTIVE_STATUS] == IS_ACTIVE][SYMBOL].to_list()
+    )
+    not_active_contracts = set(
+        contracts_table[contracts_table[ACTIVE_STATUS] != IS_ACTIVE][SYMBOL].to_list()
+    )
+
+    active_base_equities = set(
+        FutureBaseEquity.objects.all().values_list("derivative_symbol", flat=True)
+    )
+
+    new_added_contracts = active_contracts - active_base_equities
+    if new_added_contracts:
+        raise ValueError(f"not_added_contracts = {new_added_contracts}")
+
+    deactivated_contracts = not_active_contracts & active_base_equities
+    if deactivated_contracts:
+        raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
+
+
+def check_option_active_contracts():
+
+    run_main_task(
+        main_task=check_option_active_contracts_main,
         daily=True,
     )

@@ -22,10 +22,12 @@ from domestic_market.tasks import (
 
 from future_market.tasks import (
     update_derivative_info,
-    update_base_equity,
+    update_future_base_equity,
+    update_option_base_equity,
     update_future,
     update_option_result,
-    check_active_contracts,
+    check_future_active_contracts,
+    check_option_active_contracts,
 )
 from global_market.tasks import calculate_commodity_means_global
 
@@ -257,20 +259,24 @@ def future_cli(clear_cmd):
         os.system(clear_cmd)
         match cmd:
             case "all":
-                update_base_equity()
+                update_future_base_equity()
+                update_option_base_equity()
                 update_future()
                 update_option_result()
-                check_active_contracts()
+                check_future_active_contracts()
+                check_option_active_contracts()
             case "1":
                 update_derivative_info()
             case "2":
-                update_base_equity()
+                update_future_base_equity()
+                update_option_base_equity()
             case "3":
                 update_future()
             case "4":
                 update_option_result()
             case "5":
-                check_active_contracts()
+                check_future_active_contracts()
+                check_option_active_contracts()
             case "0":
                 break
 
@@ -370,7 +376,8 @@ def night_tasks_cli():
     calculate_production_sell_domestic()
     calculate_producers_yearly_value()
     #
-    update_base_equity()
+    update_future_base_equity()
+    update_option_base_equity()
     #
     get_option_history()
     #

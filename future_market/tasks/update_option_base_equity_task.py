@@ -7,7 +7,7 @@ from core.utils import RedisInterface, run_main_task
 from core.configs import FUTURE_REDIS_DB
 
 from future_market.models import (
-    BaseEquity,
+    OptionBaseEquity,
     SANDOQ_MARKET,
     GAVAHI_MARKET,
     CDC_MARKET,
@@ -54,9 +54,9 @@ BASE_EQUITY_KEYS = {
         UNIQUE_IDENTIFIER: ID,
         FILTER: filter_sandoq_base_equities,
         SYMBOLS: {
-            "LOTF": "ETC",  # LOTUS
-            "ROBA": "KB",  # KAHROBA
-            "JAVA": "JZ",  # JAVAHER
+            "LOTF": ["TL", "FE"],  # LOTUS
+            "ROBA": ["KB", "KA"],  # KAHROBA
+            "JAVA": ["JZ"],  # JAVAHER
         },
     },
     #
@@ -66,8 +66,8 @@ BASE_EQUITY_KEYS = {
         UNIQUE_IDENTIFIER: ID,
         FILTER: filter_gavahi_base_equities,
         SYMBOLS: {
-            "IRK1A": "SAF",  # SAFFRON
-            "IRK1K": "GC",  # GOLD COIN
+            "IRK1A": ["SF", "FS"],  # SAFFRON
+            "IRK1K": ["GC"],  # GOLD COIN
         },
     },
     #
@@ -77,14 +77,13 @@ BASE_EQUITY_KEYS = {
         UNIQUE_IDENTIFIER: CONTRACT_CODE,
         FILTER: filter_cdc_base_equities,
         SYMBOLS: {
-            "CD1GOB": "GB",  # GOLD BAR
-            "CD1SIB": "SIL",  # SILVER BAR
+            "CD1GOB": ["GB"],  # GOLD BAR
         },
     },
 }
 
 
-def update_base_equity_main():
+def update_option_base_equity_main():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
@@ -96,7 +95,7 @@ def update_base_equity_main():
         data = pd.DataFrame(data)
         data = (properties.get(FILTER))(data)
         symbols = properties.get(SYMBOLS)
-        for index, symbol_code in symbols.items():
+        for index, symbol_codes in symbols.items():
             symbol_rows: pd.DataFrame = data[
                 data[properties.get(INDEX)].str.contains(index)
             ]
@@ -105,21 +104,22 @@ def update_base_equity_main():
 
             symbol_rows = symbol_rows.to_dict(orient="records")
             for row in symbol_rows:
-                BaseEquity.objects.get_or_create(
-                    base_equity_key=base_equity_key,
-                    base_equity_name=row.get(properties.get(NAME)),
-                    derivative_symbol=symbol_code,
-                    unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
-                )
+                for symbol_code in symbol_codes:
+                    OptionBaseEquity.objects.get_or_create(
+                        base_equity_key=base_equity_key,
+                        base_equity_name=row.get(properties.get(NAME)),
+                        derivative_symbol=symbol_code,
+                        unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
+                    )
 
     print(
         Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
     )
 
 
-def update_base_equity():
+def update_option_base_equity():
 
     run_main_task(
-        main_task=update_base_equity_main,
+        main_task=update_option_base_equity_main,
         daily=True,
     )

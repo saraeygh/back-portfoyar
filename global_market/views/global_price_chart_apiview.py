@@ -9,7 +9,7 @@ from core.configs import SIXTY_MINUTES_CACHE
 from core.utils import set_json_cache, get_cache_as_json
 
 from global_market.utils import get_price_chart
-from global_market.serializers import PriceRatioChartSerailizer
+from global_market.serializers import PriceRatioChartSerializer
 from global_market.permissions import HasGlobalSubscription
 
 
@@ -17,10 +17,10 @@ from global_market.permissions import HasGlobalSubscription
 @permission_classes([IsAuthenticated, HasGlobalSubscription])
 class GlobalPriceChartAPIView(APIView):
     def post(self, request):
-        industry_id = request.data.get("industry_id")
-        commodity_type_id = request.data.get("commodity_type_id")
-        commodity_id = request.data.get("commodity_id")
-        transit_id = request.data.get("transit_id")
+        industry_id = request.data.get("industry_id", 0)
+        commodity_type_id = request.data.get("commodity_type_id", 0)
+        commodity_id = request.data.get("commodity_id", 0)
+        transit_id = request.data.get("transit_id", 0)
         cache_key = (
             "GLOBAL_PRICE_CHART"
             f"_i_{industry_id}"
@@ -32,21 +32,19 @@ class GlobalPriceChartAPIView(APIView):
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
-            price_chart_dict = get_price_chart(
+            price_chart = get_price_chart(
                 industry_id=industry_id,
                 commodity_type_id=commodity_type_id,
                 commodity_id=commodity_id,
                 transit_id=transit_id,
             )
 
-            if not price_chart_dict:
+            if not price_chart:
                 return Response(
                     {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            price_chart_dict_srz = PriceRatioChartSerailizer(
-                price_chart_dict, many=True
-            )
+            price_chart_dict_srz = PriceRatioChartSerializer(price_chart, many=True)
 
             set_json_cache(cache_key, price_chart_dict_srz.data, SIXTY_MINUTES_CACHE)
             return Response(price_chart_dict_srz.data, status=status.HTTP_200_OK)

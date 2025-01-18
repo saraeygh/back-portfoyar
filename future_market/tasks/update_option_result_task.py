@@ -154,20 +154,20 @@ def add_base_equity_order_book(row):
             "sell_volume": row.get("OfferVolume3"),
             "sell_price": row.get("OfferPrice3"),
         },
-        {
-            "row": 4,
-            "buy_volume": row.get("DemandVolume4"),
-            "buy_price": row.get("DemandPrice4"),
-            "sell_volume": row.get("OfferVolume4"),
-            "sell_price": row.get("OfferPrice4"),
-        },
-        {
-            "row": 5,
-            "buy_volume": row.get("DemandVolume5"),
-            "buy_price": row.get("DemandPrice5"),
-            "sell_volume": row.get("OfferVolume5"),
-            "sell_price": row.get("OfferPrice5"),
-        },
+        # {
+        #     "row": 4,
+        #     "buy_volume": row.get("DemandVolume4"),
+        #     "buy_price": row.get("DemandPrice4"),
+        #     "sell_volume": row.get("OfferVolume4"),
+        #     "sell_price": row.get("OfferPrice4"),
+        # },
+        # {
+        #     "row": 5,
+        #     "buy_volume": row.get("DemandVolume5"),
+        #     "buy_price": row.get("DemandPrice5"),
+        #     "sell_volume": row.get("OfferVolume5"),
+        #     "sell_price": row.get("OfferPrice5"),
+        # },
     ]
 
     base_equity_order_book = pd.DataFrame(base_equity_order_book)
@@ -228,14 +228,18 @@ def update_option_result_main():
 
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)
     option_data["put_order_book"] = option_data.apply(add_put_order_book, axis=1)
-
     option_data["symbol"] = option_data.apply(add_symbol_to_option_data, axis=1)
+
     base_equity_data = get_options_base_equity_info()
     base_equity_data["base_equity_order_book"] = base_equity_data.apply(
         add_base_equity_order_book, axis=1
     )
     option_data = pd.merge(
-        left=option_data, right=base_equity_data, on="symbol", how="left"
+        left=option_data,
+        right=base_equity_data,
+        left_on="symbol",
+        right_on="derivative_symbol",
+        how="left",
     )
 
     option_data.rename(columns=OPTION_COLUMNS, inplace=True)

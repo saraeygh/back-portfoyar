@@ -31,10 +31,12 @@ from domestic_market.tasks import (
 
 from future_market.tasks import (
     update_derivative_info,
-    update_base_equity,
+    update_future_base_equity,
+    update_option_base_equity,
     update_future,
     update_option_result,
-    check_active_contracts,
+    check_future_active_contracts,
+    check_option_active_contracts,
 )
 
 from option_market.tasks import update_option_data_from_tse, get_option_history
@@ -200,13 +202,24 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     )
 
     scheduler.add_job(
-        func=update_base_equity,
-        id="update_base_equity_task",
+        func=update_future_base_equity,
+        id="update_future_base_equity_task",
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="22",
         minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+    )
+
+    scheduler.add_job(
+        func=update_option_base_equity,
+        id="update_option_base_equity_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="sat, sun, mon, tue, wed, thu",
+        hour="22",
+        minute="11",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
@@ -231,11 +244,22 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     )
 
     scheduler.add_job(
-        func=check_active_contracts,
-        id="check_active_contracts_task",
+        func=check_future_active_contracts,
+        id="check_future_active_contracts_task",
         replace_existing=True,
         trigger="cron",
-        hour="18",
+        hour="22",
+        minute="12",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+    )
+
+    scheduler.add_job(
+        func=check_option_active_contracts,
+        id="check_option_active_contracts_task",
+        replace_existing=True,
+        trigger="cron",
+        hour="22",
+        minute="13",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 

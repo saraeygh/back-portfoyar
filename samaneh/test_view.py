@@ -21,10 +21,12 @@ from domestic_market.tasks import (
 
 from future_market.tasks import (
     update_derivative_info,
-    update_base_equity,
+    update_future_base_equity,
+    update_option_base_equity,
     update_future,
     update_option_result,
-    check_active_contracts,
+    check_future_active_contracts,
+    check_option_active_contracts,
 )
 from global_market.tasks import calculate_commodity_means_global
 
@@ -76,10 +78,12 @@ TASKS = {
     "491": update_stock_adjusted_history,
     # FUTURE
     "51": update_derivative_info,
-    "52": update_base_equity,
-    "53": update_future,
-    "54": update_option_result,
-    "55": check_active_contracts,
+    "52": update_future_base_equity,
+    "53": update_option_base_equity,
+    "54": update_future,
+    "55": update_option_result,
+    "56": check_future_active_contracts,
+    "57": check_option_active_contracts,
     # DASHBOARD
     "61": dashboard,
     # ACCOUNT

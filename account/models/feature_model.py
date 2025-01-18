@@ -71,8 +71,8 @@ class Feature(TimeStampMixin, models.Model):
         return f"{self.name} - {self.duration}"
 
     class Meta:
-        verbose_name = "قابلیت سایت"
-        verbose_name_plural = "۲) قابلیت‌های سایت"
+        verbose_name = "قابلیت سایت (فعال)"
+        verbose_name_plural = "۲)  (فعال) قابلیت‌های سایت"
 
 
 class DisabledFeature(Feature):
@@ -140,8 +140,8 @@ class FeatureDiscount(TimeStampMixin, models.Model):
         return f"{self.name} - {self.feature.name} - {self.feature.duration}"
 
     class Meta:
-        verbose_name = "تخفیف قابلیت سایت"
-        verbose_name_plural = "۳) تخفیف‌های قابلیت‌های سایت"
+        verbose_name = " (فعال) تخفیف قابلیت سایت"
+        verbose_name_plural = "۳) (فعال) تخفیف‌های قابلیت‌های سایت"
 
 
 class DisabledFeatureDiscount(FeatureDiscount):

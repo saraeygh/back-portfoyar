@@ -18,7 +18,7 @@ from core.configs import (
     FUTURE_REDIS_DB,
 )
 from future_market.models import (
-    BaseEquity,
+    FutureBaseEquity,
     SANDOQ_MARKET,
     GAVAHI_MARKET,
     CDC_MARKET,
@@ -215,7 +215,7 @@ def update_future_main():
         FeatureToggle.objects.get(name=MONTHLY_INTEREST_RATE["name"]).value
     )
 
-    base_equities = BaseEquity.objects.all()
+    base_equities = FutureBaseEquity.objects.all()
     for strategy_key, properties in FUTURE_STRATEGIES.items():
 
         strategy_result = list()

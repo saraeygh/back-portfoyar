@@ -74,8 +74,8 @@ class Subscription(TimeStampMixin, models.Model):
         return shamsi
 
     class Meta:
-        verbose_name = "اشتراک"
-        verbose_name_plural = "۵) اشتراک‌ها"
+        verbose_name = "(فعال) اشتراک"
+        verbose_name_plural = "۵) (فعال) اشتراک‌ها"
 
 
 class DisabledSubscription(Subscription):
@@ -146,8 +146,8 @@ class UserDiscount(TimeStampMixin, models.Model):
         return f"{self.name} - {self.feature.name} - {self.feature.duration}"
 
     class Meta:
-        verbose_name = "تخفیف کاربر"
-        verbose_name_plural = "۴) تخفیف‌های کاربران"
+        verbose_name = "(فعال) تخفیف کاربر"
+        verbose_name_plural = "۴) (فعال) تخفیف‌های کاربران"
 
 
 class DisabledUserDiscount(UserDiscount):
