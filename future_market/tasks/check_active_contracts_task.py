@@ -1,7 +1,7 @@
 import pandas as pd
 
 from core.utils import get_http_response, run_main_task
-from future_market.models import FutureBaseEquity
+from future_market.models import FutureBaseEquity, OptionBaseEquity
 
 ACTIVE_STATUS = "active_status"
 SYMBOL = "symbol"
@@ -65,7 +65,7 @@ def check_option_active_contracts_main():
     )
 
     active_base_equities = set(
-        FutureBaseEquity.objects.all().values_list("derivative_symbol", flat=True)
+        OptionBaseEquity.objects.all().values_list("derivative_symbol", flat=True)
     )
 
     new_added_contracts = active_contracts - active_base_equities
