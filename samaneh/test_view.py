@@ -97,6 +97,7 @@ TASKS = {
 
 
 class TestView(APIView):
+
     def get(self, request, *args, **kwargs):
         task_id = request.data.get("id")
         manual = request.data.get("manual")

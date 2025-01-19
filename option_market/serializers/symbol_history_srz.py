@@ -1,9 +1,13 @@
+import uuid
+
 from rest_framework import serializers
+
 from core.serializers import RoundedFloatField
 from core.configs import RIAL_TO_BILLION_TOMAN
 
 
 class SymbolHistorySerializer(serializers.Serializer):
+    id = serializers.UUIDField(default=uuid.uuid4, read_only=True)
     date = serializers.CharField()
     symbol = serializers.CharField()
     asset_name = serializers.CharField()
