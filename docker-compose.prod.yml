@@ -1,11 +1,12 @@
 services:
+
   postgres_test:
     image: docker.arvancloud.ir/postgres:16
     container_name: postgres_test
     environment:
-      POSTGRES_DB: samane_jame_test
-      POSTGRES_USER: arman
-      POSTGRES_PASSWORD: arman
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_test:/var/lib/postgresql/data
     networks:
@@ -16,8 +17,7 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
-    ports:
-      - "5432:5432"
+
   redis_test:
     image: docker.arvancloud.ir/redis:7.2
     container_name: redis_test
@@ -31,8 +31,7 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
-    ports:
-      - "6379:6379"
+
   mongodb_test:
     container_name: mongodb_test
     image: docker.arvancloud.ir/mongo:7.0.5
@@ -46,12 +45,31 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
-    ports:
-      - "27017:27017"
+
   api_test:
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+      - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     build:
       context: .
-      dockerfile: Dockerfile.api.test
+      dockerfile: Dockerfile.api.prod
+      args:
+        - SECRET_KEY=${SECRET_KEY}
+        - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+        - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+        - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+        - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     image: api_test
     container_name: api_test
     entrypoint: ["/code/infra/entrypoints/api_test.sh"]
@@ -70,10 +88,31 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
+
   apscheduler_test:
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+      - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     build:
       context: .
-      dockerfile: Dockerfile.api.test
+      dockerfile: Dockerfile.api.prod
+      args:
+        - SECRET_KEY=${SECRET_KEY}
+        - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+        - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+        - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+        - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     image: apscheduler_test
     container_name: apscheduler_test
     entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
@@ -90,6 +129,7 @@ services:
       options:
         max-size: "24m"
         max-file: "10"
+
   nginx:
     build:
       context: .
@@ -105,16 +145,16 @@ services:
       - test
     volumes:
       - nginx_logs:/var/log/nginx/
-###############################################################################
+
   wordpress:
+    environment:
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
+      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME}
+      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER}
+      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD}
     image: docker.arvancloud.ir/wordpress:6.6.2
     container_name: wordpress
     restart: always
-    environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: armanadmin
-      WORDPRESS_DB_PASSWORD: arman@wordpress1403!
-      WORDPRESS_DB_NAME: port_foyar_db
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
@@ -127,10 +167,10 @@ services:
     container_name: wordpress_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
-      MYSQL_DATABASE: port_foyar_db
-      MYSQL_USER: armanadmin
-      MYSQL_PASSWORD: arman@wordpress1403!
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${WORDPRESS_DB_NAME}
+      - MYSQL_USER=${WORDPRESS_DB_USER}
+      - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -141,13 +181,12 @@ services:
     container_name: phpmyadmin
     restart: always
     environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
+      - PMA_HOST=db
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
       - db
     networks:
       - test
-###############################################################################
 
 networks:
   test:
@@ -161,6 +200,5 @@ volumes:
   ticket_appendix:
   django_logs:
   nginx_logs:
-  #############################################################################
   wordpress_data:
   db_data:
