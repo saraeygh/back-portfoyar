@@ -133,7 +133,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: Dockerfile.nginx.test
+      dockerfile: Dockerfile.nginx.prod
     image: nginx_test
     container_name: nginx_test
     ports:
