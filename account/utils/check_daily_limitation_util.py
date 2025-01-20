@@ -1,4 +1,4 @@
-from samaneh.settings.common import DEBUG
+from samaneh.settings import DEBUG
 
 from rest_framework import status
 from rest_framework.response import Response

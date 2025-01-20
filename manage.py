@@ -5,7 +5,7 @@ import os
 import sys
 
 
-def load_env_file(env_file_path=".env"):
+def load_env_file(env_file_path=".env.dev"):
     try:
         with open(file=env_file_path, mode="r", encoding="utf-8") as env_file:
             for line in env_file:

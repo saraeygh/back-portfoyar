@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-from samaneh.settings.common import BASE_DIR
+from samaneh.settings import BASE_DIR
 
 from django.core.validators import validate_email
 from django.contrib.auth.models import User

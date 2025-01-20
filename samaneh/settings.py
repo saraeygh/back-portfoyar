@@ -2,18 +2,33 @@ import os
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEBUG = eval(os.environ.get("DEBUG"))
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+deb = os.environ.get("DEBUG")
+if deb == "True":
+    DEBUG = True
+else:
+    DEBUG = False
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
+
+ALLOWED_HOSTS = ["*"]
 
 
 POSTGRES_DB = os.environ.get("POSTGRES_DB")
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_SERVICE_NAME = os.environ.get("POSTGRES_SERVICE_NAME")
-
-ALLOWED_HOSTS = ["*"]
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": POSTGRES_DB,
+        "USER": POSTGRES_USER,
+        "PASSWORD": POSTGRES_PASSWORD,
+        "HOST": POSTGRES_SERVICE_NAME,
+        "PORT": "5432",
+    }
+}
 
 DEFAULT_INSTALLED_APPS = [
     "daphne",
@@ -25,8 +40,8 @@ DEFAULT_INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 MANUALLY_INSTALLED_APPS = [
-    "account.apps.AccountConfig",
     "core.apps.CoreConfig",
+    "account.apps.AccountConfig",
     "dashboard.apps.DashboardConfig",
     "domestic_market.apps.DomesticMarketConfig",
     "favorite.apps.FavoriteConfig",

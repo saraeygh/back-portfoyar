@@ -8,6 +8,7 @@ from support.views import (
     GetTicketFeatureListAPIView,
 )
 
+from .test_view import TestView
 
 ticket_urls = [
     path("ticket/units", GetTicketUnitListAPIView.as_view()),
@@ -15,6 +16,7 @@ ticket_urls = [
     path("ticket", TicketingAPIView.as_view()),
     path("ticket/<int:ticket_id>", GetTicketDetailAPIView.as_view()),
     path("appendix/<str:file_name>", GetTicketAppendixAPIView.as_view()),
+    path("test/", TestView.as_view()),
 ]
 
 urlpatterns = ticket_urls

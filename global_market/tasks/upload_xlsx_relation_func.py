@@ -6,7 +6,7 @@ from global_market.utils import get_commodity_type_dict
 from global_market.models import GlobalRelation
 from stock_market.models import StockInstrument
 from tqdm import tqdm
-from samaneh.settings.common import BASE_DIR
+from samaneh.settings import BASE_DIR
 
 
 def get_comm_types_dict():

@@ -9,7 +9,7 @@ from django.core.files.storage import default_storage
 from global_market.serializers import GlobalTradeSerializer
 from global_market.utils import populate_global_market_db
 from global_market.tasks import calculate_commodity_means_global
-from samaneh.settings.common import BASE_DIR
+from samaneh.settings import BASE_DIR
 from tqdm import tqdm
 from colorama import Fore, Style
 

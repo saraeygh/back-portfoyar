@@ -94,13 +94,11 @@ MELIPAYAMAK_PASSOWRD = os.environ.get("MELIPAYAMAK_PASSOWRD")
 
 # ZARINPAL PAYMENT METHOD CONFIGURATIONS
 ZARINPAL_MERCHANTID = os.environ.get("ZARINPAL_MERCHANTID")
-ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL = os.environ.get(
-    "ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL"
-)
-ZP_PAY_REQUEST_URL = os.environ.get("ZP_PAY_REQUEST_URL")
-ZP_STARTPAY_URL = os.environ.get("ZP_STARTPAY_URL")
-ZP_REDIRECT_FRONTEND_URL = os.environ.get("ZP_REDIRECT_FRONTEND_URL")
-ZP_PAY_VERIFY_URL = os.environ.get("ZP_PAY_VERIFY_URL")
+ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL = "/api/payment/zarinpal/"
+ZP_PAY_REQUEST_URL = "https://www.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
+ZP_STARTPAY_URL = "https://www.zarinpal.com/pg/StartPay/"
+ZP_REDIRECT_FRONTEND_URL = "/dashboard/recommended/recommended"
+ZP_PAY_VERIFY_URL = "https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
 
 # ADMIN USER
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")

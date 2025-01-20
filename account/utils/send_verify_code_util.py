@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from core.models import ACTIVE, FeatureToggle
-from samaneh.settings.common import DEBUG
+from samaneh.settings import DEBUG
 
 from core.configs import (
     MELIPAYAMAK_USERNAME,

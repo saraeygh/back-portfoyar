@@ -307,3 +307,6 @@ data/
 *.xls
 *.csv
 .pdm-python
+.env.dev
+.env.test
+.env.prod

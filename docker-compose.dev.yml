@@ -1,0 +1,123 @@
+services:
+
+  postgres_test:
+    image: docker.arvancloud.ir/postgres:16
+    container_name: postgres_test
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_test:/var/lib/postgresql/data
+    networks:
+      - test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "5432:5432"
+
+  redis_test:
+    image: docker.arvancloud.ir/redis:7.2
+    container_name: redis_test
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "6379:6379"
+
+  mongodb_test:
+    image: docker.arvancloud.ir/mongo:7.0.5
+    container_name: mongodb_test
+    volumes:
+      - mongodb_test:/data/db
+    networks:
+      - test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "27017:27017"
+
+  apscheduler_test:
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+      - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    build:
+      context: .
+      dockerfile: Dockerfile.api.dev
+      args:
+        - SECRET_KEY=${SECRET_KEY}
+        - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+        - MELIPAYAMAK_USERNAME=${MELIPAYAMAK_USERNAME}
+        - MELIPAYAMAK_PASSOWRD=${MELIPAYAMAK_PASSOWRD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
+        - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+
+    image: apscheduler_test
+    container_name: apscheduler_test
+    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+      # - api_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx.dev
+    image: nginx_test
+    container_name: nginx_test
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - test
+    volumes:
+      - nginx_logs:/var/log/nginx/
+
+
+networks:
+  test:
+    external: true
+    driver: bridge
+    name: test
+
+volumes:
+  postgres_test:
+  mongodb_test:
+  ticket_appendix:
+  django_logs:
+  nginx_logs:

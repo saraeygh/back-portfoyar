@@ -7,7 +7,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
-from samaneh.settings.common import (
+from samaneh.settings import (
     POSTGRES_DB,
     POSTGRES_USER,
     POSTGRES_PASSWORD,

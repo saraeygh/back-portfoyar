@@ -9,7 +9,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from samaneh.settings.common import BASE_DIR
+from samaneh.settings import BASE_DIR
 
 
 @authentication_classes([TokenAuthentication])

@@ -1,0 +1,166 @@
+services:
+  postgres_test:
+    image: docker.arvancloud.ir/postgres:16
+    container_name: postgres_test
+    environment:
+      POSTGRES_DB: samane_jame_test
+      POSTGRES_USER: arman
+      POSTGRES_PASSWORD: arman
+    volumes:
+      - postgres_test:/var/lib/postgresql/data
+    networks:
+      - test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "5432:5432"
+  redis_test:
+    image: docker.arvancloud.ir/redis:7.2
+    container_name: redis_test
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "6379:6379"
+  mongodb_test:
+    container_name: mongodb_test
+    image: docker.arvancloud.ir/mongo:7.0.5
+    volumes:
+      - mongodb_test:/data/db
+    networks:
+      - test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "27017:27017"
+  api_test:
+    build:
+      context: .
+      dockerfile: Dockerfile.api.test
+    image: api_test
+    container_name: api_test
+    entrypoint: ["/code/infra/entrypoints/api_test.sh"]
+    volumes:
+      - ticket_appendix:/code/media/tickets/
+      - django_logs:/code/logs/
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+  apscheduler_test:
+    build:
+      context: .
+      dockerfile: Dockerfile.api.test
+    image: apscheduler_test
+    container_name: apscheduler_test
+    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+      - api_test
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx.test
+    image: nginx_test
+    container_name: nginx_test
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - api_test
+    networks:
+      - test
+    volumes:
+      - nginx_logs:/var/log/nginx/
+###############################################################################
+  wordpress:
+    image: docker.arvancloud.ir/wordpress:6.6.2
+    container_name: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: armanadmin
+      WORDPRESS_DB_PASSWORD: arman@wordpress1403!
+      WORDPRESS_DB_NAME: port_foyar_db
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - test
+
+  db:
+    image: docker.arvancloud.ir/mariadb:11.5.2
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
+      MYSQL_DATABASE: port_foyar_db
+      MYSQL_USER: armanadmin
+      MYSQL_PASSWORD: arman@wordpress1403!
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - test
+
+  phpmyadmin:
+    image: docker.arvancloud.ir/phpmyadmin:5.2.1
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root@sqldb#1403!
+    depends_on:
+      - db
+    networks:
+      - test
+###############################################################################
+
+networks:
+  test:
+    external: true
+    driver: bridge
+    name: test
+
+volumes:
+  postgres_test:
+  mongodb_test:
+  ticket_appendix:
+  django_logs:
+  nginx_logs:
+  #############################################################################
+  wordpress_data:
+  db_data:

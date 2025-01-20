@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from samaneh.settings.common import BASE_DIR
+from samaneh.settings import BASE_DIR
 from global_market.tasks import upload_xlsx_data_task
 
 

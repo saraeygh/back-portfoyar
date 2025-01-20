@@ -7,13 +7,9 @@ RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/reposi
 RUN ["apk", "update"]
 RUN ["apk", "upgrade", "-U", "-a"]
 
-COPY ./infra/nginx-test/ /etc/nginx/
-COPY ./infra/nginx-test/updating.html /
-COPY ./static/ /etc/nginx/static/
+COPY ./infra/nginx-dev/ /etc/nginx/
+COPY ./infra/nginx-dev/updating.html /
 COPY ./option_market/strategy-schema/ /etc/nginx/strategy-schema/
-
-RUN chmod -R 755 /etc/nginx/static/
-RUN chown -R root:root /etc/nginx/static/
 
 RUN chmod -R 755 /etc/nginx/strategy-schema/
 RUN chown -R root:root /etc/nginx/strategy-schema/

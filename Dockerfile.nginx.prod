@@ -7,8 +7,8 @@ RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/reposi
 RUN ["apk", "update"]
 RUN ["apk", "upgrade", "-U", "-a"]
 
-COPY ./infra/nginx-test/ /etc/nginx/
-COPY ./infra/nginx-test/updating.html /
+COPY ./infra/nginx/ /etc/nginx/
+COPY ./infra/nginx/updating.html /
 COPY ./static/ /etc/nginx/static/
 COPY ./option_market/strategy-schema/ /etc/nginx/strategy-schema/
 

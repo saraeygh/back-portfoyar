@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from samaneh.settings.common import MONGODB_HOST
+from samaneh.settings import MONGODB_HOST
 
 
 class MongodbInterface:

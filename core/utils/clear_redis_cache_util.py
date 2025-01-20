@@ -1,5 +1,5 @@
 import redis
-from samaneh.settings.common import REDIS_HOST
+from samaneh.settings import REDIS_HOST
 
 
 def clear_redis_cache():

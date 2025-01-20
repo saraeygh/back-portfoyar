@@ -1,16 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from samaneh.settings.common import DEBUG
-
-
-test_urls = []
-if DEBUG:
-    from .test_view import TestView
-
-    test_urls = [
-        path("api/test", TestView.as_view()),
-    ]
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
@@ -26,4 +16,4 @@ urlpatterns = [
     path("api/stock-market/", include("stock_market.urls")),
     path("api/support/", include("support.urls")),
     path("", include("django_prometheus.urls")),
-] + test_urls
+]
