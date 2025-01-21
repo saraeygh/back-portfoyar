@@ -13,8 +13,8 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from django.urls import path
 
-from core.test_consumer import test_router
-from stock_market.routes import stock_market_router
+# from core.test_consumer import test_router
+from stock_market.router import stock_market_router
 
 
 application = get_asgi_application()
@@ -32,7 +32,7 @@ application = ProtocolTypeRouter(
                             URLRouter(
                                 [
                                     path("stock/", stock_market_router),
-                                    path("test", test_router),
+                                    # path("test", test_router),
                                 ]
                             ),
                         ),
