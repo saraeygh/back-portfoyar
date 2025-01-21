@@ -11,8 +11,10 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
+from django.urls import path
 
-from .routes import ws_urlpatterns
+from core.test_consumer import test_router
+from stock_market.routes import stock_market_router
 
 
 application = get_asgi_application()
@@ -22,7 +24,21 @@ application = ProtocolTypeRouter(
     {
         "http": application,
         "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(URLRouter(ws_urlpatterns))
+            AuthMiddlewareStack(
+                URLRouter(
+                    [
+                        path(
+                            "ws/",
+                            URLRouter(
+                                [
+                                    path("stock/", stock_market_router),
+                                    path("test", test_router),
+                                ]
+                            ),
+                        ),
+                    ]
+                )
+            )
         ),
     }
 )
