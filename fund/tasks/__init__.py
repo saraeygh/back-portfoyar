@@ -1,0 +1,1 @@
+from .get_fund_detail_task import get_fund_detail

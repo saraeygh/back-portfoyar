@@ -45,6 +45,7 @@ MANUALLY_INSTALLED_APPS = [
     "dashboard.apps.DashboardConfig",
     "domestic_market.apps.DomesticMarketConfig",
     "favorite.apps.FavoriteConfig",
+    "fund.apps.FundConfig",
     "future_market.apps.FutureMarketConfig",
     "global_market.apps.GlobalMarketConfig",
     "option_market.apps.OptionMarketConfig",

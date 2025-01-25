@@ -19,6 +19,8 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
+from fund.tasks import get_fund_detail
+
 from future_market.tasks import (
     update_derivative_info,
     update_future_base_equity,
@@ -86,13 +88,15 @@ TASKS = {
     "57": check_option_active_contracts,
     # DASHBOARD
     "61": dashboard,
+    # FUND
+    "71": get_fund_detail,
     # ACCOUNT
-    "71": disable_expired_subscription,
-    "72": create_sub_for_all_no_sub_users,
-    "73": add_days_to_subs,
+    "91": disable_expired_subscription,
+    "92": create_sub_for_all_no_sub_users,
+    "93": add_days_to_subs,
     # OTHER
-    "81": clear_redis_cache,
-    "82": replace_all_arabic_letters_in_db,
+    "101": clear_redis_cache,
+    "102": replace_all_arabic_letters_in_db,
 }
 
 

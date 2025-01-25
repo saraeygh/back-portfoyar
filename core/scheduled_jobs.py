@@ -29,6 +29,8 @@ from domestic_market.tasks import (
     get_dollar_daily_price,
 )
 
+from fund.tasks import get_fund_detail
+
 from future_market.tasks import (
     update_derivative_info,
     update_future_base_equity,
@@ -185,6 +187,20 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="*",
         minute="*/30",
+    )
+
+    return scheduler
+
+
+def add_fund_app_jobs(scheduler: BlockingScheduler):
+    scheduler.add_job(
+        func=get_fund_detail,
+        id="get_fund_detail_task",
+        replace_existing=True,
+        trigger="cron",
+        hour="20",
+        minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -433,6 +449,7 @@ def blocking_scheduler():
     scheduler = add_account_app_jobs(scheduler)
     scheduler = add_core_app_jobs(scheduler)
     scheduler = add_domestic_market_app_jobs(scheduler)
+    scheduler = add_fund_app_jobs(scheduler)
     scheduler = add_future_market_app_jobs(scheduler)
     scheduler = add_option_market_app_jobs(scheduler)
     scheduler = add_stock_market_app_jobs(scheduler)

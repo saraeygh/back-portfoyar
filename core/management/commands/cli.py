@@ -20,6 +20,8 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
+from fund.tasks import get_fund_detail
+
 from future_market.tasks import (
     update_derivative_info,
     update_future_base_equity,
@@ -69,6 +71,7 @@ def main_cli(clear_cmd):
         "4) Stock market",
         "5) Future market",
         "6) Dashboard app",
+        "7) Fund app",
         "9) Account app",
         Fore.RED + "10) Others",
         Fore.RED + "0) Exit" + Style.RESET_ALL,
@@ -311,6 +314,31 @@ def dashboard_cli(clear_cmd):
                 continue
 
 
+def fund_cli(clear_cmd):
+    while True:
+        print(
+            Style.BRIGHT + "Fund APP commands:",
+            "all) Run all commands" + Style.RESET_ALL,
+            Fore.BLUE + "1) Get fund details",
+            Fore.RED + "0) Back" + Style.RESET_ALL,
+            sep="\n",
+        )
+        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        os.system(clear_cmd)
+        match cmd:
+            case "all":
+                get_fund_detail()
+            case "1":
+                get_fund_detail()
+            case "0":
+                break
+
+            case _:
+                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                time.sleep(0.5)
+                continue
+
+
 def account_cli(clear_cmd):
     while True:
         print(
@@ -370,24 +398,32 @@ def other_cli(clear_cmd):
 
 def night_tasks_cli():
     print(Fore.BLUE + "Running night tasks." + Style.RESET_ALL)
+
+    # ACCOUNT APP
+    disable_expired_subscription()
+    # DOMESTIC APP
     populate_domestic_market_db()
     calculate_commodity_mean_domestic()
     calculate_monthly_sell_domestic()
     calculate_production_sell_domestic()
     calculate_producers_yearly_value()
-    #
+    # FUND APP
+    get_fund_detail()
+    # FUTURE APP
     update_future_base_equity()
     update_option_base_equity()
-    #
+    check_future_active_contracts()
+    check_option_active_contracts()
+    # OPTION APP
     get_option_history()
-    #
+    # STOCK APP
     update_stock_raw_adjusted_history()
     update_instrument_info()
     stock_value_history()
     stock_option_value_history()
     get_monthly_activity_report_letter()
     calculate_commodity_means_global()
-    disable_expired_subscription()
+
     print(Fore.GREEN + "Night tasks done!" + Style.RESET_ALL)
 
 
@@ -420,6 +456,9 @@ class Command(BaseCommand):
 
                 case "6":
                     dashboard_cli(clear_cmd)
+
+                case "7":
+                    fund_cli(clear_cmd)
 
                 case "9":
                     account_cli(clear_cmd)
