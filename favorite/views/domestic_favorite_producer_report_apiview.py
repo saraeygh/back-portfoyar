@@ -32,7 +32,7 @@ class DomesticFavoriteProducerReportAPIView(APIView):
         )
 
     def post(self, request):
-        producer_id = request.data.get("producer")
+        producer_id = request.data.get("company_id", 0)
         producer = get_object_or_404(DomesticProducer, id=producer_id)
         user = get_object_or_404(User, id=request.user.id)
 
