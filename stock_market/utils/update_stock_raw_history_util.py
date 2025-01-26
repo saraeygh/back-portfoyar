@@ -9,7 +9,6 @@ def update_stock_raw_history(
 ):
 
     if not raw_history.empty:
-
         model_fields_colmuns = list(HISTORY_COLUMN_RENAME.values())
         raw_history = raw_history[model_fields_colmuns]
 

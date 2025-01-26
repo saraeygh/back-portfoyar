@@ -17,10 +17,7 @@ from stock_market.utils import (
     ALL_PAPER_TYPE_DICT,
     remove_expired_instruments,
 )
-from stock_market.utils import (
-    update_get_existing_industrial_group,
-    update_get_existing_instrument,
-)
+from stock_market.models import StockInstrument
 
 
 mongo_client = MongodbInterface(
@@ -79,11 +76,9 @@ def get_historical_roi(ins_code):
 
 
 def update_instrument_info_main():
-    update_get_existing_industrial_group()
-    update_get_existing_instrument()
 
     documents = list()
-    all_instruments = remove_expired_instruments()
+    all_instruments = StockInstrument.objects.all()
     for ins_obj in tqdm(all_instruments, desc="Instrument info", ncols=10):
         market_id = ins_obj.market_type
         paper_id = ins_obj.paper_type

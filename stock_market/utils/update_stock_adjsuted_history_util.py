@@ -1,11 +1,14 @@
-from datetime import datetime
-import pandas as pd
-from stock_market.models import StockRawHistory, StockInstrument
-from . import HISTORY_COLUMN_RENAME
 import warnings
+import pandas as pd
+from datetime import datetime
+from tqdm import tqdm
+
 from core.utils import MongodbInterface
 from core.configs import STOCK_MONGO_DB
-from tqdm import tqdm
+
+from . import HISTORY_COLUMN_RENAME
+
+from stock_market.models import StockRawHistory, StockInstrument
 
 warnings.filterwarnings("ignore", category=pd.errors.SettingWithCopyWarning)
 
