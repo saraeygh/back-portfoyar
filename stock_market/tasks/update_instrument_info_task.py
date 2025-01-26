@@ -55,31 +55,22 @@ def get_historical_roi(ins_code):
     if full_history.empty:
         return historical_roi
 
-    full_history.sort_values(by="trade_date", inplace=True, ascending=False)
-    full_history.reset_index(drop=True, inplace=True)
-    range_end_price = full_history.iloc[0]
+    range_end_price = full_history.iloc[-1]
     range_end_price = (range_end_price.to_dict()).get("close_mean")
 
     for duration_int, duration_name in durations.items():
         try:
-            today = datetime.today()
-            today_timestamp = today.timestamp()
-            range_start = today - timedelta(days=duration_int)
-            range_start = range_start.timestamp()
+            today = datetime.today().timestamp()
+            range_start = today - timedelta(days=duration_int).total_seconds()
 
-            filtered_history = full_history[full_history["trade_date"] <= range_start]
+            filtered_history = full_history[full_history["trade_date"] >= range_start]
             if filtered_history.empty:
                 continue
 
-            filtered_history.sort_values(by="trade_date", inplace=True, ascending=False)
-            filtered_history.reset_index(drop=True, inplace=True)
             range_start_price = filtered_history.iloc[0]
-            range_start_price_date = range_start_price.get("trade_date")
-
-            if range_start * 0.9 < range_start_price_date < today_timestamp:
-                range_start_price = (range_start_price.to_dict()).get("close_mean")
-                roi = get_deviation_percent(range_end_price, range_start_price)
-                historical_roi[duration_name] = roi
+            range_start_price = (range_start_price.to_dict()).get("close_mean")
+            roi = get_deviation_percent(range_end_price, range_start_price)
+            historical_roi[duration_name] = roi
 
         except Exception:
             continue

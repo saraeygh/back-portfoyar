@@ -356,8 +356,8 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="*",
-        hour="4",
-        minute="10",
+        hour="5",
+        minute="30",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 

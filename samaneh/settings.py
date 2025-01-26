@@ -4,11 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-deb = os.environ.get("DEBUG")
-if deb == "True":
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = bool(os.environ.get("DEBUG"))
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 

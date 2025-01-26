@@ -113,13 +113,13 @@ def calculate_industry_duration_roi(durations: dict):
 
     industry_roi_list = list()
     unique_industry_id_list = roi["industrial_group_id"].unique().tolist()
-    for indsutry_id in unique_industry_id_list:
-        industry_roi = roi[roi["industrial_group_id"] == indsutry_id]
+    for industry_id in unique_industry_id_list:
+        industry_roi = roi[roi["industrial_group_id"] == industry_id]
         if industry_roi.empty:
             continue
 
         new_roi = {
-            "industrial_group_id": int(industry_roi.iloc[0].get("industrial_group_id")),
+            "industrial_group_id": industry_id,
             "industrial_group_name": industry_roi.iloc[0].get("industrial_group_name"),
         }
         for _, duration_name in durations.items():
@@ -143,8 +143,7 @@ def update_instrument_roi_main(run_mode):
         mongo_client = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )
-        instrument_info = mongo_client.collection.find({}, {"_id": 0})
-        instrument_info = pd.DataFrame(instrument_info)
+        instrument_info = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
 
         last_data = get_market_watch_data_from_redis()
         if last_data.empty:
