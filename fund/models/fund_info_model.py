@@ -37,9 +37,9 @@ class FundInfo(TimeStampMixin, models.Model):
         verbose_name="مدیر سرمایه‌گذاری", max_length=128, default=UNKNOWN
     )
 
-    market_maker = models.CharField(
-        verbose_name="بازارساز", max_length=128, default=UNKNOWN
-    )
+    # market_maker = models.CharField(
+    #     verbose_name="بازارساز", max_length=128, default=UNKNOWN
+    # )
 
     website = models.CharField(verbose_name="وبسایت", max_length=64, default=UNKNOWN)
 
@@ -47,13 +47,13 @@ class FundInfo(TimeStampMixin, models.Model):
         verbose_name="تضمین کننده", max_length=128, default=UNKNOWN
     )
 
-    investment_manager = models.CharField(
-        verbose_name="مدیران سرمایه‌گذاری", max_length=128, default=UNKNOWN
-    )
+    # investment_manager = models.CharField(
+    #     verbose_name="مدیران سرمایه‌گذاری", max_length=128, default=UNKNOWN
+    # )
 
-    national_id = models.CharField(
-        verbose_name="شناسه ملی", max_length=64, default=UNKNOWN
-    )
+    # national_id = models.CharField(
+    #     verbose_name="شناسه ملی", max_length=64, default=UNKNOWN
+    # )
 
     ins_code = models.CharField(
         verbose_name="شناسه بورسی", max_length=64, default=UNKNOWN

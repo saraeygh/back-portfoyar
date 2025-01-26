@@ -1,3 +1,58 @@
+FUND_COL_MAPPING = {
+    "regNo": "reg_no",  # str
+    "name": "name",  # str
+    # "rankOf12Month": "null",
+    # "rankOf24Month": "null",
+    # "rankOf36Month": "null",
+    # "rankOf48Month": "null",
+    # "rankOf60Month": "null",
+    # "rankLastUpdate": "0001-01-01T00:00:00",
+    "fundType": "fund_type",  # int
+    "typeOfInvest": "invest_type",  # str
+    "fundSize": "fund_size",  # int
+    "initiationDate": "initiation_date",  # str
+    "dailyEfficiency": "daily",  # float
+    "weeklyEfficiency": "weekly",  # float
+    "monthlyEfficiency": "monthly",  # float
+    "quarterlyEfficiency": "quarterly",  # float
+    "sixMonthEfficiency": "six_month",  # float
+    "annualEfficiency": "annual",  # float
+    "statisticalNav": "statistical_nav",  # int
+    "efficiency": "total",  # float
+    "cancelNav": "cancel_nav",  # int
+    "issueNav": "issue_nav",  # int
+    "dividendIntervalPeriod": "dividend_interval_period",  # int
+    "guaranteedEarningRate": "guaranteed_earning_rate",  # int
+    "date": "last_date",  # str
+    "netAsset": "net_asset",  # int
+    "estimatedEarningRate": "estimated_earning_rate",
+    "investedUnits": "invested_units",  # int
+    # "articlesOfAssociationLink": "null",
+    # "prosoectusLink": "null",
+    "websiteAddress": "website",  # str
+    "manager": "fund_manager",  # str
+    "managerSeoRegisterNo": "manager_reg_no",
+    # "guarantorSeoRegisterNo": "null",
+    # "auditor": "موسسه حسابرسی آزموده کاران",  # str
+    # "custodian": "موسسه حسابرسی بهراد مشار",  # str
+    "guarantor": "guarantor",  # str
+    # "beta": "null",
+    # "alpha": "null",
+    # "isCompleted": "true",
+    "fiveBest": "five_best",  # float
+    "stock": "stock",  # float
+    "bond": "bond",  # float
+    "other": "other",  # float
+    "cash": "cash",  # float
+    "deposit": "deposit",  # float
+    "fundUnit": "fund_unit",  # float
+    "commodity": "commodity",  # float
+    # "fundPublisher": 2,
+    "smallSymbolName": "symbol",
+    "insCode": "ins_code",
+    # "fundWatch": "null",
+}
+
 FIPIRAN_HEADERS = {
     "Host": "fund.fipiran.ir",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0",

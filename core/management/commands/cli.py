@@ -20,7 +20,7 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
-from fund.tasks import get_fund_detail
+from fund.tasks import update_fund_info, get_all_fund_detail
 
 from future_market.tasks import (
     update_derivative_info,
@@ -319,7 +319,8 @@ def fund_cli(clear_cmd):
         print(
             Style.BRIGHT + "Fund APP commands:",
             "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Get fund details",
+            Fore.BLUE + "1) Get all fund detail",
+            "2) Update fund info",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -327,9 +328,12 @@ def fund_cli(clear_cmd):
         os.system(clear_cmd)
         match cmd:
             case "all":
-                get_fund_detail()
+                get_all_fund_detail()
+                update_fund_info()
             case "1":
-                get_fund_detail()
+                get_all_fund_detail()
+            case "2":
+                update_fund_info()
             case "0":
                 break
 
@@ -408,7 +412,7 @@ def night_tasks_cli():
     calculate_production_sell_domestic()
     calculate_producers_yearly_value()
     # FUND APP
-    get_fund_detail()
+    update_fund_info()
     # FUTURE APP
     update_future_base_equity()
     update_option_base_equity()

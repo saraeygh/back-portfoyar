@@ -37,6 +37,9 @@ CODE_RANGE_MIN = 111111
 CODE_RANGE_MAX = 999999
 PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])-?[0-9]{3}-?[0-9]{4}$"
 
+######################################################## FUND APP
+FUND_MONGO_DB = "fund"
+FUND_ALL_DATA_COLLECTION = "all_data"
 ######################################################## DOMESTIC APP
 DOMESTIC_MONGO_DB = "domestic"
 

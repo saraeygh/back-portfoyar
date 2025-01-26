@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
@@ -19,7 +18,7 @@ from domestic_market.tasks import (
     calculate_producers_yearly_value,
 )
 
-from fund.tasks import get_fund_detail
+from fund.tasks import update_fund_info, get_all_fund_detail
 
 from future_market.tasks import (
     update_derivative_info,
@@ -89,7 +88,8 @@ TASKS = {
     # DASHBOARD
     "61": dashboard,
     # FUND
-    "71": get_fund_detail,
+    "71": get_all_fund_detail,
+    "72": update_fund_info,
     # ACCOUNT
     "91": disable_expired_subscription,
     "92": create_sub_for_all_no_sub_users,

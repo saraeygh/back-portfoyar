@@ -1,1 +1,2 @@
-from .get_fund_detail_task import get_fund_detail
+from .update_fund_info_task import update_fund_info
+from .get_all_fund_detail_task import get_all_fund_detail
