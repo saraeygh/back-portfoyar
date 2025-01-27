@@ -8,9 +8,9 @@ def get_all_fund_detail_main():
     FUND_COMPARE_URL = "https://fund.fipiran.ir/api/v1/fund/fundcompare"
 
     funds = get_http_response(req_url=FUND_COMPARE_URL, req_headers=FIPIRAN_HEADERS)
-    funds = funds.json().get("items")
 
     if funds:
+        funds = funds.json().get("items")
         mongo_client = MongodbInterface(
             db_name=FUND_MONGO_DB, collection_name=FUND_ALL_DATA_COLLECTION
         )
