@@ -4,6 +4,4 @@ data/
 locust/
 .pdm-python
 .env
-.env.dev
-.env.test
-.env.prod
+.env*

@@ -1,7 +1,5 @@
-# GET BASE IMAGE
 FROM docker.arvancloud.ir/nginx:1.27.2-alpine3.20
 
-# INSTALL REQUIRED PACKAGES ON ALPINE
 RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/repositories && \
     echo "https://mirrors.gigenet.com/alpinelinux/v3.20/community/" >> /etc/apk/repositories
 RUN ["apk", "update"]

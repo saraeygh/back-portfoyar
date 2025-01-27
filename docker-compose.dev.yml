@@ -76,7 +76,6 @@ services:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         - ZARINPAL_MERCHANTID=${ZARINPAL_MERCHANTID}
         - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-
     image: apscheduler_test
     container_name: apscheduler_test
     entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
@@ -86,7 +85,6 @@ services:
       - postgres_test
       - redis_test
       - mongodb_test
-      # - api_test
     restart: always
     logging:
       driver: "json-file"

@@ -263,6 +263,7 @@ celerybeat-schedule.*
 
 # Environments 
 .env 
+.env*
 .venv 
 env/ 
 venv/ 
@@ -307,6 +308,3 @@ data/
 *.xls
 *.csv
 .pdm-python
-.env.dev
-.env.test
-.env.prod
