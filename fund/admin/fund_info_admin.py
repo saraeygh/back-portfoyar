@@ -20,8 +20,6 @@ class FundInfoAdmin(admin.ModelAdmin):
         "reg_no",
         "name",
         "fund_manager",
-        "market_maker",
-        "investment_manager",
         "ins_code",
     )
 

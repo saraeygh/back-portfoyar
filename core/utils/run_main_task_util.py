@@ -1,14 +1,16 @@
 import threading
+import traceback
+import smtplib
+
+from urllib3.exceptions import ReadTimeoutError
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-import traceback
-import smtplib
 import jdatetime
 from colorama import Fore, Style
 
-from core.utils import get_http_response
+from core.utils import RedisInterface, get_http_response
 from core.configs import (
     EMAIL_HOST,
     EMAIL_PORT,
@@ -16,6 +18,8 @@ from core.configs import (
     EMAIL_HOST_PASSWORD,
     EMAIL_TO,
     TEHRAN_TZ,
+    KEY_WITH_EX_REDIS_DB,
+    CONNECTION_ERROR_EXPIRATION,
 )
 
 
@@ -103,6 +107,26 @@ def send_task_fail_success_email(task_name: str = "", exception: str = SUCCESS):
         print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
 
 
+def send_exception_detail_email(task_name, exception):
+    print(Fore.RED + f"{exception}" + Style.RESET_ALL)
+    send_email_thread = threading.Thread(
+        target=send_task_fail_success_email,
+        kwargs={"task_name": task_name, "exception": exception},
+    )
+    send_email_thread.start()
+
+
+def exceeded_connection_error_repetition(task_name):
+    redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
+    exceeded_repetition = redis_conn.client.get(task_name)
+    if exceeded_repetition is None:
+        redis_conn.client.set(task_name, 1, ex=CONNECTION_ERROR_EXPIRATION)
+        return False
+    else:
+        redis_conn.client.delete(task_name)
+        return True
+
+
 def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
     TASK_NAME = main_task.__name__
     print_task_info(name=TASK_NAME)
@@ -117,10 +141,9 @@ def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
             send_email_thread.start()
         print_task_info(color="GREEN", name=TASK_NAME)
 
+    except ReadTimeoutError as rtoe:
+        if exceeded_connection_error_repetition(TASK_NAME):
+            send_exception_detail_email(TASK_NAME, rtoe)
+
     except Exception as e:
-        print(Fore.RED + f"{e}" + Style.RESET_ALL)
-        send_email_thread = threading.Thread(
-            target=send_task_fail_success_email,
-            kwargs={"task_name": TASK_NAME, "exception": e},
-        )
-        send_email_thread.start()
+        send_exception_detail_email(TASK_NAME, e)

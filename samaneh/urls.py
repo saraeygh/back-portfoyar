@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/dashboard/", include("dashboard.urls")),
     path("api/domestic/", include("domestic_market.urls")),
     path("api/favorite/", include("favorite.urls")),
+    path("api/fund/", include("fund.urls")),
     path("api/future/", include("future_market.urls")),
     path("api/global-market/", include("global_market.urls")),
     path("api/option/", include("option_market.urls")),
