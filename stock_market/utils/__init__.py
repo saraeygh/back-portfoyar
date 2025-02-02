@@ -26,6 +26,7 @@ from .used_dicts_util import (
     FUND_PAPER,
     OPTION_PAPER,
 )
+from .remove_expired_instruments_util import remove_expired_instruments
 from .update_stock_raw_history_util import update_stock_raw_history
 from .update_stock_adjsuted_history_util import (
     update_stock_adjusted_history,
@@ -37,4 +38,3 @@ from .get_last_market_watch_data_util import (
 )
 from .stock_recommendation_util import stock_recommendation
 from .get_recommendation_config_util import get_recommendation_config
-from .remove_expired_instruments_util import remove_expired_instruments

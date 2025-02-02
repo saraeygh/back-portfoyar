@@ -1,16 +1,36 @@
-import warnings
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
 from tqdm import tqdm
 
 from core.utils import MongodbInterface
 from core.configs import STOCK_MONGO_DB
 
-from . import HISTORY_COLUMN_RENAME
-
+from stock_market.utils import HISTORY_COLUMN_RENAME
 from stock_market.models import StockRawHistory, StockInstrument
 
-warnings.filterwarnings("ignore", category=pd.errors.SettingWithCopyWarning)
+from . import HISTORY_COLUMN_RENAME
+
+
+DIR_COLS_LIST = [
+    "open",
+    "close",
+    "low",
+    "high",
+    "close_mean",
+    "yesterday_price",
+]
+REV_COLS_LIST = [
+    "volume",
+    "individual_buy_volume",
+    "legal_buy_volume",
+    "individual_sell_volume",
+    "legal_sell_volume",
+]
+
+mongodb_conn = MongodbInterface(
+    db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
+)
 
 
 def trade_date_to_timestamp(row):
@@ -21,12 +41,24 @@ def trade_date_to_timestamp(row):
     return trade_date
 
 
+def remove_expired_adj_histories(instruments_ins_code_list):
+    query = {"ins_code": {"$nin": instruments_ins_code_list}}
+    mongodb_conn.collection.delete_many(query)
+
+
 def update_stock_adjusted_history():
 
-    instruments = StockInstrument.objects.all()
+    model_fields_colmuns = list(HISTORY_COLUMN_RENAME.values())
 
-    for instrument in tqdm(instruments, desc="adjusted_history", ncols=10):
-        model_fields_colmuns = list(HISTORY_COLUMN_RENAME.values())
+    instrument_id_list = list(
+        StockRawHistory.objects.distinct("instrument").values_list(
+            "instrument", flat=True
+        )
+    )
+
+    all_instruments = StockInstrument.objects.filter(id__in=instrument_id_list)
+    instruments_ins_code_list = []
+    for instrument in tqdm(all_instruments, desc="adjusted_history", ncols=10):
         raw_history = pd.DataFrame(
             StockRawHistory.objects.filter(instrument=instrument)
             .filter(trade_count__gt=0)
@@ -35,116 +67,43 @@ def update_stock_adjusted_history():
         )
         if raw_history.empty:
             continue
+
         raw_history.sort_values(by="trade_date", inplace=True, ascending=True)
         raw_history.reset_index(drop=True, inplace=True)
-        adjusted_history = raw_history.copy(deep=True)
 
-        adjustment_list = []
-        row_count = len(raw_history)
-        for i in range(1, row_count):
-            previous_row = i - 1
-            next_row = i
-            previous_row_close_mean = raw_history.iloc[previous_row]["close_mean"]
-            next_row_yesterday_price = raw_history.iloc[next_row]["yesterday_price"]
-            if next_row_yesterday_price != previous_row_close_mean:
-                adjustment_list.append(
-                    {
-                        "previous_row": previous_row,
-                        "next_row": next_row,
-                        "dir_coefficient": next_row_yesterday_price
-                        / previous_row_close_mean,
-                        "rev_coefficient": previous_row_close_mean
-                        / next_row_yesterday_price,
-                    }
-                )
+        mask = (raw_history["yesterday_price"].shift(-1) != raw_history["close_mean"])[
+            :-1
+        ]
+        capital_changes = raw_history[:-1][mask]
 
-        for adjustment in adjustment_list:
-            end_index = adjustment.get("previous_row")
-            dir_coefficient = adjustment.get("dir_coefficient")
-            rev_coefficient = adjustment.get("rev_coefficient")
+        if capital_changes.empty:
+            adj_history = raw_history
+        else:
+            adj_history = raw_history.copy(deep=True)
+            for idx, _ in capital_changes.iterrows():
+                current_index = idx
+                next_index = current_index + 1
 
-            adjusted_history[
-                [
-                    "open",
-                    "close",
-                    "low",
-                    "high",
-                    "close_mean",
-                    "yesterday_price",
-                    "volume",
-                    "individual_buy_volume",
-                    "legal_buy_volume",
-                    "individual_sell_volume",
-                    "legal_sell_volume",
-                ]
-            ] = adjusted_history[
-                [
-                    "open",
-                    "close",
-                    "low",
-                    "high",
-                    "close_mean",
-                    "yesterday_price",
-                    "volume",
-                    "individual_buy_volume",
-                    "legal_buy_volume",
-                    "individual_sell_volume",
-                    "legal_sell_volume",
-                ]
-            ].astype(
-                float
-            )
+                current_close_mean = raw_history.iloc[current_index]["close_mean"]
+                next_yesterday_price = raw_history.iloc[next_index]["yesterday_price"]
 
-            adjusted_history.loc[
-                0:end_index,
-                [
-                    "open",
-                    "close",
-                    "low",
-                    "high",
-                    "close_mean",
-                    "yesterday_price",
-                ],
-            ] *= dir_coefficient
+                dir_coef = next_yesterday_price / current_close_mean
+                rev_coef = current_close_mean / next_yesterday_price
 
-            adjusted_history.loc[
-                0:end_index,
-                [
-                    "volume",
-                    "individual_buy_volume",
-                    "legal_buy_volume",
-                    "individual_sell_volume",
-                    "legal_sell_volume",
-                ],
-            ] *= rev_coefficient
+                adj_history.loc[0:current_index, DIR_COLS_LIST] *= dir_coef
+                adj_history.loc[0:current_index, REV_COLS_LIST] *= rev_coef
 
-        adjusted_history = adjusted_history.round(
-            {
-                "open": 0,
-                "close": 0,
-                "low": 0,
-                "high": 0,
-                "close_mean": 0,
-                "yesterday_price": 0,
-                "volume": 0,
-                "individual_buy_volume": 0,
-                "legal_buy_volume": 0,
-                "individual_sell_volume": 0,
-                "legal_sell_volume": 0,
-            }
-        )
+                adj_history[DIR_COLS_LIST] = adj_history[DIR_COLS_LIST].astype(int)
+                adj_history[REV_COLS_LIST] = adj_history[REV_COLS_LIST].astype(int)
 
-        adjusted_history["trade_date"] = adjusted_history.apply(
-            trade_date_to_timestamp, axis=1
-        )
-        adjusted_history = adjusted_history.to_dict(orient="records")
-
-        mongodb_conn = MongodbInterface(
-            db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
-        )
+        adj_history["trade_date"] = adj_history.apply(trade_date_to_timestamp, axis=1)
+        adj_history = adj_history.to_dict(orient="records")
 
         query_filter = {"ins_code": f"{instrument.ins_code}"}
         mongodb_conn.collection.delete_one(query_filter)
         mongodb_conn.collection.insert_one(
-            {"ins_code": f"{instrument.ins_code}", "adjusted_history": adjusted_history}
+            {"ins_code": f"{instrument.ins_code}", "adjusted_history": adj_history}
         )
+
+        instruments_ins_code_list.append(instrument.ins_code)
+    remove_expired_adj_histories(instruments_ins_code_list)

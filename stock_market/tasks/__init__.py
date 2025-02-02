@@ -5,9 +5,9 @@ from .update_market_watch_indices_task import update_market_watch_indices
 from .update_market_watch_task import update_market_watch
 
 from .update_instrument_info_task import update_instrument_info
-from .update_stock_daily_history_task import update_stock_daily_history
-from .update_stock_raw_adjusted_history_task import (
-    update_stock_raw_adjusted_history,
+from .update_stock_daily_raw_history_task import update_stock_daily_history
+from .update_stock_full_raw_history_task import (
+    update_stock_full_raw_history,
 )
 from .update_instrument_roi_task import update_instrument_roi
 from .stock_value_change_task import stock_value_change

@@ -37,7 +37,7 @@ from option_market.utils import populate_all_option_strategy_sync
 from stock_market.tasks import (
     update_market_watch,
     get_monthly_activity_report_letter,
-    update_stock_raw_adjusted_history,
+    update_stock_full_raw_history,
     update_instrument_info,
     update_instrument_roi,
     stock_value_history,
@@ -70,7 +70,7 @@ TASKS = {
     # STOCK
     "41": get_monthly_activity_report_letter,
     "42": update_market_watch,
-    "43": update_stock_raw_adjusted_history,
+    "43": update_stock_full_raw_history,
     "44": update_instrument_info,
     "45": update_instrument_roi,
     "46": stock_value_history,

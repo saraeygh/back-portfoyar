@@ -11,18 +11,13 @@ def update_stock_raw_history(
     if not raw_history.empty:
         model_fields_colmuns = list(HISTORY_COLUMN_RENAME.values())
         raw_history = raw_history[model_fields_colmuns]
-
-        last_trade = (
-            StockRawHistory.objects.filter(instrument=instrument_obj)
-            .order_by("trade_date")
-            .last()
+        prev_history = list(
+            StockRawHistory.objects.filter(instrument=instrument_obj).values_list(
+                "trade_date", flat=True
+            )
         )
 
-        if last_trade:
-            raw_history = raw_history.loc[
-                raw_history["trade_date"] > last_trade.trade_date
-            ]
-
+        raw_history = raw_history[~raw_history["trade_date"].isin(prev_history)]
         if not raw_history.empty:
             raw_history["instrument"] = instrument_obj
 

@@ -10,14 +10,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.configs import STOCK_MONGO_DB, SIXTY_MINUTES_CACHE
+from core.configs import STOCK_MONGO_DB, THIRTY_MINUTES_CACHE
 from core.utils import MongodbInterface
 
 from stock_market.serializers import IndustryROISerailizer
 from stock_market.permissions import HasStockSubscription
 
 
-@method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, HasStockSubscription])
 class StockIndustryROIAPIView(APIView):

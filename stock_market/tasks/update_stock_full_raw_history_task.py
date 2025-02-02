@@ -10,7 +10,6 @@ from stock_market.utils import (
     update_get_existing_industrial_group,
     update_get_existing_instrument,
     update_stock_raw_history,
-    update_stock_adjusted_history,
     remove_expired_instruments,
 )
 
@@ -22,7 +21,7 @@ def convert_date_str_to_obj(row):
     return date_obj
 
 
-def update_stock_raw_adjusted_history_main():
+def update_stock_full_raw_history_main():
     print(Fore.BLUE + "update_get_existing_industrial_group" + Style.RESET_ALL)
     update_get_existing_industrial_group()
     print(Fore.BLUE + "update_get_existing_instrument" + Style.RESET_ALL)
@@ -31,8 +30,6 @@ def update_stock_raw_adjusted_history_main():
     all_instruments = remove_expired_instruments()
     for instrument_obj in tqdm(all_instruments, desc="Stock history", ncols=10):
         PRICE_HISTORY_URL = f"https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceDailyList/{instrument_obj.ins_code}/0"
-        CLIENT_TYPE_HISTORY_URL = f"https://cdn.tsetmc.com/api/ClientType/GetClientTypeHistory/{instrument_obj.ins_code}"
-
         price_history = get_http_response(
             req_url=PRICE_HISTORY_URL, req_headers=TSETMC_REQUEST_HEADERS
         )
@@ -45,6 +42,7 @@ def update_stock_raw_adjusted_history_main():
             columns={"dEven": "date", "insCode": "ins_code"}, inplace=True
         )
 
+        CLIENT_TYPE_HISTORY_URL = f"https://cdn.tsetmc.com/api/ClientType/GetClientTypeHistory/{instrument_obj.ins_code}"
         client_type = get_http_response(
             req_url=CLIENT_TYPE_HISTORY_URL, req_headers=TSETMC_REQUEST_HEADERS
         )
@@ -67,12 +65,10 @@ def update_stock_raw_adjusted_history_main():
 
             update_stock_raw_history(raw_history=history, instrument_obj=instrument_obj)
 
-    update_stock_adjusted_history()
 
-
-def update_stock_raw_adjusted_history():
+def update_stock_full_raw_history():
 
     run_main_task(
-        main_task=update_stock_raw_adjusted_history_main,
+        main_task=update_stock_full_raw_history_main,
         daily=True,
     )

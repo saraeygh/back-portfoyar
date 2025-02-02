@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.configs import STOCK_MONGO_DB, SIXTY_MINUTES_CACHE, STOCK_NA_ROI
+from core.configs import STOCK_MONGO_DB, FIVE_MINUTES_CACHE, STOCK_NA_ROI
 from core.utils import (
     MongodbInterface,
     TABLE_COLS_QP,
@@ -24,7 +24,7 @@ from stock_market.utils import MAIN_PAPER_TYPE_DICT
 from stock_market.permissions import HasStockSubscription
 
 
-@method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated, HasStockSubscription])
 class StockIndustryInstrumentROIAPIView(APIView):

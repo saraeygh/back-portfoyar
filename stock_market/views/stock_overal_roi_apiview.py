@@ -20,7 +20,6 @@ from core.utils import (
 from core.configs import (
     STOCK_MONGO_DB,
     FIVE_MINUTES_CACHE,
-    STOCK_TOP_500_LIMIT,
     STOCK_NA_ROI,
 )
 

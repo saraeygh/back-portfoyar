@@ -46,7 +46,6 @@ from option_market.tasks import update_option_data_from_tse, get_option_history
 from stock_market.tasks import (
     update_market_watch,
     update_market_watch_indices,
-    update_stock_raw_adjusted_history,
     update_instrument_info,
     update_instrument_roi,
     stock_value_history,
@@ -345,7 +344,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_stock_daily_history_task",
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
         hour="12",
         minute="35",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,

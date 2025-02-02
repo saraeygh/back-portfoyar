@@ -39,7 +39,7 @@ from stock_market.tasks import (
     update_market_watch,
     get_monthly_activity_report_letter,
     update_market_watch_indices,
-    update_stock_raw_adjusted_history,
+    update_stock_full_raw_history,
     update_instrument_info,
     update_instrument_roi,
     stock_value_history,
@@ -214,7 +214,7 @@ def stock_cli(clear_cmd):
                 update_instrument_info()
                 update_instrument_roi(MANUAL_MODE)
                 update_stock_daily_history(MANUAL_MODE)
-                update_stock_raw_adjusted_history()
+                update_stock_full_raw_history()
                 stock_value_history()
                 stock_option_value_change(MANUAL_MODE)
                 stock_option_price_spread(MANUAL_MODE)
@@ -224,7 +224,7 @@ def stock_cli(clear_cmd):
             case "2":
                 update_market_watch(MANUAL_MODE)
             case "3":
-                update_stock_raw_adjusted_history()
+                update_stock_full_raw_history()
             case "4":
                 update_instrument_info()
             case "5":
@@ -426,7 +426,7 @@ def night_tasks_cli():
     # OPTION APP
     get_option_history()
     # STOCK APP
-    update_stock_raw_adjusted_history()
+    update_stock_full_raw_history()
     update_instrument_info()
     stock_value_history()
     stock_option_value_history()
