@@ -12,11 +12,7 @@ from core.utils import (
     run_main_task,
 )
 
-from stock_market.utils import (
-    MAIN_MARKET_TYPE_DICT,
-    ALL_PAPER_TYPE_DICT,
-    remove_expired_instruments,
-)
+from stock_market.utils import MAIN_MARKET_TYPE_DICT, ALL_PAPER_TYPE_DICT
 from stock_market.models import StockInstrument
 
 

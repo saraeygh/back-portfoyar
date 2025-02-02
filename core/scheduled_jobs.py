@@ -55,6 +55,7 @@ from stock_market.tasks import (
     stock_option_value_change,
     stock_option_price_spread,
     get_monthly_activity_report_letter,
+    update_stock_daily_history,
 )
 
 from global_market.tasks import calculate_commodity_means_global
@@ -340,13 +341,13 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     )
 
     scheduler.add_job(
-        func=update_stock_raw_adjusted_history,
-        id="update_stock_raw_adjusted_history_task",
+        func=update_stock_daily_history,
+        id="update_stock_daily_history_task",
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="2",
-        minute="10",
+        hour="12",
+        minute="35",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
@@ -356,7 +357,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="*",
-        hour="5",
+        hour="14",
         minute="30",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )

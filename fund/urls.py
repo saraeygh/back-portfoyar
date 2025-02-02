@@ -2,7 +2,7 @@ from django.urls import path
 
 
 fund_upload_urls = [
-    # path("positions", FuturePositionsAPIView.as_view()),
+    # path("upload-data", FuturePositionsAPIView.as_view()),
 ]
 
 

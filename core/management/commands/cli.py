@@ -46,6 +46,7 @@ from stock_market.tasks import (
     stock_option_value_history,
     stock_option_value_change,
     stock_option_price_spread,
+    update_stock_daily_history,
 )
 from stock_market.utils import update_stock_adjusted_history
 
@@ -200,6 +201,7 @@ def stock_cli(clear_cmd):
             "8) Stock option value change",
             "9) Stock option price spread",
             "10) Update stock adjusted history",
+            "11) Update stock daily history",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -211,6 +213,7 @@ def stock_cli(clear_cmd):
                 update_market_watch_indices(MANUAL_MODE)
                 update_instrument_info()
                 update_instrument_roi(MANUAL_MODE)
+                update_stock_daily_history(MANUAL_MODE)
                 update_stock_raw_adjusted_history()
                 stock_value_history()
                 stock_option_value_change(MANUAL_MODE)
@@ -236,6 +239,8 @@ def stock_cli(clear_cmd):
                 stock_option_price_spread(MANUAL_MODE)
             case "10":
                 update_stock_adjusted_history()
+            case "11":
+                update_stock_daily_history(MANUAL_MODE)
             case "0":
                 break
 

@@ -163,7 +163,7 @@ MARKET_WATCH_COLS = {
     "ztd": "share_count",
     "blDs": "order_book",
     "insCode": "ins_code",
-    "dEven": "dEven",
+    "dEven": "last_date",
     "hEven": "last_time",
 }
 

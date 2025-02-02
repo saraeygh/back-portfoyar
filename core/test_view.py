@@ -44,6 +44,7 @@ from stock_market.tasks import (
     stock_option_value_history,
     stock_option_value_change,
     stock_option_price_spread,
+    update_stock_daily_history,
 )
 from stock_market.utils import update_stock_adjusted_history
 
@@ -77,6 +78,7 @@ TASKS = {
     "48": stock_option_value_change,
     "49": stock_option_price_spread,
     "491": update_stock_adjusted_history,
+    "492": update_stock_daily_history,
     # FUTURE
     "51": update_derivative_info,
     "52": update_future_base_equity,

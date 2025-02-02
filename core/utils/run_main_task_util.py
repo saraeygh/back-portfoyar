@@ -2,10 +2,12 @@ import threading
 import traceback
 import smtplib
 
-from urllib3.exceptions import ReadTimeoutError
-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+from urllib3.exceptions import ReadTimeoutError
+from requests.exceptions import JSONDecodeError
+
 
 import jdatetime
 from colorama import Fore, Style
@@ -116,7 +118,7 @@ def send_exception_detail_email(task_name, exception):
     send_email_thread.start()
 
 
-def exceeded_connection_error_repetition(task_name):
+def exceeded_error_repetition(task_name):
     redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     exceeded_repetition = redis_conn.client.get(task_name)
     if exceeded_repetition is None:
@@ -141,9 +143,9 @@ def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
             send_email_thread.start()
         print_task_info(color="GREEN", name=TASK_NAME)
 
-    except ReadTimeoutError as rtoe:
-        if exceeded_connection_error_repetition(TASK_NAME):
-            send_exception_detail_email(TASK_NAME, rtoe)
+    except (ReadTimeoutError, JSONDecodeError, AttributeError, ValueError) as re:
+        if exceeded_error_repetition(TASK_NAME) or daily:
+            send_exception_detail_email(TASK_NAME, re)
 
     except Exception as e:
         send_exception_detail_email(TASK_NAME, e)

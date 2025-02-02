@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import date
 from colorama import Fore, Style
 
 from core.utils import (
@@ -92,7 +93,7 @@ def update_market_watch_main(run_mode):
 
         market_watch["market_type"] = market_watch["market_type"].astype(int)
         market_watch["paper_type"] = market_watch["paper_type"].astype(int)
-
+        market_watch["last_date"] = date.today().strftime("%Y-%m-%d")
         market_watch = market_watch.to_dict(orient="records")
         redis_conn.bulk_push_list_of_dicts(
             list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
