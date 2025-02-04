@@ -56,6 +56,7 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
                 columns={"trade_date": "x", "close_price": "y"}, inplace=True
             )
             history["y"] = history["y"] / HEZAR_RIAL_TO_MILLION_TOMAN
+            history.drop("id", axis=1, inplace=True)
             history = history.to_dict(orient="records")
 
             try:

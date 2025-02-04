@@ -51,7 +51,12 @@ from stock_market.tasks import (
 from stock_market.utils import update_stock_adjusted_history
 
 
-from dashboard.tasks import dashboard_buy_sell_orders_value, dashboard_last_close_price
+from dashboard.tasks import (
+    dashboard_buy_sell_orders_value,
+    dashboard_last_close_price,
+    dashboard_total_index,
+    dashboard_unweighted_index,
+)
 
 
 def get_clear_cmd():
@@ -302,6 +307,8 @@ def dashboard_cli(clear_cmd):
             Fore.CYAN + "Following tasks will be run:" + Style.RESET_ALL,
             Fore.BLUE + "- dashboard_buy_sell_orders_value",
             Fore.BLUE + "- dashboard_last_close_price",
+            Fore.BLUE + "- dashboard_total_index",
+            Fore.BLUE + "- dashboard_unweighted_index",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -311,6 +318,8 @@ def dashboard_cli(clear_cmd):
             case "all":
                 dashboard_buy_sell_orders_value(MANUAL_MODE)
                 dashboard_last_close_price(MANUAL_MODE)
+                dashboard_total_index(MANUAL_MODE)
+                dashboard_unweighted_index(MANUAL_MODE)
             case "0":
                 break
 

@@ -49,7 +49,12 @@ from stock_market.tasks import (
 from stock_market.utils import update_stock_adjusted_history
 
 
-from dashboard.tasks import dashboard_buy_sell_orders_value, dashboard_last_close_price
+from dashboard.tasks import (
+    dashboard_buy_sell_orders_value,
+    dashboard_last_close_price,
+    dashboard_total_index,
+    dashboard_unweighted_index,
+)
 
 
 TASKS = {
@@ -90,6 +95,8 @@ TASKS = {
     # DASHBOARD
     "61": dashboard_buy_sell_orders_value,
     "62": dashboard_last_close_price,
+    "63": dashboard_total_index,
+    "64": dashboard_unweighted_index,
     # FUND
     "71": get_all_fund_detail,
     "72": update_fund_info,
@@ -118,7 +125,7 @@ class TestView(APIView):
 
 
 # COMMON
-# https://cdn.tsetmc.com/api/Index/GetIndexB1LastDay/{ins_code} # Index Day history
+# https://cdn.tsetmc.com/api/Index/GetIndexB1LastDay/32097828799138957 # Index Day history
 # https://cdn.tsetmc.com/api/Index/GetIndexB2History/{ins_code} # Index whole history
 # https://cdn.tsetmc.com/api/ClosingPrice/GetIndexCompany/{ins_code} # Index sub-companies
 

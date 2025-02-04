@@ -18,7 +18,12 @@ from core.configs import TEHRAN_TZ, MGT_FOR_DAILY_TASKS
 
 from account.tasks import disable_expired_subscription
 
-from dashboard.tasks import dashboard_last_close_price, dashboard_buy_sell_orders_value
+from dashboard.tasks import (
+    dashboard_last_close_price,
+    dashboard_buy_sell_orders_value,
+    dashboard_total_index,
+    dashboard_unweighted_index,
+)
 
 from domestic_market.tasks import (
     populate_domestic_market_db,
@@ -117,7 +122,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-17",
+        hour="9-13",
         minute="*/3",
     )
 
@@ -127,7 +132,27 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-17",
+        hour="9-13",
+        minute="*/5",
+    )
+
+    scheduler.add_job(
+        func=dashboard_total_index,
+        id="dashboard_total_index_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="sat, sun, mon, tue, wed",
+        hour="9-13",
+        minute="*/5",
+    )
+
+    scheduler.add_job(
+        func=dashboard_unweighted_index,
+        id="dashboard_unweighted_index_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="sat, sun, mon, tue, wed",
+        hour="9-13",
         minute="*/5",
     )
 

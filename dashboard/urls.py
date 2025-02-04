@@ -6,6 +6,8 @@ from dashboard.views import (
     DollarPriceAPIView,
     BuySellValueAPIView,
     LastClosePriceAPIView,
+    TotalIndexDailyAPIView,
+    UnweightedIndexDailyAPIView,
 )
 
 dashboard_menu_urls = [
@@ -15,7 +17,9 @@ dashboard_menu_urls = [
 
 
 urlpatterns = [
-    path("dollar-price", DollarPriceAPIView.as_view()),
+    path("total-index-daily", TotalIndexDailyAPIView.as_view()),
+    path("unweighted-index-daily", UnweightedIndexDailyAPIView.as_view()),
     path("buy-sell-value", BuySellValueAPIView.as_view()),
     path("last-close-price", LastClosePriceAPIView.as_view()),
+    path("dollar-price", DollarPriceAPIView.as_view()),
 ] + dashboard_menu_urls

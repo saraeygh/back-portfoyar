@@ -45,7 +45,7 @@ def add_sell_value(row):
 
 def check_date():
     today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
-    date = today_datetime.strftime("%Y-%m-%d")
+    date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
