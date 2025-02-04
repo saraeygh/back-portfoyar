@@ -18,7 +18,7 @@ from core.configs import TEHRAN_TZ, MGT_FOR_DAILY_TASKS
 
 from account.tasks import disable_expired_subscription
 
-from dashboard.tasks import dashboard
+from dashboard.tasks import dashboard_last_close_price, dashboard_buy_sell_orders_value
 
 from domestic_market.tasks import (
     populate_domestic_market_db,
@@ -109,11 +109,21 @@ def add_account_app_jobs(scheduler: BlockingScheduler):
     return scheduler
 
 
-def add_core_app_jobs(scheduler: BlockingScheduler):
+def add_dashboard_app_jobs(scheduler: BlockingScheduler):
 
     scheduler.add_job(
-        func=dashboard,
-        id="dashboard_task",
+        func=dashboard_buy_sell_orders_value,
+        id="dashboard_buy_sell_orders_value_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="sat, sun, mon, tue, wed",
+        hour="9-17",
+        minute="*/3",
+    )
+
+    scheduler.add_job(
+        func=dashboard_last_close_price,
+        id="dashboard_last_close_price_task",
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
@@ -456,7 +466,7 @@ def blocking_scheduler():
     scheduler = get_scheduler()
 
     scheduler = add_account_app_jobs(scheduler)
-    scheduler = add_core_app_jobs(scheduler)
+    scheduler = add_dashboard_app_jobs(scheduler)
     scheduler = add_domestic_market_app_jobs(scheduler)
     scheduler = add_fund_app_jobs(scheduler)
     scheduler = add_future_market_app_jobs(scheduler)

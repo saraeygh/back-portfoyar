@@ -49,7 +49,7 @@ from stock_market.tasks import (
 from stock_market.utils import update_stock_adjusted_history
 
 
-from dashboard.tasks import dashboard
+from dashboard.tasks import dashboard_buy_sell_orders_value, dashboard_last_close_price
 
 
 TASKS = {
@@ -88,7 +88,8 @@ TASKS = {
     "56": check_future_active_contracts,
     "57": check_option_active_contracts,
     # DASHBOARD
-    "61": dashboard,
+    "61": dashboard_buy_sell_orders_value,
+    "62": dashboard_last_close_price,
     # FUND
     "71": get_all_fund_detail,
     "72": update_fund_info,

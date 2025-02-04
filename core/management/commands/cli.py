@@ -51,7 +51,7 @@ from stock_market.tasks import (
 from stock_market.utils import update_stock_adjusted_history
 
 
-from dashboard.tasks import dashboard
+from dashboard.tasks import dashboard_buy_sell_orders_value, dashboard_last_close_price
 
 
 def get_clear_cmd():
@@ -298,8 +298,10 @@ def dashboard_cli(clear_cmd):
     while True:
         print(
             Style.BRIGHT + "Dashboard APP commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) update dashboard",
+            "all) Run all dashboard tasks",
+            Fore.CYAN + "Following tasks will be run:" + Style.RESET_ALL,
+            Fore.BLUE + "- dashboard_buy_sell_orders_value",
+            Fore.BLUE + "- dashboard_last_close_price",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -307,9 +309,8 @@ def dashboard_cli(clear_cmd):
         os.system(clear_cmd)
         match cmd:
             case "all":
-                dashboard(MANUAL_MODE)
-            case "1":
-                dashboard(MANUAL_MODE)
+                dashboard_buy_sell_orders_value(MANUAL_MODE)
+                dashboard_last_close_price(MANUAL_MODE)
             case "0":
                 break
 

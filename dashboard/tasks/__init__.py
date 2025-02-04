@@ -1,1 +1,2 @@
-from .dashboard_task import dashboard
+from .dashboard_buy_sell_orders_value_task import dashboard_buy_sell_orders_value
+from .dashboard_last_close_price_task import dashboard_last_close_price

@@ -3,19 +3,15 @@ from pytz import timezone
 import pandas as pd
 import jdatetime as jdt
 
-from core.utils import RedisInterface, MongodbInterface
-from core.configs import (
-    STOCK_REDIS_DB,
-    MARKET_WATCH_REDIS_KEY,
-    DASHBOARD_MONGO_DB,
-    BUY_SELL_ORDERS_COLLECTION,
-)
+from core.utils import MongodbInterface
+from core.configs import DASHBOARD_MONGO_DB, BUY_SELL_ORDERS_COLLECTION
+
+from stock_market.utils import get_market_watch_data_from_redis
 
 from . import TSE_ORDER_BOOK
 
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
-redis_conn = RedisInterface(db=STOCK_REDIS_DB)
 mongo_conn = MongodbInterface(
     db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
 )
@@ -60,18 +56,19 @@ def check_date():
 
 
 def buy_sell_orders_value():
-    market_watch = pd.DataFrame(redis_conn.get_list_of_dicts(MARKET_WATCH_REDIS_KEY))
-    market_watch["buy_value"] = market_watch.apply(add_buy_value, axis=1)
-    market_watch["sell_value"] = market_watch.apply(add_sell_value, axis=1)
-    market_watch = market_watch[BUY_SELL_ORDERS_COLUMNS]
-    market_watch["industrial_group"] = market_watch["industrial_group"].astype(int)
+    market_watch = get_market_watch_data_from_redis()
+    if not market_watch.empty:
+        market_watch["buy_value"] = market_watch.apply(add_buy_value, axis=1)
+        market_watch["sell_value"] = market_watch.apply(add_sell_value, axis=1)
+        market_watch = market_watch[BUY_SELL_ORDERS_COLUMNS]
+        market_watch["industrial_group"] = market_watch["industrial_group"].astype(int)
 
-    date, time = check_date()
+        date, time = check_date()
 
-    new_doc = {
-        "date": date,
-        "time": time,
-        "order_book_value": market_watch.to_dict(orient="records"),
-    }
+        new_doc = {
+            "date": date,
+            "time": time,
+            "order_book_value": market_watch.to_dict(orient="records"),
+        }
 
-    mongo_conn.collection.insert_one(new_doc)
+        mongo_conn.collection.insert_one(new_doc)
