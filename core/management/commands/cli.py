@@ -436,7 +436,7 @@ def night_tasks_cli():
     # OPTION APP
     get_option_history()
     # STOCK APP
-    update_stock_full_raw_history()
+    update_stock_daily_history()
     update_instrument_info()
     stock_value_history()
     stock_option_value_history()

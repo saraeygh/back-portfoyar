@@ -18,28 +18,8 @@ LAST_CLOSE_PRICE_COLUMNS = [
     "industrial_group",
     "paper_type",
     "last_price_change",
-    "close_price_change",
+    "closing_price_change",
 ]
-
-
-def add_last_price_change(row):
-    try:
-        last_price_change = (row.get("last_price_change") / row.get("last_price")) * 100
-    except Exception:
-        last_price_change = 0
-
-    return last_price_change
-
-
-def add_close_price_change(row):
-    try:
-        close_price_change = (
-            row.get("closing_price_change") / row.get("closing_price")
-        ) * 100
-    except Exception:
-        close_price_change = 0
-
-    return close_price_change
 
 
 def check_date():
@@ -58,12 +38,14 @@ def last_close_price():
     market_watch = get_market_watch_data_from_redis()
     if not market_watch.empty:
         market_watch = market_watch[~market_watch["symbol"].str.contains(r"\d")]
-        market_watch["last_price_change"] = market_watch.apply(
-            add_last_price_change, axis=1
-        )
-        market_watch["close_price_change"] = market_watch.apply(
-            add_close_price_change, axis=1
-        )
+        market_watch["last_price_change"] = (
+            market_watch["last_price_change"] / market_watch["last_price"]
+        ) * 100
+
+        market_watch["last_price_change"] = (
+            market_watch["closing_price_change"] / market_watch["closing_price"]
+        ) * 100
+
         market_watch = market_watch[LAST_CLOSE_PRICE_COLUMNS]
         market_watch["industrial_group"] = market_watch["industrial_group"].astype(int)
 

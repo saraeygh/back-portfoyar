@@ -19,7 +19,7 @@ def get_last_close_price(
 ):
     last_close_price = {
         "last_price_change": 0,
-        "close_price_change": 0,
+        "closing_price_change": 0,
     }
 
     if industrial_group:
@@ -34,14 +34,14 @@ def get_last_close_price(
         last_close_price["last_price_change"] = round(
             last_close["last_price_change"].mean(), 2
         )
-        last_close_price["close_price_change"] = round(
-            last_close["close_price_change"].mean(), 2
+        last_close_price["closing_price_change"] = round(
+            last_close["closing_price_change"].mean(), 2
         )
 
     return last_close_price
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class LastClosePriceAPIView(APIView):
     def get(self, request):
         try:
