@@ -40,8 +40,6 @@ def get_total_index_from_tse():
     total_index = total_index[list(TOTAL_INDEX_COLS.values())]
     total_index["time"] = total_index.apply(convert_int_time_to_str, axis=1)
 
-    total_index.rename(columns={"time": "x", "current_value": "y"}, inplace=True)
-
     total_index = total_index.to_dict(orient="records")
 
     mongo_conn.insert_docs_into_collection(total_index)

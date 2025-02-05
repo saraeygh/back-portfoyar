@@ -40,8 +40,6 @@ def get_unweighted_index_from_tse():
     unweighted_index = unweighted_index[list(UNWEIGHTED_INDEX_COLS.values())]
     unweighted_index["time"] = unweighted_index.apply(convert_int_time_to_str, axis=1)
 
-    unweighted_index.rename(columns={"time": "x", "current_value": "y"}, inplace=True)
-
     unweighted_index = unweighted_index.to_dict(orient="records")
 
     mongo_conn.insert_docs_into_collection(unweighted_index)

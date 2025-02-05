@@ -56,6 +56,7 @@ from dashboard.tasks import (
     dashboard_last_close_price,
     dashboard_total_index,
     dashboard_unweighted_index,
+    dashboard_option_value_analysis,
 )
 
 
@@ -305,10 +306,11 @@ def dashboard_cli(clear_cmd):
             Style.BRIGHT + "Dashboard APP commands:",
             "all) Run all dashboard tasks",
             Fore.CYAN + "Following tasks will be run:" + Style.RESET_ALL,
-            Fore.BLUE + "- dashboard_buy_sell_orders_value",
-            Fore.BLUE + "- dashboard_last_close_price",
             Fore.BLUE + "- dashboard_total_index",
             Fore.BLUE + "- dashboard_unweighted_index",
+            Fore.BLUE + "- dashboard_buy_sell_orders_value",
+            Fore.BLUE + "- dashboard_last_close_price",
+            Fore.BLUE + "- dashboard_option_value_analysis",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -320,6 +322,7 @@ def dashboard_cli(clear_cmd):
                 dashboard_last_close_price(MANUAL_MODE)
                 dashboard_total_index(MANUAL_MODE)
                 dashboard_unweighted_index(MANUAL_MODE)
+                dashboard_option_value_analysis(MANUAL_MODE)
             case "0":
                 break
 

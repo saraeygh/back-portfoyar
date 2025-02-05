@@ -23,6 +23,7 @@ from dashboard.tasks import (
     dashboard_buy_sell_orders_value,
     dashboard_total_index,
     dashboard_unweighted_index,
+    dashboard_option_value_analysis,
 )
 
 from domestic_market.tasks import (
@@ -149,6 +150,16 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=dashboard_unweighted_index,
         id="dashboard_unweighted_index_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="sat, sun, mon, tue, wed",
+        hour="9-13",
+        minute="*/5",
+    )
+
+    scheduler.add_job(
+        func=dashboard_option_value_analysis,
+        id="dashboard_option_value_analysis_task",
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",

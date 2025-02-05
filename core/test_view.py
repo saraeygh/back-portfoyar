@@ -54,6 +54,7 @@ from dashboard.tasks import (
     dashboard_last_close_price,
     dashboard_total_index,
     dashboard_unweighted_index,
+    dashboard_option_value_analysis,
 )
 
 
@@ -97,6 +98,7 @@ TASKS = {
     "62": dashboard_last_close_price,
     "63": dashboard_total_index,
     "64": dashboard_unweighted_index,
+    "65": dashboard_option_value_analysis,
     # FUND
     "71": get_all_fund_detail,
     "72": update_fund_info,
@@ -111,7 +113,6 @@ TASKS = {
 
 
 class TestView(APIView):
-
     def get(self, request, *args, **kwargs):
         task_id = request.data.get("id")
         manual = request.data.get("manual")

@@ -36,6 +36,9 @@ class UnweightedIndexDailyAPIView(APIView):
             chart_title = (f"تغییرات شاخص هم‌وزن مربوط به تاریخ {date}",)
 
         unweighted_index.drop("date", axis=1, inplace=True)
+        unweighted_index.rename(
+            columns={"time": "x", "current_value": "y"}, inplace=True
+        )
 
         chart = {
             "x_title": "زمان",

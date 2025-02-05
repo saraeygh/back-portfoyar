@@ -35,6 +35,7 @@ class TotalIndexDailyAPIView(APIView):
             chart_title = (f"تغییرات شاخص کل مربوط به تاریخ {date}",)
 
         total_index.drop("date", axis=1, inplace=True)
+        total_index.rename(columns={"time": "x", "current_value": "y"}, inplace=True)
 
         chart = {
             "x_title": "زمان",
