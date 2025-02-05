@@ -54,6 +54,7 @@ class BuySellValueAPIView(APIView):
         )
 
         history_df = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
+
         history_df[["buy_value", "sell_value"]] = history_df.apply(
             add_buy_sell_values, axis=1, args=(industrial_group, paper_type)
         )

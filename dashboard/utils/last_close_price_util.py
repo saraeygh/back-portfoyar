@@ -24,7 +24,7 @@ LAST_CLOSE_PRICE_COLUMNS = [
 
 def check_date():
     today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
-    date = today_datetime.strftime("%Y-%m-%d")
+    date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
@@ -42,7 +42,7 @@ def last_close_price():
             market_watch["last_price_change"] / market_watch["last_price"]
         ) * 100
 
-        market_watch["last_price_change"] = (
+        market_watch["closing_price_change"] = (
             market_watch["closing_price_change"] / market_watch["closing_price"]
         ) * 100
 
