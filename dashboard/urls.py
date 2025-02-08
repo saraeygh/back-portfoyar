@@ -57,9 +57,9 @@ urlpatterns = (
         path("dollar-price", DollarPriceAPIView.as_view()),
     ]
     + dashboard_menu_urls
+    + index_urls
     + option_urls
     + domestic_urls
     + global_urls
     + stock_urls
-    + index_urls
 )
