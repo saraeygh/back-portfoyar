@@ -13,7 +13,12 @@ from core.configs import (
     FIVE_MINUTES_CACHE,
     DASHBOARD_MONGO_DB,
     OPTION_VALUE_ANALYSIS_COLLECTION,
+    TOP_OPTIONS_COLLECTION,
+    RIAL_TO_BILLION_TOMAN,
+    DASHBOARD_TOP_5_LIMIT,
 )
+
+from option_market.utils import get_option_data_from_redis
 
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
@@ -186,3 +191,22 @@ class OptionToMarketAPIView(APIView):
         }
 
         return Response(chart, status=status.HTTP_200_OK)
+
+
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+class TopOptionsAPIView(APIView):
+    def get(self, request):
+
+        mongo_client = MongodbInterface(
+            db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
+        )
+
+        top_options = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
+        if top_options.empty:
+            return Response([], status=status.HTTP_200_OK)
+
+        top_options = top_options.sort_values(by="total_value", ascending=False)
+        top_options = top_options.head(DASHBOARD_TOP_5_LIMIT)
+        top_options = top_options.to_dict(orient="records")
+
+        return Response(top_options, status=status.HTTP_200_OK)

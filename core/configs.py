@@ -23,6 +23,7 @@ UNWEIGHTED_INDEX_DAILY_COLLECTION = "unweighted_index_daily"
 BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
 LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
 OPTION_VALUE_ANALYSIS_COLLECTION = "option_value_analysis"
+TOP_OPTIONS_COLLECTION = "top_options"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
 MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes

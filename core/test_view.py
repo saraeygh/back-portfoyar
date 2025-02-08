@@ -135,6 +135,7 @@ class TestView(APIView):
 # https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/1 # List indices
 # https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/1/7 # MostVisited
 # https://cdn.tsetmc.com/api/Index/GetInstEffect/0/1/7 # Effects
+
 # FaraBourse
 # https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/2 # Overview
 # https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/2 # List of indices

@@ -8,3 +8,4 @@ from .last_close_price_util import last_close_price
 from .get_total_index_from_tse_util import get_total_index_from_tse
 from .get_unweighted_index_from_tse_util import get_unweighted_index_from_tse
 from .option_value_analysis_util import option_value_analysis
+from .update_top_options_util import update_top_options

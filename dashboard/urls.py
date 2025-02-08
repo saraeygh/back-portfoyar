@@ -13,6 +13,7 @@ from dashboard.views import (
     PutValueAPIView,
     CallToPutAPIView,
     OptionToMarketAPIView,
+    TopOptionsAPIView,
     DomesticMeanDeviationAPIView,
     GlobalMeanDeviationAPIView,
     IndustryROIAPIView,
@@ -35,6 +36,7 @@ option_urls = [
     path("put-value", PutValueAPIView.as_view()),
     path("call-to-put", CallToPutAPIView.as_view()),
     path("option-to-market", OptionToMarketAPIView.as_view()),
+    path("top-options", TopOptionsAPIView.as_view()),
 ]
 
 domestic_urls = [
