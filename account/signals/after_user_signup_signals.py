@@ -8,7 +8,7 @@ from account.models import Profile, Subscription, Feature, ALL_FEATURE
 
 NEW_USER_FREE_FEATURES = [ALL_FEATURE]
 
-NEW_USER_FREE_DURATION = 7
+NEW_USER_FREE_DURATION = 1
 
 
 @receiver(post_save, sender=User)

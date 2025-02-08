@@ -15,6 +15,8 @@ from dashboard.views import (
     OptionToMarketAPIView,
     DomesticMeanDeviationAPIView,
     GlobalMeanDeviationAPIView,
+    IndustryROIAPIView,
+    MinimumPEAPIView,
 )
 
 dashboard_menu_urls = [
@@ -43,6 +45,11 @@ global_urls = [
     path("global-top-price-change", GlobalMeanDeviationAPIView.as_view()),
 ]
 
+stock_urls = [
+    path("industry-roi", IndustryROIAPIView.as_view()),
+    path("pe", MinimumPEAPIView.as_view()),
+]
+
 urlpatterns = (
     [
         path("buy-sell-value", BuySellValueAPIView.as_view()),
@@ -53,4 +60,6 @@ urlpatterns = (
     + option_urls
     + domestic_urls
     + global_urls
+    + stock_urls
+    + index_urls
 )
