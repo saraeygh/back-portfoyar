@@ -7,6 +7,7 @@ from .ratio_chart_srz import RatioChartSerailizer
 from .mean_deviation_srz import (
     DomesticMeanDeviationSerailizer,
     SummaryDomesticMeanDeviationSerailizer,
+    DashboardDomesticMeanDeviationSerailizer,
 )
 from .upload_dollar_price_srz import UploadDollarPriceSerializer
 from .get_dollar_price_srz import GetDollarPriceSerializer

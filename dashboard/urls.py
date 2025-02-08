@@ -13,6 +13,8 @@ from dashboard.views import (
     PutValueAPIView,
     CallToPutAPIView,
     OptionToMarketAPIView,
+    DomesticMeanDeviationAPIView,
+    GlobalMeanDeviationAPIView,
 )
 
 dashboard_menu_urls = [
@@ -33,6 +35,14 @@ option_urls = [
     path("option-to-market", OptionToMarketAPIView.as_view()),
 ]
 
+domestic_urls = [
+    path("domestic-top-price-change", DomesticMeanDeviationAPIView.as_view()),
+]
+
+global_urls = [
+    path("global-top-price-change", GlobalMeanDeviationAPIView.as_view()),
+]
+
 urlpatterns = (
     [
         path("buy-sell-value", BuySellValueAPIView.as_view()),
@@ -41,4 +51,6 @@ urlpatterns = (
     ]
     + dashboard_menu_urls
     + option_urls
+    + domestic_urls
+    + global_urls
 )

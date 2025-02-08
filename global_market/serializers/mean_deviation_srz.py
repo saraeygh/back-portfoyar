@@ -25,3 +25,10 @@ class SummaryGlobalMeanDeviationSerailizer(serializers.Serializer):
     deviation = RoundedFloatField(decimal_places=2)
     last_price_date = serializers.CharField()
     chart = serializers.DictField()
+
+
+class DashboardGlobalMeanDeviationSerailizer(serializers.Serializer):
+    commodity_type = serializers.CharField()
+    transit = serializers.CharField()
+    deviation = RoundedFloatField(decimal_places=2)
+    last_price_date = serializers.CharField()

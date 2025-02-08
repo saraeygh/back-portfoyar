@@ -71,3 +71,11 @@ class SummaryDomesticMeanDeviationSerailizer(serializers.Serializer):
         )
 
         return super().to_representation(instance)
+
+
+class DashboardDomesticMeanDeviationSerailizer(serializers.Serializer):
+    symbol = serializers.CharField()
+    link = serializers.CharField()
+    commodity = serializers.CharField()
+    last_price_date = serializers.CharField()
+    deviation = RoundedFloatField(decimal_places=2)

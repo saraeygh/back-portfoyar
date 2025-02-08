@@ -73,6 +73,7 @@ STOCK_DAILY_HISTORY_DELAY = 5 * 60  # 5 Minutes
 
 ######################################################## COMMON
 # DOMESTIC & GLOBAL MEAN DEVIATION
+DASHBOARD_TOP_5_LIMIT = 5
 COMMODITY_TOP_200_LIMIT = 200
 TEHRAN_TZ = timezone("Asia/Tehran")
 

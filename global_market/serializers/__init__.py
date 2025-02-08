@@ -7,5 +7,6 @@ from .price_ratio_chart_srz import PriceRatioChartSerializer
 from .mean_deviation_srz import (
     GlobalMeanDeviationSerailizer,
     SummaryGlobalMeanDeviationSerailizer,
+    DashboardGlobalMeanDeviationSerailizer,
 )
 from .global_related_stock_srz import GlobalRelatedStockSerailizer
