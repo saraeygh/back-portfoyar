@@ -54,8 +54,9 @@ class CustomObtainAuthToken(views.ObtainAuthToken):
         if result == ACCOUNT_BANNED:
             return Response(
                 data={"message": "حساب شما مسدود شده است"},
-                status=status.HTTP_403_FORBIDDEN,
+                status=status.HTTP_402_PAYMENT_REQUIRED,
             )
+
         response = super().post(request, *args, **kwargs)
         token = response.data.get("token")
         full_name = get_full_name(user)
