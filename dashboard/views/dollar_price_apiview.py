@@ -16,11 +16,11 @@ from domestic_market.serializers import GetDollarPriceSerializer
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class DollarPriceAPIView(APIView):
     def get(self, request):
-        dollar_prices = DomesticDollarPrice.objects.all().order_by("date")[0:365]
+        dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")[0:365]
 
         dollar_prices = GetDollarPriceSerializer(dollar_prices, many=True)
         dollar_prices = pd.DataFrame(dollar_prices.data)
-
+        dollar_prices.sort_values(by="date", ascending=True, inplace=True)
         dollar_prices.drop(["id", "date"], axis=1, inplace=True)
 
         dollar_prices.rename(
