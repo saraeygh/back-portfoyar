@@ -390,7 +390,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_stock_daily_history_task",
         replace_existing=True,
         trigger="cron",
-        hour="12",
+        hour="16",
         minute="35",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )

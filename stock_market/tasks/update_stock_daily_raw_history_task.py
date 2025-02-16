@@ -1,10 +1,9 @@
-from time import sleep
 from datetime import datetime, date
 from tqdm import tqdm
 import pandas as pd
 from colorama import Fore, Style
 
-from core.configs import AUTO_MODE, MANUAL_MODE, STOCK_DAILY_HISTORY_DELAY
+from core.configs import AUTO_MODE, MANUAL_MODE
 from core.utils import run_main_task
 
 from stock_market.utils import (
@@ -85,11 +84,10 @@ def update_stock_daily_history_main(run_mode: str = AUTO_MODE):
 
         add_today_history(today_history)
 
-    else:
-        sleep(STOCK_DAILY_HISTORY_DELAY)
-        update_stock_daily_history()
+        update_stock_adjusted_history()
 
-    update_stock_adjusted_history()
+    else:
+        raise Exception("MARKET WAS NOT OPEN TODAY!!!")
 
 
 def update_stock_daily_history(run_mode: str = AUTO_MODE):
