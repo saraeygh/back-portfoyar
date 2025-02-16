@@ -146,48 +146,6 @@ services:
     volumes:
       - nginx_logs:/var/log/nginx/
 
-  wordpress:
-    environment:
-      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
-      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME}
-      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER}
-      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD}
-    image: docker.arvancloud.ir/wordpress:6.6.2
-    container_name: wordpress
-    restart: always
-    volumes:
-      - wordpress_data:/var/www/html
-    depends_on:
-      - db
-    networks:
-      - test
-
-  db:
-    image: docker.arvancloud.ir/mariadb:11.5.2
-    container_name: wordpress_db
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${WORDPRESS_DB_NAME}
-      - MYSQL_USER=${WORDPRESS_DB_USER}
-      - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD}
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - test
-
-  phpmyadmin:
-    image: docker.arvancloud.ir/phpmyadmin:5.2.1
-    container_name: phpmyadmin
-    restart: always
-    environment:
-      - PMA_HOST=db
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    depends_on:
-      - db
-    networks:
-      - test
-
 networks:
   test:
     external: true
@@ -200,5 +158,3 @@ volumes:
   ticket_appendix:
   django_logs:
   nginx_logs:
-  wordpress_data:
-  db_data:
