@@ -16,7 +16,7 @@ from domestic_market.serializers import GetDollarPriceSerializer
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class DollarPriceAPIView(APIView):
     def get(self, request):
-        dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")[0:365]
+        dollar_prices = DomesticDollarPrice.objects.all().order_by("date")[0:365]
 
         dollar_prices = GetDollarPriceSerializer(dollar_prices, many=True)
         dollar_prices = pd.DataFrame(dollar_prices.data)
@@ -29,8 +29,8 @@ class DollarPriceAPIView(APIView):
 
         chart = {
             "x_title": "تاریخ",
-            "y_1_title": "دلار آزاد (تومان)",
-            "y_2_title": "دلار نیما (تومان)",
+            "y_1_title": "دلار آزاد",
+            "y_2_title": "دلار نیما",
             "chart_title": "تغییرات قیمت دلار در یکسال گذشته",
             "history": dollar_prices.to_dict(orient="records"),
         }
