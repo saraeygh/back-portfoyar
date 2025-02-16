@@ -17,3 +17,5 @@ RUN chown -R root:root /etc/nginx/static/
 
 RUN chmod -R 755 /etc/nginx/strategy-schema/
 RUN chown -R root:root /etc/nginx/strategy-schema/
+
+COPY --from=frontend_image /code/build /usr/share/nginx/html

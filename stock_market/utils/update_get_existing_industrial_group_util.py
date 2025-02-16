@@ -19,12 +19,18 @@ def update_get_existing_industrial_group():
     industry_group = industry_group[industry_group["type"] == "IndustrialGroup"]
     industry_group = industry_group.to_dict(orient="records")
 
+    ig_bulk_update = []
     for group in industry_group:
         code = group.get("code")
         name = (group.get("name")).strip()
         try:
-            StockIndustrialGroup.objects.get(code=code)
+            ig = StockIndustrialGroup.objects.get(code=code)
+            ig.name = name
+            ig_bulk_update.append(ig)
         except StockIndustrialGroup.DoesNotExist:
             StockIndustrialGroup.objects.create(code=code, name=name)
+
+    if ig_bulk_update:
+        StockIndustrialGroup.objects.bulk_update(objs=ig_bulk_update, fields=["name"])
 
     replace_all_arabic_letters_in_db()

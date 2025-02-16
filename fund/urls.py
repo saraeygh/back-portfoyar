@@ -1,8 +1,9 @@
 from django.urls import path
 
+from fund.views import CheckUploadDataAPIView
 
 fund_upload_urls = [
-    # path("upload-data", FuturePositionsAPIView.as_view()),
+    path("check-upload-data", CheckUploadDataAPIView.as_view()),
 ]
 
 
