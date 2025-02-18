@@ -197,11 +197,7 @@ def apply_discount(plan, discount, code, user):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    if (
-        discount.has_discount_code
-        and code != ""
-        and discount.discount_code.lower() != code.lower()
-    ):
+    if discount.has_discount_code and discount.discount_code.lower() != code.lower():
         return Response(
             {"message": "کد تخفیف وارد شده اشتباه است"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -233,7 +229,7 @@ class PricingAPIView(APIView):
     def post(self, request):
         request = get_request_user(request)
 
-        code = request.data.get("code", "")
+        code = str(request.data.get("code", ""))
         plan_id = request.query_params.get("plan_id", 0)
         plan = get_object_or_404(Feature, id=plan_id)
 
