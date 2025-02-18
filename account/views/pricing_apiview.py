@@ -1,17 +1,18 @@
 from uuid import uuid4
-import pytz
-import jdatetime
 from datetime import datetime as dt
+import pytz
+
+import jdatetime
 
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import AnonymousUser
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import get_authorization_header
+from rest_framework.authtoken.models import Token
 
 from core.configs import TEHRAN_TZ
 from payment.models import Receipt
@@ -27,33 +28,16 @@ DURATIONS = {duration[0]: duration[1] for duration in FEATURE_DURATION_CHOICES}
 FEATURES = {feature[0]: feature[1] for feature in SUBSCRIPTION_FEATURE_CHOICES}
 
 
-def get_all_plans():
-    features = list(
-        Feature.objects.filter(is_enabled=True)
-        .distinct("name")
-        .values_list("name", flat=True)
-    )
-    all_plans = {}
-    for feature in features:
-        all_plans[feature] = {"name": FEATURES.get(feature), "plans": []}
+def get_request_user(request):
+    try:
+        auth_header = get_authorization_header(request).decode("utf-8")
+        token_key = auth_header.split(" ")[1]
+        token = Token.objects.get(key=token_key)
+        request.user = token.user
+    except Exception:
+        request.user = AnonymousUser()
 
-        feature_plans = Feature.objects.filter(name=feature, is_enabled=True).order_by(
-            "price"
-        )
-        for feature_plan in feature_plans:
-            all_plans[feature]["plans"].append(
-                {
-                    "id": feature_plan.id,
-                    "duration": DURATIONS.get(feature_plan.duration),
-                    "price": feature_plan.price,
-                    "has_discount": feature_plan.has_discount,
-                    "discount_percent": feature_plan.discount_percent,
-                    "discounted_price": feature_plan.discounted_price,
-                    "login_count": feature_plan.login_count,
-                }
-            )
-
-    return all_plans
+    return request
 
 
 def get_best_user_discount(plan, user):
@@ -102,7 +86,11 @@ def get_discount_info(plan, discount: FeatureDiscount | UserDiscount):
 
 
 def get_best_discount(plan, user):
-    user_discount = get_best_user_discount(plan, user)
+    if user.is_authenticated:
+        user_discount = get_best_user_discount(plan, user)
+    else:
+        user_discount = None
+
     feature_discount = get_best_feature_discount(plan)
 
     if user_discount:
@@ -121,6 +109,39 @@ def get_plan_discount(plan, user):
         discount = get_discount_info(plan, discount)
 
     return discount
+
+
+def get_all_plans(user):
+    features = list(
+        Feature.objects.filter(is_enabled=True)
+        .distinct("name")
+        .values_list("name", flat=True)
+    )
+    all_plans = {}
+    for feature in features:
+        all_plans[feature] = {"name": FEATURES.get(feature), "plans": []}
+
+        feature_plans = Feature.objects.filter(name=feature, is_enabled=True).order_by(
+            "price"
+        )
+        for feature_plan in feature_plans:
+            discount = get_plan_discount(feature_plan, user)
+            discount = {} if discount is None else discount
+
+            all_plans[feature]["plans"].append(
+                {
+                    "id": feature_plan.id,
+                    "duration": DURATIONS.get(feature_plan.duration),
+                    "price": feature_plan.price,
+                    "has_discount": feature_plan.has_discount,
+                    "discount_percent": feature_plan.discount_percent,
+                    "discounted_price": feature_plan.discounted_price,
+                    "login_count": feature_plan.login_count,
+                    "discount": discount,
+                }
+            )
+
+    return all_plans
 
 
 def add_discount(receipt, discount: FeatureDiscount | UserDiscount, user_code: str):
@@ -201,28 +222,19 @@ def get_final_price(plan, user, code):
         return calculated_final_price(plan, plan.discounted_price, discount, user, code)
 
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-class PlansAPIView(APIView):
+class PricingAPIView(APIView):
+
     def get(self, request):
-        plans = get_all_plans()
+        request = get_request_user(request)
+
+        plans = get_all_plans(request.user)
         return Response(plans, status=status.HTTP_200_OK)
 
+    def post(self, request):
+        request = get_request_user(request)
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-class PlanAPIView(APIView):
-    def get(self, request, plan_id):
-        user = request.user
-        plan = get_object_or_404(Feature, id=plan_id)
-        discount = get_plan_discount(plan, user)
-        discount = {} if discount is None else discount
-
-        return Response(discount, status=status.HTTP_200_OK)
-
-    def post(self, request, plan_id):
-        user = request.user
         code = request.data.get("code", "")
+        plan_id = request.query_params.get("plan_id", 0)
         plan = get_object_or_404(Feature, id=plan_id)
 
-        return get_final_price(plan, user, code)
+        return get_final_price(plan, request.user, code)

@@ -1,4 +1,4 @@
-from .plans_apiview import PlansAPIView, PlanAPIView
+from .pricing_apiview import PricingAPIView
 from .subscription_apiview import SubscriptionAPIView
 from .sign_up_apiview import SignUpAPIView
 from .upload_users_apiview import UploadUsersAPIView
