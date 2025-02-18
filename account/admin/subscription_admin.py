@@ -42,6 +42,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "id",
         "is_enabled",
         "user",
+        "full_name",
         "feature",
         "is_active",
         "remained_days",
@@ -75,6 +76,7 @@ class DisabledSubscriptionAdmin(admin.ModelAdmin):
         "id",
         "is_enabled",
         "user",
+        "full_name",
         "feature",
         "is_active",
         "remained_days",
@@ -107,6 +109,7 @@ class UserDiscountAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
+        "full_name",
         "feature",
         "name",
         "is_enabled",
@@ -152,6 +155,7 @@ class DisabledUserDiscountAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
+        "full_name",
         "feature",
         "name",
         "is_enabled",

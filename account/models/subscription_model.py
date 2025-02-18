@@ -73,6 +73,13 @@ class Subscription(TimeStampMixin, models.Model):
         shamsi = JalaliDate(self.end_at).strftime("%Y-%m-%d")
         return shamsi
 
+    @admin.display(description="نام کاربر")
+    def full_name(self):
+        full_name = self.user.get_full_name()
+        if full_name is None or full_name == "":
+            full_name = f"{self.user.username} ({self.user.profile.note})"
+        return full_name
+
     class Meta:
         verbose_name = "(فعال) اشتراک"
         verbose_name_plural = "۵) (فعال) اشتراک‌ها"
@@ -141,6 +148,13 @@ class UserDiscount(TimeStampMixin, models.Model):
             + jdatetime.timedelta(hours=3, minutes=30)
         ).strftime("%Y-%m-%d %H:%M:%S")
         return shamsi
+
+    @admin.display(description="نام کاربر")
+    def full_name(self):
+        full_name = self.user.get_full_name()
+        if full_name is None or full_name == "":
+            full_name = f"{self.user.username} ({self.user.profile.note})"
+        return full_name
 
     def __str__(self) -> str:
         return f"{self.name} - {self.feature.name} - {self.feature.duration}"
