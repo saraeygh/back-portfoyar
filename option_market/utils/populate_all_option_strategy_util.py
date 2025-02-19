@@ -1,11 +1,7 @@
 import os
 import multiprocessing
 
-import pandas as pd
-
 from core.configs import OPTION_REDIS_DB
-from core.utils import RedisInterface
-
 
 from . import (
     covered_call,
@@ -59,11 +55,7 @@ def populate_all_option_strategy_async(option_data):
         pool.join()
 
 
-def populate_all_option_strategy_sync():
-
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    option_data = redis_conn.get_list_of_dicts(list_key="option_data")
-    option_data = pd.DataFrame(option_data)
+def populate_all_option_strategy_sync(option_data):
 
     for strategy in STRATEGIES:
         strategy(option_data, OPTION_REDIS_DB)
