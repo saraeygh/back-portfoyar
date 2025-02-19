@@ -27,7 +27,6 @@ TOP_OPTIONS_COLLECTION = "top_options"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
 MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
-CONNECTION_ERROR_EXPIRATION = 5 * 60  # 5 Minutes
 
 ######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"

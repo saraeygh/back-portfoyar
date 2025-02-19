@@ -5,14 +5,11 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from urllib3.exceptions import ReadTimeoutError
-from requests.exceptions import JSONDecodeError
-
 
 import jdatetime
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, get_http_response
+from core.utils import get_http_response
 from core.configs import (
     EMAIL_HOST,
     EMAIL_PORT,
@@ -20,8 +17,6 @@ from core.configs import (
     EMAIL_HOST_PASSWORD,
     EMAIL_TO,
     TEHRAN_TZ,
-    KEY_WITH_EX_REDIS_DB,
-    CONNECTION_ERROR_EXPIRATION,
 )
 
 
@@ -118,17 +113,6 @@ def send_exception_detail_email(task_name, exception):
     send_email_thread.start()
 
 
-def exceeded_error_repetition(task_name):
-    redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-    exceeded_repetition = redis_conn.client.get(task_name)
-    if exceeded_repetition is None:
-        redis_conn.client.set(task_name, 1, ex=CONNECTION_ERROR_EXPIRATION)
-        return False
-    else:
-        redis_conn.client.delete(task_name)
-        return True
-
-
 def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
     TASK_NAME = main_task.__name__
     print_task_info(name=TASK_NAME)
@@ -142,10 +126,6 @@ def run_main_task(main_task, kw_args: dict = {}, daily: bool = False):
             )
             send_email_thread.start()
         print_task_info(color="GREEN", name=TASK_NAME)
-
-    except (ReadTimeoutError, JSONDecodeError, AttributeError, ValueError) as re:
-        if exceeded_error_repetition(TASK_NAME) or daily:
-            send_exception_detail_email(TASK_NAME, re)
 
     except Exception as e:
         send_exception_detail_email(TASK_NAME, e)
