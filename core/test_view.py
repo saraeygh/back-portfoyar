@@ -114,6 +114,7 @@ TASKS = {
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
+
         task_id = request.data.get("id")
         manual = request.data.get("manual")
 
@@ -141,3 +142,181 @@ class TestView(APIView):
 # https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/2 # List of indices
 # https://cdn.tsetmc.com/api/ClosingPrice/GetTradeTop/MostVisited/2/7 # MostVisitedf
 # https://cdn.tsetmc.com/api/Index/GetInstEffect/0/2/7 # Effects
+
+
+# ExcelReport2025_2_19_13_30 خرید
+# def create_excel(request):
+#     import pandas as pd
+
+#     turnover = request.FILES.get("turnover")
+#     file_name = turnover.name
+
+#     turnover = pd.read_excel(turnover)
+
+#     new_excel = []
+#     for _, row in turnover.iterrows():
+#         row = row.to_dict()
+
+#         desc = row.get("شرح")
+#         if desc == "نقل از قبل":
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         try:
+#             desc = desc.split(" ")
+#         except AttributeError:
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         pure_desc = [x for x in desc if x != ""]
+
+#         equity_name = []
+#         next_index = 1
+#         for item in pure_desc:
+#             current_index = pure_desc.index(item)
+#             if item == "تعداد":
+#                 row["تعداد"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             elif item == "سهم":
+#                 next_index = current_index + 1
+#             elif item == "نرخ":
+#                 row["قیمت"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             else:
+#                 if (
+#                     (current_index == next_index)
+#                     and item != pure_desc[-1]
+#                     and item != "به"
+#                 ):
+#                     equity_name.append(pure_desc[current_index])
+#                     next_index = current_index + 1
+
+#         row["دارایی"] = " ".join(equity_name)
+#         new_excel.append(row)
+
+#     new_excel = pd.DataFrame(new_excel)
+#     new_excel.to_excel(f"./{file_name}")
+
+#     return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
+
+
+# pasargad-turnover-2 فروش
+# def create_excel(request):
+#     import pandas as pd
+
+#     turnover = request.FILES.get("turnover")
+#     file_name = turnover.name
+
+#     turnover = pd.read_excel(turnover)
+
+#     new_excel = []
+#     for _, row in turnover.iterrows():
+#         row = row.to_dict()
+
+#         desc = row.get("شرح")
+#         if desc == "نقل از قبل":
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         try:
+#             desc = desc.split(" ")
+#         except AttributeError:
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         pure_desc = [x for x in desc if x != ""]
+
+#         equity_name = []
+#         next_index = 1
+#         for item in pure_desc:
+#             current_index = pure_desc.index(item)
+#             if item == "فروش":
+#                 row["تعداد"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             elif item == "سهم":
+#                 next_index = current_index + 1
+#             elif item == "متوسط":
+#                 row["قیمت"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             else:
+#                 if (current_index == next_index) and item != pure_desc[-1]:
+#                     equity_name.append(pure_desc[current_index])
+#                     next_index = current_index + 1
+
+#         row["دارایی"] = " ".join(equity_name)
+#         new_excel.append(row)
+
+#     new_excel = pd.DataFrame(new_excel)
+#     new_excel.to_excel(f"./{file_name}")
+
+#     return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
+
+
+# pasargad-turnover-1.xlsx - خرید
+# def create_excel(request):
+#     import pandas as pd
+
+#     turnover = request.FILES.get("turnover")
+#     file_name = turnover.name
+
+#     turnover = pd.read_excel(turnover)
+
+#     new_excel = []
+#     for _, row in turnover.iterrows():
+#         row = row.to_dict()
+
+#         desc = row.get("شرح")
+#         if desc == "نقل از قبل":
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         try:
+#             desc = desc.split(" ")
+#         except AttributeError:
+#             row["تعداد"] = ""
+#             row["قیمت"] = ""
+#             row["دارایی"] = ""
+#             new_excel.append(row)
+#             continue
+
+#         pure_desc = [x for x in desc if x != ""]
+
+#         equity_name = []
+#         next_index = 1
+#         for item in pure_desc:
+#             current_index = pure_desc.index(item)
+#             if item == "خريد":
+#                 row["تعداد"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             elif item == "سهم":
+#                 next_index = current_index + 1
+#             elif item == "متوسط":
+#                 row["قیمت"] = pure_desc[current_index + 1]
+#                 next_index = current_index + 2
+#             else:
+#                 if (current_index == next_index) and item != pure_desc[-1]:
+#                     equity_name.append(pure_desc[current_index])
+#                     next_index = current_index + 1
+
+#         row["دارایی"] = " ".join(equity_name)
+#         new_excel.append(row)
+
+#     new_excel = pd.DataFrame(new_excel)
+#     new_excel.to_excel(f"./{file_name}")
+
+#     return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
