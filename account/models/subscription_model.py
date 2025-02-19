@@ -55,11 +55,19 @@ class Subscription(TimeStampMixin, models.Model):
     def remained_days(self):
         today_date = datetime.today().date()
         sub_end_date = self.end_at
-        remained_days = (sub_end_date - today_date).days
-        if remained_days > 0:
+        remained_days = (sub_end_date - today_date).days + 1
+        if remained_days >= 0:
             return remained_days
-        elif remained_days == 0:
-            return 1
+        else:
+            return 0
+
+    @admin.display(description="کل")
+    def total_days(self):
+        sub_start_date = self.start_at
+        sub_end_date = self.end_at
+        total_days = (sub_end_date - sub_start_date).days + 1
+        if total_days >= 0:
+            return total_days
         else:
             return 0
 

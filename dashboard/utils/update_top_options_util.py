@@ -31,13 +31,13 @@ def update_top_options():
 
         base_equity_df = base_equity_df.sort_values(by="call_value", ascending=False)
         new_option["best_call"] = base_equity_df.iloc[0].get("call_name")
-        new_option["call_value"] = int(
+        new_option["call_value"] = (
             base_equity_df.iloc[0].get("call_value") / RIAL_TO_BILLION_TOMAN
         )
 
         base_equity_df = base_equity_df.sort_values(by="put_value", ascending=False)
         new_option["best_put"] = base_equity_df.iloc[0].get("put_name")
-        new_option["put_value"] = int(
+        new_option["put_value"] = (
             base_equity_df.iloc[0].get("put_value") / RIAL_TO_BILLION_TOMAN
         )
 

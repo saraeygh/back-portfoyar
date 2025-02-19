@@ -193,7 +193,7 @@ class OptionToMarketAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class TopOptionsAPIView(APIView):
     def get(self, request):
 
@@ -207,6 +207,8 @@ class TopOptionsAPIView(APIView):
 
         top_options = top_options.sort_values(by="total_value", ascending=False)
         top_options = top_options.head(DASHBOARD_TOP_5_LIMIT)
+        columns_to_round = ["call_value", "put_value"]
+        top_options[columns_to_round] = top_options[columns_to_round].round(3)
         top_options = top_options.to_dict(orient="records")
 
         return Response(top_options, status=status.HTTP_200_OK)

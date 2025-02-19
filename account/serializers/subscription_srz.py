@@ -12,6 +12,7 @@ class GetSubscriptionSerailizer(serializers.ModelSerializer):
             "feature_name",
             "is_active",
             "remained_days",
+            "total_days",
             "start_at_shamsi",
             "end_at_shamsi",
         ]
