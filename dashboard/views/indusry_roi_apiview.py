@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from core.utils import MongodbInterface
 from core.configs import STOCK_MONGO_DB, THIRTY_MINUTES_CACHE, DASHBOARD_TOP_5_LIMIT
 
-from stock_market.serializers import IndustryROISerailizer
+from stock_market.serializers import DashboardIndustryROISerailizer
 
 
 @method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
@@ -29,6 +29,6 @@ class IndustryROIAPIView(APIView):
         results = results.sort_values(by="half_yearly_roi", ascending=False)
         results = results.head(DASHBOARD_TOP_5_LIMIT)
         results = results.to_dict(orient="records")
-        results_srz = IndustryROISerailizer(results, many=True)
+        results_srz = DashboardIndustryROISerailizer(results, many=True)
 
         return Response(results_srz.data, status=status.HTTP_200_OK)

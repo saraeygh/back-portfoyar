@@ -17,7 +17,7 @@ from .market_roi_srz import (
     FavoriteGroupMarketROISerailizer,
     SummaryMarketROISerailizer,
 )
-from .industry_roi_srz import IndustryROISerailizer
+from .industry_roi_srz import IndustryROISerailizer, DashboardIndustryROISerailizer
 from .stock_value_change_srz import (
     StockValueChangeSerailizer,
     SummaryStockValueChangeSerailizer,
