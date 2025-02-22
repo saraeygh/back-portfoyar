@@ -212,7 +212,7 @@ def apply_discount(plan, discount, code, user):
 def get_final_price(plan, user, code):
     discount = get_best_discount(plan, user)
 
-    if discount:
+    if discount and code != "":
         return apply_discount(plan, discount, code, user)
     else:
         return calculated_final_price(plan, plan.discounted_price, discount, user, code)
@@ -230,7 +230,7 @@ class PricingAPIView(APIView):
         request = get_request_user(request)
 
         code = str(request.data.get("code", ""))
-        plan_id = request.query_params.get("plan_id", 0)
+        plan_id = int(request.data.get("plan_id", 0))
         plan = get_object_or_404(Feature, id=plan_id)
 
         return get_final_price(plan, request.user, code)
