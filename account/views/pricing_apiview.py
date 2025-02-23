@@ -203,7 +203,11 @@ def apply_discount(plan, discount, code, user):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    if discount.has_discount_code and discount.discount_code.lower() != code.lower():
+    if (
+        discount.has_discount_code
+        and code != ""
+        and discount.discount_code.lower() != code.lower()
+    ):
         return Response(
             {"message": "کد تخفیف وارد شده اشتباه است"},
             status=status.HTTP_400_BAD_REQUEST,
