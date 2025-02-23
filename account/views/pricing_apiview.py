@@ -152,15 +152,15 @@ def add_discount(receipt, discount: FeatureDiscount | UserDiscount):
     return receipt
 
 
-def calculated_final_price(plan, price, discount, user, desc):
+def calculated_final_price(
+    plan, price, discount, user, desc, has_special_discount=False
+):
     receipt = {}
     receipt["user"] = user
     receipt["feature"] = plan
 
-    has_special_discount = False
     if discount is not None:
         receipt = add_discount(receipt, discount)
-        has_special_discount = True
 
     receipt["receipt_id"] = uuid4().hex
     receipt["price"] = price
@@ -209,8 +209,11 @@ def apply_discount(plan, discount, code, user):
     plan_price = plan.discounted_price
     price = int(plan_price * (1 - (discount.discount_percent / 100)))
     desc = f"تخفیف ویژه {discount.name} اعمال شد"
+    has_special_discount = True
 
-    return calculated_final_price(plan, price, discount, user, desc)
+    return calculated_final_price(
+        plan, price, discount, user, desc, has_special_discount
+    )
 
 
 def get_final_price(plan, user, code):
