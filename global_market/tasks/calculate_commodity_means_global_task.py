@@ -88,11 +88,14 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
 
             mean_list.append(new_record)
 
-    mongodb = MongodbInterface(db_name=GLOBAL_MONGO_DB, collection_name=collection_name)
+    mongo_conn = MongodbInterface(
+        db_name=GLOBAL_MONGO_DB, collection_name=collection_name
+    )
     if mean_list:
-        mongodb.insert_docs_into_collection(documents=mean_list)
+        mongo_conn.insert_docs_into_collection(documents=mean_list)
     else:
-        mongodb.collection.delete_many({})
+        mongo_conn.collection.delete_many({})
+    mongo_conn.client.close()
 
 
 def calculate_commodity_means_global_main():

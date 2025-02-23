@@ -21,8 +21,6 @@ from option_market.permissions import HasOptionSubscription
 PROFIT_SORTING_COLUMN = "monthly_profit"
 BREAK_EVEN_SORTING_COLUMN = "monthly_break_even"
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
 
 def drop_unwanted_cols(strategy_result: pd.DataFrame, strategy_key: str):
     if strategy_result.empty:
@@ -50,7 +48,9 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 
 # NEW VIEW BASED ON RISK LEVELS #########################
 def get_strategy_result_from_redis(strategy_key, table=None):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
+    redis_conn.client.close()
 
     strategy_result = pd.DataFrame(strategy_result)
     if table == ALL_TABLE_COLS:

@@ -5,11 +5,10 @@ from core.configs import (
     STOCK_MONGO_DB,
     RIAL_TO_BILLION_TOMAN,
     TO_MILLION,
-    STOCK_REDIS_DB,
     AUTO_MODE,
     MANUAL_MODE,
 )
-from core.utils import RedisInterface, MongodbInterface, run_main_task
+from core.utils import MongodbInterface, run_main_task
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_redis,
@@ -41,9 +40,6 @@ def add_link(row):
     return link
 
 
-redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-
-
 def stock_value_change_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
         value_change = get_market_watch_data_from_redis()
@@ -51,10 +47,8 @@ def stock_value_change_main(run_mode):
             value_change["paper_type"].isin(list(MAIN_PAPER_TYPE_DICT.keys()))
         ]
 
-        mongo_client = MongodbInterface(
-            db_name=STOCK_MONGO_DB, collection_name="history"
-        )
-        history = pd.DataFrame(list(mongo_client.collection.find({}, {"_id": 0})))
+        mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="history")
+        history = pd.DataFrame(list(mongo_conn.collection.find({}, {"_id": 0})))
         if history.empty:
             return
 
@@ -91,8 +85,9 @@ def stock_value_change_main(run_mode):
         value_change.drop_duplicates(subset=["symbol"], keep="last", inplace=True)
         value_change = value_change.to_dict(orient="records")
 
-        mongo_client.collection = mongo_client.db["value_change"]
-        mongo_client.insert_docs_into_collection(documents=value_change)
+        mongo_conn.collection = mongo_conn.db["value_change"]
+        mongo_conn.insert_docs_into_collection(documents=value_change)
+        mongo_conn.client.close()
 
 
 def stock_value_change(run_mode: str = AUTO_MODE):

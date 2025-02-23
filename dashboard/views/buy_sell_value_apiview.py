@@ -49,11 +49,11 @@ class BuySellValueAPIView(APIView):
         except Exception:
             paper_type = None
 
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
         )
-
-        history_df = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
+        history_df = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+        mongo_conn.client.close()
 
         history_df[["buy_value", "sell_value"]] = history_df.apply(
             add_buy_sell_values, axis=1, args=(industrial_group, paper_type)

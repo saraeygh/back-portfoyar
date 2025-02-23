@@ -11,10 +11,11 @@ def get_all_fund_detail_main():
 
     if funds:
         funds = funds.json().get("items")
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=FUND_MONGO_DB, collection_name=FUND_ALL_DATA_COLLECTION
         )
-        mongo_client.insert_docs_into_collection(documents=funds)
+        mongo_conn.insert_docs_into_collection(documents=funds)
+        mongo_conn.client.close()
 
 
 def get_all_fund_detail():

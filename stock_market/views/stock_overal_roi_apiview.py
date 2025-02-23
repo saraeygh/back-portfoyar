@@ -36,15 +36,15 @@ SORT_COL = "quarterly_roi"
 class StockOveralROIAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-        results = mongo_client.collection.find(
+        mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+        results = mongo_conn.collection.find(
             {"paper_id": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )
-        results = pd.DataFrame(results)
+        mongo_conn.client.close()
 
+        results = pd.DataFrame(results)
         na_rows = results[(results[SORT_COL] == STOCK_NA_ROI)]
         results = results[(results[SORT_COL] != STOCK_NA_ROI)]
-
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

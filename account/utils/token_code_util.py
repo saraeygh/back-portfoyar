@@ -10,9 +10,6 @@ from core.utils import RedisInterface
 from core.configs import KEY_WITH_EX_REDIS_DB, CODE_RANGE_MIN, CODE_RANGE_MAX
 
 
-redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-
-
 def check_token_match(generated_token, sent_token):
     if sent_token != generated_token:
         return False, Response(
@@ -34,12 +31,16 @@ def check_code_match(generated_code, sent_code):
 def set_dict_in_redis(code_info: dict, prefix: str, expiry: int):
     username = code_info.get("username")
     code_key = prefix + f"{username}"
+    redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     old_code_info = redis_conn.client.get(code_key)
     if old_code_info is not None:
+        redis_conn.client.close()
         return False
 
     code_info = json.dumps(code_info)
     redis_conn.client.set(code_key, code_info, ex=expiry)
+    redis_conn.client.close()
+
     return True
 
 

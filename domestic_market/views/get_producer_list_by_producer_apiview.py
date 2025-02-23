@@ -18,10 +18,12 @@ from core.configs import SIXTY_MINUTES_CACHE, DOMESTIC_MONGO_DB
 @permission_classes([IsAuthenticated])
 class GetProducerListAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
         )
-        producers = list(mongo_client.collection.find({}, {"_id": 0}))
+        producers = list(mongo_conn.collection.find({}, {"_id": 0}))
+        mongo_conn.client.close()
+
         producers = pd.DataFrame(producers)
         if producers.empty:
             return Response({}, status=status.HTTP_200_OK)

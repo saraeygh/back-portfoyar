@@ -20,24 +20,25 @@ from stock_market.utils import (
 )
 
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
-
 def get_instrument_info():
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=STOCK_MONGO_DB, collection_name="instrument_info"
     )
-    instrument_info = list(mongo_client.collection.find({}, {"_id": 0}))
+    instrument_info = list(mongo_conn.collection.find({}, {"_id": 0}))
+    mongo_conn.client.close()
+
     instrument_info = pd.DataFrame(instrument_info)
 
     return instrument_info
 
 
 def add_history(options: pd.DataFrame, history_collection_name: str):
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=STOCK_MONGO_DB, collection_name=history_collection_name
     )
-    history = list(mongo_client.collection.find({}, {"_id": 0}))
+    history = list(mongo_conn.collection.find({}, {"_id": 0}))
+    mongo_conn.client.close()
+
     history = pd.DataFrame(history)
 
     options = pd.merge(left=options, right=history, on="symbol")
@@ -46,7 +47,10 @@ def add_history(options: pd.DataFrame, history_collection_name: str):
 
 
 def get_last_options(option_type):
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     last_options = redis_conn.get_list_of_dicts(list_key="option_data")
+    redis_conn.client.close()
+
     last_options = pd.DataFrame(last_options)
     if option_type == CALL_OPTION:
         last_options = last_options[
@@ -270,10 +274,11 @@ def stock_option_value_change_main(run_mode):
             options = options.to_dict(orient="records")
 
             if options:
-                mongo_client = MongodbInterface(
+                mongo_conn = MongodbInterface(
                     db_name=STOCK_MONGO_DB, collection_name=collection_name
                 )
-                mongo_client.insert_docs_into_collection(documents=options)
+                mongo_conn.insert_docs_into_collection(documents=options)
+                mongo_conn.client.close()
 
 
 def stock_option_value_change(run_mode: str = AUTO_MODE):

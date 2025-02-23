@@ -6,7 +6,6 @@ from colorama import Fore, Style
 from core.utils import RedisInterface, run_main_task
 from core.configs import FUTURE_REDIS_DB
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 IS_RUNNING = "is_running"
 
@@ -62,6 +61,7 @@ def update_info():
     start_connection(negotiation_response["ConnectionToken"])
     event_stream = connect_to_events(negotiation_response["ConnectionToken"])
 
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     for data in event_stream:
         try:
             data = json.loads(data.decode("utf-8").split("data:")[1])
@@ -85,12 +85,15 @@ def update_info():
         except (json.decoder.JSONDecodeError, IndexError):
             continue
         except Exception as e:
+            redis_conn.client.close()
             print(Fore.RED + f"{e}" + Style.RESET_ALL)
             raise e
 
 
 def update_derivative_info_main():
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     is_running = redis_conn.client.get(name=IS_RUNNING)
+    redis_conn.client.close()
 
     if is_running is None:
         update_info()

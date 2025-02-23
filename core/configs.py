@@ -105,7 +105,7 @@ ZARINPAL_MERCHANTID = os.environ.get("ZARINPAL_MERCHANTID")
 ZARINPAL_VERIFY_TRANSACTION_CALLBACKURL = "/api/payment/zarinpal/"
 ZP_PAY_REQUEST_URL = "https://www.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
 ZP_STARTPAY_URL = "https://www.zarinpal.com/pg/StartPay/"
-ZP_REDIRECT_FRONTEND_URL = "/dashboard/recommended/recommended"
+ZP_REDIRECT_FRONTEND_URL = "/dashboard/profile"
 ZP_PAY_VERIFY_URL = "https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
 
 # ADMIN USER

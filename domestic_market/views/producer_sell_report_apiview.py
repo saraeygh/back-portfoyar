@@ -19,13 +19,13 @@ from domestic_market.permissions import HasDomesticSubscription
 @permission_classes([IsAuthenticated, HasDomesticSubscription])
 class ProducerSellReportAPIView(APIView):
     def get(self, request, company_id):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
         )
-
         producer_sell_report = list(
-            mongo_client.collection.find({"producer_id": company_id}, {"_id": 0})
+            mongo_conn.collection.find({"producer_id": company_id}, {"_id": 0})
         )
+        mongo_conn.client.close()
 
         if producer_sell_report:
             producer_sell_report = producer_sell_report[0]["report"]
@@ -43,13 +43,13 @@ class ProducerSellReportAPIViewV2(APIView):
     def post(self, request):
         company_id = request.data.get("company_id")
 
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
         )
-
         producer_sell_report = list(
-            mongo_client.collection.find({"producer_id": company_id}, {"_id": 0})
+            mongo_conn.collection.find({"producer_id": company_id}, {"_id": 0})
         )
+        mongo_conn.client.close()
 
         if producer_sell_report:
             producer_sell_report = producer_sell_report[0]["report"]

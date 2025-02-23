@@ -17,8 +17,6 @@ from stock_market.models import StockRawHistory
 from stock_market.utils import CALL_OPTION, PUT_OPTION
 from . import stock_option_value_change
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
 
 def stock_option_value_history_main():
 
@@ -37,7 +35,10 @@ def stock_option_value_history_main():
         )
     )
 
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     last_option = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
+    redis_conn.client.close()
+
     last_option = last_option[
         [
             "call_ins_code",
@@ -101,12 +102,11 @@ def stock_option_value_history_main():
             else:
                 collection_name = "put_value_history"
 
-            mongo_client = MongodbInterface(
+            mongo_conn = MongodbInterface(
                 db_name=STOCK_MONGO_DB, collection_name=collection_name
             )
-            mongo_client.insert_docs_into_collection(
-                documents=option_value_mean_history
-            )
+            mongo_conn.insert_docs_into_collection(documents=option_value_mean_history)
+            mongo_conn.client.close()
 
     stock_option_value_change()
 

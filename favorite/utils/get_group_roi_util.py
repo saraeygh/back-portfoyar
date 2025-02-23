@@ -5,7 +5,7 @@ from core.utils import MongodbInterface
 
 def get_group_roi(favorite_roi_groups):
 
-    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+    mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
 
     group_roi = []
     for group in favorite_roi_groups:
@@ -29,7 +29,7 @@ def get_group_roi(favorite_roi_groups):
             group_instruments.values_list("instrument__ins_code", flat=True)
         )
         group_instruments = list(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {"ins_code": {"$in": group_instruments}},
                 {"_id": 0},
             )
@@ -71,5 +71,7 @@ def get_group_roi(favorite_roi_groups):
                 new_group[roi] = filtered_df[roi].mean()
 
         group_roi.append(new_group)
+
+    mongo_conn.client.close()
 
     return group_roi

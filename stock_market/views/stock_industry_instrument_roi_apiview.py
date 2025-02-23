@@ -30,18 +30,18 @@ from stock_market.permissions import HasStockSubscription
 class StockIndustryInstrumentROIAPIView(APIView):
     def get(self, request, industry_id):
 
-        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-        results = mongo_client.collection.find(
+        mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+        results = mongo_conn.collection.find(
             {
                 "industrial_group_id": industry_id,
                 "paper_id": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())},
             },
             {"_id": 0},
         )
+        mongo_conn.client.close()
+
         results = pd.DataFrame(results)
-
         results = results[(results["weekly_roi"] != STOCK_NA_ROI)]
-
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

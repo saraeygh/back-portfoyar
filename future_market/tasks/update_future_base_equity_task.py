@@ -16,9 +16,6 @@ from future_market.models import (
 )
 
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-
-
 NAME = "name"
 INDEX = "index_col"
 FILTER = "filter"
@@ -88,6 +85,8 @@ def update_future_base_equity_main():
     print(
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
+
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
         data = redis_conn.client.get(name=base_equity_key)
         if data is None:
@@ -111,6 +110,7 @@ def update_future_base_equity_main():
                     derivative_symbol=symbol_code,
                     unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
                 )
+    redis_conn.client.close()
 
     print(
         Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL

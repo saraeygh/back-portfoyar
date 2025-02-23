@@ -49,5 +49,6 @@ def get_market_watch_data_from_redis():
     market_watch = pd.DataFrame(
         redis_conn.get_list_of_dicts(list_key=MARKET_WATCH_REDIS_KEY)
     )
+    redis_conn.client.close()
 
     return market_watch

@@ -27,8 +27,6 @@ from stock_market.utils import CALL_OPTION, PUT_OPTION, is_market_open
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
 CALL_OLD_NEW_MAPPING = {
     "call_ins_code": "inst_id",
     "option_link": "option_link",
@@ -71,7 +69,10 @@ PUT_OLD_NEW_MAPPING = {
 
 
 def get_last_options():
+    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     last_options = redis_conn.get_list_of_dicts(list_key="option_data")
+    redis_conn.client.close()
+
     last_options = pd.DataFrame(last_options)
     return last_options
 
@@ -257,16 +258,16 @@ def get_put_spreads(spreads):
     return results
 
 
-def check_date(mongo_client):
+def check_date(mongo_conn):
     today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
     date = today_datetime.strftime("%Y-%m-%d")
     time = today_datetime.strftime("%H:%M")
 
-    one_doc = mongo_client.collection.find_one({}, {"_id": 0})
+    one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
     if one_doc:
         doc_date = one_doc.get("date")
         if date != doc_date:
-            mongo_client.collection.delete_many({})
+            mongo_conn.collection.delete_many({})
 
     return date, time
 
@@ -331,14 +332,15 @@ def stock_option_price_spread_main(run_mode):
             last_spreads = pd.DataFrame(call_spreads + put_spreads)
 
         if not last_spreads.empty:
-            mongo_client = MongodbInterface(
+            mongo_conn = MongodbInterface(
                 db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
             )
-            last_spreads["date"], _ = check_date(mongo_client)
-            last_spreads = add_spread_history(mongo_client, last_spreads)
+            last_spreads["date"], _ = check_date(mongo_conn)
+            last_spreads = add_spread_history(mongo_conn, last_spreads)
 
             last_spreads = last_spreads.to_dict(orient="records")
-            mongo_client.insert_docs_into_collection(documents=last_spreads)
+            mongo_conn.insert_docs_into_collection(documents=last_spreads)
+            mongo_conn.client.close()
 
 
 def stock_option_price_spread(run_mode: str = AUTO_MODE):

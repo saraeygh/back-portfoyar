@@ -11,10 +11,11 @@ from fund.utils import update_fund_type
 def update_fund_info_main():
     update_fund_type()
 
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=FUND_MONGO_DB, collection_name=FUND_ALL_DATA_COLLECTION
     )
-    funds = list(mongo_client.collection.find({}, {"_id": 0}))
+    funds = list(mongo_conn.collection.find({}, {"_id": 0}))
+    mongo_conn.client.close()
 
     fund_info_bulk_update = []
     for fund in tqdm(funds, desc="Update fund info", ncols=10):

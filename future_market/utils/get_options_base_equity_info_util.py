@@ -14,8 +14,6 @@ from future_market.models import (
     ID,
 )
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-
 
 OPTION_BASE_EQUITY_SYMBOLS = {
     "لوتوس": "TL",
@@ -166,6 +164,8 @@ def get_options_base_equity_info():
     )
 
     base_equity_data = pd.DataFrame()
+
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
         data = redis_conn.client.get(name=base_equity_key)
         data = json.loads(data.decode("utf-8"))
@@ -177,6 +177,7 @@ def get_options_base_equity_info():
         data = data[list(col_mapping.values())]
 
         base_equity_data = pd.concat([base_equity_data, data])
+    redis_conn.client.close()
 
     base_equities = pd.merge(
         left=base_equities,

@@ -21,19 +21,21 @@ from stock_market.utils import (
 
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
-mongo_conn = MongodbInterface(
-    db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
-)
-
 
 def check_date():
     today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
+    )
+
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
     if one_doc and one_doc["date"] != date:
         mongo_conn.collection.delete_many({})
+
+    mongo_conn.client.close()
 
     return date, time
 
@@ -66,4 +68,10 @@ def option_value_analysis():
         "option_to_market": round(option_value / market_value, 3),
     }
 
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
+    )
+
     mongo_conn.collection.insert_one(new_doc)
+
+    mongo_conn.client.close()

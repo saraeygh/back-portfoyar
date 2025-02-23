@@ -128,10 +128,11 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
             mean_list.append(new_record)
 
     if mean_list:
-        mongodb = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
         )
-        mongodb.insert_docs_into_collection(documents=mean_list)
+        mongo_conn.insert_docs_into_collection(documents=mean_list)
+        mongo_conn.client.close()
 
 
 def calculate_commodity_mean_domestic_main():

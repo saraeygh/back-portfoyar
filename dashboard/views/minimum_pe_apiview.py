@@ -17,8 +17,9 @@ from dashboard.serializers import MinimumPESerailizer
 class MinimumPEAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-        results = mongo_client.collection.find({}, {"_id": 0})
+        mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+        results = mongo_conn.collection.find({}, {"_id": 0})
+        mongo_conn.client.close()
 
         results = pd.DataFrame(results)
         if results.empty:

@@ -102,13 +102,14 @@ def update_instrument_duration_roi(instrument_info: pd.DataFrame):
     instrument_info = instrument_info.to_dict(orient="records")
 
     if instrument_info:
-        mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-        mongo_client.insert_docs_into_collection(documents=instrument_info)
+        mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+        mongo_conn.insert_docs_into_collection(documents=instrument_info)
+        mongo_conn.client.close()
 
 
 def calculate_industry_duration_roi(durations: dict):
-    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-    roi = list(mongo_client.collection.find({}, {"_id": 0}))
+    mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+    roi = list(mongo_conn.collection.find({}, {"_id": 0}))
     roi = pd.DataFrame(roi)
 
     industry_roi_list = list()
@@ -132,18 +133,20 @@ def calculate_industry_duration_roi(durations: dict):
         industry_roi_list.append(new_roi)
 
     if industry_roi_list:
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
-        mongo_client.insert_docs_into_collection(documents=industry_roi_list)
+        mongo_conn.insert_docs_into_collection(documents=industry_roi_list)
+        mongo_conn.client.close()
 
 
 def update_instrument_roi_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )
-        instrument_info = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
+        instrument_info = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+        mongo_conn.client.close()
 
         last_data = get_market_watch_data_from_redis()
         if last_data.empty:

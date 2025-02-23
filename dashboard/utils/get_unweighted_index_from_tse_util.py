@@ -4,11 +4,6 @@ from core.utils import MongodbInterface, TSETMC_REQUEST_HEADERS, get_http_respon
 from core.configs import DASHBOARD_MONGO_DB, UNWEIGHTED_INDEX_DAILY_COLLECTION
 
 
-mongo_conn = MongodbInterface(
-    db_name=DASHBOARD_MONGO_DB, collection_name=UNWEIGHTED_INDEX_DAILY_COLLECTION
-)
-
-
 UNWEIGHTED_INDEX_COLS = {
     "dEven": "date",
     "hEven": "time",
@@ -42,4 +37,10 @@ def get_unweighted_index_from_tse():
 
     unweighted_index = unweighted_index.to_dict(orient="records")
 
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=UNWEIGHTED_INDEX_DAILY_COLLECTION
+    )
+
     mongo_conn.insert_docs_into_collection(unweighted_index)
+
+    mongo_conn.client.close()

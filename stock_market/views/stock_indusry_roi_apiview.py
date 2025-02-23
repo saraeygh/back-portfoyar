@@ -23,13 +23,13 @@ from stock_market.permissions import HasStockSubscription
 class StockIndustryROIAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
-        results = mongo_client.collection.find({}, {"_id": 0})
+        results = mongo_conn.collection.find({}, {"_id": 0})
+        mongo_conn.client.close()
 
         results = pd.DataFrame(results)
-
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

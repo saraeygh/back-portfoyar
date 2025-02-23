@@ -43,9 +43,10 @@ class RelatedStockAPIView(APIView):
             related_stock = GlobalRelatedStockSerailizer(related_stock, many=True)
             related_stock = pd.DataFrame(related_stock.data)
 
-            stock_info = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
-            stock_info = stock_info.collection.find({}, {"_id": 0})
+            mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+            stock_info = mongo_conn.collection.find({}, {"_id": 0})
             stock_info = pd.DataFrame(stock_info)
+            mongo_conn.client.close()
 
             if related_stock.empty or stock_info.empty:
                 return Response(data=[], status=status.HTTP_200_OK)

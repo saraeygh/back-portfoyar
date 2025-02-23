@@ -29,18 +29,20 @@ NEGATIVE_RANGE = "negative_range"
 
 
 def get_range_result(collection_name, range_name, table=None):
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
     )
 
     if range_name == POSITIVE_RANGE:
         range_result = list(
-            mongo_client.collection.find({"deviation": {"$gte": 0}}, {"_id": 0})
+            mongo_conn.collection.find({"deviation": {"$gte": 0}}, {"_id": 0})
         )
     else:
         range_result = list(
-            mongo_client.collection.find({"deviation": {"$lt": 0}}, {"_id": 0})
+            mongo_conn.collection.find({"deviation": {"$lt": 0}}, {"_id": 0})
         )
+
+    mongo_conn.client.close()
 
     range_result = pd.DataFrame(range_result)
     if range_result.empty:
@@ -114,18 +116,20 @@ PRICE_CHANGES_NEG = "dec"
 
 
 def get_range_result_v2(collection_name, price_changes, table=None):
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
     )
 
     if price_changes == PRICE_CHANGES_POS:
         range_result = list(
-            mongo_client.collection.find({"deviation": {"$gte": 0}}, {"_id": 0})
+            mongo_conn.collection.find({"deviation": {"$gte": 0}}, {"_id": 0})
         )
     else:
         range_result = list(
-            mongo_client.collection.find({"deviation": {"$lt": 0}}, {"_id": 0})
+            mongo_conn.collection.find({"deviation": {"$lt": 0}}, {"_id": 0})
         )
+
+    mongo_conn.client.close()
 
     range_result = pd.DataFrame(range_result)
     if range_result.empty:

@@ -12,10 +12,6 @@ from . import TSE_ORDER_BOOK
 
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
-mongo_conn = MongodbInterface(
-    db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
-)
-
 
 BUY_SELL_ORDERS_COLUMNS = [
     "industrial_group",
@@ -48,9 +44,15 @@ def check_date():
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
+    )
+
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
     if one_doc and one_doc["date"] != date:
         mongo_conn.collection.delete_many({})
+
+    mongo_conn.client.close()
 
     return date, time
 
@@ -71,4 +73,10 @@ def buy_sell_orders_value():
             "order_book_value": market_watch.to_dict(orient="records"),
         }
 
-        mongo_conn.collection.insert_one(new_doc)
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
+    )
+
+    mongo_conn.collection.insert_one(new_doc)
+
+    mongo_conn.client.close()

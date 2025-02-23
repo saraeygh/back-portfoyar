@@ -12,7 +12,6 @@ from future_market.utils import (
     populate_all_strategy,
 )
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 REPLACE_SYMBOL_DICT = {
     "قرارداد اختیار معامله فروش ": "ا.ف ",
@@ -223,9 +222,11 @@ def shorten_option_symbol(row, col_name):
 
 
 def update_option_result_main():
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     option_data = json.loads(redis_conn.client.get(name=OPTION_MARKET))
-    option_data = pd.DataFrame(option_data)
+    redis_conn.client.close()
 
+    option_data = pd.DataFrame(option_data)
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)
     option_data["put_order_book"] = option_data.apply(add_put_order_book, axis=1)
     option_data["symbol"] = option_data.apply(add_symbol_to_option_data, axis=1)

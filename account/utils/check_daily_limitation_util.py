@@ -1,8 +1,7 @@
-from samaneh.settings import DEBUG
-
 from rest_framework import status
 from rest_framework.response import Response
 
+from samaneh.settings import DEBUG
 
 from core.utils import (
     RedisInterface,
@@ -12,9 +11,6 @@ from core.configs import KEY_WITH_EX_REDIS_DB, SIGNUP_TRY_COUNT_EXPIRY
 from core.models import ACTIVE, FeatureToggle
 
 
-redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
-
-
 def check_daily_limitation(request):
     check_try_limitation = FeatureToggle.objects.filter(
         name=DAILY_SIGNUP_TRY_LIMITATION["name"]
@@ -22,9 +18,11 @@ def check_daily_limitation(request):
 
     if check_try_limitation.state == ACTIVE:
         ip = request.META.get("REMOTE_ADDR", "")
+        redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
         tried_count = redis_conn.client.get(ip)
         if tried_count is None:
             redis_conn.client.set(ip, 1, ex=SIGNUP_TRY_COUNT_EXPIRY)
+            redis_conn.client.close()
             return False, ""
 
         else:
@@ -41,6 +39,7 @@ def check_daily_limitation(request):
             else:
                 time_left = redis_conn.client.ttl(ip)
                 redis_conn.client.set(ip, today_tried_count, ex=time_left)
+                redis_conn.client.close()
 
                 return False, ""
 

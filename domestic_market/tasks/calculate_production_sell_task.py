@@ -78,10 +78,11 @@ def calculate_production_sell_domestic_main():
         )
         production_sell_list.append(production_sell)
 
-    mongodb_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
     )
-    mongodb_client.insert_docs_into_collection(documents=production_sell_list)
+    mongo_conn.insert_docs_into_collection(documents=production_sell_list)
+    mongo_conn.client.close()
 
 
 def calculate_production_sell_domestic():

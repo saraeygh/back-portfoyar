@@ -16,11 +16,6 @@ from stock_market.utils import MAIN_MARKET_TYPE_DICT, ALL_PAPER_TYPE_DICT
 from stock_market.models import StockInstrument
 
 
-mongo_client = MongodbInterface(
-    db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
-)
-
-
 def get_historical_roi(ins_code):
     durations = {
         7: "weekly_roi",
@@ -41,7 +36,13 @@ def get_historical_roi(ins_code):
     }
 
     query_filter = {"ins_code": f"{ins_code}"}
-    full_history = mongo_client.collection.find_one(query_filter, {"_id": 0})
+
+    mongo_conn = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
+    )
+    full_history = mongo_conn.collection.find_one(query_filter, {"_id": 0})
+    mongo_conn.client.close()
+
     if full_history is None:
         return historical_roi
     full_history = pd.DataFrame(full_history.get("adjusted_history", []))
@@ -127,8 +128,11 @@ def update_instrument_info_main():
         info.update(historical_roi)
         documents.append(info)
 
-    mongo_client.collection = mongo_client.db["instrument_info"]
-    mongo_client.insert_docs_into_collection(documents=documents)
+    mongo_conn = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
+    )
+    mongo_conn.insert_docs_into_collection(documents=documents)
+    mongo_conn.client.close()
 
 
 def update_instrument_info():

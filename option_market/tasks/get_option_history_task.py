@@ -106,20 +106,20 @@ def get_update_history(instrument, instrument_type):
 
         option_history_df = option_history_df.to_dict(orient="records")
 
-        mongodb_conn = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=OPTION_MONGO_DB, collection_name="history"
         )
 
         query_filter = {"option_symbol": instrument[f"{instrument_type}_symbol"]}
-        mongodb_conn.collection.delete_one(query_filter)
+        mongo_conn.collection.delete_one(query_filter)
 
-        mongodb_conn.collection.insert_one(
+        mongo_conn.collection.insert_one(
             {
                 "option_symbol": instrument[f"{instrument_type}_symbol"],
                 "history": option_history_df,
             }
         )
-
+        mongo_conn.client.close()
     except Exception as e:
         print(Fore.RED + f"{e}" + Style.RESET_ALL)
         return
@@ -134,8 +134,8 @@ def convert_to_date(row):
 
 
 def remove_expired_options_history():
-    mongodb_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
-    history = pd.DataFrame(list(mongodb_conn.collection.find({}, {"_id": 0})))
+    mongo_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name="history")
+    history = pd.DataFrame(list(mongo_conn.collection.find({}, {"_id": 0})))
 
     history["expiration_date"] = history.apply(convert_to_date, axis=1)
     today_date = jdatetime.datetime.now().date()
@@ -144,12 +144,14 @@ def remove_expired_options_history():
     history.drop(["expiration_date"], axis=1, inplace=True)
     history = history.to_dict(orient="records")
     if history:
-        mongodb_conn.insert_docs_into_collection(documents=history)
+        mongo_conn.insert_docs_into_collection(documents=history)
+    mongo_conn.client.close()
 
 
 def get_option_history_main():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
+    redis_conn.client.close()
 
     for instrument in tqdm(
         all_instruments, desc=f"Options history, #{len(all_instruments) * 2}", ncols=10

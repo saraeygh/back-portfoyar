@@ -14,25 +14,22 @@ from core.configs import (
     DASHBOARD_MONGO_DB,
     OPTION_VALUE_ANALYSIS_COLLECTION,
     TOP_OPTIONS_COLLECTION,
-    RIAL_TO_BILLION_TOMAN,
     DASHBOARD_TOP_5_LIMIT,
 )
-
-from option_market.utils import get_option_data_from_redis
 
 
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionValueAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-
         option_value = pd.DataFrame(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {}, {"_id": 0, "time": 1, "option_value": 1, "date": 1}
             )
         )
+        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -58,15 +55,15 @@ class OptionValueAPIView(APIView):
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class CallValueAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-
         option_value = pd.DataFrame(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {}, {"_id": 0, "time": 1, "call_value": 1, "date": 1}
             )
         )
+        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -92,15 +89,15 @@ class CallValueAPIView(APIView):
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutValueAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-
         option_value = pd.DataFrame(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {}, {"_id": 0, "time": 1, "put_value": 1, "date": 1}
             )
         )
+        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -126,15 +123,15 @@ class PutValueAPIView(APIView):
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class CallToPutAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-
         option_value = pd.DataFrame(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {}, {"_id": 0, "time": 1, "call_to_put": 1, "date": 1}
             )
         )
+        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -160,15 +157,15 @@ class CallToPutAPIView(APIView):
 @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionToMarketAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-
         option_value = pd.DataFrame(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {}, {"_id": 0, "time": 1, "option_to_market": 1, "date": 1}
             )
         )
+        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -197,11 +194,12 @@ class OptionToMarketAPIView(APIView):
 class TopOptionsAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
         )
+        top_options = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+        mongo_conn.client.close()
 
-        top_options = pd.DataFrame(mongo_client.collection.find({}, {"_id": 0}))
         if top_options.empty:
             return Response([], status=status.HTTP_200_OK)
 

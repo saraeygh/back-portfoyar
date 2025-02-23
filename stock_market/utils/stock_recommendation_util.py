@@ -21,8 +21,10 @@ from stock_market.models.recommendation_config_model import (
 
 
 def result_from_mongo(db, collection):
-    result = MongodbInterface(db_name=db, collection_name=collection)
-    result = result.collection.find({}, {"_id": 0})
+    mongo_conn = MongodbInterface(db_name=db, collection_name=collection)
+    result = mongo_conn.collection.find({}, {"_id": 0})
+    mongo_conn.client.close()
+
     result = pd.DataFrame(result)
 
     return result

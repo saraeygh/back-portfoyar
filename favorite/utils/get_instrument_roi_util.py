@@ -5,12 +5,12 @@ from core.utils import MongodbInterface, add_index_as_id
 
 def get_instrument_roi(instruments):
 
-    mongo_client = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
+    mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
 
     instruments_roi = []
     for instrument in instruments:
         inst_roi = list(
-            mongo_client.collection.find(
+            mongo_conn.collection.find(
                 {"ins_code": instrument.instrument.ins_code}, {"_id": 0}
             )
         )
@@ -34,6 +34,7 @@ def get_instrument_roi(instruments):
                     "ps": 0,
                 },
             )
+    mongo_conn.client.close()
 
     instruments_roi = pd.DataFrame(instruments_roi)
     if instruments_roi.empty:

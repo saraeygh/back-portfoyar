@@ -11,13 +11,11 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authtoken.models import Token
 
 from core.utils import (
-    RedisInterface,
     SEND_RESET_PASSWORD_SMS,
     persian_numbers_to_english,
 )
 
 from core.configs import (
-    KEY_WITH_EX_REDIS_DB,
     REDIS_RESET_PASSWORD_PREFIX,
     RESET_PASSWORD_CODE_EXPIRY,
     MELIPAYAMAK_OK_RESPONSE,
@@ -33,9 +31,6 @@ from account.utils import (
     is_valid_phone,
     password_is_valid,
 )
-
-
-redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
 
 def change_user_password(user, new_password):

@@ -34,7 +34,6 @@ REQUIRED_COLUMNS = [
 
 
 def long_strangle(option_data, redis_db_num: int):
-    redis_conn = RedisInterface(db=redis_db_num)
     distinct_end_date_options = option_data.loc[
         (option_data["put_best_sell_price"] > 0)
         & (option_data["call_best_sell_price"] > 0)
@@ -130,6 +129,8 @@ def long_strangle(option_data, redis_db_num: int):
 
     print(Fore.GREEN + f"long_strangle, {len(result)} records." + Style.RESET_ALL)
     if result:
+        redis_conn = RedisInterface(db=redis_db_num)
         redis_conn.bulk_push_list_of_dicts(
             list_key="long_strangle", list_of_dicts=result
         )
+        redis_conn.client.close()

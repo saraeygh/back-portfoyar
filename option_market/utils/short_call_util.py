@@ -47,7 +47,6 @@ def add_profits(remained_day, base_equity_last_price, strike_price):
 
 
 def short_call(option_data, redis_db_num: int):
-    redis_conn = RedisInterface(db=redis_db_num)
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
         & (option_data["call_last_update"] > 90000)
@@ -101,4 +100,6 @@ def short_call(option_data, redis_db_num: int):
 
     print(Fore.GREEN + f"short_call, {len(result)} records." + Style.RESET_ALL)
     if result:
+        redis_conn = RedisInterface(db=redis_db_num)
         redis_conn.bulk_push_list_of_dicts(list_key="short_call", list_of_dicts=result)
+        redis_conn.client.close()

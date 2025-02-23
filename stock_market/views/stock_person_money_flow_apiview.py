@@ -32,14 +32,15 @@ from stock_market.serializers import (
 @permission_classes([IsAuthenticated, HasStockSubscription])
 class StockPersonMoneyFlowAPIView(APIView):
     def get(self, request):
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="money_flow"
         )
-        results = mongo_client.collection.find(
+        results = mongo_conn.collection.find(
             {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )
-        results = pd.DataFrame(results)
+        mongo_conn.client.close()
 
+        results = pd.DataFrame(results)
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

@@ -28,7 +28,6 @@ from future_market.models import (
 )
 from future_market.utils import RENAME_COLUMNS
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 UNIQUE_IDENTIFIER_COL = {
     SANDOQ_MARKET: ID,
@@ -39,7 +38,9 @@ UNIQUE_IDENTIFIER_COL = {
 
 
 def get_base_equity_row(base_equity):
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     base_equity_row = redis_conn.client.get(name=base_equity.base_equity_key)
+    redis_conn.client.close()
     base_equity_row = json.loads(base_equity_row.decode("utf-8"))
     base_equity_row = pd.DataFrame(base_equity_row)
     base_equity_row = base_equity_row[
@@ -58,7 +59,9 @@ def get_base_equity_row(base_equity):
 
 
 def get_future_derivatives(derivative_symbol):
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     future_derivatives = redis_conn.client.get(name=FUTURE_MARKET)
+    redis_conn.client.close()
     future_derivatives = json.loads(future_derivatives.decode("utf-8"))
     future_derivatives = pd.DataFrame(future_derivatives)
     future_derivatives = future_derivatives[
@@ -234,7 +237,9 @@ def update_future_main():
 
         if strategy_result:
             serialized_data = json.dumps(strategy_result)
+            redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
             redis_conn.client.set(strategy_key, serialized_data)
+            redis_conn.client.close()
 
 
 def update_future():

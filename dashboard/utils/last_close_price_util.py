@@ -1,17 +1,12 @@
 from pytz import timezone
 import jdatetime as jdt
 
-from core.utils import RedisInterface, MongodbInterface
-from core.configs import STOCK_REDIS_DB, DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION
+from core.utils import MongodbInterface
+from core.configs import DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION
 
 from stock_market.utils import get_market_watch_data_from_redis
 
 TEHRAN_TIMEZONE = timezone("Asia/Tehran")
-
-redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-mongo_conn = MongodbInterface(
-    db_name=DASHBOARD_MONGO_DB, collection_name=LAST_CLOSE_PRICE_COLLECTION
-)
 
 
 LAST_CLOSE_PRICE_COLUMNS = [
@@ -27,9 +22,15 @@ def check_date():
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
+    mongo_conn = MongodbInterface(
+        db_name=DASHBOARD_MONGO_DB, collection_name=LAST_CLOSE_PRICE_COLLECTION
+    )
+
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
     if one_doc and one_doc["date"] != date:
         mongo_conn.collection.delete_many({})
+
+    mongo_conn.client.close()
 
     return date, time
 
@@ -57,4 +58,10 @@ def last_close_price():
             "last_close_price": market_watch.to_dict(orient="records"),
         }
 
+        mongo_conn = MongodbInterface(
+            db_name=DASHBOARD_MONGO_DB, collection_name=LAST_CLOSE_PRICE_COLLECTION
+        )
+
         mongo_conn.collection.insert_one(new_doc)
+
+        mongo_conn.client.close()

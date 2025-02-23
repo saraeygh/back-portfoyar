@@ -24,7 +24,6 @@ from core.utils import (
 from future_market.tasks import FUTURE_STRATEGIES
 from future_market.permissions import HasFutureSubscription
 
-redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
 
 RESULT_SORTING_COLUMN = "monthly_spread"
 
@@ -76,7 +75,10 @@ def sort_strategy_result(positions, sort_column, strategy_key, table):
 
 
 def get_strategy_result_from_redis(strategy_key, table):
+    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
+    redis_conn.client.close()
+
     positions = pd.DataFrame(positions)
     positions = sort_strategy_result(
         positions, RESULT_SORTING_COLUMN, strategy_key, table

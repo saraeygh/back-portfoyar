@@ -28,10 +28,6 @@ REV_COLS_LIST = [
     "legal_sell_volume",
 ]
 
-mongodb_conn = MongodbInterface(
-    db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
-)
-
 
 def trade_date_to_timestamp(row):
     trade_date = str(row.get("trade_date"))
@@ -43,7 +39,11 @@ def trade_date_to_timestamp(row):
 
 def remove_expired_adj_histories(instruments_ins_code_list):
     query = {"ins_code": {"$nin": instruments_ins_code_list}}
-    mongodb_conn.collection.delete_many(query)
+    mongo_conn = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
+    )
+    mongo_conn.collection.delete_many(query)
+    mongo_conn.client.close()
 
 
 def update_stock_adjusted_history():
@@ -100,10 +100,15 @@ def update_stock_adjusted_history():
         adj_history = adj_history.to_dict(orient="records")
 
         query_filter = {"ins_code": f"{instrument.ins_code}"}
-        mongodb_conn.collection.delete_one(query_filter)
-        mongodb_conn.collection.insert_one(
+
+        mongo_conn = MongodbInterface(
+            db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
+        )
+        mongo_conn.collection.delete_one(query_filter)
+        mongo_conn.collection.insert_one(
             {"ins_code": f"{instrument.ins_code}", "adjusted_history": adj_history}
         )
+        mongo_conn.client.close()
 
         instruments_ins_code_list.append(instrument.ins_code)
     remove_expired_adj_histories(instruments_ins_code_list)

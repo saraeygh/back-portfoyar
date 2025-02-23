@@ -61,9 +61,6 @@ def get_additional_info():
     return additional_info
 
 
-redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-
-
 def update_market_watch_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
         additional_info = get_additional_info()
@@ -95,9 +92,11 @@ def update_market_watch_main(run_mode):
         market_watch["paper_type"] = market_watch["paper_type"].astype(int)
         market_watch["last_date"] = date.today().strftime("%Y-%m-%d")
         market_watch = market_watch.to_dict(orient="records")
+        redis_conn = RedisInterface(db=STOCK_REDIS_DB)
         redis_conn.bulk_push_list_of_dicts(
             list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
         )
+        redis_conn.client.close()
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):

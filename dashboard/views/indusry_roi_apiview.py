@@ -17,10 +17,11 @@ from stock_market.serializers import DashboardIndustryROISerailizer
 class IndustryROIAPIView(APIView):
     def get(self, request):
 
-        mongo_client = MongodbInterface(
+        mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
-        results = mongo_client.collection.find({}, {"_id": 0})
+        results = mongo_conn.collection.find({}, {"_id": 0})
+        mongo_conn.client.close()
 
         results = pd.DataFrame(results)
         if results.empty:

@@ -46,10 +46,11 @@ def calculate_producers_yearly_value_main():
     yearly_values["name"] = yearly_values.apply(add_value_to_name, axis=1)
     yearly_values = yearly_values.to_dict(orient="records")
 
-    mongo_client = MongodbInterface(
+    mongo_conn = MongodbInterface(
         db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
     )
-    mongo_client.insert_docs_into_collection(documents=yearly_values)
+    mongo_conn.insert_docs_into_collection(documents=yearly_values)
+    mongo_conn.client.close()
 
 
 def calculate_producers_yearly_value():

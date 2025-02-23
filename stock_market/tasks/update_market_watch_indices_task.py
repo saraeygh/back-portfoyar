@@ -3,7 +3,7 @@ import numpy as np
 import jdatetime
 from tqdm import tqdm
 
-from core.utils import RedisInterface, MongodbInterface, run_main_task
+from core.utils import MongodbInterface, run_main_task
 from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
@@ -12,7 +12,6 @@ from core.configs import (
     STOCK_MONGO_DB,
     NO_DAILY_HISTORY,
     NO_HISTORY_DATE,
-    STOCK_REDIS_DB,
 )
 
 from stock_market.utils import (
@@ -165,9 +164,6 @@ def get_history(row, index_name):
     return history
 
 
-redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-
-
 def update_market_watch_indices_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
         market_watch = update_market_watch_data(get_market_watch_data_from_redis())
@@ -210,10 +206,10 @@ def update_market_watch_indices_main(run_mode):
             index_df.loc[:, :] = index_df.replace([np.inf, -np.inf], np.nan)
             index_df = index_df.dropna()
 
-            mongo_client = MongodbInterface(
+            mongo_conn = MongodbInterface(
                 db_name=STOCK_MONGO_DB, collection_name=index_name
             )
-            history_df = list(mongo_client.collection.find({}, {"_id": 0}))
+            history_df = list(mongo_conn.collection.find({}, {"_id": 0}))
             history_df = pd.DataFrame(history_df)
             if history_df.empty:
                 index_df["history"] = NO_DAILY_HISTORY
@@ -237,7 +233,8 @@ def update_market_watch_indices_main(run_mode):
             index_df.drop("last_history_date", axis=1, inplace=True)
             index_df = index_df.to_dict(orient="records")
 
-            mongo_client.insert_docs_into_collection(documents=index_df)
+            mongo_conn.insert_docs_into_collection(documents=index_df)
+            mongo_conn.client.close()
 
 
 def update_market_watch_indices(run_mode: str = AUTO_MODE):

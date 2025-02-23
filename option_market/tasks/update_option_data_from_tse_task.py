@@ -24,9 +24,6 @@ from option_market.utils import (
 )
 
 
-redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-
-
 def add_base_equity_best_orders(row, order_index):
     best_order = row.get("base_equity_order_book")
     best_order = best_order[0]
@@ -160,9 +157,12 @@ def update_option_data_from_tse_main(run_mode):
         )
 
         option_data_dict = option_data.to_dict(orient="records")
+        redis_conn = RedisInterface(db=OPTION_REDIS_DB)
         redis_conn.bulk_push_list_of_dicts(
             list_key="option_data", list_of_dicts=option_data_dict
         )
+        redis_conn.client.close()
+
         print(
             Fore.BLUE
             + f"option_data, {len(option_data_dict)} records."

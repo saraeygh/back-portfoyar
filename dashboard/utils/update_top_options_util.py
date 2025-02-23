@@ -8,10 +8,6 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
 )
 
-mongo_conn = MongodbInterface(
-    db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
-)
-
 
 def update_top_options():
     option_data = get_option_data_from_redis()
@@ -44,4 +40,11 @@ def update_top_options():
         top_options.append(new_option)
 
     if top_options:
+
+        mongo_conn = MongodbInterface(
+            db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
+        )
+
         mongo_conn.insert_docs_into_collection(top_options)
+
+        mongo_conn.client.close()
