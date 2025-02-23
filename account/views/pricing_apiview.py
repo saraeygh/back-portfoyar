@@ -194,6 +194,10 @@ def apply_discount(plan, discount, code, user):
         desc = f"زمان استفاده از طرح {discount.name} به پایان رسیده است"
         return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
+    if discount.has_discount_code and code == "":
+        desc = "اگر کد تخفیف دارید آن را وارد کنید"
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
+
     if (
         discount.has_discount_code
         and code != ""
