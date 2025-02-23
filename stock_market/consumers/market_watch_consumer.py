@@ -25,12 +25,13 @@ class MarketWatchConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({index: []}))
 
         mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index)
-        results = mongo_conn.collection.find(
-            {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
+        results = pd.DataFrame(
+            mongo_conn.collection.find(
+                {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
+            )
         )
         mongo_conn.client.close()
 
-        results = pd.DataFrame(results)
         if results.empty:
             results = results.to_dict(orient="records")
             self.send(text_data=json.dumps({index: results}))

@@ -1,3 +1,6 @@
+import os
+import multiprocessing
+
 from core.configs import FUTURE_REDIS_DB
 
 from option_market.utils import (
@@ -42,7 +45,18 @@ STRATEGIES = [
 ]
 
 
-def populate_all_strategy(option_data):
+def populate_all_strategy_sync(option_data):
 
     for strategy in STRATEGIES:
         strategy(option_data, FUTURE_REDIS_DB)
+
+
+def populate_all_strategy_async(option_data):
+    total_cores = os.cpu_count()
+    used_cores = total_cores // 2
+    with multiprocessing.Pool(processes=used_cores) as pool:
+        for strategy in STRATEGIES:
+            pool.apply_async(strategy, args=(option_data, FUTURE_REDIS_DB))
+
+        pool.close()
+        pool.join()

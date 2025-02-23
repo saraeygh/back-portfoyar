@@ -35,19 +35,20 @@ def get_historical_roi(ins_code):
         "three_years_roi": STOCK_NA_ROI,
     }
 
-    query_filter = {"ins_code": f"{ins_code}"}
-
     mongo_conn = MongodbInterface(
         db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
     )
+    query_filter = {"ins_code": f"{ins_code}"}
     full_history = mongo_conn.collection.find_one(query_filter, {"_id": 0})
-    mongo_conn.client.close()
 
     if full_history is None:
+        mongo_conn.client.close()
         return historical_roi
     full_history = pd.DataFrame(full_history.get("adjusted_history", []))
     if full_history.empty:
+        mongo_conn.client.close()
         return historical_roi
+    mongo_conn.client.close()
 
     range_end_price = full_history.iloc[-1]
     range_end_price = (range_end_price.to_dict()).get("close_mean")

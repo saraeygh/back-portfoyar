@@ -71,9 +71,9 @@ PUT_OLD_NEW_MAPPING = {
 def get_last_options():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     last_options = redis_conn.get_list_of_dicts(list_key="option_data")
+    last_options = pd.DataFrame(last_options)
     redis_conn.client.close()
 
-    last_options = pd.DataFrame(last_options)
     return last_options
 
 

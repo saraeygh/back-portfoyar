@@ -27,9 +27,8 @@ class StockIndustryROIAPIView(APIView):
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
         results = mongo_conn.collection.find({}, {"_id": 0})
-        mongo_conn.client.close()
-
         results = pd.DataFrame(results)
+        mongo_conn.client.close()
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

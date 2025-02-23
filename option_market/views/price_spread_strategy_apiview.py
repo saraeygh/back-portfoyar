@@ -28,17 +28,14 @@ from option_market.permissions import HasOptionSubscription
 @permission_classes([IsAuthenticated, HasOptionSubscription])
 class PriceSpreadStrategyAPIView(APIView):
     def post(self, request):
+        strike_deviation = int(request.data.get("strike_deviation"))
 
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
         )
-        results = mongo_conn.collection.find({}, {"_id": 0})
+        results = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
         mongo_conn.client.close()
-
-        strike_deviation = int(request.data.get("strike_deviation"))
-        results = pd.DataFrame(results)
         results = results[abs(results["strike_deviation"]) <= strike_deviation]
-
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

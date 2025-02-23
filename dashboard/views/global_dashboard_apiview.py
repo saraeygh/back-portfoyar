@@ -23,7 +23,6 @@ def get_range_result(collection_name, price_changes):
     mongo_conn = MongodbInterface(
         db_name=GLOBAL_MONGO_DB, collection_name=collection_name
     )
-
     if price_changes == PRICE_CHANGES_POS:
         range_result = list(
             mongo_conn.collection.find({"deviation": {"$gte": 0}}, {"_id": 0})

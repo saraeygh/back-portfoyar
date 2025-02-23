@@ -22,12 +22,13 @@ class StockDashboardAPIView(APIView):
         result = dict()
         for index, index_serializer in STOCK_MARKET_WATCH_INDICES.items():
             mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index)
-            index_result = mongo_conn.collection.find(
-                {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
+            index_result = pd.DataFrame(
+                mongo_conn.collection.find(
+                    {"paper_type": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}},
+                    {"_id": 0},
+                )
             )
             mongo_conn.client.close()
-
-            index_result = pd.DataFrame(index_result)
             if index_result.empty:
                 result[index] = []
                 continue
@@ -53,10 +54,8 @@ class OptionDashboardAPIView(APIView):
         result = dict()
         for index, index_serializer in OPTION_MARKET_WATCH_INDICES.items():
             mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index)
-            index_result = mongo_conn.collection.find({}, {"_id": 0})
+            index_result = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
             mongo_conn.client.close()
-
-            index_result = pd.DataFrame(index_result)
             if index_result.empty:
                 result[index] = []
                 continue

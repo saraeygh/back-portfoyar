@@ -20,7 +20,7 @@ class IndustryROIAPIView(APIView):
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
-        results = mongo_conn.collection.find({}, {"_id": 0})
+        results = list(mongo_conn.collection.find({}, {"_id": 0}))
         mongo_conn.client.close()
 
         results = pd.DataFrame(results)

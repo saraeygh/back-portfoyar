@@ -89,10 +89,9 @@ class SymbolHistoryAPIView(APIView):
 
             query_filter = {"option_symbol": symbol}
             symbol_history = mongo_conn.collection.find_one(query_filter, {"_id": 0})
-            mongo_conn.client.close()
             symbol_history = symbol_history["history"]
-
             symbol_history_srz = SymbolHistorySerializer(symbol_history, many=True)
+            mongo_conn.client.close()
 
             set_json_cache(cache_key, symbol_history_srz.data, SIXTY_MINUTES_CACHE)
             return Response(symbol_history_srz.data, status=status.HTTP_200_OK)
