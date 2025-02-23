@@ -158,7 +158,12 @@ def calculated_final_price(plan, price, discount, user, code):
     receipt = {}
     receipt["user"] = user
     receipt["feature"] = plan
+
+    has_special_discount = False
     receipt = add_discount(receipt, discount, code)
+    if "discount_type" in receipt:
+        has_special_discount = True
+
     receipt["receipt_id"] = uuid4().hex
     receipt["price"] = price
     new_receipt = Receipt(**receipt)
@@ -170,10 +175,8 @@ def calculated_final_price(plan, price, discount, user, code):
         "login_count": plan.login_count,
         "price": price,
         "receipt_id": new_receipt.receipt_id,
-        "has_special_discount": False,
+        "has_special_discount": has_special_discount,
     }
-    if "discount_type" in receipt:
-        final_price["has_special_discount"] = True
 
     return Response(final_price, status=status.HTTP_200_OK)
 
