@@ -170,7 +170,10 @@ def calculated_final_price(plan, price, discount, user, code):
         "login_count": plan.login_count,
         "price": price,
         "receipt_id": new_receipt.receipt_id,
+        "has_special_discount": False,
     }
+    if "discount_type" in receipt:
+        final_price["has_special_discount"] = True
 
     return Response(final_price, status=status.HTTP_200_OK)
 
@@ -212,7 +215,7 @@ def apply_discount(plan, discount, code, user):
 def get_final_price(plan, user, code):
     discount = get_best_discount(plan, user)
 
-    if discount and code != "":
+    if discount:
         return apply_discount(plan, discount, code, user)
     else:
         return calculated_final_price(plan, plan.discounted_price, discount, user, code)
