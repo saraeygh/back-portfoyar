@@ -144,9 +144,7 @@ def get_all_plans(user):
     return all_plans
 
 
-def add_discount(receipt, discount: FeatureDiscount | UserDiscount, user_code: str):
-    if discount is None:
-        return receipt
+def add_discount(receipt, discount: FeatureDiscount | UserDiscount):
     receipt["discount_type"] = ContentType.objects.get_for_model(type(discount))
     receipt["discount_id"] = discount.id
     receipt["discount_object"] = discount
@@ -154,14 +152,14 @@ def add_discount(receipt, discount: FeatureDiscount | UserDiscount, user_code: s
     return receipt
 
 
-def calculated_final_price(plan, price, discount, user, code):
+def calculated_final_price(plan, price, discount, user, desc):
     receipt = {}
     receipt["user"] = user
     receipt["feature"] = plan
 
     has_special_discount = False
-    receipt = add_discount(receipt, discount, code)
-    if "discount_type" in receipt:
+    if discount is not None:
+        receipt = add_discount(receipt, discount)
         has_special_discount = True
 
     receipt["receipt_id"] = uuid4().hex
@@ -176,6 +174,7 @@ def calculated_final_price(plan, price, discount, user, code):
         "price": price,
         "receipt_id": new_receipt.receipt_id,
         "has_special_discount": has_special_discount,
+        "desc": desc,
     }
 
     return Response(final_price, status=status.HTTP_200_OK)
@@ -184,39 +183,30 @@ def calculated_final_price(plan, price, discount, user, code):
 def apply_discount(plan, discount, code, user):
     now = dt.now(tz=pytz.UTC)
     if discount.has_start and discount.start_at > now:
-        return Response(
-            {"message": f"زمان استفاده از طرح {discount.name} فرا نرسیده است"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        desc = f"زمان استفاده از طرح {discount.name} فرا نرسیده است"
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
     if discount.has_max_use_count and discount.used_count >= discount.max_use_count:
-        return Response(
-            {
-                "message": f"محدودیت تعداد دفعات استفاده از طرح {discount.name} به پایان رسیده است"
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        desc = f"محدودیت تعداد دفعات استفاده از طرح {discount.name} به پایان رسیده است"
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
     if discount.has_expiry and discount.expire_at < now:
-        return Response(
-            {"message": f"زمان استفاده از طرح {discount.name} به پایان رسیده است"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        desc = f"زمان استفاده از طرح {discount.name} به پایان رسیده است"
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
     if (
         discount.has_discount_code
         and code != ""
         and discount.discount_code.lower() != code.lower()
     ):
-        return Response(
-            {"message": "کد تخفیف وارد شده اشتباه است"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        desc = "کد تخفیف وارد شده اشتباه است"
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
     plan_price = plan.discounted_price
     price = int(plan_price * (1 - (discount.discount_percent / 100)))
+    desc = f"تخفیف ویژه {discount.name} اعمال شد"
 
-    return calculated_final_price(plan, price, discount, user, code)
+    return calculated_final_price(plan, price, discount, user, desc)
 
 
 def get_final_price(plan, user, code):
@@ -225,7 +215,8 @@ def get_final_price(plan, user, code):
     if discount:
         return apply_discount(plan, discount, code, user)
     else:
-        return calculated_final_price(plan, plan.discounted_price, discount, user, code)
+        desc = ""
+        return calculated_final_price(plan, plan.discounted_price, discount, user, desc)
 
 
 class PricingAPIView(APIView):
