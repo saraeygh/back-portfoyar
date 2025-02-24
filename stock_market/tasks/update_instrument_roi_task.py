@@ -111,6 +111,7 @@ def calculate_industry_duration_roi(durations: dict):
     mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
     roi = list(mongo_conn.collection.find({}, {"_id": 0}))
     roi = pd.DataFrame(roi)
+    mongo_conn.client.close()
 
     industry_roi_list = list()
     unique_industry_id_list = roi["industrial_group_id"].unique().tolist()

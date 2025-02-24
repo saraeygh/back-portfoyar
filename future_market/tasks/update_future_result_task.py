@@ -1,6 +1,7 @@
 import json
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
 import jdatetime
 from tqdm import tqdm
 
@@ -89,7 +90,9 @@ def get_total_and_monthly_spread(
         return spreads
 
     total_spread = get_deviation_percent(open_position_price, base_equity_last_price)
-    monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
+    # monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
+    monthly_spread = (total_spread / remained_day) * 30
+
     spreads = {
         "total_spread": total_spread,
         "remained_day": remained_day,
@@ -224,6 +227,7 @@ def update_future_main():
         strategy_result = list()
         for base_equity in tqdm(base_equities, desc=f"{strategy_key} result", ncols=10):
             base_equity_row = get_base_equity_row(base_equity)
+
             if not base_equity_row:
                 continue
             future_derivatives = get_future_derivatives(base_equity.derivative_symbol)

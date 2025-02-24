@@ -44,6 +44,7 @@ def get_historical_roi(ins_code):
     if full_history is None:
         mongo_conn.client.close()
         return historical_roi
+
     full_history = pd.DataFrame(full_history.get("adjusted_history", []))
     if full_history.empty:
         mongo_conn.client.close()
@@ -54,28 +55,26 @@ def get_historical_roi(ins_code):
     range_end_price = (range_end_price.to_dict()).get("close_mean")
 
     for duration_int, duration_name in durations.items():
-        try:
-            today = datetime.today().timestamp()
-            range_start = today - timedelta(days=duration_int).total_seconds()
+        today = datetime.today().timestamp()
+        range_start = today - timedelta(days=duration_int).total_seconds()
 
-            filtered_history = full_history[full_history["trade_date"] >= range_start]
-            if filtered_history.empty:
-                continue
-
-            range_start_price = filtered_history.iloc[0]
-            range_start_price = (range_start_price.to_dict()).get("close_mean")
-            roi = get_deviation_percent(range_end_price, range_start_price)
-            historical_roi[duration_name] = roi
-
-        except Exception:
+        filtered_history = full_history[full_history["trade_date"] >= range_start]
+        if filtered_history.empty:
             continue
+
+        range_start_price = filtered_history.iloc[0]
+        range_start_price = (range_start_price.to_dict()).get("close_mean")
+        roi = get_deviation_percent(range_end_price, range_start_price)
+        historical_roi[duration_name] = roi
 
     return historical_roi
 
 
 def update_instrument_info_main():
+    mongo_conn = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
+    )
 
-    documents = list()
     all_instruments = StockInstrument.objects.all()
     for ins_obj in tqdm(all_instruments, desc="Instrument info", ncols=10):
         market_id = ins_obj.market_type
@@ -85,54 +84,48 @@ def update_instrument_info_main():
         instrument_info = get_http_response(
             req_url=URL, req_headers=TSETMC_REQUEST_HEADERS
         )
+        instrument_info = instrument_info.json()
+        instrument_info = instrument_info.get("instrumentInfo")
+
+        info = {
+            "ins_code": ins_obj.ins_code,
+            "symbol": replace_arabic_letters(instrument_info.get("lVal18AFC")),
+            "name": replace_arabic_letters(instrument_info.get("lVal30")),
+            "last_update": instrument_info.get("dEven"),
+            "industrial_group_id": ins_obj.industrial_group.id,
+            "industrial_group_name": replace_arabic_letters(
+                ins_obj.industrial_group.name
+            ),
+            "market_id": market_id,
+            "market_name": MAIN_MARKET_TYPE_DICT.get(market_id),
+            "sub_market": instrument_info.get("cgrValCotTitle"),
+            "paper_id": paper_id,
+            "paper_name": ALL_PAPER_TYPE_DICT.get(paper_id),
+            "total_share": instrument_info.get("zTitad"),
+            "month_mean_volume": instrument_info.get("qTotTran5JAvg"),
+            "base_volume": instrument_info.get("baseVol"),
+            "sector_pe": instrument_info.get("eps").get("sectorPE"),
+            "psr": instrument_info.get("eps").get("psr"),
+        }
+
         try:
-            instrument_info = instrument_info.json()
-            instrument_info = instrument_info.get("instrumentInfo")
-
-            info = {
-                "ins_code": ins_obj.ins_code,
-                "symbol": replace_arabic_letters(instrument_info.get("lVal18AFC")),
-                "name": replace_arabic_letters(instrument_info.get("lVal30")),
-                "last_update": instrument_info.get("dEven"),
-                "industrial_group_id": ins_obj.industrial_group.id,
-                "industrial_group_name": replace_arabic_letters(
-                    ins_obj.industrial_group.name
-                ),
-                "market_id": market_id,
-                "market_name": MAIN_MARKET_TYPE_DICT.get(market_id),
-                "sub_market": instrument_info.get("cgrValCotTitle"),
-                "paper_id": paper_id,
-                "paper_name": ALL_PAPER_TYPE_DICT.get(paper_id),
-                "total_share": instrument_info.get("zTitad"),
-                "month_mean_volume": instrument_info.get("qTotTran5JAvg"),
-                "base_volume": instrument_info.get("baseVol"),
-                "sector_pe": instrument_info.get("eps").get("sectorPE"),
-                "psr": instrument_info.get("eps").get("psr"),
-            }
-
             eps = instrument_info.get("eps").get("estimatedEPS")
-            try:
-                info["eps"] = float(eps)
-            except Exception:
-                info["eps"] = 0
-
-            floating_volume = instrument_info.get("kAjCapValCpsIdx")
-            try:
-                info["floating_volume"] = float(floating_volume)
-            except Exception:
-                info["floating_volume"] = 0
-
+            info["eps"] = float(eps)
         except Exception:
-            continue
+            info["eps"] = 0
+
+        try:
+            floating_volume = instrument_info.get("kAjCapValCpsIdx")
+            info["floating_volume"] = float(floating_volume)
+        except Exception:
+            info["floating_volume"] = 0
 
         historical_roi = get_historical_roi(ins_obj.ins_code)
         info.update(historical_roi)
-        documents.append(info)
+        query = {"ins_code": ins_obj.ins_code}
+        mongo_conn.collection.delete_many(filter=query)
+        mongo_conn.collection.insert_one(info)
 
-    mongo_conn = MongodbInterface(
-        db_name=STOCK_MONGO_DB, collection_name="instrument_info"
-    )
-    mongo_conn.insert_docs_into_collection(documents=documents)
     mongo_conn.client.close()
 
 

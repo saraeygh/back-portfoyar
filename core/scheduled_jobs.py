@@ -338,6 +338,21 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     return scheduler
 
 
+def add_global_market_app_jobs(scheduler: BlockingScheduler):
+    scheduler.add_job(
+        func=calculate_commodity_means_global,
+        id="calculate_commodity_means_global_task",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="*",
+        hour="7",
+        minute="10",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+    )
+
+    return scheduler
+
+
 def add_option_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_option_data_from_tse,
@@ -410,7 +425,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_roi_task",
         replace_existing=True,
         trigger="cron",
-        hour="9-15",
+        hour="9-14",
         minute="*/5",
     )
 
@@ -480,21 +495,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     return scheduler
 
 
-def add_global_market_app_jobs(scheduler: BlockingScheduler):
-    scheduler.add_job(
-        func=calculate_commodity_means_global,
-        id="calculate_commodity_means_global_task",
-        replace_existing=True,
-        trigger="cron",
-        day_of_week="*",
-        hour="7",
-        minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
-    )
-
-    return scheduler
-
-
 def blocking_scheduler():
 
     scheduler = get_scheduler()
@@ -504,9 +504,9 @@ def blocking_scheduler():
     scheduler = add_domestic_market_app_jobs(scheduler)
     scheduler = add_fund_app_jobs(scheduler)
     scheduler = add_future_market_app_jobs(scheduler)
+    scheduler = add_global_market_app_jobs(scheduler)
     scheduler = add_option_market_app_jobs(scheduler)
     scheduler = add_stock_market_app_jobs(scheduler)
-    scheduler = add_global_market_app_jobs(scheduler)
 
     print(Fore.GREEN + "APScheduler started successfully" + Style.RESET_ALL)
     scheduler.start()

@@ -28,4 +28,4 @@ class ProfileAdmin(admin.ModelAdmin):
 
     search_fields = ("id", "user__username")
 
-    list_filter = ("gender", "max_login", "active_login", "note")
+    list_filter = ("gender", "max_login", "active_login")

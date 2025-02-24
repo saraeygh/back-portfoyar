@@ -72,14 +72,15 @@ def get_clear_cmd():
 def main_cli(clear_cmd):
     print(
         Style.BRIGHT + "Choose app:",
-        Fore.BLUE + "1) Domestic market",
-        "2) Global market",
-        "3) Option market",
-        "4) Stock market",
+        Fore.BLUE + "1) Account app",
+        "2) Dashboard app",
+        "3) Domestic market",
+        "4) Fund app",
         "5) Future market",
-        "6) Dashboard app",
-        "7) Fund app",
-        "9) Account app",
+        "6) Global market",
+        "7) Option market",
+        "8) Stock market",
+        ################################
         Fore.RED + "10) Others",
         Fore.RED + "0) Exit" + Style.RESET_ALL,
         sep="\n",
@@ -197,17 +198,18 @@ def stock_cli(clear_cmd):
         print(
             Style.BRIGHT + "Stock market commands:",
             "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Get monthly activity",
-            "2) Update market watch",
-            "3) Update instrument history",
-            "4) Update instrument info",
-            "5) Update instrument ROI",
-            "6) Stock value change",
+            Fore.BLUE + "1) Update market watch",
+            "2) Update stock daily history",
+            "3) Update instrument info",
+            "4) Update instrument ROI",
+            "5) Stock option price spread",
+            "6) Stock value history & change",
             "7) Stock option value history",
             "8) Stock option value change",
-            "9) Stock option price spread",
+            "9) update_stock_full_raw_history",
             "10) Update stock adjusted history",
-            "11) Update stock daily history",
+            "11) Get monthly activity",
+            ##############################
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -226,15 +228,15 @@ def stock_cli(clear_cmd):
                 stock_option_price_spread(MANUAL_MODE)
                 get_monthly_activity_report_letter()
             case "1":
-                get_monthly_activity_report_letter()
-            case "2":
                 update_market_watch(MANUAL_MODE)
+            case "2":
+                update_stock_daily_history()
             case "3":
-                update_stock_full_raw_history()
-            case "4":
                 update_instrument_info()
-            case "5":
+            case "4":
                 update_instrument_roi(MANUAL_MODE)
+            case "5":
+                stock_option_price_spread(MANUAL_MODE)
             case "6":
                 stock_value_history()
             case "7":
@@ -242,11 +244,11 @@ def stock_cli(clear_cmd):
             case "8":
                 stock_option_value_change(MANUAL_MODE)
             case "9":
-                stock_option_price_spread(MANUAL_MODE)
+                update_stock_full_raw_history()
             case "10":
                 update_stock_adjusted_history()
             case "11":
-                update_stock_daily_history()
+                get_monthly_activity_report_letter()
             case "0":
                 break
 
@@ -462,28 +464,28 @@ class Command(BaseCommand):
 
             match cmd:
                 case "1":
-                    domestic_cli(clear_cmd)
+                    account_cli(clear_cmd)
 
                 case "2":
-                    global_cli(clear_cmd)
+                    dashboard_cli(clear_cmd)
 
                 case "3":
-                    option_cli(clear_cmd)
+                    domestic_cli(clear_cmd)
 
                 case "4":
-                    stock_cli(clear_cmd)
+                    fund_cli(clear_cmd)
 
                 case "5":
                     future_cli(clear_cmd)
 
                 case "6":
-                    dashboard_cli(clear_cmd)
+                    global_cli(clear_cmd)
 
                 case "7":
-                    fund_cli(clear_cmd)
+                    option_cli(clear_cmd)
 
-                case "9":
-                    account_cli(clear_cmd)
+                case "8":
+                    stock_cli(clear_cmd)
 
                 case "10":
                     other_cli(clear_cmd)
