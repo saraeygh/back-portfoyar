@@ -21,8 +21,6 @@ services:
   redis_test:
     image: docker.arvancloud.ir/redis:7.2
     container_name: redis_test
-    volumes:
-      - redis_test:/data
     networks:
       - test
     depends_on:
@@ -156,7 +154,6 @@ networks:
 
 volumes:
   postgres_test:
-  redis_test:
   mongodb_test:
   ticket_appendix:
   django_logs:
