@@ -219,7 +219,7 @@ def stock_cli(clear_cmd):
                 update_market_watch_indices(MANUAL_MODE)
                 update_instrument_info()
                 update_instrument_roi(MANUAL_MODE)
-                update_stock_daily_history(MANUAL_MODE)
+                update_stock_daily_history()
                 update_stock_full_raw_history()
                 stock_value_history()
                 stock_option_value_change(MANUAL_MODE)
@@ -246,7 +246,7 @@ def stock_cli(clear_cmd):
             case "10":
                 update_stock_adjusted_history()
             case "11":
-                update_stock_daily_history(MANUAL_MODE)
+                update_stock_daily_history()
             case "0":
                 break
 

@@ -100,7 +100,6 @@ def update_stock_adjusted_history():
         adj_history = adj_history.to_dict(orient="records")
 
         query_filter = {"ins_code": f"{instrument.ins_code}"}
-
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
         )
@@ -111,4 +110,4 @@ def update_stock_adjusted_history():
         mongo_conn.client.close()
 
         instruments_ins_code_list.append(instrument.ins_code)
-    remove_expired_adj_histories(instruments_ins_code_list)
+    # remove_expired_adj_histories(instruments_ins_code_list)

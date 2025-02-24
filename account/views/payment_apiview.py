@@ -14,7 +14,11 @@ from account.serializers import GetReceiptSerailizer
 class ReceiptAPIView(APIView):
     def get(self, request):
         user = request.user
-        receipts = Receipt.objects.filter(user=user).order_by("-updated_at")
+        receipts = (
+            Receipt.objects.filter(is_confirmed=True)
+            .filter(user=user)
+            .order_by("-updated_at")
+        )
         receipts = GetReceiptSerailizer(receipts, many=True)
 
         return Response(receipts.data, status=status.HTTP_200_OK)

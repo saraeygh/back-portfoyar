@@ -22,20 +22,20 @@ def remove_expired_options():
     put_options = active_options["put_ins_code"].to_list()
     active_options = call_options + put_options
 
-    deactive_options = StockInstrument.objects.filter(paper_type=OPTION_PAPER).exclude(
+    expired_options = StockInstrument.objects.filter(paper_type=OPTION_PAPER).exclude(
         ins_code__in=active_options
     )
-    deactive_options.delete()
+    expired_options.delete()
 
 
 def remove_paper_type_updated_instruments():
-    repated_symbols = (
+    repeated_symbols = (
         StockInstrument.objects.values("symbol")
         .annotate(symbol_count=Count("symbol"))
         .filter(symbol_count__gt=1)
     )
 
-    for repeated_symbol in repated_symbols:
+    for repeated_symbol in repeated_symbols:
         duplicate_instances = StockInstrument.objects.filter(
             symbol=repeated_symbol["symbol"]
         ).order_by("id")

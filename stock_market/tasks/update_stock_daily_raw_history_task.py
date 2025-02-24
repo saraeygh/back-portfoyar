@@ -3,7 +3,6 @@ from tqdm import tqdm
 import pandas as pd
 from colorama import Fore, Style
 
-from core.configs import AUTO_MODE, MANUAL_MODE
 from core.utils import run_main_task
 
 from stock_market.utils import (
@@ -66,8 +65,8 @@ def add_today_history(today_history: pd.DataFrame):
         StockRawHistory.objects.bulk_create(raw_history_bulk)
 
 
-def update_stock_daily_history_main(run_mode: str = AUTO_MODE):
-    if not is_market_open() or run_mode == MANUAL_MODE:
+def update_stock_daily_history_main():
+    if not is_market_open():
         print(Fore.BLUE + "update_get_existing_industrial_group" + Style.RESET_ALL)
         update_get_existing_industrial_group()
 
@@ -78,22 +77,24 @@ def update_stock_daily_history_main(run_mode: str = AUTO_MODE):
         remove_expired_instruments()
 
         today_date = date.today().strftime("%Y-%m-%d")
-        today_history = get_market_watch_data_from_redis()
-        if today_date != today_history.iloc[0].get("last_date", "no_date"):
-            return
+        last_history = get_market_watch_data_from_redis()
+        last_open_market_date = last_history.iloc[0].get("last_date", "no_date")
 
-        add_today_history(today_history)
-
-        update_stock_adjusted_history()
+        if today_date == last_open_market_date:
+            add_today_history(last_history)
 
     else:
+        raise Exception("MARKET IS STILL OPEN!!!")
+
+    update_stock_adjusted_history()
+
+    if today_date != last_open_market_date:
         raise Exception("MARKET WAS NOT OPEN TODAY!!!")
 
 
-def update_stock_daily_history(run_mode: str = AUTO_MODE):
+def update_stock_daily_history():
 
     run_main_task(
         main_task=update_stock_daily_history_main,
-        kw_args={"run_mode": run_mode},
         daily=True,
     )

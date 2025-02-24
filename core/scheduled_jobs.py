@@ -377,7 +377,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
 
     scheduler.add_job(
         func=update_market_watch_indices,
-        id="stock_market_watch_task",
+        id="update_market_watch_indices_task",
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
@@ -390,7 +390,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_stock_daily_history_task",
         replace_existing=True,
         trigger="cron",
-        hour="16",
+        hour="14",
         minute="35",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
@@ -400,8 +400,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_info_task",
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
-        hour="14",
+        hour="17",
         minute="30",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
@@ -411,7 +410,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_roi_task",
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
         minute="*/5",
     )

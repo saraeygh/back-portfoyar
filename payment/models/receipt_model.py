@@ -92,11 +92,15 @@ class Receipt(TimeStampMixin, models.Model):
 
     @property
     def discount_name(self):
-        return self.discount_object.name
+        if self.discount_type:
+            return self.discount_object.name
+        return ""
 
     @property
     def discount_percent(self):
-        return self.discount_object.discount_percent
+        if self.discount_type:
+            return self.discount_object.discount_percent
+        return 0
 
     @property
     def method_name(self):
