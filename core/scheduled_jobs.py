@@ -270,7 +270,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
-        minute="*/5",
+        minute="*/2",
     )
 
     scheduler.add_job(
