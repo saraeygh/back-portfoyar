@@ -1,3 +1,5 @@
+import jdatetime as jdt
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,5 +19,23 @@ class SubscriptionAPIView(APIView):
         subscriptions = Subscription.objects.filter(
             user=user, is_enabled=True
         ).order_by("-end_at")
+
         subscriptions = GetSubscriptionSerailizer(subscriptions, many=True)
-        return Response(subscriptions.data, status=status.HTTP_200_OK)
+        subscriptions = subscriptions.data
+        if subscriptions:
+            return Response(subscriptions, status=status.HTTP_200_OK)
+
+        today_date = jdt.date.today().strftime("%Y-%m-%d")
+        NO_SUB_DEFAULT = [
+            {
+                "id": 0,
+                "feature_name": "بدون اشتراک",
+                "is_active": False,
+                "remained_days": 0,
+                "total_days": 0,
+                "start_at_shamsi": today_date,
+                "end_at_shamsi": today_date,
+            }
+        ]
+
+        return Response(NO_SUB_DEFAULT, status=status.HTTP_200_OK)
