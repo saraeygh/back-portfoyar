@@ -10,7 +10,7 @@ class GetReceiptSerailizer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
         fields = [
-            # "id",
+            "id",
             #
             "feature_name",
             "feature_duration",
