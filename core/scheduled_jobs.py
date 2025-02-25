@@ -105,11 +105,12 @@ def add_account_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=disable_expired_subscription,
         id="disable_expired_subscription_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="1",
         minute="5",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -121,6 +122,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         func=dashboard_buy_sell_orders_value,
         id="dashboard_buy_sell_orders_value_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
@@ -131,6 +133,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         func=dashboard_last_close_price,
         id="dashboard_last_close_price_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
@@ -141,6 +144,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         func=dashboard_total_index,
         id="dashboard_total_index_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
@@ -151,6 +155,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         func=dashboard_unweighted_index,
         id="dashboard_unweighted_index_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
@@ -161,6 +166,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         func=dashboard_option_value_analysis,
         id="dashboard_option_value_analysis_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
@@ -174,62 +180,68 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=populate_domestic_market_db,
         id="populate_domestic_market_db_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="19",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=calculate_commodity_mean_domestic,
         id="calculate_commodity_mean_domestic_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=calculate_monthly_sell_domestic,
         id="calculate_monthly_sell_domestic_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="20",
         minute="30",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=calculate_production_sell_domestic,
         id="calculate_production_sell_domestic_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="21",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=calculate_producers_yearly_value,
         id="calculate_producers_yearly_value_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="21",
         minute="45",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=get_dollar_daily_price,
         id="get_dollar_daily_price_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         minute="*/30",
@@ -242,17 +254,19 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_fund_info,
         id="get_fund_detail_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="20",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=get_all_fund_detail,
         id="get_all_fund_detail_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="9-17",
@@ -267,6 +281,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         func=update_derivative_info,
         id="update_derivative_info_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -276,29 +291,32 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_future_base_equity,
         id="update_future_base_equity_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="22",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=update_option_base_equity,
         id="update_option_base_equity_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="22",
         minute="11",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=update_future,
         id="update_future_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -309,6 +327,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         func=update_option_result,
         id="update_option_result_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
@@ -318,21 +337,23 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=check_future_active_contracts,
         id="check_future_active_contracts_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="22",
         minute="12",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=check_option_active_contracts,
         id="check_option_active_contracts_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="22",
         minute="13",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -342,12 +363,13 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=calculate_commodity_means_global,
         id="calculate_commodity_means_global_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="7",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -358,6 +380,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         func=update_option_data_from_tse,
         id="update_option_data_from_tse_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -367,12 +390,13 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_option_history,
         id="get_option_history_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="1",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
@@ -384,6 +408,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         func=update_market_watch,
         id="update_market_watch_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -394,6 +419,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         func=update_market_watch_indices,
         id="update_market_watch_indices_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -403,27 +429,30 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_stock_daily_history,
         id="update_stock_daily_history_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="14",
         minute="35",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=update_instrument_info,
         id="update_instrument_info_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="17",
         minute="30",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=update_instrument_roi,
         id="update_instrument_roi_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="9-14",
         minute="*/15",
@@ -432,18 +461,20 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_value_history,
         id="stock_value_history_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="5",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=stock_value_change,
         id="stock_value_change_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -453,18 +484,20 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_option_value_history,
         id="stock_option_value_history_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="7",
         minute="30",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     scheduler.add_job(
         func=stock_option_value_change,
         id="stock_option_value_change_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -475,6 +508,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         func=stock_option_price_spread,
         id="stock_option_price_spread_task",
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
@@ -484,12 +518,13 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_monthly_activity_report_letter,
         id="get_monthly_activity_report_letter_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         day_of_week="*",
         hour="6",
         minute="10",
-        misfire_grace_time=MGT_FOR_DAILY_TASKS,
     )
 
     return scheduler
