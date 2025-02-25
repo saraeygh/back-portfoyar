@@ -256,7 +256,7 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="9-17",
-        second="*/45",
+        minute="*/5",
     )
 
     return scheduler
@@ -270,7 +270,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
-        minute="*/1",
+        minute="*/5",
     )
 
     scheduler.add_job(
@@ -302,7 +302,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
-        second="*/30",
+        minute="*/1",
     )
 
     scheduler.add_job(
@@ -312,7 +312,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="10-17",
-        second="*/45",
+        minute="*/1",
     )
 
     scheduler.add_job(
@@ -361,7 +361,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        second="*/15",
+        second="*/30",
     )
 
     scheduler.add_job(
@@ -387,7 +387,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        second="*/20",
+        second="*/45",
     )
 
     scheduler.add_job(
@@ -397,7 +397,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        second="*/55",
+        minute="*/1",
     )
 
     scheduler.add_job(
@@ -426,7 +426,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         hour="9-14",
-        minute="*/5",
+        minute="*/15",
     )
 
     scheduler.add_job(
@@ -447,7 +447,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        minute="*/1",
+        minute="*/3",
     )
 
     scheduler.add_job(
@@ -478,7 +478,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-15",
-        minute="*/1",
+        minute="*/3",
     )
 
     scheduler.add_job(
