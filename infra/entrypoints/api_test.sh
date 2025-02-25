@@ -7,4 +7,4 @@ python manage.py migrate
 
 python manage.py pre_start_functions
 
-daphne -b 0.0.0.0 -p 9000 samaneh.asgi:application
+gunicorn --workers 4 --bind 0.0.0.0:9000 samaneh.wsgi:application

@@ -27,8 +27,6 @@ dependencies = [
     "django-prometheus>=2.3.1",
     "colorama>=0.4.6",
     "psutil>=6.1.0",
-    "channels>=4.2.0",
-    "daphne>=4.1.2",
     "SQLAlchemy>=2.0.36",
     "apscheduler>=3.11.0",
     "pandas==2.0.3",

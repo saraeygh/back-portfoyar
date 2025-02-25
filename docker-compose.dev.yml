@@ -23,9 +23,6 @@ services:
   redis_test:
     image: docker.arvancloud.ir/redis:7.2
     container_name: redis_test
-    volumes:
-      - ./infra/redis/dev/redis.conf:/usr/local/etc/redis/redis.conf
-      - redis_data:/data
     networks:
       - test
     depends_on:
@@ -56,6 +53,7 @@ services:
       - "27017:27017"
 
   apscheduler_test:
+    mem_limit: 3g
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
@@ -118,7 +116,6 @@ networks:
 
 volumes:
   postgres_test:
-  redis_data:
   mongodb_test:
   ticket_appendix:
   django_logs:
