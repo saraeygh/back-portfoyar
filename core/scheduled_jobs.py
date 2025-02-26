@@ -269,7 +269,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="10-17",
+        hour="11-17",
         minute="*/2",
     )
 
@@ -301,7 +301,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="10-17",
+        hour="11-17",
         minute="*/1",
     )
 
@@ -311,7 +311,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="10-17",
+        hour="11-17",
         minute="*/1",
     )
 
