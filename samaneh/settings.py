@@ -80,6 +80,8 @@ MIDDLEWARE = [
 
 CSRF_TRUSTED_ORIGINS = [
     # DOMAINS
+    "http://my.portfoyar.com",
+    "https://my.portfoyar.com",
     "http://portfoyar.com",
     "https://portfoyar.com",
     # LOCALHOST
