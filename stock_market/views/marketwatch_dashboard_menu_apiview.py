@@ -38,7 +38,7 @@ class StockDashboardAPIView(APIView):
             index_result = index_result.sort_values(by=index, ascending=False)
             index_result = index_result.head(MARKET_WATCH_TOP_5_LIMIT)
             index_result.reset_index(drop=True, inplace=True)
-            index_result["id"] = index_result.apply(add_index_as_id, axis=1)
+            # index_result["id"] = index_result.apply(add_index_as_id, axis=1)
             index_result = index_result.to_dict(orient="records")
 
             index_result = index_serializer(index_result, many=True)
@@ -71,7 +71,7 @@ class OptionDashboardAPIView(APIView):
 
             index_result = index_result.head(MARKET_WATCH_TOP_5_LIMIT)
             index_result.reset_index(drop=True, inplace=True)
-            index_result["id"] = index_result.apply(add_index_as_id, axis=1)
+            # index_result["id"] = index_result.apply(add_index_as_id, axis=1)
             index_result = index_result.to_dict(orient="records")
             index_result = index_serializer(index_result, many=True)
             result[index] = index_result.data
