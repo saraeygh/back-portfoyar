@@ -28,7 +28,7 @@ def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = Non
         order_book = order_book[order_book["industrial_group"] == industrial_group]
     else:
         order_book = order_book[
-            ~order_book["industrial_group"] == FUNDS_INDUSTRIAL_GROUP
+            order_book["industrial_group"] != FUNDS_INDUSTRIAL_GROUP
         ]
 
     if paper_type:
