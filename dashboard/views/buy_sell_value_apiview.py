@@ -16,6 +16,8 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
 )
 
+FUNDS_INDUSTRIAL_GROUP = 68
+
 
 def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = None):
     order_book = pd.DataFrame(row["order_book_value"])
@@ -24,6 +26,10 @@ def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = Non
 
     if industrial_group:
         order_book = order_book[order_book["industrial_group"] == industrial_group]
+    else:
+        order_book = order_book[
+            ~order_book["industrial_group"] == FUNDS_INDUSTRIAL_GROUP
+        ]
 
     if paper_type:
         order_book = order_book[order_book["paper_type"] == paper_type]
