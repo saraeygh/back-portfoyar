@@ -34,7 +34,7 @@ class UnweightedIndexDailyAPIView(APIView):
         if date == today_date:
             chart_title = "تغییرات امروز شاخص هم‌وزن"
         else:
-            chart_title = (f"تغییرات شاخص هم‌وزن مربوط به تاریخ {date}",)
+            chart_title = (f"تغییرات شاخص هم‌وزن {date}",)
 
         unweighted_index.drop("date", axis=1, inplace=True)
         unweighted_index.rename(

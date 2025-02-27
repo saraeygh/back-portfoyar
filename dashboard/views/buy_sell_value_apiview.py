@@ -68,11 +68,9 @@ class BuySellValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز ارزش سفارش‌های خرید و فروش پنج خط اول"
+            chart_title = "ارزش سفارش‌های خرید و فروش امروز (بدون صندوق‌ها)"
         else:
-            chart_title = (
-                f"تغییرات ارزش سفارش‌های خرید و فروش پنج خط اول به تاریخ {date}"
-            )
+            chart_title = f"ارزش سفارش‌های خرید و فروش {date} (بدون صندوق‌ها)"
 
         history_df.drop(["date", "order_book_value"], axis=1, inplace=True)
 
@@ -82,8 +80,8 @@ class BuySellValueAPIView(APIView):
 
         chart = {
             "x_title": "زمان",
-            "y_1_title": "ارزش سفارش‌های خرید (میلیارد تومان)",
-            "y_2_title": "ارزش سفارش‌های فروش (میلیارد تومان)",
+            "y_1_title": "سفارش‌های خرید (میلیارد تومان)",
+            "y_2_title": "سفارش‌های فروش (میلیارد تومان)",
             "chart_title": chart_title,
             "history": history_df.to_dict(orient="records"),
         }

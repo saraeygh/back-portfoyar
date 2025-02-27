@@ -34,16 +34,16 @@ class OptionValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز ارزش قراردادهای اختیار"
+            chart_title = "ارزش کل امروز آپشن‌ها"
         else:
-            chart_title = f"تغییرات ارزش قراردادهای اختیار به تاریخ {date}"
+            chart_title = f"ارزش کل آپشن‌ها {date}"
 
         option_value.rename(columns={"time": "x", "option_value": "y"}, inplace=True)
         option_value.drop("date", axis=1, inplace=True)
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش قراردادهای اختیار (میلیارد تومان)",
+            "y_title": "ارزش کل آپشن‌ها (میلیارد تومان)",
             "chart_title": chart_title,
             "history": option_value.to_dict(orient="records"),
         }
@@ -67,16 +67,16 @@ class CallValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز ارزش اختیارهای خرید"
+            chart_title = "ارزش کل امروز کال آپشن‌ها"
         else:
-            chart_title = f"تغییرات ارزش اختیارهای خرید به تاریخ {date}"
+            chart_title = f"ارزش کل کال آپشن‌ها {date}"
 
         option_value.rename(columns={"time": "x", "call_value": "y"}, inplace=True)
         option_value.drop("date", axis=1, inplace=True)
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش اختیارهای خرید (میلیارد تومان)",
+            "y_title": "ارزش کل کال آپشن‌ها (میلیارد تومان)",
             "chart_title": chart_title,
             "history": option_value.to_dict(orient="records"),
         }
@@ -100,16 +100,16 @@ class PutValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز ارزش اختیارهای فروش"
+            chart_title = "ارزش کل امروز پوت آپشن‌ها"
         else:
-            chart_title = f"تغییرات ارزش اختیارهای فروش به تاریخ {date}"
+            chart_title = f"ارزش کل پوت آپشن‌ها {date}"
 
         option_value.rename(columns={"time": "x", "put_value": "y"}, inplace=True)
         option_value.drop("date", axis=1, inplace=True)
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش اختیارهای فروش (میلیارد تومان)",
+            "y_title": "ارزش کل پوت آپشن‌ها (میلیارد تومان)",
             "chart_title": chart_title,
             "history": option_value.to_dict(orient="records"),
         }
@@ -133,9 +133,9 @@ class CallToPutAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز نسبت کال به پوت"
+            chart_title = "نسبت کال به پوت امروز"
         else:
-            chart_title = f"تغییرات کال به پوت به تاریخ {date}"
+            chart_title = f"نسبت کال به پوت {date}"
 
         option_value.rename(columns={"time": "x", "call_to_put": "y"}, inplace=True)
         option_value.drop("date", axis=1, inplace=True)
@@ -166,9 +166,9 @@ class OptionToMarketAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز نسبت ارزش اختیارها به کل بازار"
+            chart_title = "نسبت امروز آپشن‌ها به کل بازار"
         else:
-            chart_title = f"تغییرات ارزش اختیارها به کل بازار به تاریخ {date}"
+            chart_title = f"نسبت آپشن‌ها به کل بازار {date}"
 
         option_value.rename(
             columns={"time": "x", "option_to_market": "y"}, inplace=True
@@ -177,7 +177,7 @@ class OptionToMarketAPIView(APIView):
 
         chart = {
             "x_title": "زمان",
-            "y_title": "نسبت ارزش اختیارها به کل بازار",
+            "y_title": "نسبت آپشن‌ها به کل بازار",
             "chart_title": chart_title,
             "history": option_value.to_dict(orient="records"),
         }

@@ -14,6 +14,8 @@ from core.configs import (
     LAST_CLOSE_PRICE_COLLECTION,
 )
 
+FUNDS_INDUSTRIAL_GROUP = 68
+
 
 def add_last_close_price(row, industrial_group: int = None, paper_type: int = None):
     last_close = pd.DataFrame(row["last_close_price"])
@@ -22,6 +24,10 @@ def add_last_close_price(row, industrial_group: int = None, paper_type: int = No
 
     if industrial_group:
         last_close = last_close[last_close["industrial_group"] == industrial_group]
+    else:
+        last_close = last_close[
+            last_close["industrial_group"] != FUNDS_INDUSTRIAL_GROUP
+        ]
 
     if paper_type:
         last_close = last_close[last_close["paper_type"] == paper_type]
@@ -60,9 +66,9 @@ class LastClosePriceAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "تغییرات امروز قیمت آخرین و قیمت پایانی"
+            chart_title = "درصد قیمت آخرین و پایانی امروز (بدون صندوق‌ها)"
         else:
-            chart_title = f"تغییرات قیمت آخرین و قیمت پایانی به تاریخ {date}"
+            chart_title = f"تغییرات قیمت آخرین و قیمت پایانی {date} (بدون صندوق‌ها)"
 
         history_df.drop(["date", "last_close_price"], axis=1, inplace=True)
 
@@ -77,8 +83,8 @@ class LastClosePriceAPIView(APIView):
 
         chart = {
             "x_title": "زمان",
-            "y_1_title": "تغییرات قیمت آخرین (درصد)",
-            "y_2_title": "تغییرات قیمت پایانی (درصد)",
+            "y_1_title": "درصد قیمت آخرین",
+            "y_2_title": "درصد قیمت پایانی",
             "chart_title": chart_title,
             "history": history_df.to_dict(orient="records"),
         }

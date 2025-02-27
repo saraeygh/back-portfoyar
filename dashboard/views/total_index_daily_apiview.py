@@ -33,7 +33,7 @@ class TotalIndexDailyAPIView(APIView):
         if date == today_date:
             chart_title = "تغییرات امروز شاخص کل"
         else:
-            chart_title = (f"تغییرات شاخص کل مربوط به تاریخ {date}",)
+            chart_title = (f"تغییرات شاخص کل {date}",)
 
         total_index.drop("date", axis=1, inplace=True)
         total_index.rename(columns={"time": "x", "current_value": "y"}, inplace=True)
