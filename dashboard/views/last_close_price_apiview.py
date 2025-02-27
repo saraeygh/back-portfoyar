@@ -68,7 +68,7 @@ class LastClosePriceAPIView(APIView):
         if date == today_date:
             chart_title = "درصد قیمت آخرین و پایانی امروز (بدون صندوق‌ها)"
         else:
-            chart_title = f"تغییرات قیمت آخرین و قیمت پایانی {date} (بدون صندوق‌ها)"
+            chart_title = f"درصد قیمت آخرین و پایانی {date} (بدون صندوق‌ها)"
 
         history_df.drop(["date", "last_close_price"], axis=1, inplace=True)
 

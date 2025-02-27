@@ -30,6 +30,14 @@ index_urls = [
     path("unweighted-index-daily", UnweightedIndexDailyAPIView.as_view()),
 ]
 
+market_watch_urls = [
+    path("buy-sell-value", BuySellValueAPIView.as_view()),
+    path("last-close-price", LastClosePriceAPIView.as_view()),
+]
+
+dollar_urls = [
+    path("dollar-price", DollarPriceAPIView.as_view()),
+]
 option_urls = [
     path("option-value", OptionValueAPIView.as_view()),
     path("call-value", CallValueAPIView.as_view()),
@@ -53,13 +61,10 @@ stock_urls = [
 ]
 
 urlpatterns = (
-    [
-        path("buy-sell-value", BuySellValueAPIView.as_view()),
-        path("last-close-price", LastClosePriceAPIView.as_view()),
-        path("dollar-price", DollarPriceAPIView.as_view()),
-    ]
-    + dashboard_menu_urls
+    dashboard_menu_urls
     + index_urls
+    + dollar_urls
+    + market_watch_urls
     + option_urls
     + domestic_urls
     + global_urls
