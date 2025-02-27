@@ -27,9 +27,13 @@ def update_get_existing_instrument():
             for instrument in response:
                 ins_code = instrument.get("insCode")
                 industrial_group_code = int((instrument.get("csv")).strip())
-                industrial_group = StockIndustrialGroup.objects.get(
-                    code=industrial_group_code
-                )
+                try:
+                    industrial_group = StockIndustrialGroup.objects.get(
+                        code=industrial_group_code
+                    )
+                except StockIndustrialGroup.DoesNotExist:
+                    continue
+
                 ins_id = instrument.get("insID")
                 symbol = instrument.get("lva")
                 name = instrument.get("lvc")
