@@ -13,8 +13,13 @@ from core.configs import (
     DASHBOARD_MONGO_DB,
     LAST_CLOSE_PRICE_COLLECTION,
 )
-
-FUNDS_INDUSTRIAL_GROUP = 68
+from stock_market.utils import (
+    STOCK_PAPER,
+    INITIAL_MARKET_PAPER,
+    PRIORITY_PAPER,
+    FUND_PAPER,
+    ETF_FUNDS_IG,
+)
 
 
 def add_last_close_price(row, industrial_group: int = None, paper_type: int = None):
@@ -25,14 +30,16 @@ def add_last_close_price(row, industrial_group: int = None, paper_type: int = No
     if industrial_group:
         last_close = last_close[last_close["industrial_group"] == industrial_group]
     else:
-        last_close = last_close[
-            last_close["industrial_group"] != FUNDS_INDUSTRIAL_GROUP
-        ]
+        last_close = last_close[last_close["industrial_group"] != ETF_FUNDS_IG]
 
     if paper_type:
         last_close = last_close[last_close["paper_type"] == paper_type]
     else:
-        last_close = last_close[last_close["paper_type"].isin([1, 2, 8, 4])]
+        last_close = last_close[
+            last_close["paper_type"].isin(
+                [STOCK_PAPER, INITIAL_MARKET_PAPER, PRIORITY_PAPER, FUND_PAPER]
+            )
+        ]
 
     if not last_close.empty:
         last_price_change = round(last_close["last_price_change"].mean(), 2)
@@ -66,9 +73,9 @@ class LastClosePriceAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "درصد قیمت آخرین و پایانی امروز (بدون صندوق‌ها)"
+            chart_title = "درصد قیمت آخرین و پایانی امروز (غیر صندوق‌ها)"
         else:
-            chart_title = f"درصد قیمت آخرین و پایانی {date} (بدون صندوق‌ها)"
+            chart_title = f"درصد قیمت آخرین و پایانی {date} (غیر صندوق‌ها)"
 
         history_df.drop(["date", "last_close_price"], axis=1, inplace=True)
 

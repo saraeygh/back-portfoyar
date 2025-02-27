@@ -16,9 +16,13 @@ from core.configs import (
     RIAL_TO_BILLION_TOMAN,
 )
 
-from stock_market.utils import STOCK_PAPER, INITIAL_MARKET_PAPER, PRIORITY_PAPER
-
-# FUNDS_INDUSTRIAL_GROUP = 68
+from stock_market.utils import (
+    STOCK_PAPER,
+    INITIAL_MARKET_PAPER,
+    PRIORITY_PAPER,
+    FUND_PAPER,
+    ETF_FUNDS_IG,
+)
 
 
 def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = None):
@@ -28,17 +32,15 @@ def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = Non
 
     if industrial_group:
         order_book = order_book[order_book["industrial_group"] == industrial_group]
-    # else:
-    #     order_book = order_book[
-    #         order_book["industrial_group"] != FUNDS_INDUSTRIAL_GROUP
-    #     ]
+    else:
+        order_book = order_book[order_book["industrial_group"] != ETF_FUNDS_IG]
 
     if paper_type:
         order_book = order_book[order_book["paper_type"] == paper_type]
     else:
         order_book = order_book[
             order_book["paper_type"].isin(
-                [STOCK_PAPER, INITIAL_MARKET_PAPER, PRIORITY_PAPER]
+                [STOCK_PAPER, INITIAL_MARKET_PAPER, PRIORITY_PAPER, FUND_PAPER]
             )
         ]
 
@@ -74,9 +76,9 @@ class BuySellValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "ارزش سفارش‌های خرید و فروش امروز (بدون صندوق‌ها)"
+            chart_title = "ارزش سفارش‌های خرید و فروش امروز (غیر صندوق‌ها)"
         else:
-            chart_title = f"ارزش سفارش‌های خرید و فروش {date} (بدون صندوق‌ها)"
+            chart_title = f"ارزش سفارش‌های خرید و فروش {date} (غیر صندوق‌ها)"
 
         history_df.drop(["date", "order_book_value"], axis=1, inplace=True)
 

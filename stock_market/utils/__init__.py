@@ -28,6 +28,7 @@ from .used_dicts_util import (
     PRIORITY_PAPER,
     FUND_PAPER,
     OPTION_PAPER,
+    ETF_FUNDS_IG,
 )
 from .remove_expired_instruments_util import remove_expired_instruments
 from .update_stock_raw_history_util import update_stock_raw_history
