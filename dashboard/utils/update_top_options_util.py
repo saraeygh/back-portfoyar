@@ -46,5 +46,3 @@ def update_top_options():
         )
 
         mongo_conn.insert_docs_into_collection(top_options)
-
-        mongo_conn.client.close()

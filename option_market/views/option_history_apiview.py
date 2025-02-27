@@ -36,7 +36,6 @@ class OptionAssetNamesAPIView(APIView):
         option_base_equity = pd.DataFrame(
             redis_conn.get_list_of_dicts(list_key="option_data")
         )
-        redis_conn.client.close()
 
         option_base_equity.sort_values(by="base_equity_symbol", inplace=True)
         option_base_equity = option_base_equity["base_equity_symbol"].unique().tolist()
@@ -57,7 +56,6 @@ class AssetOptionSymbolsAPIView(APIView):
             asset_options_list = pd.DataFrame(
                 redis_conn.get_list_of_dicts(list_key="option_data")
             )
-            redis_conn.client.close()
 
             asset_options_list = asset_options_list[
                 asset_options_list["base_equity_symbol"] == asset_name
@@ -91,7 +89,6 @@ class SymbolHistoryAPIView(APIView):
             symbol_history = mongo_conn.collection.find_one(query_filter, {"_id": 0})
             symbol_history = symbol_history["history"]
             symbol_history_srz = SymbolHistorySerializer(symbol_history, many=True)
-            mongo_conn.client.close()
 
             set_json_cache(cache_key, symbol_history_srz.data, SIXTY_MINUTES_CACHE)
             return Response(symbol_history_srz.data, status=status.HTTP_200_OK)

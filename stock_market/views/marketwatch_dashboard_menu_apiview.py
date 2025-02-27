@@ -28,7 +28,7 @@ class StockDashboardAPIView(APIView):
                     {"_id": 0},
                 )
             )
-            mongo_conn.client.close()
+
             if index_result.empty:
                 result[index] = []
                 continue
@@ -55,7 +55,7 @@ class OptionDashboardAPIView(APIView):
         for index, index_serializer in OPTION_MARKET_WATCH_INDICES.items():
             mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index)
             index_result = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-            mongo_conn.client.close()
+
             if index_result.empty:
                 result[index] = []
                 continue

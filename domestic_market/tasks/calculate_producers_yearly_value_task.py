@@ -50,7 +50,6 @@ def calculate_producers_yearly_value_main():
         db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
     )
     mongo_conn.insert_docs_into_collection(documents=yearly_values)
-    mongo_conn.client.close()
 
 
 def calculate_producers_yearly_value():

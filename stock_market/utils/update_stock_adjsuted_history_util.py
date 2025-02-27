@@ -43,7 +43,6 @@ def remove_expired_adj_histories(instruments_ins_code_list):
         db_name=STOCK_MONGO_DB, collection_name="adjusted_history"
     )
     mongo_conn.collection.delete_many(query)
-    mongo_conn.client.close()
 
 
 def update_stock_adjusted_history():
@@ -107,7 +106,6 @@ def update_stock_adjusted_history():
         mongo_conn.collection.insert_one(
             {"ins_code": f"{instrument.ins_code}", "adjusted_history": adj_history}
         )
-        mongo_conn.client.close()
 
         instruments_ins_code_list.append(instrument.ins_code)
     # remove_expired_adj_histories(instruments_ins_code_list)

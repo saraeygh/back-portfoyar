@@ -72,6 +72,4 @@ def get_group_roi(favorite_roi_groups):
 
         group_roi.append(new_group)
 
-    mongo_conn.client.close()
-
     return group_roi

@@ -34,7 +34,7 @@ class PriceSpreadStrategyAPIView(APIView):
             db_name=STOCK_MONGO_DB, collection_name="option_price_spread"
         )
         results = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
+
         results = results[abs(results["strike_deviation"]) <= strike_deviation]
         if results.empty:
             return Response(

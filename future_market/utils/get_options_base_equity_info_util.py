@@ -177,7 +177,6 @@ def get_options_base_equity_info():
         data = data[list(col_mapping.values())]
 
         base_equity_data = pd.concat([base_equity_data, data])
-    redis_conn.client.close()
 
     base_equities = pd.merge(
         left=base_equities,

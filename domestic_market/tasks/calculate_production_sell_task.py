@@ -82,7 +82,6 @@ def calculate_production_sell_domestic_main():
         db_name=DOMESTIC_MONGO_DB, collection_name="producer_sell"
     )
     mongo_conn.insert_docs_into_collection(documents=production_sell_list)
-    mongo_conn.client.close()
 
 
 def calculate_production_sell_domestic():

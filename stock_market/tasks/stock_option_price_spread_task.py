@@ -72,7 +72,6 @@ def get_last_options():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     last_options = redis_conn.get_list_of_dicts(list_key="option_data")
     last_options = pd.DataFrame(last_options)
-    redis_conn.client.close()
 
     return last_options
 
@@ -340,7 +339,6 @@ def stock_option_price_spread_main(run_mode):
 
             last_spreads = last_spreads.to_dict(orient="records")
             mongo_conn.insert_docs_into_collection(documents=last_spreads)
-            mongo_conn.client.close()
 
 
 def stock_option_price_spread(run_mode: str = AUTO_MODE):

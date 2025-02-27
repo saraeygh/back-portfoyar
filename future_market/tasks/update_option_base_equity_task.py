@@ -110,7 +110,6 @@ def update_option_base_equity_main():
                         derivative_symbol=symbol_code,
                         unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
                     )
-    redis_conn.client.close()
 
     print(
         Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL

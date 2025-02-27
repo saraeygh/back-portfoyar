@@ -34,7 +34,6 @@ def get_instrument_roi(instruments):
                     "ps": 0,
                 },
             )
-    mongo_conn.client.close()
 
     instruments_roi = pd.DataFrame(instruments_roi)
     if instruments_roi.empty:

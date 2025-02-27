@@ -85,7 +85,7 @@ def update_info():
         except (json.decoder.JSONDecodeError, IndexError):
             continue
         except Exception as e:
-            redis_conn.client.close()
+
             print(Fore.RED + f"{e}" + Style.RESET_ALL)
             raise e
 
@@ -93,7 +93,6 @@ def update_info():
 def update_derivative_info_main():
     redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     is_running = redis_conn.client.get(name=IS_RUNNING)
-    redis_conn.client.close()
 
     if is_running is None:
         update_info()

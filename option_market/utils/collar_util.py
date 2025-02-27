@@ -132,4 +132,3 @@ def collar(option_data, redis_db_num: int):
     if result:
         redis_conn = RedisInterface(db=redis_db_num)
         redis_conn.bulk_push_list_of_dicts(list_key="collar", list_of_dicts=result)
-        redis_conn.client.close()

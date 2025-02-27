@@ -42,14 +42,13 @@ def get_historical_roi(ins_code):
     full_history = mongo_conn.collection.find_one(query_filter, {"_id": 0})
 
     if full_history is None:
-        mongo_conn.client.close()
+
         return historical_roi
 
     full_history = pd.DataFrame(full_history.get("adjusted_history", []))
     if full_history.empty:
-        mongo_conn.client.close()
+
         return historical_roi
-    mongo_conn.client.close()
 
     range_end_price = full_history.iloc[-1]
     range_end_price = (range_end_price.to_dict()).get("close_mean")
@@ -125,8 +124,6 @@ def update_instrument_info_main():
         query = {"ins_code": ins_obj.ins_code}
         mongo_conn.collection.delete_many(filter=query)
         mongo_conn.collection.insert_one(info)
-
-    mongo_conn.client.close()
 
 
 def update_instrument_info():

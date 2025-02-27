@@ -46,7 +46,7 @@ class StockCallValueChangeAPIView(APIView):
         )
         results = mongo_conn.collection.find({}, {"_id": 0})
         results = pd.DataFrame(results)
-        mongo_conn.client.close()
+
         if results.empty:
             return Response(
                 {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST

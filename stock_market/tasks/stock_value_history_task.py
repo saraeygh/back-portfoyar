@@ -61,7 +61,6 @@ def stock_value_history_main():
 
     mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="history")
     mongo_conn.insert_docs_into_collection(documents=duration_result_list)
-    mongo_conn.client.close()
 
     stock_value_change()
 

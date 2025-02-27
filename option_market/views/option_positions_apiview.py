@@ -51,7 +51,6 @@ def get_strategy_result_from_redis(strategy_key, table=None):
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
     strategy_result = pd.DataFrame(strategy_result)
-    redis_conn.client.close()
 
     if table == ALL_TABLE_COLS:
         pass

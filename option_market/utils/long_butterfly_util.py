@@ -196,4 +196,3 @@ def long_butterfly(option_data, redis_db_num: int):
         redis_conn.bulk_push_list_of_dicts(
             list_key="long_butterfly", list_of_dicts=result
         )
-        redis_conn.client.close()

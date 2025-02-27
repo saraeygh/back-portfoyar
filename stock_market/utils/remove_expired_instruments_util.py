@@ -11,7 +11,6 @@ from stock_market.utils import OPTION_PAPER
 def get_options():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     options = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
-    redis_conn.client.close()
 
     return options
 

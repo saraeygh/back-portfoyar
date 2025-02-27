@@ -25,7 +25,6 @@ class ProducerSellReportAPIView(APIView):
         producer_sell_report = list(
             mongo_conn.collection.find({"producer_id": company_id}, {"_id": 0})
         )
-        mongo_conn.client.close()
 
         if producer_sell_report:
             producer_sell_report = producer_sell_report[0]["report"]
@@ -49,7 +48,6 @@ class ProducerSellReportAPIViewV2(APIView):
         producer_sell_report = list(
             mongo_conn.collection.find({"producer_id": company_id}, {"_id": 0})
         )
-        mongo_conn.client.close()
 
         if producer_sell_report:
             producer_sell_report = producer_sell_report[0]["report"]

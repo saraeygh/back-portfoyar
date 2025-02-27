@@ -119,7 +119,7 @@ def get_update_history(instrument, instrument_type):
                 "history": option_history_df,
             }
         )
-        mongo_conn.client.close()
+
     except Exception as e:
         print(Fore.RED + f"{e}" + Style.RESET_ALL)
         return
@@ -145,13 +145,11 @@ def remove_expired_options_history():
     history = history.to_dict(orient="records")
     if history:
         mongo_conn.insert_docs_into_collection(documents=history)
-    mongo_conn.client.close()
 
 
 def get_option_history_main():
     redis_conn = RedisInterface(db=OPTION_REDIS_DB)
     all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
-    redis_conn.client.close()
 
     for instrument in tqdm(
         all_instruments, desc=f"Options history, #{len(all_instruments) * 2}", ncols=10

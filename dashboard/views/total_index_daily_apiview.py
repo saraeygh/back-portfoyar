@@ -24,7 +24,6 @@ class TotalIndexDailyAPIView(APIView):
             db_name=DASHBOARD_MONGO_DB, collection_name=TOTAL_INDEX_DAILY_COLLECTION
         )
         total_index = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
 
         date = str(int(total_index.iloc[0].get("date")))
         date = dt.strptime(date, "%Y%m%d")

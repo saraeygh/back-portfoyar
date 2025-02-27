@@ -104,14 +104,12 @@ def update_instrument_duration_roi(instrument_info: pd.DataFrame):
     if instrument_info:
         mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
         mongo_conn.insert_docs_into_collection(documents=instrument_info)
-        mongo_conn.client.close()
 
 
 def calculate_industry_duration_roi(durations: dict):
     mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name="roi")
     roi = list(mongo_conn.collection.find({}, {"_id": 0}))
     roi = pd.DataFrame(roi)
-    mongo_conn.client.close()
 
     industry_roi_list = list()
     unique_industry_id_list = roi["industrial_group_id"].unique().tolist()
@@ -138,7 +136,6 @@ def calculate_industry_duration_roi(durations: dict):
             db_name=STOCK_MONGO_DB, collection_name="industry_ROI"
         )
         mongo_conn.insert_docs_into_collection(documents=industry_roi_list)
-        mongo_conn.client.close()
 
 
 def update_instrument_roi_main(run_mode):
@@ -147,7 +144,6 @@ def update_instrument_roi_main(run_mode):
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )
         instrument_info = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
 
         last_data = get_market_watch_data_from_redis()
         if last_data.empty:

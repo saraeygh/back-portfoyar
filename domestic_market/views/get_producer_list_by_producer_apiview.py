@@ -22,7 +22,6 @@ class GetProducerListAPIView(APIView):
             db_name=DOMESTIC_MONGO_DB, collection_name="producers_yearly_value"
         )
         producers = list(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
 
         producers = pd.DataFrame(producers)
         if producers.empty:

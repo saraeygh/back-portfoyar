@@ -39,7 +39,7 @@ class StockIndustryInstrumentROIAPIView(APIView):
             {"_id": 0},
         )
         results = pd.DataFrame(results)
-        mongo_conn.client.close()
+
         results = results[(results["weekly_roi"] != STOCK_NA_ROI)]
         if results.empty:
             return Response(

@@ -95,7 +95,6 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
         mongo_conn.insert_docs_into_collection(documents=mean_list)
     else:
         mongo_conn.collection.delete_many({})
-    mongo_conn.client.close()
 
 
 def calculate_commodity_means_global_main():

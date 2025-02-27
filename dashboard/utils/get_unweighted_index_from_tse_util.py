@@ -42,5 +42,3 @@ def get_unweighted_index_from_tse():
     )
 
     mongo_conn.insert_docs_into_collection(unweighted_index)
-
-    mongo_conn.client.close()

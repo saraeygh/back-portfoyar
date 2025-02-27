@@ -234,7 +234,6 @@ def update_market_watch_indices_main(run_mode):
             index_df = index_df.to_dict(orient="records")
 
             mongo_conn.insert_docs_into_collection(documents=index_df)
-            mongo_conn.client.close()
 
 
 def update_market_watch_indices(run_mode: str = AUTO_MODE):

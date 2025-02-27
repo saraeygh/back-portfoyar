@@ -29,7 +29,6 @@ class OptionValueAPIView(APIView):
                 {}, {"_id": 0, "time": 1, "option_value": 1, "date": 1}
             )
         )
-        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -63,7 +62,6 @@ class CallValueAPIView(APIView):
                 {}, {"_id": 0, "time": 1, "call_value": 1, "date": 1}
             )
         )
-        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -97,7 +95,6 @@ class PutValueAPIView(APIView):
                 {}, {"_id": 0, "time": 1, "put_value": 1, "date": 1}
             )
         )
-        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -131,7 +128,6 @@ class CallToPutAPIView(APIView):
                 {}, {"_id": 0, "time": 1, "call_to_put": 1, "date": 1}
             )
         )
-        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -165,7 +161,6 @@ class OptionToMarketAPIView(APIView):
                 {}, {"_id": 0, "time": 1, "option_to_market": 1, "date": 1}
             )
         )
-        mongo_conn.client.close()
 
         date = option_value.iloc[0].get("date")
 
@@ -198,7 +193,6 @@ class TopOptionsAPIView(APIView):
             db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
         )
         top_options = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
 
         if top_options.empty:
             return Response([], status=status.HTTP_200_OK)

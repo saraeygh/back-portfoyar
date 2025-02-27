@@ -11,7 +11,6 @@ def get_dict_from_redis(username, prefix):
     redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     code_key = prefix + f"{username}"
     code_info = redis_conn.client.get(code_key)
-    redis_conn.client.close()
 
     return None if code_info is None else json.loads(code_info.decode("utf-8"))
 

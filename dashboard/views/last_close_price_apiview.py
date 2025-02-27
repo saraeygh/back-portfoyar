@@ -51,7 +51,6 @@ class LastClosePriceAPIView(APIView):
             db_name=DASHBOARD_MONGO_DB, collection_name=LAST_CLOSE_PRICE_COLLECTION
         )
         history_df = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
-        mongo_conn.client.close()
 
         history_df[["last_price_change", "closing_price_change"]] = history_df.apply(
             add_last_close_price, axis=1, args=(industrial_group, paper_type)

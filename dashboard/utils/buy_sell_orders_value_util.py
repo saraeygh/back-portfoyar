@@ -52,8 +52,6 @@ def check_date():
     if one_doc and one_doc["date"] != date:
         mongo_conn.collection.delete_many({})
 
-    mongo_conn.client.close()
-
     return date, time
 
 
@@ -78,5 +76,3 @@ def buy_sell_orders_value():
     )
 
     mongo_conn.collection.insert_one(new_doc)
-
-    mongo_conn.client.close()

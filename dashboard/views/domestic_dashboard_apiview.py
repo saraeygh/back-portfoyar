@@ -31,7 +31,6 @@ def get_range_result(collection_name, price_changes):
         range_result = list(
             mongo_conn.collection.find({"deviation": {"$lt": 0}}, {"_id": 0})
         )
-    mongo_conn.client.close()
 
     range_result = pd.DataFrame(range_result)
     if range_result.empty:

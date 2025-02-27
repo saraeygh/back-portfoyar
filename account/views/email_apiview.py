@@ -37,14 +37,12 @@ def set_dict_in_redis(code_info: dict):
     redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     redis_conn.client.delete(code_key)
     redis_conn.client.set(code_key, code_info, ex=expiration_time)
-    redis_conn.client.close()
 
 
 def get_dict_from_redis(username):
     code_key = REDIS_EMAIL_VERIFY_PREFIX + f"{username}"
     redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     code_info = redis_conn.client.get(code_key)
-    redis_conn.client.close()
 
     return None if code_info is None else json.loads(code_info.decode("utf-8"))
 

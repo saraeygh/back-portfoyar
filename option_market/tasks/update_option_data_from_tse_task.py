@@ -161,7 +161,6 @@ def update_option_data_from_tse_main(run_mode):
         redis_conn.bulk_push_list_of_dicts(
             list_key="option_data", list_of_dicts=option_data_dict
         )
-        redis_conn.client.close()
 
         print(
             Fore.BLUE

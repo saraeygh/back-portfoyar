@@ -42,5 +42,3 @@ def get_total_index_from_tse():
     )
 
     mongo_conn.insert_docs_into_collection(total_index)
-
-    mongo_conn.client.close()

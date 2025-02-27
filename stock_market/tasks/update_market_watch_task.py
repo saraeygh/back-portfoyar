@@ -96,7 +96,6 @@ def update_market_watch_main(run_mode):
         redis_conn.bulk_push_list_of_dicts(
             list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
         )
-        redis_conn.client.close()
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):

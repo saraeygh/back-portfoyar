@@ -225,7 +225,6 @@ def shorten_option_symbol(row, col_name):
 def update_option_result_main():
     redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     option_data = json.loads(redis_conn.client.get(name=OPTION_MARKET))
-    redis_conn.client.close()
 
     option_data = pd.DataFrame(option_data)
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)

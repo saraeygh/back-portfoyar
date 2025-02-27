@@ -50,7 +50,6 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 def get_strategy_result_from_redis(strategy_key, table=None):
     redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
-    redis_conn.client.close()
 
     strategy_result = pd.DataFrame(strategy_result)
     if table == ALL_TABLE_COLS:

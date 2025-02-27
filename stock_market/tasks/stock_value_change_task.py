@@ -87,7 +87,6 @@ def stock_value_change_main(run_mode):
 
         mongo_conn.collection = mongo_conn.db["value_change"]
         mongo_conn.insert_docs_into_collection(documents=value_change)
-        mongo_conn.client.close()
 
 
 def stock_value_change(run_mode: str = AUTO_MODE):

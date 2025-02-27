@@ -22,7 +22,7 @@ def check_daily_limitation(request):
         tried_count = redis_conn.client.get(ip)
         if tried_count is None:
             redis_conn.client.set(ip, 1, ex=SIGNUP_TRY_COUNT_EXPIRY)
-            redis_conn.client.close()
+
             return False, ""
 
         else:
@@ -39,7 +39,6 @@ def check_daily_limitation(request):
             else:
                 time_left = redis_conn.client.ttl(ip)
                 redis_conn.client.set(ip, today_tried_count, ex=time_left)
-                redis_conn.client.close()
 
                 return False, ""
 

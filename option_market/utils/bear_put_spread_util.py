@@ -159,4 +159,3 @@ def bear_put_spread(option_data, redis_db_num: int):
         redis_conn.bulk_push_list_of_dicts(
             list_key="bear_put_spread", list_of_dicts=result
         )
-        redis_conn.client.close()

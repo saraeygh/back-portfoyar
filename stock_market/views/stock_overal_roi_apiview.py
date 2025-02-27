@@ -41,7 +41,7 @@ class StockOveralROIAPIView(APIView):
             {"paper_id": {"$in": list(MAIN_PAPER_TYPE_DICT.keys())}}, {"_id": 0}
         )
         results = pd.DataFrame(results)
-        mongo_conn.client.close()
+
         na_rows = results[(results[SORT_COL] == STOCK_NA_ROI)]
         results = results[(results[SORT_COL] != STOCK_NA_ROI)]
         if results.empty:
