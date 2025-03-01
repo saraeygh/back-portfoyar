@@ -81,3 +81,5 @@ ENV EMAIL_TO=saraey.gholamreza@gmail.com
 
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_FIRST_NAME=ادمین
+
+RUN apk add htop

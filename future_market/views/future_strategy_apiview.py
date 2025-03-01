@@ -9,9 +9,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE, FUTURE_REDIS_DB
+from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE, FUTURE_MONGO_DB
 from core.utils import (
-    RedisInterface,
+    MongodbInterface,
     TABLE_COLS_QP,
     ALL_TABLE_COLS,
     SUMMARY_TABLE_COLS,
@@ -75,9 +75,9 @@ def sort_strategy_result(positions, sort_column, strategy_key, table):
 
 
 def get_strategy_result_from_redis(strategy_key, table):
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-    positions = redis_conn.get_list_of_dicts(list_key=strategy_key)
-    positions = pd.DataFrame(positions)
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+    mongo_conn.collection = mongo_conn.db[strategy_key]
+    positions = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     positions = sort_strategy_result(
         positions, RESULT_SORTING_COLUMN, strategy_key, table

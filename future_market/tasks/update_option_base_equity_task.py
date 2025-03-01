@@ -1,10 +1,9 @@
-import json
 import pandas as pd
 
 from colorama import Fore, Style
 
-from core.utils import RedisInterface, run_main_task
-from core.configs import FUTURE_REDIS_DB
+from core.utils import MongodbInterface, run_main_task
+from core.configs import FUTURE_MONGO_DB
 
 from future_market.models import (
     OptionBaseEquity,
@@ -85,13 +84,12 @@ def update_option_base_equity_main():
         Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
     )
 
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
-        data = redis_conn.client.get(name=base_equity_key)
-        if data is None:
+        mongo_conn.collection = mongo_conn.db[base_equity_key]
+        data = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+        if data.empty:
             continue
-        data = json.loads(data.decode("utf-8"))
-        data = pd.DataFrame(data)
         data = (properties.get(FILTER))(data)
         symbols = properties.get(SYMBOLS)
         for index, symbol_codes in symbols.items():

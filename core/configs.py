@@ -44,6 +44,10 @@ PHONE_PATTERN = r"^09(0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[
 ######################################################## FUND APP
 FUND_MONGO_DB = "fund"
 FUND_ALL_DATA_COLLECTION = "all_data"
+
+######################################################## FUTURE APP
+FUTURE_MONGO_DB = "future"
+
 ######################################################## DOMESTIC APP
 DOMESTIC_MONGO_DB = "domestic"
 

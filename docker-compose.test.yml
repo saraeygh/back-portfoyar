@@ -47,7 +47,7 @@ services:
         max-file: "10"
 
   api_test:
-    mem_limit: 5g
+    mem_limit: 4g
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
@@ -91,7 +91,7 @@ services:
         max-file: "10"
 
   apscheduler_test:
-    mem_limit: 5g
+    mem_limit: 4g
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}

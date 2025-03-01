@@ -1,10 +1,9 @@
-import json
 import pandas as pd
 
 from colorama import Fore, Style
 
-from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface
+from core.configs import FUTURE_MONGO_DB
+from core.utils import MongodbInterface
 from future_market.models import (
     OptionBaseEquity,
     CONTRACT_CODE,
@@ -165,13 +164,12 @@ def get_options_base_equity_info():
 
     base_equity_data = pd.DataFrame()
 
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
-        data = redis_conn.client.get(name=base_equity_key)
-        data = json.loads(data.decode("utf-8"))
-        data = pd.DataFrame(data)
-        data = (properties.get(FILTER_BASE_EQUITIES))(data)
+        mongo_conn.collection = mongo_conn.db[base_equity_key]
+        data = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
+        data = (properties.get(FILTER_BASE_EQUITIES))(data)
         col_mapping = properties.get(COL_MAPPING)
         data.rename(columns=col_mapping, inplace=True)
         data = data[list(col_mapping.values())]

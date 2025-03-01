@@ -8,6 +8,7 @@ from tqdm import tqdm
 from core.utils import (
     RedisInterface,
     MONTHLY_INTEREST_RATE,
+    MongodbInterface,
     get_deviation_percent,
     run_main_task,
 )
@@ -17,6 +18,7 @@ from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
     RIAL_TO_BILLION_TOMAN,
     FUTURE_REDIS_DB,
+    FUTURE_MONGO_DB,
 )
 from future_market.models import (
     FutureBaseEquity,
@@ -39,11 +41,13 @@ UNIQUE_IDENTIFIER_COL = {
 
 
 def get_base_equity_row(base_equity):
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-    base_equity_row = redis_conn.client.get(name=base_equity.base_equity_key)
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+    mongo_conn.collection = mongo_conn.db[base_equity.base_equity_key]
 
-    base_equity_row = json.loads(base_equity_row.decode("utf-8"))
-    base_equity_row = pd.DataFrame(base_equity_row)
+    base_equity_row = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+    if base_equity_row.empty:
+        return []
+
     base_equity_row = base_equity_row[
         base_equity_row[UNIQUE_IDENTIFIER_COL.get(base_equity.base_equity_key)]
         == base_equity.unique_identifier
@@ -60,11 +64,9 @@ def get_base_equity_row(base_equity):
 
 
 def get_future_derivatives(derivative_symbol):
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-    future_derivatives = redis_conn.client.get(name=FUTURE_MARKET)
-
-    future_derivatives = json.loads(future_derivatives.decode("utf-8"))
-    future_derivatives = pd.DataFrame(future_derivatives)
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+    mongo_conn.collection = mongo_conn.db[FUTURE_MARKET]
+    future_derivatives = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
     future_derivatives = future_derivatives[
         future_derivatives[UNIQUE_IDENTIFIER_COL.get(FUTURE_MARKET)].str.contains(
             derivative_symbol, na=False
@@ -240,9 +242,9 @@ def update_future_main():
             strategy_result = add_to_strategy_result(strategy_result, result)
 
         if strategy_result:
-            serialized_data = json.dumps(strategy_result)
-            redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-            redis_conn.client.set(strategy_key, serialized_data)
+            mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+            mongo_conn.collection = mongo_conn.db[strategy_key]
+            mongo_conn.insert_docs_into_collection(strategy_result)
 
 
 def update_future():

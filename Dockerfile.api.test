@@ -82,3 +82,5 @@ ENV POSTGRES_SERVICE_NAME=postgres_test
 
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_FIRST_NAME=ادمین
+
+RUN apk add htop

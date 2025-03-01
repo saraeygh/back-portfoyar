@@ -1,16 +1,15 @@
-import json
 import pandas as pd
 import jdatetime
 
-from core.configs import FUTURE_REDIS_DB
-from core.utils import RedisInterface, run_main_task
+from core.configs import FUTURE_MONGO_DB
+from core.utils import MongodbInterface, run_main_task
 
 from future_market.models import OPTION_MARKET
 from future_market.utils import (
     OPTION_COLUMNS,
     get_options_base_equity_info,
-    # populate_all_strategy_sync,
-    populate_all_strategy_async,
+    populate_all_strategy_sync,
+    # populate_all_strategy_async,
 )
 
 
@@ -223,10 +222,10 @@ def shorten_option_symbol(row, col_name):
 
 
 def update_option_result_main():
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
-    option_data = json.loads(redis_conn.client.get(name=OPTION_MARKET))
+    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+    mongo_conn.collection = mongo_conn.db[OPTION_MARKET]
+    option_data = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
-    option_data = pd.DataFrame(option_data)
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)
     option_data["put_order_book"] = option_data.apply(add_put_order_book, axis=1)
     option_data["symbol"] = option_data.apply(add_symbol_to_option_data, axis=1)
@@ -267,8 +266,8 @@ def update_option_result_main():
     )
 
     option_data = option_data[option_data["base_equity_last_price"] > 0]
-    populate_all_strategy_async(option_data)
-    # populate_all_strategy_sync(option_data)
+    # populate_all_strategy_async(option_data)
+    populate_all_strategy_sync(option_data)
 
 
 def update_option_result():

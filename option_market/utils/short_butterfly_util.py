@@ -2,8 +2,8 @@ from uuid import uuid4
 from tqdm import tqdm
 from colorama import Fore, Style
 
-from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import RedisInterface, get_deviation_percent
+from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_MONGO_DB, FUTURE_REDIS_DB
+from core.utils import RedisInterface, MongodbInterface, get_deviation_percent
 
 from . import (
     AddOption,
@@ -196,7 +196,11 @@ def short_butterfly(option_data, redis_db_num: int):
 
     print(Fore.GREEN + f"short_butterfly, {len(result)} records." + Style.RESET_ALL)
     if result:
-        redis_conn = RedisInterface(db=redis_db_num)
-        redis_conn.bulk_push_list_of_dicts(
-            list_key="short_butterfly", list_of_dicts=result
-        )
+        list_key = "short_butterfly"
+        if redis_db_num == FUTURE_REDIS_DB:
+            mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
+            mongo_conn.collection = mongo_conn.db[list_key]
+            mongo_conn.insert_docs_into_collection(result)
+        else:
+            redis_conn = RedisInterface(db=redis_db_num)
+            redis_conn.bulk_push_list_of_dicts(list_key=list_key, list_of_dicts=result)

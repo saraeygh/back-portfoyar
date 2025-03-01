@@ -51,6 +51,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "end_at_shamsi",
         "desc",
     )
+
     list_display_links = ("user", "feature")
     ordering = ("-updated_at",)
 
