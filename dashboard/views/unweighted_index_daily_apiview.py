@@ -32,7 +32,7 @@ class UnweightedIndexDailyAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "امروز شاخص هم‌وزن"
+            chart_title = "شاخص هم‌وزن امروز"
         else:
             chart_title = (f"شاخص هم‌وزن {date}",)
 

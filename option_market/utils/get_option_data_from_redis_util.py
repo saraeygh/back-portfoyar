@@ -1,11 +1,13 @@
 import pandas as pd
 
-from core.utils import RedisInterface
-from core.configs import OPTION_REDIS_DB
+from core.utils import MongodbInterface
+from core.configs import OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 
 
 def get_option_data_from_redis():
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    option_data = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    option_data = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     return option_data

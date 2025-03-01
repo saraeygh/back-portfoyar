@@ -144,7 +144,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
-        minute="*/5",
+        minute="*/6",
     )
 
     scheduler.add_job(
@@ -154,7 +154,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
         hour="9-13",
-        minute="*/5",
+        minute="*/6",
     )
 
     scheduler.add_job(
@@ -177,7 +177,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
+        day_of_week="sat, sun, mon, tue, wed, thu",
         hour="19",
         minute="10",
     )
@@ -188,7 +188,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
+        day_of_week="sat, sun, mon, tue, wed, thu",
         hour="20",
         minute="10",
     )
@@ -199,7 +199,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
+        day_of_week="sat, sun, mon, tue, wed, thu",
         hour="20",
         minute="30",
     )
@@ -210,7 +210,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
+        day_of_week="sat, sun, mon, tue, wed, thu",
         hour="21",
         minute="10",
     )
@@ -221,7 +221,6 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="21",
         minute="45",
     )
@@ -231,7 +230,6 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="get_dollar_daily_price_task",
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         minute="*/30",
     )
 
@@ -256,10 +254,12 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed, thu",
         hour="9-17",
-        minute="*/5",
+        minute="*/35",
     )
 
     return scheduler
+
+    # -------------------------------------------------------------------------
 
 
 def add_future_market_app_jobs(scheduler: BlockingScheduler):

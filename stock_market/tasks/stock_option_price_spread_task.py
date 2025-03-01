@@ -1,16 +1,16 @@
-from pytz import timezone
 import jdatetime as jdt
 import pandas as pd
 from core.configs import (
     STOCK_OPTION_STRIKE_DEVIATION,
     STOCK_MONGO_DB,
-    OPTION_REDIS_DB,
     AUTO_MODE,
     MANUAL_MODE,
     RIAL_TO_MILLION_TOMAN,
+    TEHRAN_TZ,
+    OPTION_MONGO_DB,
+    OPTION_DATA_COLLECTION,
 )
 from core.utils import (
-    RedisInterface,
     MongodbInterface,
     get_deviation_percent,
     run_main_task,
@@ -23,8 +23,6 @@ from option_market.utils import (
     PUT_OPTION_COLUMN,
 )
 from stock_market.utils import CALL_OPTION, PUT_OPTION, is_market_open
-
-TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 
 CALL_OLD_NEW_MAPPING = {
@@ -69,9 +67,10 @@ PUT_OLD_NEW_MAPPING = {
 
 
 def get_last_options():
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    last_options = redis_conn.get_list_of_dicts(list_key="option_data")
-    last_options = pd.DataFrame(last_options)
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    last_options = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     return last_options
 
@@ -258,7 +257,7 @@ def get_put_spreads(spreads):
 
 
 def check_date(mongo_conn):
-    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
     date = today_datetime.strftime("%Y-%m-%d")
     time = today_datetime.strftime("%H:%M")
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python manage.py run_scheduler
+exec python manage.py run_scheduler

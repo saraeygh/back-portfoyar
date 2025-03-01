@@ -31,7 +31,7 @@ class TotalIndexDailyAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "امروز شاخص کل"
+            chart_title = "شاخص کل امروز"
         else:
             chart_title = (f"شاخص کل {date}",)
 

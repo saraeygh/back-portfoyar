@@ -1,16 +1,18 @@
 import pandas as pd
 
 from django.db.models import Count
-from core.utils import RedisInterface
-from core.configs import OPTION_REDIS_DB
+from core.utils import MongodbInterface
+from core.configs import OPTION_DATA_COLLECTION, OPTION_MONGO_DB
 
 from stock_market.models import StockInstrument
 from stock_market.utils import OPTION_PAPER
 
 
 def get_options():
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    options = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    options = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     return options
 

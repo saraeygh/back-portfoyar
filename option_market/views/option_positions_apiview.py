@@ -7,9 +7,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from core.configs import OPTION_REDIS_DB
+from core.configs import OPTION_MONGO_DB
 from core.utils import (
-    RedisInterface,
+    MongodbInterface,
     TABLE_COLS_QP,
     ALL_TABLE_COLS,
     STRATEGIES,
@@ -48,9 +48,8 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 
 # NEW VIEW BASED ON RISK LEVELS #########################
 def get_strategy_result_from_redis(strategy_key, table=None):
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    strategy_result = redis_conn.get_list_of_dicts(list_key=strategy_key)
-    strategy_result = pd.DataFrame(strategy_result)
+    mongo_conn = MongodbInterface(db_name=OPTION_MONGO_DB, collection_name=strategy_key)
+    strategy_result = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     if table == ALL_TABLE_COLS:
         pass

@@ -3,10 +3,9 @@ import jdatetime
 from tqdm import tqdm
 from colorama import Fore, Style
 
-from core.configs import OPTION_MONGO_DB, OPTION_REDIS_DB
+from core.configs import OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 from core.utils import (
     MongodbInterface,
-    RedisInterface,
     TSETMC_REQUEST_HEADERS,
     get_http_response,
     run_main_task,
@@ -148,8 +147,10 @@ def remove_expired_options_history():
 
 
 def get_option_history_main():
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    all_instruments = redis_conn.get_list_of_dicts(list_key="option_data")
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    all_instruments = list(mongo_conn.collection.find({}, {"_id": 0}))
 
     for instrument in tqdm(
         all_instruments, desc=f"Options history, #{len(all_instruments) * 2}", ncols=10

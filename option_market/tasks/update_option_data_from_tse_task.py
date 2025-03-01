@@ -2,13 +2,13 @@ import pandas as pd
 from colorama import Fore, Style
 
 from core.utils import (
-    RedisInterface,
     TSETMC_REQUEST_HEADERS,
+    MongodbInterface,
     run_main_task,
     get_http_response,
     replace_arabic_letters_pd,
 )
-from core.configs import OPTION_REDIS_DB, AUTO_MODE, MANUAL_MODE
+from core.configs import AUTO_MODE, MANUAL_MODE, OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 
 from stock_market.utils import get_last_market_watch_data, is_market_open
 
@@ -18,8 +18,8 @@ from option_market.utils import (
     CALL_OPTION_COLUMN,
     PUT_OPTION_COLUMN,
     TSE_ORDER_BOOK,
-    populate_all_option_strategy_async,
-    # populate_all_option_strategy_sync,
+    # populate_all_option_strategy_async,
+    populate_all_option_strategy_sync,
     convert_int_date_to_str_date,
 )
 
@@ -157,10 +157,10 @@ def update_option_data_from_tse_main(run_mode):
         )
 
         option_data_dict = option_data.to_dict(orient="records")
-        redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-        redis_conn.bulk_push_list_of_dicts(
-            list_key="option_data", list_of_dicts=option_data_dict
+        mongo_conn = MongodbInterface(
+            db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
         )
+        mongo_conn.insert_docs_into_collection(option_data_dict)
 
         print(
             Fore.BLUE
@@ -169,8 +169,8 @@ def update_option_data_from_tse_main(run_mode):
         )
 
         option_data = option_data[option_data["base_equity_last_price"] > 0]
-        populate_all_option_strategy_async(option_data)
-        # populate_all_option_strategy_sync(option_data)
+        # populate_all_option_strategy_async(option_data)
+        populate_all_option_strategy_sync(option_data)
 
 
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):

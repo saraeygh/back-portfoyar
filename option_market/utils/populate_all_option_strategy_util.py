@@ -1,7 +1,7 @@
 import os
 import multiprocessing
 
-from core.configs import OPTION_REDIS_DB
+from core.configs import OPTION_MONGO_DB
 
 from . import (
     covered_call,
@@ -49,7 +49,7 @@ def populate_all_option_strategy_async(option_data):
     used_cores = total_cores // 2
     with multiprocessing.Pool(processes=used_cores) as pool:
         for strategy in STRATEGIES:
-            pool.apply_async(strategy, args=(option_data, OPTION_REDIS_DB))
+            pool.apply_async(strategy, args=(option_data, OPTION_MONGO_DB))
 
         pool.close()
         pool.join()
@@ -58,4 +58,7 @@ def populate_all_option_strategy_async(option_data):
 def populate_all_option_strategy_sync(option_data):
 
     for strategy in STRATEGIES:
-        strategy(option_data, OPTION_REDIS_DB)
+        try:
+            strategy(option_data, OPTION_MONGO_DB)
+        except Exception as e:
+            print(e)

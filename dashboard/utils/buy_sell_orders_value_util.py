@@ -4,13 +4,11 @@ import pandas as pd
 import jdatetime as jdt
 
 from core.utils import MongodbInterface
-from core.configs import DASHBOARD_MONGO_DB, BUY_SELL_ORDERS_COLLECTION
+from core.configs import DASHBOARD_MONGO_DB, BUY_SELL_ORDERS_COLLECTION, TEHRAN_TZ
 
 from stock_market.utils import get_market_watch_data_from_redis
 
 from . import TSE_ORDER_BOOK
-
-TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 
 BUY_SELL_ORDERS_COLUMNS = [
@@ -40,7 +38,7 @@ def add_sell_value(row):
 
 
 def check_date():
-    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
@@ -71,8 +69,8 @@ def buy_sell_orders_value():
             "order_book_value": market_watch.to_dict(orient="records"),
         }
 
-    mongo_conn = MongodbInterface(
-        db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
-    )
+        mongo_conn = MongodbInterface(
+            db_name=DASHBOARD_MONGO_DB, collection_name=BUY_SELL_ORDERS_COLLECTION
+        )
 
-    mongo_conn.collection.insert_one(new_doc)
+        mongo_conn.collection.insert_one(new_doc)

@@ -3,8 +3,8 @@ from tqdm import tqdm
 
 from colorama import Fore, Style
 
-from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_MONGO_DB, FUTURE_REDIS_DB
-from core.utils import RedisInterface, MongodbInterface
+from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import MongodbInterface
 
 from . import (
     Conversion,
@@ -72,7 +72,7 @@ def add_profits_with_fee(
     return profits
 
 
-def conversion(option_data, redis_db_num: int):
+def conversion(option_data, mongo_db: str):
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
         & (option_data["put_best_sell_price"] > 0)
@@ -154,10 +154,6 @@ def conversion(option_data, redis_db_num: int):
 
     if result:
         list_key = "conversion"
-        if redis_db_num == FUTURE_REDIS_DB:
-            mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
-            mongo_conn.collection = mongo_conn.db[list_key]
-            mongo_conn.insert_docs_into_collection(result)
-        else:
-            redis_conn = RedisInterface(db=redis_db_num)
-            redis_conn.bulk_push_list_of_dicts(list_key=list_key, list_of_dicts=result)
+        mongo_conn = MongodbInterface(db_name=mongo_db)
+        mongo_conn.collection = mongo_conn.db[list_key]
+        mongo_conn.insert_docs_into_collection(result)

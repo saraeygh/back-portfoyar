@@ -1,7 +1,7 @@
 from uuid import uuid4
 from tqdm import tqdm
-from core.configs import RIAL_TO_BILLION_TOMAN, FUTURE_REDIS_DB, FUTURE_MONGO_DB
-from core.utils import RedisInterface, MongodbInterface
+from core.configs import RIAL_TO_BILLION_TOMAN
+from core.utils import MongodbInterface
 
 from . import (
     AddOption,
@@ -32,7 +32,7 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def collar(option_data, redis_db_num: int):
+def collar(option_data, mongo_db: str):
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
         & (option_data["call_best_sell_price"] > 0)
@@ -131,10 +131,6 @@ def collar(option_data, redis_db_num: int):
     print(Fore.GREEN + f"collar, {len(result)} records." + Style.RESET_ALL)
     if result:
         list_key = "collar"
-        if redis_db_num == FUTURE_REDIS_DB:
-            mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
-            mongo_conn.collection = mongo_conn.db[list_key]
-            mongo_conn.insert_docs_into_collection(result)
-        else:
-            redis_conn = RedisInterface(db=redis_db_num)
-            redis_conn.bulk_push_list_of_dicts(list_key=list_key, list_of_dicts=result)
+        mongo_conn = MongodbInterface(db_name=mongo_db)
+        mongo_conn.collection = mongo_conn.db[list_key]
+        mongo_conn.insert_docs_into_collection(result)

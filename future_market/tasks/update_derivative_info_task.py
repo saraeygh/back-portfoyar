@@ -104,7 +104,6 @@ def update_derivative_info_main():
     redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
     is_running = redis_conn.client.get(name=IS_RUNNING)
 
-    update_info()
     if is_running is None:
         update_info()
 

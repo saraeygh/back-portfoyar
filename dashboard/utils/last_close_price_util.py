@@ -1,12 +1,9 @@
-from pytz import timezone
 import jdatetime as jdt
 
 from core.utils import MongodbInterface
-from core.configs import DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION
+from core.configs import DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION, TEHRAN_TZ
 
 from stock_market.utils import get_market_watch_data_from_redis
-
-TEHRAN_TIMEZONE = timezone("Asia/Tehran")
 
 
 LAST_CLOSE_PRICE_COLUMNS = [
@@ -18,7 +15,7 @@ LAST_CLOSE_PRICE_COLUMNS = [
 
 
 def check_date():
-    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 

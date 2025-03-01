@@ -12,14 +12,9 @@ from core.configs import (
     SIXTY_SECONDS_CACHE,
     SIXTY_MINUTES_CACHE,
     OPTION_MONGO_DB,
-    OPTION_REDIS_DB,
+    OPTION_DATA_COLLECTION,
 )
-from core.utils import (
-    RedisInterface,
-    MongodbInterface,
-    set_json_cache,
-    get_cache_as_json,
-)
+from core.utils import MongodbInterface, set_json_cache, get_cache_as_json
 
 
 from option_market.serializers import SymbolHistorySerializer
@@ -31,11 +26,10 @@ from option_market.permissions import HasOptionSubscription
 @permission_classes([IsAuthenticated])
 class OptionAssetNamesAPIView(APIView):
     def get(self, request):
-
-        redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-        option_base_equity = pd.DataFrame(
-            redis_conn.get_list_of_dicts(list_key="option_data")
+        mongo_conn = MongodbInterface(
+            db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
         )
+        option_base_equity = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
         option_base_equity.sort_values(by="base_equity_symbol", inplace=True)
         option_base_equity = option_base_equity["base_equity_symbol"].unique().tolist()
@@ -52,9 +46,11 @@ class AssetOptionSymbolsAPIView(APIView):
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
-            redis_conn = RedisInterface(db=OPTION_REDIS_DB)
+            mongo_conn = MongodbInterface(
+                db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+            )
             asset_options_list = pd.DataFrame(
-                redis_conn.get_list_of_dicts(list_key="option_data")
+                mongo_conn.collection.find({}, {"_id": 0})
             )
 
             asset_options_list = asset_options_list[

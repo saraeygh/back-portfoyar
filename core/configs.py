@@ -1,5 +1,5 @@
 import os
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 ######################################################## CACHE
 SIXTY_SECONDS_CACHE = 60  # 60 seconds
@@ -13,8 +13,6 @@ KEY_WITH_EX_REDIS_DB = 1  # CORE
 OPTION_REDIS_DB = 3  # OPTION
 FUTURE_REDIS_DB = 4  # FUTURE
 STOCK_REDIS_DB = 5  # STOCK
-USER_AGENTS_REDIS_DB = 13  # CORE
-ONLINE_USERS_REDIS_DB = 15  # CORE
 
 ######################################################## CORE APP
 DASHBOARD_MONGO_DB = "dashboard"
@@ -56,6 +54,7 @@ GLOBAL_MONGO_DB = "global"
 
 ######################################################## OPTIONS APP
 OPTION_MONGO_DB = "option"
+OPTION_DATA_COLLECTION = "option_data"
 OPTION_TRADE_FEE = 0.00103
 OPTION_SETTLEMENT_FEE = 0.0005
 BASE_EQUITY_BUY_FEE = 0.003712
@@ -78,7 +77,7 @@ STOCK_OPTION_STRIKE_DEVIATION = 5  # PERCENT
 # DOMESTIC & GLOBAL MEAN DEVIATION
 DASHBOARD_TOP_5_LIMIT = 5
 COMMODITY_TOP_200_LIMIT = 200
-TEHRAN_TZ = timezone("Asia/Tehran")
+TEHRAN_TZ = ZoneInfo("Asia/Tehran")
 
 # UNIT CONVERSION
 HEZAR_RIAL_TO_MILLION_TOMAN = 10_000

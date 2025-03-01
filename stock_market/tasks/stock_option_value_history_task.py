@@ -5,11 +5,12 @@ import jdatetime as jdt
 
 from django.db.models import Q
 
-from core.utils import MongodbInterface, RedisInterface, run_main_task
+from core.utils import MongodbInterface, run_main_task
 from core.configs import (
     STOCK_VALUE_CHANGE_DURATION,
     STOCK_MONGO_DB,
-    OPTION_REDIS_DB,
+    OPTION_MONGO_DB,
+    OPTION_DATA_COLLECTION,
     RIAL_TO_MILLION_TOMAN,
 )
 
@@ -34,9 +35,10 @@ def stock_option_value_history_main():
             .values("instrument__ins_code", "trade_date", "value")
         )
     )
-
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    last_option = pd.DataFrame(redis_conn.get_list_of_dicts(list_key="option_data"))
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    last_option = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     last_option = last_option[
         [

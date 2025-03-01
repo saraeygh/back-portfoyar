@@ -7,6 +7,7 @@ from core.configs import (
     DASHBOARD_MONGO_DB,
     OPTION_VALUE_ANALYSIS_COLLECTION,
     RIAL_TO_BILLION_TOMAN,
+    TEHRAN_TZ,
 )
 
 from option_market.utils import get_option_data_from_redis
@@ -19,11 +20,8 @@ from stock_market.utils import (
 )
 
 
-TEHRAN_TIMEZONE = timezone("Asia/Tehran")
-
-
 def check_date():
-    today_datetime = jdt.datetime.now(tz=TEHRAN_TIMEZONE)
+    today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
     date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 

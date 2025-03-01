@@ -1,12 +1,13 @@
 import pandas as pd
 import jdatetime as jdt
-from core.utils import MongodbInterface, RedisInterface, run_main_task
+from core.utils import MongodbInterface, run_main_task
 
 from core.configs import (
     STOCK_MONGO_DB,
     RIAL_TO_BILLION_TOMAN,
     RIAL_TO_MILLION_TOMAN,
-    OPTION_REDIS_DB,
+    OPTION_MONGO_DB,
+    OPTION_DATA_COLLECTION,
     AUTO_MODE,
     MANUAL_MODE,
 )
@@ -45,9 +46,10 @@ def add_history(options: pd.DataFrame, history_collection_name: str):
 
 
 def get_last_options(option_type):
-    redis_conn = RedisInterface(db=OPTION_REDIS_DB)
-    last_options = redis_conn.get_list_of_dicts(list_key="option_data")
-    last_options = pd.DataFrame(last_options)
+    mongo_conn = MongodbInterface(
+        db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
+    )
+    last_options = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     if option_type == CALL_OPTION:
         last_options = last_options[
