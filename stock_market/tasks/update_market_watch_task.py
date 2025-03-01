@@ -3,7 +3,7 @@ from datetime import date
 from colorama import Fore, Style
 
 from core.utils import (
-    RedisInterface,
+    MongodbInterface,
     MARKET_WATCH_URL,
     CLIENT_TYPE_URL,
     TSETMC_REQUEST_HEADERS,
@@ -11,7 +11,12 @@ from core.utils import (
     replace_arabic_letters_pd,
     run_main_task,
 )
-from core.configs import STOCK_REDIS_DB, MARKET_WATCH_REDIS_KEY, AUTO_MODE, MANUAL_MODE
+from core.configs import (
+    AUTO_MODE,
+    MANUAL_MODE,
+    STOCK_MONGO_DB,
+    MARKET_WATCH_COLLECTION,
+)
 
 from stock_market.models import StockInstrument
 from stock_market.utils import (
@@ -92,10 +97,10 @@ def update_market_watch_main(run_mode):
         market_watch["paper_type"] = market_watch["paper_type"].astype(int)
         market_watch["last_date"] = date.today().strftime("%Y-%m-%d")
         market_watch = market_watch.to_dict(orient="records")
-        redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-        redis_conn.bulk_push_list_of_dicts(
-            list_key=MARKET_WATCH_REDIS_KEY, list_of_dicts=market_watch
+        mongo_conn = MongodbInterface(
+            db_name=STOCK_MONGO_DB, collection_name=MARKET_WATCH_COLLECTION
         )
+        mongo_conn.insert_docs_into_collection(market_watch)
 
 
 def update_market_watch(run_mode: str = AUTO_MODE):

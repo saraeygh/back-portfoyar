@@ -25,8 +25,6 @@ def convert_date_obj_to_str(record):
 
 
 def stock_value_history_main():
-    stock_value_change()
-
     main_paper_type = list(MAIN_PAPER_TYPE_DICT.keys())
     stocks = StockInstrument.objects.filter(paper_type__in=main_paper_type)
 

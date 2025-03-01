@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 import pandas as pd
@@ -6,7 +5,6 @@ import jdatetime
 from tqdm import tqdm
 
 from core.utils import (
-    RedisInterface,
     MONTHLY_INTEREST_RATE,
     MongodbInterface,
     get_deviation_percent,
@@ -17,7 +15,6 @@ from core.models import FeatureToggle
 from core.configs import (
     HEZAR_RIAL_TO_BILLION_TOMAN,
     RIAL_TO_BILLION_TOMAN,
-    FUTURE_REDIS_DB,
     FUTURE_MONGO_DB,
 )
 from future_market.models import (

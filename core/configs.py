@@ -10,9 +10,6 @@ SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
 
 ######################################################## REDIS_DBs
 KEY_WITH_EX_REDIS_DB = 1  # CORE
-OPTION_REDIS_DB = 3  # OPTION
-FUTURE_REDIS_DB = 4  # FUTURE
-STOCK_REDIS_DB = 5  # STOCK
 
 ######################################################## CORE APP
 DASHBOARD_MONGO_DB = "dashboard"
@@ -62,6 +59,7 @@ BASE_EQUITY_SELL_FEE = 0.0088
 
 ######################################################## STOCK APP
 MARKET_WATCH_REDIS_KEY = "market_watch"
+MARKET_WATCH_COLLECTION = "market_watch"
 STOCK_MONGO_DB = "stock"
 STOCK_NA_ROI = -1000
 MARKET_WATCH_TOP_5_LIMIT = 5

@@ -259,8 +259,6 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
 
     return scheduler
 
-    # -------------------------------------------------------------------------
-
 
 def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
@@ -345,7 +343,6 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="7",
         minute="10",
     )
@@ -360,8 +357,8 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-15",
-        second="*/30",
+        hour="9-13",
+        minute="*/1",
     )
 
     scheduler.add_job(
@@ -370,7 +367,6 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="1",
         minute="10",
     )
@@ -386,7 +382,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-15",
+        hour="9-13",
         second="*/45",
     )
 
@@ -396,7 +392,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-15",
+        hour="9-13",
         minute="*/1",
     )
 
@@ -425,7 +421,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_roi_task",
         replace_existing=True,
         trigger="cron",
-        hour="9-14",
+        hour="9-13",
         minute="*/15",
     )
 
@@ -435,7 +431,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="5",
         minute="10",
     )
@@ -446,8 +441,8 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-15",
-        minute="*/3",
+        hour="9-13",
+        minute="*/5",
     )
 
     scheduler.add_job(
@@ -456,7 +451,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="7",
         minute="30",
     )
@@ -477,7 +471,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         day_of_week="sat, sun, mon, tue, wed",
-        hour="9-15",
+        hour="9-13",
         minute="*/3",
     )
 
@@ -487,7 +481,6 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
         trigger="cron",
-        day_of_week="*",
         hour="6",
         minute="10",
     )

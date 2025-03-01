@@ -4,10 +4,10 @@ import requests
 from colorama import Fore, Style
 
 from core.utils import RedisInterface, MongodbInterface, run_main_task
-from core.configs import FUTURE_REDIS_DB, FUTURE_MONGO_DB
+from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB
 
 
-IS_RUNNING = "is_running"
+IS_RUNNING = "get_derivatives_is_running"
 
 
 def get_now_timestamp_as_str():
@@ -61,7 +61,7 @@ def update_info():
     start_connection(negotiation_response["ConnectionToken"])
     event_stream = connect_to_events(negotiation_response["ConnectionToken"])
 
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+    redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     for data in event_stream:
         redis_conn.client.set(name=IS_RUNNING, value=0, ex=60)
@@ -95,13 +95,12 @@ def update_info():
         except (json.decoder.JSONDecodeError, IndexError):
             continue
         except Exception as e:
-
             print(Fore.RED + f"{e}" + Style.RESET_ALL)
             raise e
 
 
 def update_derivative_info_main():
-    redis_conn = RedisInterface(db=FUTURE_REDIS_DB)
+    redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     is_running = redis_conn.client.get(name=IS_RUNNING)
 
     if is_running is None:

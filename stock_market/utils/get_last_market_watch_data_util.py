@@ -1,12 +1,12 @@
 import pandas as pd
 
 from core.utils import (
-    RedisInterface,
+    MongodbInterface,
     TSETMC_REQUEST_HEADERS,
     get_http_response,
     replace_arabic_letters_pd,
 )
-from core.configs import STOCK_REDIS_DB, MARKET_WATCH_REDIS_KEY
+from core.configs import STOCK_MONGO_DB, MARKET_WATCH_COLLECTION
 
 
 def get_last_market_watch_data(
@@ -45,9 +45,9 @@ def get_last_market_watch_data(
 
 
 def get_market_watch_data_from_redis():
-    redis_conn = RedisInterface(db=STOCK_REDIS_DB)
-    market_watch = pd.DataFrame(
-        redis_conn.get_list_of_dicts(list_key=MARKET_WATCH_REDIS_KEY)
+    mongo_conn = MongodbInterface(
+        db_name=STOCK_MONGO_DB, collection_name=MARKET_WATCH_COLLECTION
     )
+    market_watch = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     return market_watch
