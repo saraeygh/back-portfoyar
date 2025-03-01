@@ -1,3 +1,4 @@
+import os
 import threading
 import traceback
 import smtplib
@@ -9,7 +10,6 @@ from email.mime.multipart import MIMEMultipart
 import jdatetime
 from colorama import Fore, Style
 
-from core.utils import get_http_response
 from core.configs import (
     EMAIL_HOST,
     EMAIL_PORT,
@@ -38,20 +38,19 @@ def print_task_info(color: str = BLUE, name: str = ""):
 
 
 SERVERS = {
-    "178.252.141.50": "LOCAL",
-    "185.105.185.188": "TEST",
-    "188.121.98.119": "PROD",
+    # "178.252.141.50": "LOCAL",
+    # "185.105.185.188": "TEST",
+    # "188.121.98.119": "PROD",
+    "LOCAL": "178.252.141.50",
+    "TEST": "185.105.185.188",
+    "PROD": "188.121.98.119",
 }
 
 
 def get_host():
-    host_name = "NO_NAME"
-    host_ip = "NO_IP"
-
-    response = get_http_response(req_url="https://api.ipify.org?format=json")
-    if response:
-        host_ip = response.json().get("ip")
-        host_name = SERVERS.get(host_ip, host_name)
+    SERVER_NAME = os.environ.get("SERVER_NAME")
+    host_name = SERVER_NAME or "NO_NAME"
+    host_ip = SERVERS.get(SERVER_NAME) or "NO_IP"
 
     return host_name, host_ip
 
