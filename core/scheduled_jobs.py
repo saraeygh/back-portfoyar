@@ -508,5 +508,8 @@ def blocking_scheduler():
     scheduler = add_option_market_app_jobs(scheduler)
     scheduler = add_stock_market_app_jobs(scheduler)
 
-    print(Fore.GREEN + "APScheduler started successfully" + Style.RESET_ALL)
-    scheduler.start()
+    print(f"RUN_MAIN is >>>>>>>>>>>>>>>>>> {os.environ.get("RUN_MAIN", None)}")
+    if os.environ.get("RUN_MAIN", None) != "true":
+        print(Fore.GREEN + "APScheduler started successfully" + Style.RESET_ALL)
+        scheduler.start()
+    print(Fore.RED + "Another instance of APScheduler running" + Style.RESET_ALL)
