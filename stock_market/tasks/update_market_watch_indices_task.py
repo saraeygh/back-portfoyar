@@ -71,7 +71,7 @@ def update_market_watch_data(market_watch: pd.DataFrame):
         & (market_watch["closing_price"] != 0)
         & (market_watch["yesterday_price"] != 0)
     ]
-
+    market_watch = market_watch.copy()
     market_watch["last_time"] = market_watch.apply(get_time, axis=1)
     market_watch["last_date"] = str(jdt.date.today())
 
@@ -139,8 +139,7 @@ def update_market_watch_data(market_watch: pd.DataFrame):
     return market_watch
 
 
-def check_date(index_name):
-    mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB, collection_name=index_name)
+def check_date(mongo_conn):
 
     today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
     today_date = today_datetime.strftime("%Y-%m-%d")
@@ -210,8 +209,8 @@ def update_market_watch_indices_main(run_mode):
             "sell_ratio",
         ]
         for index_name in tqdm(index_list, desc="Update indices", ncols=10):
-            today_date = check_date(index_name)
             mongo_conn.collection = mongo_conn.db[index_name]
+            today_date = check_date(mongo_conn)
 
             index_columns = common_columns + [index_name]
             index_df = market_watch[index_columns]
@@ -223,6 +222,7 @@ def update_market_watch_indices_main(run_mode):
                     columns={"last_date": "last_history_date"}
                 )
                 index_df = index_df.merge(right=history_df, on="ins_code", how="left")
+                index_df.dropna(inplace=True)
                 index_df["history"] = index_df.apply(
                     get_history, axis=1, args=(index_name,)
                 )

@@ -58,7 +58,4 @@ def populate_all_option_strategy_async(option_data):
 def populate_all_option_strategy_sync(option_data):
 
     for strategy in STRATEGIES:
-        try:
-            strategy(option_data, OPTION_MONGO_DB)
-        except Exception as e:
-            print(e)
+        strategy(option_data, OPTION_MONGO_DB)

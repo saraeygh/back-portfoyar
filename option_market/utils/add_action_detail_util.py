@@ -17,7 +17,9 @@ def add_details(row, column_mapping: dict):
             symbol = str(row.get(row_column))
             name = str(row.get(row_column.replace("symbol", "name")))
             result_dict[action_key] = f"{symbol} - {name}"
-        else:
+        elif action_key == "order_book":
             result_dict[action_key] = row.get(row_column)
+        else:
+            result_dict[action_key] = int(row.get(row_column))
 
     return result_dict
