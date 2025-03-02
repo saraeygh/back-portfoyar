@@ -53,7 +53,7 @@ services:
       - "27017:27017"
 
   apscheduler_test:
-    mem_limit: 8g
+    # mem_limit: 8g
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
