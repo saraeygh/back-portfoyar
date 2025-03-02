@@ -7,7 +7,7 @@ from core.utils import RedisInterface, MongodbInterface, run_main_task
 from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB
 
 
-IS_RUNNING = "get_derivatives_is_running"
+IS_RUNNING = "derivatives_is_running"
 
 
 def get_now_timestamp_as_str():
