@@ -44,7 +44,7 @@ def get_last_market_watch_data(
     return last_data
 
 
-def get_market_watch_data_from_redis():
+def get_market_watch_data_from_mongo():
     mongo_conn = MongodbInterface(
         db_name=STOCK_MONGO_DB, collection_name=MARKET_WATCH_COLLECTION
     )

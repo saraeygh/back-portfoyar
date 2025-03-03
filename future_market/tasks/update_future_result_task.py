@@ -82,18 +82,29 @@ def get_future_derivatives(derivative_symbol):
 
 
 def get_total_and_monthly_spread(
-    open_position_price, base_equity_last_price, expiration, monthly_interest_rate
+    open_position_price,
+    base_equity_last_price,
+    expiration,
+    monthly_interest_rate,
+    initial_margin,
+    contract_size,
 ):
     spreads = []
     today_date = datetime.now().date()
     expiration_date = datetime.fromisoformat(expiration).date()
     remained_day = (expiration_date - today_date).days
-    if remained_day < 1:
+    if remained_day < 1 or contract_size == 0:
         return spreads
-
-    total_spread = get_deviation_percent(open_position_price, base_equity_last_price)
-    # monthly_spread = ((total_spread / remained_day) * 30) + monthly_interest_rate
-    monthly_spread = (total_spread / remained_day) * 30
+    initial_margin_fee = (
+        (initial_margin / contract_size) * monthly_interest_rate * (remained_day / 30)
+    ) / 100
+    total_spread = get_deviation_percent(
+        open_position_price, base_equity_last_price, initial_margin_fee
+    )
+    if remained_day < 30:
+        monthly_spread = total_spread
+    else:
+        monthly_spread = (total_spread / remained_day) * 30
 
     spreads = {
         "total_spread": total_spread,
@@ -117,6 +128,8 @@ def long_future_result(
     results = list()
     for row in future_derivatives:
         open_position_price = row.get("best_sell_price")
+        initial_margin = row.get("initial_margin")
+        future_contract_size = row.get("contract_size")
         if open_position_price < 2:
             continue
         expiration_date = row.get("expiration_date")
@@ -125,6 +138,8 @@ def long_future_result(
             base_equity_last_price,
             expiration_date,
             monthly_interest_rate,
+            initial_margin,
+            future_contract_size,
         )
 
         if spreads:
@@ -144,7 +159,7 @@ def long_future_result(
                 "open_interests": row.get("open_interests"),
                 "last_settlement_price": row.get("last_settlement_price"),
                 "today_settlement_price": row.get("today_settlement_price"),
-                "contract_size": f"{row.get("contract_size")} {row.get("contract_size_unit_fa")}",
+                "contract_size": f"{future_contract_size} {row.get("contract_size_unit_fa")}",
             }
             results.append(result)
 
@@ -162,6 +177,8 @@ def short_future_result(
 
     results = list()
     for row in future_derivatives:
+        initial_margin = row.get("initial_margin")
+        future_contract_size = row.get("contract_size")
         open_position_price = row.get("best_buy_price")
         if open_position_price < 2:
             continue
@@ -170,7 +187,9 @@ def short_future_result(
             open_position_price,
             base_equity_last_price,
             expiration_date,
-            -1 * monthly_interest_rate,
+            monthly_interest_rate,
+            initial_margin,
+            future_contract_size,
         )
 
         if spreads:
@@ -190,7 +209,7 @@ def short_future_result(
                 "open_interests": row.get("open_interests"),
                 "last_settlement_price": row.get("last_settlement_price"),
                 "today_settlement_price": row.get("today_settlement_price"),
-                "contract_size": f"{row.get("contract_size")} {row.get("contract_size_unit_fa")}",
+                "contract_size": f"{future_contract_size} {row.get("contract_size_unit_fa")}",
             }
             results.append(result)
 
@@ -244,8 +263,9 @@ def update_future_main():
             strategy_result = add_to_strategy_result(strategy_result, result)
 
         if strategy_result:
-            mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
-            mongo_conn.collection = mongo_conn.db[strategy_key]
+            mongo_conn = MongodbInterface(
+                db_name=FUTURE_MONGO_DB, collection_name=strategy_key
+            )
             mongo_conn.insert_docs_into_collection(strategy_result)
 
 

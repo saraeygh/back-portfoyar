@@ -135,6 +135,5 @@ def covered_call(option_data, mongo_db: str):
 
     if result:
         list_key = "covered_call"
-        mongo_conn = MongodbInterface(db_name=mongo_db)
-        mongo_conn.collection = mongo_conn.db[list_key]
+        mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)
         mongo_conn.insert_docs_into_collection(result)

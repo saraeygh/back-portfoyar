@@ -1,4 +1,4 @@
-from option_market.utils import get_option_data_from_redis
+from option_market.utils import get_option_data_from_mongo
 
 from core.utils import MongodbInterface
 
@@ -10,7 +10,7 @@ from core.configs import (
 
 
 def update_top_options():
-    option_data = get_option_data_from_redis()
+    option_data = get_option_data_from_mongo()
     base_equities = list(option_data["base_equity_symbol"].unique())
     top_options = []
     for base_equity_symbol in base_equities:
@@ -40,7 +40,6 @@ def update_top_options():
         top_options.append(new_option)
 
     if top_options:
-
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=TOP_OPTIONS_COLLECTION
         )

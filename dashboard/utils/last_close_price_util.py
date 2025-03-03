@@ -3,7 +3,7 @@ import jdatetime as jdt
 from core.utils import MongodbInterface
 from core.configs import DASHBOARD_MONGO_DB, LAST_CLOSE_PRICE_COLLECTION, TEHRAN_TZ
 
-from stock_market.utils import get_market_watch_data_from_redis
+from stock_market.utils import get_market_watch_data_from_mongo
 
 
 LAST_CLOSE_PRICE_COLUMNS = [
@@ -31,7 +31,7 @@ def check_date():
 
 
 def last_close_price():
-    market_watch = get_market_watch_data_from_redis()
+    market_watch = get_market_watch_data_from_mongo()
     if not market_watch.empty:
         market_watch = market_watch[~market_watch["symbol"].str.contains(r"\d")]
         market_watch["last_price_change"] = (

@@ -222,8 +222,9 @@ def shorten_option_symbol(row, col_name):
 
 
 def update_option_result_main():
-    mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
-    mongo_conn.collection = mongo_conn.db[OPTION_MARKET]
+    mongo_conn = MongodbInterface(
+        db_name=FUTURE_MONGO_DB, collection_name=OPTION_MARKET
+    )
     option_data = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
     option_data["call_order_book"] = option_data.apply(add_call_order_book, axis=1)

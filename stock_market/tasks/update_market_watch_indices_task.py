@@ -14,7 +14,7 @@ from core.configs import (
 
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
     is_market_open,
 )
 
@@ -177,7 +177,7 @@ def update_market_watch_indices_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
         mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB)
 
-        market_watch = get_market_watch_data_from_redis()
+        market_watch = get_market_watch_data_from_mongo()
         if market_watch.empty:
             return
         market_watch = update_market_watch_data(market_watch)

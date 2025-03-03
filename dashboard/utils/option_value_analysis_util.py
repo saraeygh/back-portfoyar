@@ -10,13 +10,13 @@ from core.configs import (
     TEHRAN_TZ,
 )
 
-from option_market.utils import get_option_data_from_redis
+from option_market.utils import get_option_data_from_mongo
 from stock_market.utils import (
     STOCK_PAPER,
     INITIAL_MARKET_PAPER,
     PRIORITY_PAPER,
     FUND_PAPER,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
 )
 
 
@@ -37,7 +37,7 @@ def check_date():
 
 
 def option_value_analysis():
-    market_watch = get_market_watch_data_from_redis()
+    market_watch = get_market_watch_data_from_mongo()
 
     market_value = market_watch[
         market_watch["paper_type"].isin(
@@ -45,7 +45,7 @@ def option_value_analysis():
         )
     ]["value"].sum()
 
-    option_data = get_option_data_from_redis()
+    option_data = get_option_data_from_mongo()
 
     date, time = check_date()
 

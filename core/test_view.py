@@ -322,3 +322,119 @@ class TestView(APIView):
 #     new_excel.to_excel(f"./{file_name}")
 
 #     return Response({"message": "DAWWSHHAAMMI"}, status=status.HTTP_200_OK)
+
+# def gLeapYear(y):
+#     if (y%4==0) and ((y%100!=0) or (y%400==0)):
+#         return True
+#     else:
+#         return False
+
+# def sLeapYear(y):
+#     ary = [1, 5, 9, 13, 17, 22, 26, 30]
+#     result = False
+#     b = y%33
+#     if b in ary:
+#         result = True
+#     return result
+
+# def shamsiDate(gyear, gmonth, gday):
+#     _gl = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+#     _g  = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+
+#     deydiffjan = 10
+#     if gLeapYear(gyear-1):
+#         deydiffjan = 11
+#     if gLeapYear(gyear):
+#         gd = _gl[gmonth-1]+gday
+#     else:
+#         gd = _g[gmonth-1]+gday
+
+#     if gd>79:
+#         sy = gyear - 621
+#         gd = gd - 79
+#         if gd<=186:
+#             gmod = gd%31
+#             if gmod==0:
+#                 sd = 31
+#                 sm = int(gd/31)
+#             else:
+#                 sd = gmod
+#                 sm = int(gd/31) + 1
+#         else:
+#             gd = gd - 186
+#             gmod = gd%30
+#             if gmod==0:
+#                 sd = 30
+#                 sm = int(gd/30) + 6
+#             else:
+#                 sd = gmod
+#                 sm = int(gd/30) + 7
+#     else:
+#         sy = gyear - 622
+#         gd = gd+deydiffjan
+#         gmod = gd%30
+#         if gmod==0:
+#             sd = 30
+#             sm = int(gd/30) + 9
+#         else:
+#             sd = gmod;
+#             sm = int(gd/30) + 10
+
+#     result = [sy, sm, sd]
+#     return result
+
+
+# # Version 13941121
+# # By Mohammad Khanalipour
+
+# MAXLEN = 17
+# A = 0
+# B = 0
+# C = 0
+# CRC = 0
+# ORIG_CRC = REFERENCE_NUMBER[-2:]
+# Year_Ref=(REFERENCE_NUMBER[-7])
+# Day_Ref=(REFERENCE_NUMBER[-6:])[:-3]
+# REFERENCE_NUMBER = REFERENCE_NUMBER[0:-2]
+# reference_no = (REFERENCE_NUMBER.strip()).zfill(15)
+# acc_no = '{0:04}{1:03}{2:08}{3:03}'.format(DEPOSIT_ID['branch_code'],
+#            DEPOSIT_ID['type_code'],
+#            DEPOSIT_ID['number'],
+#            DEPOSIT_ID['serial'])
+# acc_no = (acc_no.strip()).zfill(18)
+
+# ID = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47 ,53]
+# ACCOUNT = [5, 7, 11, 13, 17, 19, 23, 29, 31, 37,41,43,47,53,59,61,67 ,71]
+# PRICE = [ 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,53 ,59 ,61]
+# amount = (str(int(AMOUNT))).zfill(15)
+# currentDT=shamsiDate(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day)
+# y = currentDT[0]
+# m = currentDT[1]
+# d = currentDT[2]
+# sumday = 0
+# m = m - 1
+# if m <= 6 :
+#     sumday = (m*31)+d
+# else :
+#     sumday=(6*31)+((m-6)*30)+d
+# y=str(y)
+
+
+# if(Year_Ref==y[3]) and (sumday<=Day_Ref):
+#     for i in xrange(0,15):
+#         A += ID[i] * int(reference_no[i])
+#     for i in xrange(0, 18):
+#         B += ACCOUNT[i] * int(acc_no[i])
+#     for i in xrange(0, 15):
+#         C += PRICE[i] * int(amount[i])
+#     CRC = (A + B+ C) % 99
+
+#     CRC = '{0:02}'.format(CRC)
+
+#     if CRC != ORIG_CRC:
+#         return False
+
+# else:
+#     return False
+
+# return True

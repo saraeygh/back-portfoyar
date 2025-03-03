@@ -6,7 +6,7 @@ import jdatetime as jdt
 from core.utils import MongodbInterface
 from core.configs import DASHBOARD_MONGO_DB, BUY_SELL_ORDERS_COLLECTION, TEHRAN_TZ
 
-from stock_market.utils import get_market_watch_data_from_redis
+from stock_market.utils import get_market_watch_data_from_mongo
 
 from . import TSE_ORDER_BOOK
 
@@ -54,7 +54,7 @@ def check_date():
 
 
 def buy_sell_orders_value():
-    market_watch = get_market_watch_data_from_redis()
+    market_watch = get_market_watch_data_from_mongo()
     if not market_watch.empty:
         market_watch["buy_value"] = market_watch.apply(add_buy_value, axis=1)
         market_watch["sell_value"] = market_watch.apply(add_sell_value, axis=1)

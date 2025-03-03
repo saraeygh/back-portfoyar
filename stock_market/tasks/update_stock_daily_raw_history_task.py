@@ -8,7 +8,7 @@ from core.utils import run_main_task
 from stock_market.utils import (
     update_get_existing_industrial_group,
     update_get_existing_instrument,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
     update_stock_adjusted_history,
     remove_expired_instruments,
     is_market_open,
@@ -77,7 +77,7 @@ def update_stock_daily_history_main():
         remove_expired_instruments()
 
         today_date = date.today().strftime("%Y-%m-%d")
-        last_history = get_market_watch_data_from_redis()
+        last_history = get_market_watch_data_from_mongo()
         last_open_market_date = last_history.iloc[0].get("last_date", "no_date")
 
         if today_date == last_open_market_date:

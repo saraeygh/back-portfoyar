@@ -16,7 +16,7 @@ from stock_market.utils import (
     CALL_OPTION,
     PUT_OPTION,
     FUND_PAPER,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
     is_market_open,
 )
 
@@ -244,7 +244,7 @@ def stock_option_value_change_main(run_mode):
                 ]
             ]
 
-            last_data = get_market_watch_data_from_redis()
+            last_data = get_market_watch_data_from_mongo()
             if last_data.empty:
                 return
             last_data["daily_roi"] = (

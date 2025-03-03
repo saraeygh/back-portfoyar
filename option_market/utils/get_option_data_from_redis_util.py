@@ -4,7 +4,7 @@ from core.utils import MongodbInterface
 from core.configs import OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 
 
-def get_option_data_from_redis():
+def get_option_data_from_mongo():
     mongo_conn = MongodbInterface(
         db_name=OPTION_MONGO_DB, collection_name=OPTION_DATA_COLLECTION
     )

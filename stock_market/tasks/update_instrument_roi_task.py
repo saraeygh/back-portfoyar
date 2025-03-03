@@ -11,7 +11,7 @@ from core.utils import MongodbInterface, run_main_task
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
     is_market_open,
 )
 
@@ -145,7 +145,7 @@ def update_instrument_roi_main(run_mode):
         )
         instrument_info = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
 
-        last_data = get_market_watch_data_from_redis()
+        last_data = get_market_watch_data_from_mongo()
         if last_data.empty:
             return
 

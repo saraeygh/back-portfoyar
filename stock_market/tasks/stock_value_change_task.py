@@ -11,7 +11,7 @@ from core.configs import (
 from core.utils import MongodbInterface, run_main_task
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
-    get_market_watch_data_from_redis,
+    get_market_watch_data_from_mongo,
     is_market_open,
 )
 
@@ -42,7 +42,7 @@ def add_link(row):
 
 def stock_value_change_main(run_mode):
     if run_mode == MANUAL_MODE or is_market_open():
-        value_change = get_market_watch_data_from_redis()
+        value_change = get_market_watch_data_from_mongo()
         value_change = value_change[
             value_change["paper_type"].isin(list(MAIN_PAPER_TYPE_DICT.keys()))
         ]
