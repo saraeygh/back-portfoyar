@@ -422,7 +422,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         trigger="cron",
         hour="9-13",
-        minute="*/15",
+        minute="*/45",
     )
 
     scheduler.add_job(

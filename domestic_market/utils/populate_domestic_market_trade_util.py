@@ -153,31 +153,36 @@ def populate_trades_between_dates(start_date: str, end_date: str):
         else:
             competition = get_deviation_percent(close_price, base_price)
 
-        new_trade = DomesticTrade(
-            commodity=commodity,
-            producer=producer,
-            trade_date=trade_date,
-            delivery_date=delivery_date,
-            base_price=base_price,
-            close_price=close_price,
-            competition=competition,
-            trade_date_shamsi=trade.get("date"),
-            commodity_name=trade.get("GoodsName"),
-            symbol=trade.get("Symbol"),
-            contract_type=trade.get("ContractType"),
-            value=trade.get("TotalPrice"),
-            currency=trade.get("Currency"),
-            unit=trade.get("Unit"),
-            min_price=trade.get("MinPrice"),
-            max_price=trade.get("MaxPrice"),
-            supply_volume=trade.get("arze"),
-            demand_volume=trade.get("taghaza"),
-            contract_volume=trade.get("Quantity"),
-            broker=trade.get("cBrokerSpcName"),
-            delivery_date_shamsi=trade.get("DeliveryDate"),
-        )
+        new_trade = {
+            "commodity": commodity,
+            "producer": producer,
+            "trade_date": trade_date,
+            "delivery_date": delivery_date,
+            "base_price": base_price,
+            "close_price": close_price,
+            "competition": competition,
+            "trade_date_shamsi": trade.get("date"),
+            "commodity_name": trade.get("GoodsName"),
+            "symbol": trade.get("Symbol"),
+            "contract_type": trade.get("ContractType"),
+            "value": trade.get("TotalPrice"),
+            "currency": trade.get("Currency"),
+            "unit": trade.get("Unit"),
+            "min_price": trade.get("MinPrice"),
+            "max_price": trade.get("MaxPrice"),
+            "supply_volume": trade.get("arze"),
+            "demand_volume": trade.get("taghaza"),
+            "contract_volume": trade.get("Quantity"),
+            "broker": trade.get("cBrokerSpcName"),
+            "delivery_date_shamsi": trade.get("DeliveryDate"),
+            "supply_pk": trade.get("arzehPk"),
+        }
 
-        trades_bulk_list.append(new_trade)
+        try:
+            DomesticTrade.objects.get(**new_trade)
+        except DomesticTrade.DoesNotExist:
+            new_trade_obj = DomesticTrade(**new_trade)
+            trades_bulk_list.append(new_trade_obj)
 
     if trades_bulk_list:
         bulk_created_list = DomesticTrade.objects.bulk_create(trades_bulk_list)

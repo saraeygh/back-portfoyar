@@ -110,8 +110,7 @@ def get_update_history(instrument, instrument_type):
         )
 
         query_filter = {"option_symbol": instrument[f"{instrument_type}_symbol"]}
-        mongo_conn.collection.delete_one(query_filter)
-
+        mongo_conn.collection.delete_many(query_filter)
         mongo_conn.collection.insert_one(
             {
                 "option_symbol": instrument[f"{instrument_type}_symbol"],

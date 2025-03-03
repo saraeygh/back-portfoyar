@@ -84,6 +84,8 @@ class DomesticTrade(TimeStampMixin, models.Model):
 
     broker = models.CharField(max_length=255, verbose_name="کارگزار")
 
+    supply_pk = models.CharField(max_length=64, verbose_name="کد عرضه", default="-")
+
     def __str__(self):
         return f"{self.commodity_name}: {self.trade_date_shamsi}"
 

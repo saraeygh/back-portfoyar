@@ -52,8 +52,6 @@ def populate_producer(producers: list):
         except DomesticProducer.DoesNotExist:
             new_producer = DomesticProducer(name=name, code=code)
             producer_bulk_create.append(new_producer)
-        except Exception as e:
-            print(e, "CODE: ", code)
 
     if producer_bulk_create:
         DomesticProducer.objects.bulk_create(producer_bulk_create)

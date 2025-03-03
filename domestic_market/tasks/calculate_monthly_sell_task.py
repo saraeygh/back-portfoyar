@@ -225,7 +225,7 @@ def calculate_month_sell(start_date, end_date):
                 ]
                 previous_monthly_sell.save()
             else:
-                pass
+                raise ValueError("MORE THAN ONE MONTHLY REPORT!!!")
 
     if bulk_monthly_list:
         DomesticMonthlySell.objects.bulk_create(bulk_monthly_list)
