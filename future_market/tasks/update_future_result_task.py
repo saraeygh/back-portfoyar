@@ -64,6 +64,9 @@ def get_future_derivatives(derivative_symbol):
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     mongo_conn.collection = mongo_conn.db[FUTURE_MARKET]
     future_derivatives = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
+    if future_derivatives.empty:
+        return []
+
     future_derivatives = future_derivatives[
         future_derivatives[UNIQUE_IDENTIFIER_COL.get(FUTURE_MARKET)].str.contains(
             derivative_symbol, na=False
@@ -226,10 +229,12 @@ def update_future_main():
         strategy_result = list()
         for base_equity in tqdm(base_equities, desc=f"{strategy_key} result", ncols=10):
             base_equity_row = get_base_equity_row(base_equity)
-
             if not base_equity_row:
                 continue
+
             future_derivatives = get_future_derivatives(base_equity.derivative_symbol)
+            if not future_derivatives:
+                continue
 
             calculate_result = properties.get("calculate")
             result = calculate_result(
