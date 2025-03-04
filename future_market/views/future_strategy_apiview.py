@@ -1,15 +1,12 @@
 import pandas as pd
 
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
-
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from core.configs import SIX_HOURS_CACHE, SIXTY_SECONDS_CACHE, FUTURE_MONGO_DB
+from core.configs import SIXTY_SECONDS_CACHE, FUTURE_MONGO_DB
 from core.utils import (
     MongodbInterface,
     TABLE_COLS_QP,
@@ -86,7 +83,6 @@ def get_strategy_result_from_redis(strategy_key, table):
     return positions
 
 
-@method_decorator(cache_page(SIX_HOURS_CACHE), name="dispatch")
 class FuturePositionsAPIView(APIView):
     def get_authenticators(self):
         return [TokenAuthentication()]
