@@ -359,7 +359,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=SIX_DAYS_WEEK,
         hour=DERIVATIVE_MARKET_HOURS,
-        second="*/55",
+        minute="*/1",
     )
 
     scheduler.add_job(

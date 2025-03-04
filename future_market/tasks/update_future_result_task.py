@@ -95,6 +95,7 @@ def get_total_and_monthly_spread(
     remained_day = (expiration_date - today_date).days
     if remained_day < 1 or contract_size == 0:
         return spreads
+
     initial_margin_fee = (
         (initial_margin / contract_size) * monthly_interest_rate * (remained_day / 30)
     ) / 100
@@ -137,7 +138,7 @@ def long_future_result(
             open_position_price,
             base_equity_last_price,
             expiration_date,
-            monthly_interest_rate,
+            -1 * monthly_interest_rate,
             initial_margin,
             future_contract_size,
         )
