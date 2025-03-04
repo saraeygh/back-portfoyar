@@ -14,7 +14,15 @@ from samaneh.settings import (
     POSTGRES_SERVICE_NAME,
 )
 
-from core.configs import TEHRAN_TZ, MGT_FOR_DAILY_TASKS
+from core.configs import (
+    TEHRAN_TZ,
+    MGT_FOR_DAILY_TASKS,
+    MGT_FOR_PREIODIC_TASKS,
+    FIVE_DAYS_WEEK,
+    SIX_DAYS_WEEK,
+    TSETMC_MARKET_HOURS,
+    DERIVATIVE_MARKET_HOURS,
+)
 
 from account.tasks import disable_expired_subscription
 
@@ -66,7 +74,7 @@ from stock_market.tasks import (
 from global_market.tasks import calculate_commodity_means_global
 
 
-def get_scheduler():
+def get_cores_threads():
     total_cores = os.cpu_count()
     used_cores = total_cores // 2
     print(Fore.BLUE + f"Cores: {total_cores}, Used: {used_cores}" + Style.RESET_ALL)
@@ -76,24 +84,36 @@ def get_scheduler():
         Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
     )
 
+    return used_cores, total_threads
+
+
+def get_job_stores():
     jobstores = {
         "default": SQLAlchemyJobStore(
             url=f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVICE_NAME}:5432/{POSTGRES_DB}"
         )
     }
 
+    return jobstores
+
+
+def get_executors(used_cores, total_threads):
     executors = {
         "default": ThreadPoolExecutor(total_threads),
         "processpool": ProcessPoolExecutor(used_cores),
     }
-    job_defaults = {
-        "coalesce": True,
-    }
+
+    return executors
+
+
+def get_scheduler():
+    used_cores, total_threads = get_cores_threads()
+    jobstores = get_job_stores()
+    executors = get_executors(used_cores, total_threads)
 
     scheduler = BlockingScheduler(
         jobstores=jobstores,
         executors=executors,
-        job_defaults=job_defaults,
         timezone=TEHRAN_TZ,
     )
 
@@ -107,6 +127,7 @@ def add_account_app_jobs(scheduler: BlockingScheduler):
         id="disable_expired_subscription_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="1",
         minute="5",
@@ -120,50 +141,60 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=dashboard_buy_sell_orders_value,
         id="dashboard_buy_sell_orders_value_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
     scheduler.add_job(
         func=dashboard_last_close_price,
         id="dashboard_last_close_price_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
     scheduler.add_job(
         func=dashboard_total_index,
         id="dashboard_total_index_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/6",
     )
 
     scheduler.add_job(
         func=dashboard_unweighted_index,
         id="dashboard_unweighted_index_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/6",
     )
 
     scheduler.add_job(
         func=dashboard_option_value_analysis,
         id="dashboard_option_value_analysis_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -176,8 +207,9 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="populate_domestic_market_db_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="19",
         minute="10",
     )
@@ -187,8 +219,9 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_commodity_mean_domestic_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="20",
         minute="10",
     )
@@ -198,8 +231,9 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_monthly_sell_domestic_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="20",
         minute="30",
     )
@@ -209,8 +243,9 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_production_sell_domestic_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="21",
         minute="10",
     )
@@ -220,6 +255,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_producers_yearly_value_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="21",
         minute="45",
@@ -228,7 +264,9 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_dollar_daily_price,
         id="get_dollar_daily_price_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         minute="*/30",
     )
@@ -242,6 +280,7 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
         id="get_fund_detail_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="20",
         minute="10",
@@ -250,10 +289,12 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=get_all_fund_detail,
         id="get_all_fund_detail_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="9-17",
+        day_of_week=SIX_DAYS_WEEK,
+        hour=DERIVATIVE_MARKET_HOURS,
         minute="*/15",
     )
 
@@ -264,10 +305,12 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_derivative_info,
         id="update_derivative_info_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="11-17",
+        day_of_week=SIX_DAYS_WEEK,
+        hour=DERIVATIVE_MARKET_HOURS,
         minute="*/2",
     )
 
@@ -276,8 +319,9 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         id="update_future_base_equity_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="22",
         minute="10",
     )
@@ -287,8 +331,9 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         id="update_option_base_equity_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
+        day_of_week=SIX_DAYS_WEEK,
         hour="22",
         minute="11",
     )
@@ -296,20 +341,24 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_future,
         id="update_future_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="11-17",
+        day_of_week=SIX_DAYS_WEEK,
+        hour=DERIVATIVE_MARKET_HOURS,
         second="*/55",
     )
 
     scheduler.add_job(
         func=update_option_result,
         id="update_option_result_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed, thu",
-        hour="11-17",
+        day_of_week=SIX_DAYS_WEEK,
+        hour=DERIVATIVE_MARKET_HOURS,
         second="*/55",
     )
 
@@ -318,6 +367,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         id="check_future_active_contracts_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="22",
         minute="12",
@@ -328,6 +378,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
         id="check_option_active_contracts_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="22",
         minute="13",
@@ -342,6 +393,7 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
         id="calculate_commodity_means_global_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="7",
         minute="10",
@@ -354,10 +406,12 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_option_data_from_tse,
         id="update_option_data_from_tse_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         second="*/40",
     )
 
@@ -366,6 +420,7 @@ def add_option_market_app_jobs(scheduler: BlockingScheduler):
         id="get_option_history_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="1",
         minute="10",
@@ -379,20 +434,24 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_market_watch,
         id="update_market_watch_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         second="*/45",
     )
 
     scheduler.add_job(
         func=update_market_watch_indices,
         id="update_market_watch_indices_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -401,6 +460,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_stock_daily_history_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="14",
         minute="35",
@@ -411,6 +471,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="update_instrument_info_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="17",
         minute="30",
@@ -419,9 +480,11 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=update_instrument_roi,
         id="update_instrument_roi_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        hour="9-13",
+        hour=TSETMC_MARKET_HOURS,
         minute="*/45",
     )
 
@@ -430,6 +493,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_value_history_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="5",
         minute="10",
@@ -438,10 +502,12 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_value_change,
         id="stock_value_change_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -450,6 +516,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="stock_option_value_history_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="7",
         minute="30",
@@ -458,20 +525,24 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
     scheduler.add_job(
         func=stock_option_value_change,
         id="stock_option_value_change_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
     scheduler.add_job(
         func=stock_option_price_spread,
         id="stock_option_price_spread_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
-        day_of_week="sat, sun, mon, tue, wed",
-        hour="9-13",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -480,6 +551,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         id="get_monthly_activity_report_letter_task",
         misfire_grace_time=MGT_FOR_DAILY_TASKS,
         replace_existing=True,
+        coalesce=True,
         trigger="cron",
         hour="6",
         minute="10",
