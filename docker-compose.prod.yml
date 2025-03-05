@@ -47,7 +47,7 @@ services:
         max-file: "10"
 
   api_test:
-    # mem_limit: 6g
+    mem_limit: 6g
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
