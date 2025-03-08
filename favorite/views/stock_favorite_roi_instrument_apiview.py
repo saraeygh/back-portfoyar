@@ -35,8 +35,8 @@ class StockFavoriteROIInstrumentAPIView(APIView):
         )
         if instrument.exists():
             instrument.delete()
-            return Response({"message": "با موفقیت حذف شد."}, status=status.HTTP_200_OK)
+            return Response({"message": "با موفقیت پاک شد."}, status=status.HTTP_200_OK)
 
         return Response(
-            {"message": "این نماد وجود ندارد."}, status=status.HTTP_400_BAD_REQUEST
+            {"message": "درخواست نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
         )

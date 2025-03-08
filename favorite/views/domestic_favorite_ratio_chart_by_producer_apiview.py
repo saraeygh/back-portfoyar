@@ -95,11 +95,11 @@ class DomesticFavoriteRatioChartByProducerAPIView(APIView):
                 validated_data_dict_srz.save()
 
                 return Response(
-                    validated_data_dict_srz.data,
+                    {"message": "با موفقیت افزوده شد"},
                     status=status.HTTP_200_OK,
                 )
         return Response(
-            {"detail": "Invalid ids"},
+            {"message": "درخواست نامعتبر"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -115,6 +115,6 @@ class DomesticFavoriteRatioChartByProducerAPIView(APIView):
         favorite_ratio_chart_by_producer.delete()
 
         return Response(
-            {"message": "نمودار قیمت مورد علاقه پاک شد"},
+            {"message": "با موفقیت پاک شد"},
             status=status.HTTP_200_OK,
         )

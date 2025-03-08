@@ -76,7 +76,7 @@ class DomesticFavoritePriceChartByProducerAPIView(APIView):
                 validated_data_dict_srz.save()
 
                 return Response(
-                    validated_data_dict_srz.data,
+                    {"message": "با موفقیت افزوده شد"},
                     status=status.HTTP_200_OK,
                 )
 
@@ -97,6 +97,6 @@ class DomesticFavoritePriceChartByProducerAPIView(APIView):
         favorite_price_chart_by_producer.delete()
 
         return Response(
-            {"message": "نمودار قیمت مورد علاقه پاک شد"},
+            {"message": "با موفقیت پاک شد"},
             status=status.HTTP_200_OK,
         )

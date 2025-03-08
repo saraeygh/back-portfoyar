@@ -30,11 +30,11 @@ class StockFavoriteROIGroupAPIView(APIView):
         group_name = group_name.strip()
         if group_name == "" or group_name is None:
             return Response(
-                {"message": "نام نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "درخواست نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
             )
         new_group = StockFavoriteROIGroup(user=request.user, name=group_name)
         new_group.save()
-        return Response({"message": "با موفقیت ساخته شد"}, status=status.HTTP_200_OK)
+        return Response({"message": "با موفقیت افزوده شد"}, status=status.HTTP_200_OK)
 
     def patch(self, request):
         group_id = request.data.get("group_id")
@@ -52,4 +52,4 @@ class StockFavoriteROIGroupAPIView(APIView):
         )
         group.delete()
 
-        return Response({"message": "با موفقیت حذف شد."}, status=status.HTTP_200_OK)
+        return Response({"message": "با موفقیت پاک شد"}, status=status.HTTP_200_OK)

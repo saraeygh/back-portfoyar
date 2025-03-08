@@ -39,14 +39,14 @@ class DomesticFavoriteProducerReportAPIView(APIView):
         try:
             DomesticFavoriteProducerReport.objects.get(user=user, producer=producer)
             return Response(
-                {"message": "تولید کننده تکراری است"},
+                {"message": "درخواست نامعتبر"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except DomesticFavoriteProducerReport.DoesNotExist:
             new_favorite = {"user": user, "producer": producer}
             DomesticFavoriteProducerReport.objects.create(**new_favorite)
             return Response(
-                {"message": "تولید کننده اضافه شد"}, status=status.HTTP_200_OK
+                {"message": "با موفقیت افزوده شذ"}, status=status.HTTP_200_OK
             )
 
     def delete(self, request, *args, **kwargs):
@@ -56,11 +56,9 @@ class DomesticFavoriteProducerReportAPIView(APIView):
                 id=favorite_id, user=request.user
             )
             favorite.delete()
-            return Response(
-                {"message": "تولید کننده مورد نظر حذف شد"}, status=status.HTTP_200_OK
-            )
+            return Response({"message": "با موفقیت پاک شد"}, status=status.HTTP_200_OK)
         except DomesticFavoriteProducerReport.DoesNotExist:
             return Response(
-                {"message": "تولید کننده وجود ندارد"},
+                {"message": "درخواست نامعتبر"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

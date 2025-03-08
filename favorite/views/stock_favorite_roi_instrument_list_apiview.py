@@ -45,10 +45,10 @@ class StockFavoriteROIInstrumentListAPIView(APIView):
         ).exists()
         if exists:
             return Response(
-                {"message": "قبلاً اضافه شده است"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "درخواست نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         new_instrument = ROIGroupInstrument(group=group, instrument=instrument)
         new_instrument.save()
 
-        return Response({"message": "با موفقیت ساخته شد"}, status=status.HTTP_200_OK)
+        return Response({"message": "با موفقیت افزوده شد"}, status=status.HTTP_200_OK)

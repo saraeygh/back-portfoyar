@@ -74,12 +74,12 @@ class GlobalFavoritePriceChartAPIView(APIView):
                 validated_data_dict_srz.save()
 
                 return Response(
-                    validated_data_dict_srz.data,
+                    {"message": "با موفقیت افزوده شد"},
                     status=status.HTTP_200_OK,
                 )
         else:
             return Response(
-                {"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "درخواست نامعتبر"}, status=status.HTTP_400_BAD_REQUEST
             )
 
     def delete(self, request, *args, **kwargs):
@@ -91,6 +91,6 @@ class GlobalFavoritePriceChartAPIView(APIView):
         favorite_price_chart.delete()
 
         return Response(
-            {"message": "نمودار قیمت مورد علاقه پاک شد"},
+            {"message": "با موفقیت پاک شد"},
             status=status.HTTP_200_OK,
         )
