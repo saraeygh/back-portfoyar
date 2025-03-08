@@ -7,4 +7,4 @@ class MinimumPESerailizer(serializers.Serializer):
     link = serializers.CharField()
     pe = RoundedFloatField(decimal_places=2)
     sector_pe = RoundedFloatField(decimal_places=2)
-    market_cap = RoundedFloatField()
+    market_cap = serializers.IntegerField()

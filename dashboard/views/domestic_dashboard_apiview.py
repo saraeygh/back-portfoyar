@@ -46,6 +46,7 @@ def get_range_result(collection_name, price_changes):
         range_result = range_result.sort_values(by="deviation", ascending=True)
 
     range_result = range_result.head(DASHBOARD_TOP_5_LIMIT)
+    range_result["deviation"] = range_result["deviation"].abs()
     range_result = range_result.to_dict(orient="records")
     range_result = DashboardDomesticMeanDeviationSerailizer(range_result, many=True)
 
