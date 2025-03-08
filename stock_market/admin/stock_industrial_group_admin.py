@@ -8,13 +8,13 @@ from stock_market.models import StockIndustrialGroup
 
 @admin.register(StockIndustrialGroup)
 class StockIndustrialGroupAdmin(admin.ModelAdmin):
-    list_display = ("id", "code", "name", "created_at_shamsi", "updated_at_shamsi")
+    list_display = ("id", "code", "name", "priority", "created_at_shamsi", "updated_at_shamsi")
 
     list_display_links = ("id", "code", "name")
 
     ordering = ("-updated_at",)
 
-    search_fields = ("id", "code", "name")
+    search_fields = ("id", "code", "name", "priority")
 
     @admin.display(description="ایجاد")
     def created_at_shamsi(self, obj: StockIndustrialGroup):

@@ -10,24 +10,27 @@ from rest_framework.views import APIView
 from core.configs import SIXTY_MINUTES_CACHE
 from stock_market.models import StockIndustrialGroup
 
+from dashboard.serializers import IndustrialGroupSerailizer
+
 
 @method_decorator(cache_page(SIXTY_MINUTES_CACHE), name="dispatch")
 class IndustrialGroupsAPIView(APIView):
     def get(self, request):
-        industrial_groups = StockIndustrialGroup.objects.values("code", "name")
+        industrial_groups = StockIndustrialGroup.objects.order_by("priority").values(
+            "code", "name"
+        )
+        industrial_groups = IndustrialGroupSerailizer(industrial_groups, many=True)
 
-        if industrial_groups:
-            return Response(industrial_groups, status=status.HTTP_200_OK)
-        return Response([], status=status.HTTP_200_OK)
+        return Response(industrial_groups.data, status=status.HTTP_200_OK)
 
 
 DASHBOARD_MENU_PAPER_TYPE_LIST = [
-    {"code": 1, "name": "سهام"},
-    {"code": 2, "name": "بازار پایه فرابورس"},
-    {"code": 8, "name": "صندوق‌های سرمایه‌گذاری"},
-    {"code": 4, "name": "حق تقدم"},
-    {"code": 6, "name": "اختیار معامله"},
-    {"code": 7, "name": "آتی"},
+    {"id": 1, "name": "سهام"},
+    {"id": 2, "name": "بازار پایه فرابورس"},
+    {"id": 8, "name": "صندوق‌های سرمایه‌گذاری"},
+    {"id": 4, "name": "حق تقدم"},
+    {"id": 6, "name": "اختیار معامله"},
+    {"id": 7, "name": "آتی"},
 ]
 
 

@@ -1,1 +1,2 @@
 from .minimum_pe_srz import MinimumPESerailizer
+from .industrial_group_srz import IndustrialGroupSerailizer
