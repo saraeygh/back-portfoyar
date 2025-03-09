@@ -108,4 +108,20 @@ class Receipt(TimeStampMixin, models.Model):
 
     class Meta:
         verbose_name = "رسید تراکنش‌"
-        verbose_name_plural = "۱) رسید تراکنش‌ها"
+        verbose_name_plural = "۱) رسید تراکنش‌ها (همه)"
+
+
+class NotConfirmedReceipt(Receipt):
+
+    class Meta:
+        proxy = True
+        verbose_name = "رسید تراکنش‌"
+        verbose_name_plural = "۲) رسید تراکنش‌ها (تایید نشده)"
+
+
+class ConfirmedReceipt(Receipt):
+
+    class Meta:
+        proxy = True
+        verbose_name = "رسید تراکنش‌"
+        verbose_name_plural = "۳) رسید تراکنش‌ها (تایید شده)"

@@ -4,11 +4,14 @@ from django.contrib import admin
 
 from core.configs import TEHRAN_TZ
 
-from payment.models import Receipt
+from payment.models import Receipt, NotConfirmedReceipt, ConfirmedReceipt
 
 
 @admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        return super().get_queryset(request)
+
     list_display = (
         "id",
         "user",
@@ -58,3 +61,17 @@ class ReceiptAdmin(admin.ModelAdmin):
         ).strftime("%Y-%m-%d %H:%M:%S")
 
         return shamsi
+
+
+@admin.register(NotConfirmedReceipt)
+class NotConfirmedReceiptAdmin(ReceiptAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_confirmed=False)
+
+
+@admin.register(ConfirmedReceipt)
+class ConfirmedReceiptAdmin(ReceiptAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.filter(is_confirmed=True)

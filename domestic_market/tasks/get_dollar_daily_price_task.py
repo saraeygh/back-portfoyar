@@ -7,6 +7,10 @@ from core.utils import run_main_task, get_http_response
 from domestic_market.models import DomesticDollarPrice
 
 
+def get_last_dollar_price():
+    return DomesticDollarPrice.objects.last()
+
+
 def get_dollar_price_bs(URL: str):
 
     response = get_http_response(req_url=URL)
@@ -24,18 +28,13 @@ def get_dollar_price_bs(URL: str):
     return last_price_value
 
 
-def get_dollar_daily_price_main():
+def update_azad_price(last_dollar, today_price_date):
     AZAD_URL = "https://www.tgju.org/profile/price_dollar_rl"
-    NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
-
     azad_usd_price = get_dollar_price_bs(URL=AZAD_URL)
-    nima_usd_price = get_dollar_price_bs(URL=NIMA_URL)
 
-    today_price_date = datetime.now().date()
     try:
         last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
         last_dollar_price.azad = azad_usd_price
-        last_dollar_price.nima = nima_usd_price
         last_dollar_price.save()
     except DomesticDollarPrice.DoesNotExist:
         today_price_date_shamsi = str(
@@ -46,8 +45,37 @@ def get_dollar_daily_price_main():
             date=today_price_date,
             date_shamsi=today_price_date_shamsi,
             azad=azad_usd_price,
+            nima=last_dollar.nima,
+        )
+
+
+def update_nima_price(last_dollar, today_price_date):
+    NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
+    nima_usd_price = get_dollar_price_bs(URL=NIMA_URL)
+
+    try:
+        last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
+        last_dollar_price.nima = nima_usd_price
+        last_dollar_price.save()
+    except DomesticDollarPrice.DoesNotExist:
+        today_price_date_shamsi = str(
+            jdatetime.date.fromgregorian(date=today_price_date)
+        )
+
+        DomesticDollarPrice.objects.create(
+            date=today_price_date,
+            date_shamsi=today_price_date_shamsi,
+            azad=last_dollar.azad,
             nima=nima_usd_price,
         )
+
+
+def get_dollar_daily_price_main():
+    last_dollar = get_last_dollar_price()
+    today_price_date = datetime.now().date()
+
+    update_azad_price(last_dollar, today_price_date)
+    update_nima_price(last_dollar, today_price_date)
 
 
 def get_dollar_daily_price():

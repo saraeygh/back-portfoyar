@@ -5,3 +5,5 @@ locust/
 .pdm-python
 .env
 .env*
+.venv
+.git
