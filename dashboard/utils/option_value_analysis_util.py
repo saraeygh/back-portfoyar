@@ -68,7 +68,7 @@ def option_value_analysis():
             "option_value",
             "put_to_call",
             "option_to_market",
-        )[0:90]
+        )[0:30]
     )
     data_history = data_history.sort_values(by="date")
 

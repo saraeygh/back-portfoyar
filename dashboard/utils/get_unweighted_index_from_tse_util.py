@@ -33,7 +33,9 @@ def get_unweighted_index_from_tse():
     unweighted_index = pd.DataFrame(unweighted_index.json().get("indexB1"))
     unweighted_index.rename(columns=UNWEIGHTED_INDEX_COLS, inplace=True)
     unweighted_index = unweighted_index[list(UNWEIGHTED_INDEX_COLS.values())]
-    unweighted_index = unweighted_index[unweighted_index["time"] >= 90000]
+    unweighted_index = unweighted_index[
+        (unweighted_index["time"] >= 90000) & (unweighted_index["time"] <= 123500)
+    ]
     unweighted_index["time"] = unweighted_index.apply(convert_int_time_to_str, axis=1)
 
     unweighted_index = unweighted_index.to_dict(orient="records")
