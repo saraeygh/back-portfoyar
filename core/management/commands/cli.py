@@ -33,7 +33,11 @@ from future_market.tasks import (
 )
 from global_market.tasks import calculate_commodity_means_global
 
-from option_market.tasks import update_option_data_from_tse, get_option_history
+from option_market.tasks import (
+    update_option_data_from_tse,
+    get_option_history,
+    calculate_daily_option_value,
+)
 
 from stock_market.tasks import (
     update_market_watch,
@@ -171,6 +175,7 @@ def option_cli(clear_cmd):
             "all) Run all commands" + Style.RESET_ALL,
             Fore.BLUE + "1) Update option data",
             "2) Get option history",
+            "3) calculate_daily_option_value",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -184,6 +189,8 @@ def option_cli(clear_cmd):
                 update_option_data_from_tse(MANUAL_MODE)
             case "2":
                 get_option_history()
+            case "3":
+                calculate_daily_option_value()
             case "0":
                 break
 

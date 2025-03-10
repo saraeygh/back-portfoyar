@@ -8,7 +8,7 @@ from .option_value_analysis_apiview import (
     OptionValueAPIView,
     CallValueAPIView,
     PutValueAPIView,
-    CallToPutAPIView,
+    PutToCallAPIView,
     OptionToMarketAPIView,
     TopOptionsAPIView,
 )

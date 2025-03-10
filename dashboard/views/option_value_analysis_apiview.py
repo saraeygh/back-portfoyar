@@ -18,174 +18,119 @@ from core.configs import (
 )
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find(
-                {}, {"_id": 0, "time": 1, "option_value": 1, "date": 1}
-            )
+            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "option_value": 1})
         )
 
-        date = option_value.iloc[0].get("date")
-
-        today_date = jdt.date.today().strftime("%Y/%m/%d")
-        if date == today_date:
-            chart_title = "ارزش کل امروز آپشن‌ها"
-        else:
-            chart_title = f"ارزش کل آپشن‌ها {date}"
-
-        option_value.rename(columns={"time": "x", "option_value": "y"}, inplace=True)
-        option_value.drop("date", axis=1, inplace=True)
+        option_value.rename(columns={"date": "x", "option_value": "y"}, inplace=True)
 
         chart = {
             "x_title": "زمان",
             "y_title": "ارزش کل آپشن‌ها (میلیارد تومان)",
-            "chart_title": chart_title,
+            "chart_title": "ارزش کل آپشن‌ها",
             "history": option_value.to_dict(orient="records"),
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class CallValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find(
-                {}, {"_id": 0, "time": 1, "call_value": 1, "date": 1}
-            )
+            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "call_value": 1})
         )
 
-        date = option_value.iloc[0].get("date")
-
-        today_date = jdt.date.today().strftime("%Y/%m/%d")
-        if date == today_date:
-            chart_title = "ارزش کل امروز کال آپشن‌ها"
-        else:
-            chart_title = f"ارزش کل کال آپشن‌ها {date}"
-
-        option_value.rename(columns={"time": "x", "call_value": "y"}, inplace=True)
-        option_value.drop("date", axis=1, inplace=True)
+        option_value.rename(columns={"date": "x", "call_value": "y"}, inplace=True)
 
         chart = {
             "x_title": "زمان",
             "y_title": "ارزش کل کال آپشن‌ها (میلیارد تومان)",
-            "chart_title": chart_title,
+            "chart_title": "ارز کال آپشن‌ها",
             "history": option_value.to_dict(orient="records"),
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find(
-                {}, {"_id": 0, "time": 1, "put_value": 1, "date": 1}
-            )
+            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "put_value": 1})
         )
 
-        date = option_value.iloc[0].get("date")
-
-        today_date = jdt.date.today().strftime("%Y/%m/%d")
-        if date == today_date:
-            chart_title = "ارزش کل امروز پوت آپشن‌ها"
-        else:
-            chart_title = f"ارزش کل پوت آپشن‌ها {date}"
-
-        option_value.rename(columns={"time": "x", "put_value": "y"}, inplace=True)
-        option_value.drop("date", axis=1, inplace=True)
+        option_value.rename(columns={"date": "x", "put_value": "y"}, inplace=True)
 
         chart = {
             "x_title": "زمان",
             "y_title": "ارزش کل پوت آپشن‌ها (میلیارد تومان)",
-            "chart_title": chart_title,
+            "chart_title": "ارزش پوت آشپن‌ها",
             "history": option_value.to_dict(orient="records"),
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
-class CallToPutAPIView(APIView):
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+class PutToCallAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find(
-                {}, {"_id": 0, "time": 1, "call_to_put": 1, "date": 1}
-            )
+            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "put_to_call": 1})
         )
 
-        date = option_value.iloc[0].get("date")
-
-        today_date = jdt.date.today().strftime("%Y/%m/%d")
-        if date == today_date:
-            chart_title = "نسبت کال به پوت امروز"
-        else:
-            chart_title = f"نسبت کال به پوت {date}"
-
-        option_value.rename(columns={"time": "x", "call_to_put": "y"}, inplace=True)
-        option_value.drop("date", axis=1, inplace=True)
+        option_value.rename(columns={"date": "x", "put_to_call": "y"}, inplace=True)
 
         chart = {
             "x_title": "زمان",
             "y_title": "نسبت کال به پوت",
-            "chart_title": chart_title,
+            "chart_title": "نسبت کال به پوت",
             "history": option_value.to_dict(orient="records"),
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionToMarketAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find(
-                {}, {"_id": 0, "time": 1, "option_to_market": 1, "date": 1}
-            )
+            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "option_to_market": 1})
         )
-
-        date = option_value.iloc[0].get("date")
-
-        today_date = jdt.date.today().strftime("%Y/%m/%d")
-        if date == today_date:
-            chart_title = "نسبت امروز آپشن‌ها به کل بازار"
-        else:
-            chart_title = f"نسبت آپشن‌ها به کل بازار {date}"
 
         option_value.rename(
-            columns={"time": "x", "option_to_market": "y"}, inplace=True
+            columns={"date": "x", "option_to_market": "y"}, inplace=True
         )
-        option_value.drop("date", axis=1, inplace=True)
 
         chart = {
             "x_title": "زمان",
             "y_title": "نسبت آپشن‌ها به کل بازار",
-            "chart_title": chart_title,
+            "chart_title": "ارزش آپشن‌ها به کل بازار",
             "history": option_value.to_dict(orient="records"),
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class TopOptionsAPIView(APIView):
     def get(self, request):
 

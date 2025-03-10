@@ -55,7 +55,11 @@ from future_market.tasks import (
     check_option_active_contracts,
 )
 
-from option_market.tasks import update_option_data_from_tse, get_option_history
+from option_market.tasks import (
+    update_option_data_from_tse,
+    get_option_history,
+    calculate_daily_option_value,
+)
 
 from stock_market.tasks import (
     update_market_watch,
@@ -184,6 +188,18 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
         minute="*/6",
+    )
+
+    scheduler.add_job(
+        func=calculate_daily_option_value,
+        id="calculate_daily_option_value_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+        replace_existing=True,
+        coalesce=True,
+        trigger="cron",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour="23",
+        minute="5",
     )
 
     scheduler.add_job(

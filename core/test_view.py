@@ -31,7 +31,11 @@ from future_market.tasks import (
 )
 from global_market.tasks import calculate_commodity_means_global
 
-from option_market.tasks import update_option_data_from_tse, get_option_history
+from option_market.tasks import (
+    update_option_data_from_tse,
+    get_option_history,
+    calculate_daily_option_value,
+)
 
 from stock_market.tasks import (
     update_market_watch,
@@ -71,6 +75,7 @@ TASKS = {
     # OPTION
     "31": (update_option_data_from_tse, True),
     "32": (get_option_history, False),
+    "33": (calculate_daily_option_value, False),
     # STOCK
     "41": (get_monthly_activity_report_letter, False),
     "42": (update_market_watch, True),
