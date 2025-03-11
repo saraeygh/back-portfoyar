@@ -49,7 +49,10 @@ SHORT_SUMMARY_TABLE_LIST = [
 
 def sort_strategy_result(positions, sort_column, strategy_key, table):
     try:
-        positions.sort_values(by=sort_column, inplace=True, ascending=False)
+        if strategy_key == "long_future":
+            positions.sort_values(by=sort_column, inplace=True)
+        else:
+            positions.sort_values(by=sort_column, inplace=True, ascending=False)
 
         positions["derivative_name"] = positions.apply(
             replace_arabic_letters_pd, args=("derivative_name",), axis=1
@@ -71,7 +74,7 @@ def sort_strategy_result(positions, sort_column, strategy_key, table):
         return positions
 
 
-def get_strategy_result_from_redis(strategy_key, table):
+def get_strategy_result_from_mongo(strategy_key, table):
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     mongo_conn.collection = mongo_conn.db[strategy_key]
     positions = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
@@ -109,7 +112,7 @@ class FuturePositionsAPIView(APIView):
         cache_response = get_cache_as_json(cache_key)
 
         if cache_response is None:
-            result = get_strategy_result_from_redis(strategy_key, table)
+            result = get_strategy_result_from_mongo(strategy_key, table)
             result.reset_index(drop=True, inplace=True)
             result["id"] = result.apply(add_index_as_id, axis=1)
             result = result.to_dict(orient="records")
