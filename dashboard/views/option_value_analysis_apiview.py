@@ -1,5 +1,4 @@
 import pandas as pd
-import jdatetime as jdt
 
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
@@ -18,7 +17,7 @@ from core.configs import (
 )
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -27,110 +26,114 @@ class OptionValueAPIView(APIView):
         option_value = pd.DataFrame(
             mongo_conn.collection.find({}, {"_id": 0, "date": 1, "option_value": 1})
         )
-
         option_value.rename(columns={"date": "x", "option_value": "y"}, inplace=True)
+        history = option_value.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش کل آپشن‌ها (میلیارد تومان)",
-            "chart_title": "ارزش کل آپشن‌ها",
-            "history": option_value.to_dict(orient="records"),
+            "y_title": "ارزش آپشن‌ها (میلیارد تومان)",
+            "chart_title": f"ارزش آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
+            "history": history,
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class CallValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-        option_value = pd.DataFrame(
+        call_value = pd.DataFrame(
             mongo_conn.collection.find({}, {"_id": 0, "date": 1, "call_value": 1})
         )
 
-        option_value.rename(columns={"date": "x", "call_value": "y"}, inplace=True)
+        call_value.rename(columns={"date": "x", "call_value": "y"}, inplace=True)
+        history = call_value.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش کل کال آپشن‌ها (میلیارد تومان)",
-            "chart_title": "ارز کال آپشن‌ها",
-            "history": option_value.to_dict(orient="records"),
+            "y_title": "ارز کال آپشن‌ها (میلیارد تومان)",
+            "chart_title": f"ارزش کال آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
+            "history": history,
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-        option_value = pd.DataFrame(
+        put_value = pd.DataFrame(
             mongo_conn.collection.find({}, {"_id": 0, "date": 1, "put_value": 1})
         )
 
-        option_value.rename(columns={"date": "x", "put_value": "y"}, inplace=True)
+        put_value.rename(columns={"date": "x", "put_value": "y"}, inplace=True)
+        history = put_value.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش کل پوت آپشن‌ها (میلیارد تومان)",
-            "chart_title": "ارزش پوت آشپن‌ها",
-            "history": option_value.to_dict(orient="records"),
+            "y_title": "ارزش پوت آشپن‌ها (میلیارد تومان)",
+            "chart_title": f"ارزش پوت آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
+            "history": history,
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutToCallAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-        option_value = pd.DataFrame(
+        put_to_call = pd.DataFrame(
             mongo_conn.collection.find({}, {"_id": 0, "date": 1, "put_to_call": 1})
         )
 
-        option_value.rename(columns={"date": "x", "put_to_call": "y"}, inplace=True)
+        put_to_call.rename(columns={"date": "x", "put_to_call": "y"}, inplace=True)
+        history = put_to_call.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "نسبت کال به پوت",
-            "chart_title": "نسبت کال به پوت",
-            "history": option_value.to_dict(orient="records"),
+            "y_title": "نسبت پوت به کال",
+            "chart_title": f"نسبت پوت به کال ({history[-1]["y"]})",
+            "history": history,
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionToMarketAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
-        option_value = pd.DataFrame(
+        option_to_market = pd.DataFrame(
             mongo_conn.collection.find({}, {"_id": 0, "date": 1, "option_to_market": 1})
         )
 
-        option_value.rename(
+        option_to_market.rename(
             columns={"date": "x", "option_to_market": "y"}, inplace=True
         )
+        history = option_to_market.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "نسبت آپشن‌ها به کل بازار",
-            "chart_title": "ارزش آپشن‌ها به کل بازار",
-            "history": option_value.to_dict(orient="records"),
+            "y_title": "ارزش آپشن‌ها به کل بازار",
+            "chart_title": f"ارزش آپشن‌ها به کل بازار ({history[-1]["y"]})",
+            "history": history,
         }
 
         return Response(chart, status=status.HTTP_200_OK)
 
 
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class TopOptionsAPIView(APIView):
     def get(self, request):
 
