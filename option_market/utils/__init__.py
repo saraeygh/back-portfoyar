@@ -21,6 +21,7 @@ from .option_strategy_class_util import (
     AddOption,
     CoveredCall,
     Conversion,
+    MarriedPut,
     get_profit_range,
     get_distinc_end_date_options,
 )
@@ -53,6 +54,7 @@ from .long_butterfly_util import long_butterfly
 from .short_butterfly_util import short_butterfly
 from .collar_util import collar
 from .conversion_util import conversion
+from .married_put_util import married_put
 from .populate_all_option_strategy_util import (
     populate_all_option_strategy_sync,
     populate_all_option_strategy_async,

@@ -6,6 +6,7 @@ from core.configs import OPTION_MONGO_DB
 from . import (
     covered_call,
     conversion,
+    married_put,
     long_call,
     short_call,
     long_put,
@@ -26,21 +27,22 @@ from . import (
 STRATEGIES = [
     covered_call,  # 1
     conversion,  # 2
-    long_call,  # 3
-    short_call,  # 4
-    long_put,  # 5
-    short_put,  # 6
-    bull_call_spread,  # 7
-    bear_call_spread,  # 8
-    bull_put_spread,  # 9
-    bear_put_spread,  # 10
-    long_straddle,  # 11
-    short_straddle,  # 12
-    long_strangle,  # 13
-    short_strangle,  # 14
-    long_butterfly,  # 15
-    short_butterfly,  # 16
-    collar,  # 17
+    married_put,  # 3
+    long_call,  # 4
+    short_call,  # 5
+    long_put,  # 6
+    short_put,  # 7
+    bull_call_spread,  # 8
+    bear_call_spread,  # 9
+    bull_put_spread,  # 10
+    bear_put_spread,  # 11
+    long_straddle,  # 12
+    short_straddle,  # 13
+    long_strangle,  # 14
+    short_strangle,  # 15
+    long_butterfly,  # 16
+    short_butterfly,  # 17
+    collar,  # 18
 ]
 
 

@@ -9,53 +9,56 @@ CONVERSION_DESC = (
     "خرید سهم و فروش آپشن خرید و خرید آپشن فروش با قیمت اعمال یکسان همان سهم"
 )
 
-LONG_CALL_SEQ = 3
+MARRIED_PUT_SEQ = 3
+MARRIED_PUT_DESC = "خرید سهم و خرید آپشن فروش با قیمت اعمال کمتر از قیمت سهم"
+
+LONG_CALL_SEQ = 4
 LONG_CALL_DESC = "خرید آپشن خرید"
 
-SHORT_CALL_SEQ = 4
+SHORT_CALL_SEQ = 5
 SHORT_CALL_DESC = "فروش آپشن خرید"
 
-LONG_PUT_SEQ = 5
+LONG_PUT_SEQ = 6
 LONG_PUT_DESC = "خرید آپشن فروش"
 
-SHORT_PUT_SEQ = 6
+SHORT_PUT_SEQ = 7
 SHORT_PUT_DESC = "فروش آپشن فروش"
 
-LONG_STRADDLE_SEQ = 7
+LONG_STRADDLE_SEQ = 8
 LONG_STRADDLE_DESC = (
     "خرید همزمان آپشن خرید و آپشن فروش با قیمت اعمال برابر مربوط به یک سهم"
 )
 
-SHORT_STRADDLE_SEQ = 8
+SHORT_STRADDLE_SEQ = 9
 SHORT_STRADDLE_DESC = (
     "فروش همزمان آپشن خرید و آپشن فروش با قیمت اعمال برابر مربوط به یک سهم"
 )
 
-BULL_CALL_SPREAD_SEQ = 9
+BULL_CALL_SPREAD_SEQ = 10
 BULL_CALL_SPREAD_DESC = "خرید آپشن خرید با قیمت اعمال پایین‌تر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
 
-BEAR_CALL_SPREAD_SEQ = 10
+BEAR_CALL_SPREAD_SEQ = 11
 BEAR_CALL_SPREAD_DESC = "خرید آپشن خرید با قیمت اعمال بالاتر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
 
-BULL_PUT_SPREAD_SEQ = 11
+BULL_PUT_SPREAD_SEQ = 12
 BULL_PUT_SPREAD_DESC = "خرید آپشن فروش با قیمت اعمال پایین‌تر و فروش آپشن فروش با قیمت اعمال بالاتر مربوط به یک سهم"
 
-BEAR_PUT_SPREAD_SEQ = 12
+BEAR_PUT_SPREAD_SEQ = 13
 BEAR_PUT_SPREAD_DESC = "خرید آپشن فروش با قیمت اعمال بالاتر و فروش آپشن فروش با قیمت اعمال پایین‌تر مربوط به یک سهم"
 
-LONG_STRANGLE_SEQ = 13
+LONG_STRANGLE_SEQ = 14
 LONG_STRANGLE_DESC = "خرید آپشن فروش با قیمت اعمال پایین‌تر و خرید آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
 
-SHORT_STRANGLE_SEQ = 14
+SHORT_STRANGLE_SEQ = 15
 SHORT_STRANGLE_DESC = "فروش آپشن فروش با قیمت اعمال پایین‌تر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
 
-LONG_BUTTERFLY_SEQ = 15
+LONG_BUTTERFLY_SEQ = 16
 LONG_BUTTERFLY_DESC = "خرید آپشن خرید با قیمت اعمال پایین‌ و دو بار فروش آپشن خرید با قیمت اعمال میانه و خرید آپشن خرید با قیمت اعمال بالای مربوط به یک سهم"
 
-SHORT_BUTTERFLY_SEQ = 16
+SHORT_BUTTERFLY_SEQ = 17
 SHORT_BUTTERFLY_DESC = "فروش آپشن خرید با قیمت اعمال پایین‌ و دو بار خرید آپشن خرید با قیمت اعمال میانه و فروش آپشن خرید با قیمت اعمال بالای مربوط به یک سهم"
 
-COLLAR_SEQ = 17
+COLLAR_SEQ = 18
 COLLAR_DESC = "فروش آپشن خرید با قیمت اعمال پایین‌تر و دو بار خرید آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
 
 STRATEGIES = {
@@ -87,6 +90,20 @@ STRATEGIES = {
             "required_change",
             "end_date",
             "yearly_profit",
+        ],
+    },
+    "married_put": {
+        "name": "مرید پوت",
+        "profit_status": "unlimited_profit",
+        "risk_levels": ["low_risk"],
+        "sequence": MARRIED_PUT_SEQ,
+        "desc": MARRIED_PUT_DESC,
+        "drop_cols": [
+            "base_equity_best_sell_price",
+            "put_value",
+            "final_break_even",
+            "end_date",
+            "yearly_break_even",
         ],
     },
     #

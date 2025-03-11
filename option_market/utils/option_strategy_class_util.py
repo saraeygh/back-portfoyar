@@ -743,3 +743,88 @@ class Conversion:
         )
 
         return results
+
+
+class MarriedPut:
+    def __init__(self, strike, put_premium, asset_price) -> None:
+        self.strike = strike
+        self.put_premium = put_premium
+        self.asset_price = asset_price
+        self.name = "married_put"
+        STRATEGY_NAME_LIST.append(self.name)
+        self.interval = [(-np.inf, strike), (strike, np.inf)]
+
+    def get_slop(self):
+        return {str((-np.inf, self.strike)): 0, str((self.strike, np.inf)): 1}
+
+    def is_profit_unlimited(self):
+        return True
+
+    def is_loss_unlimited(self):
+        return False
+
+    def is_limited(self):
+        return False
+
+    def get_net_profit(self):
+        return self.strike - self.put_premium - self.asset_price
+
+    def get_break_even(self):
+        return self.asset_price + self.put_premium
+
+    def get_break_even_points(self):
+        return [
+            {
+                "x": self.asset_price + self.put_premium,
+                "y": 0,
+            }
+        ]
+
+    def get_profit_loss_ranges(self):
+        return [
+            ((-np.inf, self.get_break_even()), "negative"),
+            ((self.get_break_even(), np.inf), "positive"),
+        ]
+
+    def __get_limit_y_2(self, x_1, x_2, y_1, m):
+        y_2 = y_1 + (m * (x_2 - x_1))
+
+        return float(y_2)
+
+    def get_coordinate(self):
+        results = []
+        results.append(
+            {
+                "x_1": 0,
+                "y_1": self.get_net_profit(),
+                "x_2": self.strike,
+                "y_2": self.get_net_profit(),
+                "slope": 0,
+            }
+        )
+        results.append(
+            {
+                "x_1": self.strike,
+                "y_1": self.get_net_profit(),
+                "x_2": self.get_break_even(),
+                "y_2": 0,
+                "slope": 1,
+            },
+        )
+
+        results.append(
+            {
+                "x_1": self.get_break_even(),
+                "y_1": 0,
+                "x_2": self.get_break_even() * EXTEND_POSITIVE_RANGE_COEFFICIENT,
+                "y_2": self.__get_limit_y_2(
+                    x_1=self.get_break_even(),
+                    y_1=0,
+                    x_2=self.get_break_even() * EXTEND_POSITIVE_RANGE_COEFFICIENT,
+                    m=1,
+                ),
+                "slope": 1,
+            },
+        )
+
+        return results

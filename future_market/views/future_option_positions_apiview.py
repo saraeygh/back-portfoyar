@@ -47,7 +47,7 @@ def sort_strategy_result(strategy_result_df, sort_column: str = PROFIT_SORTING_C
 
 
 # NEW VIEW BASED ON RISK LEVELS #########################
-def get_strategy_result_from_redis(strategy_key, table=None):
+def get_strategy_result_from_mongo(strategy_key, table=None):
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     mongo_conn.collection = mongo_conn.db[strategy_key]
     strategy_result = pd.DataFrame(mongo_conn.collection.find({}, {"_id": 0}))
@@ -81,7 +81,7 @@ def get_strategy_result_from_redis(strategy_key, table=None):
 
 # COVERED_CALL ##########################################
 def get_low_risk_covered_call(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["strike_price"] <= strategy_result["base_equity_last_price"]
@@ -92,7 +92,7 @@ def get_low_risk_covered_call(strategy_key, table):
 
 
 def get_high_risk_covered_call(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             (
@@ -112,7 +112,7 @@ def get_high_risk_covered_call(strategy_key, table):
 
 # CONVERSION ############################################
 def get_no_risk_conversion(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[strategy_result[PROFIT_SORTING_COLUMN] >= 0]
 
@@ -121,16 +121,24 @@ def get_no_risk_conversion(strategy_key, table):
     return strategy_result
 
 
+# MARRIED_PUT ############################################
+def get_low_risk_married_put(strategy_key, table=None):
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
+    strategy_result = strategy_result.to_dict(orient="records")
+
+    return strategy_result
+
+
 # LONG_CALL ############################################
 def get_high_risk_long_call(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
     return strategy_result
 
 
 # SHORT_CALL ###########################################
 def get_low_risk_short_call(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["base_equity_last_price"] <= strategy_result["strike_price"]
@@ -141,7 +149,7 @@ def get_low_risk_short_call(strategy_key, table):
 
 
 def get_high_risk_short_call(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["base_equity_last_price"] > strategy_result["strike_price"]
@@ -153,14 +161,14 @@ def get_high_risk_short_call(strategy_key, table):
 
 # LONG_PUT #############################################
 def get_high_risk_long_put(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
     return strategy_result
 
 
 # SHORT_PUT ############################################
 def get_high_risk_short_put(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["strike_price"] > strategy_result["base_equity_last_price"]
@@ -172,7 +180,7 @@ def get_high_risk_short_put(strategy_key, table):
 
 # LONG_STRADDLE #######################################
 def get_high_risk_long_straddle(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -180,7 +188,7 @@ def get_high_risk_long_straddle(strategy_key, table):
 
 # SHORT_STRADDLE #######################################
 def get_high_risk_short_straddle(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -188,7 +196,7 @@ def get_high_risk_short_straddle(strategy_key, table):
 
 # BULL_CALL_SPREAD ############################################
 def get_low_risk_bull_call_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_sell_strike"]
@@ -200,7 +208,7 @@ def get_low_risk_bull_call_spread(strategy_key, table):
 
 
 def get_high_risk_bull_call_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_buy_strike"]
@@ -213,7 +221,7 @@ def get_high_risk_bull_call_spread(strategy_key, table):
 
 # BEAR_CALL_SPREAD #######################################
 def get_high_risk_bear_call_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -221,14 +229,14 @@ def get_high_risk_bear_call_spread(strategy_key, table):
 
 # BULL_PUT_SPREAD #######################################
 def get_low_risk_bull_put_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
 
 
 def get_high_risk_bull_put_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["put_sell_strike"]
@@ -241,7 +249,7 @@ def get_high_risk_bull_put_spread(strategy_key, table):
 
 # BEAR_PUT_SPREAD #######################################
 def get_low_risk_bear_put_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["put_sell_strike"]
@@ -253,7 +261,7 @@ def get_low_risk_bear_put_spread(strategy_key, table):
 
 
 def get_high_risk_bear_put_spread(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -261,7 +269,7 @@ def get_high_risk_bear_put_spread(strategy_key, table):
 
 # LONG_STRANGLE ############################################
 def get_low_risk_long_strangle(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_buy_strike"]
@@ -273,7 +281,7 @@ def get_low_risk_long_strangle(strategy_key, table):
 
 
 def get_high_risk_long_strangle(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_buy_strike"]
@@ -286,7 +294,7 @@ def get_high_risk_long_strangle(strategy_key, table):
 
 # SHORT_STRANGLE #######################################
 def get_high_risk_short_strangle(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -294,7 +302,7 @@ def get_high_risk_short_strangle(strategy_key, table):
 
 # LONG_BUTTERFLY #######################################
 def get_high_risk_long_butterfly(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -302,7 +310,7 @@ def get_high_risk_long_butterfly(strategy_key, table):
 
 # SHORT_BUTTERFLY #######################################
 def get_high_risk_short_butterfly(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     strategy_result = strategy_result.to_dict(orient="records")
 
     return strategy_result
@@ -310,7 +318,7 @@ def get_high_risk_short_butterfly(strategy_key, table):
 
 # COLLAR ############################################
 def get_low_risk_collar(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_buy_strike_high"]
@@ -322,7 +330,7 @@ def get_low_risk_collar(strategy_key, table):
 
 
 def get_high_risk_collar(strategy_key, table):
-    strategy_result = get_strategy_result_from_redis(strategy_key, table)
+    strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
             strategy_result["call_buy_strike_high"]
@@ -339,6 +347,8 @@ FILTER_DICT = {
     "high_risk_covered_call": get_high_risk_covered_call,
     # CONVERSION
     "no_risk_conversion": get_no_risk_conversion,
+    # MARRIED_PUT
+    "low_risk_married_put": get_low_risk_married_put,
     # LONG_CALL
     "high_risk_long_call": get_high_risk_long_call,
     # SHORT_CALL
@@ -385,7 +395,7 @@ class FutureOptionPositionsAPIView(APIView):
 
         table = request.query_params.get(TABLE_COLS_QP, SUMMARY_TABLE_COLS)
         if risk_level == "all_risk":
-            strategy_result = get_strategy_result_from_redis(strategy_key, table)
+            strategy_result = get_strategy_result_from_mongo(strategy_key, table)
             strategy_result = strategy_result.to_dict(orient="records")
         else:
             filter_key = f"{risk_level}_{strategy_key}"
