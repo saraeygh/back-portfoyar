@@ -2,6 +2,9 @@ from django.db import models
 
 from core.models import TimeStampMixin
 
+FIXED_INCOME_FUND = 4
+MIXED_FUND = 7
+
 
 class FundType(TimeStampMixin, models.Model):
 

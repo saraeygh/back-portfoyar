@@ -12,6 +12,8 @@ from core.configs import (
     TEHRAN_TZ,
 )
 
+from fund.models import FundInfo, UNKNOWN, FIXED_INCOME_FUND, MIXED_FUND
+
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_mongo,
@@ -59,6 +61,18 @@ def add_link(row):
     link = f"https://www.tsetmc.com/instInfo/{ins_code}"
 
     return link
+
+
+def remove_fixed_income_mixed(market_watch: pd.DataFrame):
+    fixed_income_mixed = list(
+        FundInfo.objects.filter(fund_type__code__in=[FIXED_INCOME_FUND, MIXED_FUND])
+        .exclude(ins_code=UNKNOWN)
+        .values_list("ins_code", flat=True)
+    )
+
+    market_watch = market_watch[~market_watch["ins_code"].isin(fixed_income_mixed)]
+
+    return market_watch
 
 
 def update_market_watch_data(market_watch: pd.DataFrame):
@@ -135,6 +149,8 @@ def update_market_watch_data(market_watch: pd.DataFrame):
     market_watch["closing_price_change"] = (
         market_watch["closing_price_change"] / market_watch["yesterday_price"]
     ) * 100
+
+    market_watch = remove_fixed_income_mixed(market_watch)
 
     return market_watch
 
