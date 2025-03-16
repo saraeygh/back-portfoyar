@@ -7,6 +7,7 @@ from core.serializers import RoundedFloatField
 class PriceRatioChartSerializer(serializers.Serializer):
     trade_date = serializers.DateField()
     avg_price = RoundedFloatField()
+    mean = RoundedFloatField()
 
     def to_representation(self, instance):
         instance["trade_date"] = jdatetime.date.fromgregorian(

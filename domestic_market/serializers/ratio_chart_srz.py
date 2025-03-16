@@ -6,6 +6,7 @@ from core.serializers import RoundedFloatField
 class RatioChartSerailizer(serializers.Serializer):
     trade_date = serializers.SerializerMethodField()
     avg_price = RoundedFloatField()
+    mean = RoundedFloatField()
     competition = RoundedFloatField()
 
     def get_trade_date(self, instance):

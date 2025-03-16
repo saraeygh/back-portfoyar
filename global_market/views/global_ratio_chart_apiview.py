@@ -13,8 +13,8 @@ from global_market.serializers import PriceRatioChartSerializer
 from global_market.permissions import HasGlobalSubscription
 
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated, HasGlobalSubscription])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated, HasGlobalSubscription])
 class GlobalRatioChartAPIView(APIView):
     def post(self, request):
         industry_id_1 = request.data.get("industry_1_id")

@@ -134,6 +134,7 @@ def get_ratio_chart(plt_1, plt_2):
 
     ratio_df["avg_price"] = ratio_df["avg_price_1"] / ratio_df["avg_price_2"]
     ratio_df.dropna(inplace=True)
+    ratio_df["mean"] = round(ratio_df["avg_price"].mean(), 2)
     ratio_df = ratio_df.to_dict(orient="records")
 
     return ratio_df
