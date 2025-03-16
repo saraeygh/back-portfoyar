@@ -18,6 +18,7 @@ from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_mongo,
     is_market_open,
+    remove_fixed_income_mixed,
 )
 
 
@@ -61,18 +62,6 @@ def add_link(row):
     link = f"https://www.tsetmc.com/instInfo/{ins_code}"
 
     return link
-
-
-def remove_fixed_income_mixed(market_watch: pd.DataFrame):
-    fixed_income_mixed = list(
-        FundInfo.objects.filter(fund_type__code__in=[FIXED_INCOME_FUND, MIXED_FUND])
-        .exclude(ins_code=UNKNOWN)
-        .values_list("ins_code", flat=True)
-    )
-
-    market_watch = market_watch[~market_watch["ins_code"].isin(fixed_income_mixed)]
-
-    return market_watch
 
 
 def update_market_watch_data(market_watch: pd.DataFrame):

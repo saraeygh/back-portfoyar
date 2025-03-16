@@ -13,6 +13,7 @@ from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_mongo,
     is_market_open,
+    remove_fixed_income_mixed,
 )
 
 
@@ -83,6 +84,7 @@ def stock_value_change_main(run_mode):
             return
 
         value_change.drop_duplicates(subset=["symbol"], keep="last", inplace=True)
+        value_change = remove_fixed_income_mixed(value_change)
         value_change = value_change.to_dict(orient="records")
 
         mongo_conn.collection = mongo_conn.db["value_change"]
