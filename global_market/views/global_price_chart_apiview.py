@@ -9,7 +9,7 @@ from core.configs import SIXTY_MINUTES_CACHE
 from core.utils import set_json_cache, get_cache_as_json
 
 from global_market.utils import get_price_chart
-from global_market.serializers import PriceRatioChartSerializer
+from global_market.serializers import PriceChartSerializer
 from global_market.permissions import HasGlobalSubscription
 
 
@@ -44,7 +44,7 @@ class GlobalPriceChartAPIView(APIView):
                     {"message": "مشکل در درخواست"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            price_chart_dict_srz = PriceRatioChartSerializer(price_chart, many=True)
+            price_chart_dict_srz = PriceChartSerializer(price_chart, many=True)
 
             set_json_cache(cache_key, price_chart_dict_srz.data, SIXTY_MINUTES_CACHE)
             return Response(price_chart_dict_srz.data, status=status.HTTP_200_OK)
