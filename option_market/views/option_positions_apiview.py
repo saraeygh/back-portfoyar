@@ -114,9 +114,7 @@ def get_no_risk_conversion(strategy_key, table=None):
     strategy_result = get_strategy_result_from_mongo(strategy_key, table)
 
     if not strategy_result.empty:
-        strategy_result = strategy_result[
-            strategy_result[BREAK_EVEN_SORTING_COLUMN] >= 0
-        ]
+        strategy_result = strategy_result[strategy_result[PROFIT_SORTING_COLUMN] >= 0]
 
     strategy_result = strategy_result.to_dict(orient="records")
 
