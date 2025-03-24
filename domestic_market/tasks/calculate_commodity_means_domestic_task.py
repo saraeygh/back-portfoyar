@@ -127,10 +127,10 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
             }
             mean_list.append(new_record)
 
+    mongo_conn = MongodbInterface(
+        db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
+    )
     if mean_list:
-        mongo_conn = MongodbInterface(
-            db_name=DOMESTIC_MONGO_DB, collection_name=collection_name
-        )
         mongo_conn.insert_docs_into_collection(documents=mean_list)
     else:
         mongo_conn.collection.delete_many({})
