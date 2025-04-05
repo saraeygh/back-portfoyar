@@ -41,9 +41,10 @@ class UnweightedIndexDailyAPIView(APIView):
             columns={"time": "x", "current_value": "y"}, inplace=True
         )
 
+        change_percent = f"{round(unweighted_index.iloc[-1].get("change_percent"), 2)}٪"
         chart = {
             "x_title": "زمان",
-            "y_title": "شاخص هم‌وزن",
+            "y_title": f"شاخص هم‌وزن ({change_percent})",
             "chart_title": chart_title,
             "history": unweighted_index.to_dict(orient="records"),
         }

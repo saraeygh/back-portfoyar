@@ -10,7 +10,7 @@ TOTAL_INDEX_COLS = {
     "xDrNivJIdx004": "current_value",
     # "xPhNivJIdx004": "max_value",
     # "xPbNivJIdx004": "min_value",
-    # "xVarIdxJRfV": "change_percent",
+    "xVarIdxJRfV": "change_percent",
 }
 
 
@@ -34,7 +34,7 @@ def get_total_index_from_tse():
     total_index.rename(columns=TOTAL_INDEX_COLS, inplace=True)
     total_index = total_index[list(TOTAL_INDEX_COLS.values())]
     total_index = total_index[
-        (total_index["time"] >= 90000) & (total_index["time"] <= 123500)
+        (total_index["time"] >= 90000) & (total_index["time"] <= 124000)
     ]
     total_index["time"] = total_index.apply(convert_int_time_to_str, axis=1)
 

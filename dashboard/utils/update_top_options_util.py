@@ -22,7 +22,7 @@ def update_top_options():
         base_equity_last_price = int(
             base_equity_df.iloc[0].get("base_equity_last_price")
         )
-        new_option["symbol"] = f"{base_equity_symbol} - {base_equity_last_price}"
+        new_option["symbol"] = f"{base_equity_symbol} ({base_equity_last_price})"
         new_option["total_value"] = int(
             (base_equity_df["call_value"].sum() + base_equity_df["put_value"].sum())
             / RIAL_TO_BILLION_TOMAN
