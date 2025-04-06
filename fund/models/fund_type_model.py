@@ -4,6 +4,10 @@ from core.models import TimeStampMixin
 
 FIXED_INCOME_FUND = 4
 MIXED_FUND = 7
+IN_STOCK_FUND = 6
+IN_STOCK_PARTIAL_FUND = 21
+IN_STOCK_LEVERAGE_FUND = 22
+IN_STOCK_INDEX_FUND = 23
 
 
 class FundType(TimeStampMixin, models.Model):

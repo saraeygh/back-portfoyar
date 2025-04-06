@@ -18,6 +18,7 @@ from dashboard.views import (
     GlobalMeanDeviationAPIView,
     IndustryROIAPIView,
     MinimumPEAPIView,
+    PercentRangesAPIView,
 )
 
 dashboard_menu_urls = [
@@ -58,6 +59,7 @@ global_urls = [
 stock_urls = [
     path("industry-roi", IndustryROIAPIView.as_view()),
     path("pe", MinimumPEAPIView.as_view()),
+    path("percent-ranges", PercentRangesAPIView.as_view()),
 ]
 
 urlpatterns = (

@@ -16,3 +16,4 @@ from .domestic_dashboard_apiview import DomesticMeanDeviationAPIView
 from .global_dashboard_apiview import GlobalMeanDeviationAPIView
 from .indusry_roi_apiview import IndustryROIAPIView
 from .minimum_pe_apiview import MinimumPEAPIView
+from .percent_ranges_apiview import PercentRangesAPIView

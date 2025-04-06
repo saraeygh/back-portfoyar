@@ -16,6 +16,7 @@ DASHBOARD_MONGO_DB = "dashboard"
 TOTAL_INDEX_DAILY_COLLECTION = "total_index_daily"
 UNWEIGHTED_INDEX_DAILY_COLLECTION = "unweighted_index_daily"
 BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
+CHANGE_PERCENT_RANGES = "change_percent_ranges"
 LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
 OPTION_VALUE_ANALYSIS_COLLECTION = "option_value_analysis"
 TOP_OPTIONS_COLLECTION = "top_options"
@@ -63,7 +64,6 @@ BASE_EQUITY_BUY_FEE = 0.003712
 BASE_EQUITY_SELL_FEE = 0.0088
 
 ######################################################## STOCK APP
-MARKET_WATCH_REDIS_KEY = "market_watch"
 MARKET_WATCH_COLLECTION = "market_watch"
 STOCK_MONGO_DB = "stock"
 STOCK_NA_ROI = -1000

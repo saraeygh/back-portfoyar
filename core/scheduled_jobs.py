@@ -32,6 +32,7 @@ from dashboard.tasks import (
     dashboard_total_index,
     dashboard_unweighted_index,
     dashboard_option_value_analysis,
+    dashboard_change_percent_ranges_count,
 )
 
 from domestic_market.tasks import (
@@ -214,6 +215,18 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         minute="*/5",
     )
 
+    scheduler.add_job(
+        func=dashboard_change_percent_ranges_count,
+        id="dashboard_change_percent_ranges_count_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
+        replace_existing=True,
+        coalesce=True,
+        trigger="cron",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
+        minute="*/1",
+    )
+
     return scheduler
 
 
@@ -284,7 +297,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         coalesce=True,
         trigger="cron",
-        minute="*/30",
+        minute="*/5",
     )
 
     return scheduler

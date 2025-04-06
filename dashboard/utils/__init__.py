@@ -9,3 +9,4 @@ from .get_total_index_from_tse_util import get_total_index_from_tse
 from .get_unweighted_index_from_tse_util import get_unweighted_index_from_tse
 from .option_value_analysis_util import option_value_analysis
 from .update_top_options_util import update_top_options
+from .change_percent_ranges_count_util import change_percent_ranges_count

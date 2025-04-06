@@ -3,3 +3,6 @@ from .dashboard_last_close_price_task import dashboard_last_close_price
 from .dashboard_total_index_task import dashboard_total_index
 from .dashboard_unweighted_index_task import dashboard_unweighted_index
 from .dashboard_option_value_analysis_task import dashboard_option_value_analysis
+from .dashboard_change_percent_ranges_count_task import (
+    dashboard_change_percent_ranges_count,
+)
