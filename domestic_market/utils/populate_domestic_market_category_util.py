@@ -46,18 +46,26 @@ def get_industry():
 
 
 def populate_industry(industries: list):
-    industry_bulk_list = []
+    industry_bulk_create = []
+    industry_bulk_update = []
     for industry in industries:
-        name = industry.get("Name")
         code = industry.get("code")
+        name = industry.get("Name")
         try:
-            DomesticIndustry.objects.get(name=name, code=code)
-        except DomesticIndustry.DoesNotExist:
-            new_industry = DomesticIndustry(name=name, code=code)
-            industry_bulk_list.append(new_industry)
+            ex_industry = DomesticIndustry.objects.get(code=code)
+            if ex_industry.name != name:
+                ex_industry.name = name
+                industry_bulk_update.append(ex_industry)
 
-    if industry_bulk_list:
-        DomesticIndustry.objects.bulk_create(industry_bulk_list)
+        except DomesticIndustry.DoesNotExist:
+            new_industry = DomesticIndustry(code=code, name=name)
+            industry_bulk_create.append(new_industry)
+
+    if industry_bulk_create:
+        DomesticIndustry.objects.bulk_create(industry_bulk_create)
+
+    if industry_bulk_update:
+        DomesticIndustry.objects.bulk_update(industry_bulk_update, ["name"])
 
 
 def get_commodity_type(main_cat_code: int):
@@ -84,20 +92,28 @@ def get_commodity_type(main_cat_code: int):
 def populate_commodity_type(main_cat_code: int, commodity_types: list):
     industry = DomesticIndustry.objects.get(code=main_cat_code)
 
-    commodity_type_bulk_list = []
+    commodity_type_bulk_create = []
+    commodity_type_bulk_update = []
     for commodity_type in commodity_types:
-        name = commodity_type.get("name")
         code = commodity_type.get("code")
+        name = commodity_type.get("name")
         try:
-            DomesticCommodityType.objects.get(industry=industry, name=name, code=code)
+            ex_commodity_type = DomesticCommodityType.objects.get(code=code)
+            if ex_commodity_type.name != name:
+                ex_commodity_type.name = name
+                commodity_type_bulk_update.append(ex_commodity_type)
+
         except DomesticCommodityType.DoesNotExist:
             new_commodity_type = DomesticCommodityType(
                 industry=industry, name=name, code=code
             )
-            commodity_type_bulk_list.append(new_commodity_type)
+            commodity_type_bulk_create.append(new_commodity_type)
 
-    if commodity_type_bulk_list:
-        DomesticCommodityType.objects.bulk_create(commodity_type_bulk_list)
+    if commodity_type_bulk_create:
+        DomesticCommodityType.objects.bulk_create(commodity_type_bulk_create)
+
+    if commodity_type_bulk_update:
+        DomesticCommodityType.objects.bulk_update(commodity_type_bulk_update, ["name"])
 
 
 def get_commodity(main_cat_code: int, cat_code: int):
@@ -122,22 +138,28 @@ def get_commodity(main_cat_code: int, cat_code: int):
 def populate_commodity(cat_code: int, commodities: list):
     commodity_type = DomesticCommodityType.objects.get(code=cat_code)
 
-    commodity_bulk_list = []
+    commodity_bulk_create = []
+    commodity_bulk_update = []
     for commodity in commodities:
-        name = commodity.get("name")
         code = commodity.get("code")
+        name = commodity.get("name")
         try:
-            DomesticCommodity.objects.get(
-                commodity_type=commodity_type, name=name, code=code
-            )
+            ex_commodity = DomesticCommodity.objects.get(code=code)
+            if ex_commodity.name != name:
+                ex_commodity.name = name
+                commodity_bulk_update.append(ex_commodity)
+
         except DomesticCommodity.DoesNotExist:
             new_commodity = DomesticCommodity(
                 commodity_type=commodity_type, name=name, code=code
             )
-            commodity_bulk_list.append(new_commodity)
+            commodity_bulk_create.append(new_commodity)
 
-    if commodity_bulk_list:
-        DomesticCommodity.objects.bulk_create(commodity_bulk_list)
+    if commodity_bulk_create:
+        DomesticCommodity.objects.bulk_create(commodity_bulk_create)
+
+    if commodity_bulk_update:
+        DomesticCommodity.objects.bulk_update(commodity_bulk_update, ["name"])
 
 
 def populate_domestic_market_category():

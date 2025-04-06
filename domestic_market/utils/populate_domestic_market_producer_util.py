@@ -43,8 +43,8 @@ def populate_producer(producers: list):
     producer_bulk_create = []
     producer_bulk_update = []
     for producer in tqdm(producers, desc="Get producers list", ncols=10):
-        name = producer.get("name")
         code = producer.get("code")
+        name = producer.get("name")
         try:
             ex_producer = DomesticProducer.objects.get(code=code)
             ex_producer.name = name
