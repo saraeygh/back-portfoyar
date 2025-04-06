@@ -20,6 +20,8 @@ class DollarPriceAPIView(APIView):
 
         dollar_prices = GetDollarPriceSerializer(dollar_prices, many=True)
         dollar_prices = pd.DataFrame(dollar_prices.data)
+        dollar_prices["azad"] = dollar_prices["azad"] // 10
+        dollar_prices["nima"] = dollar_prices["nima"] // 10
         dollar_prices.sort_values(by="date", ascending=True, inplace=True)
         dollar_prices.drop(["id", "date"], axis=1, inplace=True)
 

@@ -19,33 +19,27 @@ def update_azad_price(last_dollar, today_price_date):
     TGJU_MAIN_URL = f"https://call{random.choice(TGJU_API_LIST)}.tgju.org/ajax.json"
     response = get_http_response(req_url=TGJU_MAIN_URL)
     response = response.json()
-    lasts = response.get("last")
+    last_price_value = response.get("current").get("price_dollar_rl").get("p")
+    last_price_value = int((last_price_value).replace(",", ""))
+    try:
+        last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
+        last_dollar_price.azad = last_price_value
+        last_dollar_price.save()
+    except DomesticDollarPrice.DoesNotExist:
+        today_price_date_shamsi = str(
+            jdatetime.date.fromgregorian(date=today_price_date)
+        )
 
-    for last_item in lasts:
-        name = last_item.get("name")
-        if name == "price_dollar_rl":
-            last_price_value = last_item.get("p")
-            last_price_value = int((last_price_value).replace(",", ""))
-            try:
-                last_dollar_price = DomesticDollarPrice.objects.get(
-                    date=today_price_date
-                )
-                last_dollar_price.azad = last_price_value
-                last_dollar_price.save()
-            except DomesticDollarPrice.DoesNotExist:
-                today_price_date_shamsi = str(
-                    jdatetime.date.fromgregorian(date=today_price_date)
-                )
-
-                DomesticDollarPrice.objects.create(
-                    date=today_price_date,
-                    date_shamsi=today_price_date_shamsi,
-                    azad=last_price_value,
-                    nima=last_dollar.nima,
-                )
+        DomesticDollarPrice.objects.create(
+            date=today_price_date,
+            date_shamsi=today_price_date_shamsi,
+            azad=last_price_value,
+            nima=last_dollar.nima,
+        )
 
 
-def get_dollar_price_bs(URL: str):
+def get_dollar_price_bs(URL: str, last_dollar: DomesticDollarPrice):
+    last_price_value = last_dollar.nima
 
     response = get_http_response(req_url=URL)
     response = response.text
@@ -55,16 +49,15 @@ def get_dollar_price_bs(URL: str):
     for index, td in enumerate(soup):
         if td.string == "نرخ فعلی":
             last_price_value = soup[index + 1]
+            last_price_value = int((last_price_value.string).replace(",", ""))
             break
-
-    last_price_value = int((last_price_value.string).replace(",", ""))
 
     return last_price_value
 
 
 def update_nima_price(last_dollar, today_price_date):
     NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
-    nima_usd_price = get_dollar_price_bs(URL=NIMA_URL)
+    nima_usd_price = get_dollar_price_bs(NIMA_URL, last_dollar)
 
     try:
         last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
