@@ -46,6 +46,15 @@ def get_date_time():
     return date, time
 
 
+def get_correct_sign(number):
+    if number < 0:
+        return f"{abs(number)}٪-"
+    elif number > 0:
+        return f"{abs(number)}٪"
+    else:
+        return f"{number}"
+
+
 def change_percent_ranges_count():
     percent_ranges = get_market_watch_data_from_mongo()
     if not percent_ranges.empty:
@@ -79,7 +88,10 @@ def change_percent_ranges_count():
             )
 
             result.append(
-                {"range": f"({range_left}, {range_right})", "count": range_rows}
+                {
+                    "range": f"({get_correct_sign(range_right)}, {get_correct_sign(range_left)})",
+                    "count": range_rows,
+                }
             )
 
             range_left += 1

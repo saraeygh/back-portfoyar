@@ -1,6 +1,5 @@
 import pandas as pd
 import jdatetime as jdt
-from datetime import datetime as dt
 
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
@@ -28,9 +27,9 @@ class PercentRangesAPIView(APIView):
         date = percent_ranges.get("date")
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "محدوده تغییرات"
+            chart_title = "محدوده تغییرات قیمتی"
         else:
-            chart_title = f"محدوده تغییرات {date}"
+            chart_title = f"محدوده تغییرات قیمتی {date}"
 
         percent_ranges = percent_ranges.get("change_percent_ranges")
         percent_ranges = pd.DataFrame(percent_ranges)
