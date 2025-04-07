@@ -75,6 +75,7 @@ def update_instrument_info_main():
     )
 
     all_instruments = StockInstrument.objects.all()
+    error_instruments = []
     for ins_obj in tqdm(all_instruments, desc="Instrument info", ncols=10):
         market_id = ins_obj.market_type
         paper_id = ins_obj.paper_type
@@ -83,7 +84,17 @@ def update_instrument_info_main():
         instrument_info = get_http_response(
             req_url=URL, req_headers=TSETMC_REQUEST_HEADERS
         )
-        instrument_info = instrument_info.json()
+        if instrument_info:
+            instrument_info = instrument_info.json()
+        else:
+            error_instruments.append(
+                {
+                    "ins_code": ins_obj.ins_code,
+                    "name": ins_obj.name,
+                }
+            )
+            continue
+
         instrument_info = instrument_info.get("instrumentInfo")
 
         info = {
@@ -124,6 +135,9 @@ def update_instrument_info_main():
         query = {"ins_code": ins_obj.ins_code}
         mongo_conn.collection.delete_many(filter=query)
         mongo_conn.collection.insert_one(info)
+
+    if error_instruments:
+        raise Exception("BELOW INSTRUMENTS ENCOUNTERED ERROR" f"{error_instruments}")
 
 
 def update_instrument_info():
