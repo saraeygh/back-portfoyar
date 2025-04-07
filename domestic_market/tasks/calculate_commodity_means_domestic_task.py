@@ -90,7 +90,7 @@ def calculate_mean(duration: int, collection_name: str, producer_id_list):
 
             shamsi_date = jdt.date.fromgregorian(
                 date=commodity_last_trade["trade_date"], locale="fa_IR"
-            )
+            ).strftime("%Y/%m/%d")
             id = commodity_last_trade["id"]
             commodity_last_trade = DomesticTrade.objects.get(id=id)
             link = ""

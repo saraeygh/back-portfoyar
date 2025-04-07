@@ -73,7 +73,7 @@ class LastClosePriceAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "درصد قیمت آخرین و پایانی امروز (غیر صندوق‌ها)"
+            chart_title = "درصد قیمت آخرین و پایانی (غیر صندوق‌ها)"
         else:
             chart_title = f"درصد قیمت آخرین و پایانی {date} (غیر صندوق‌ها)"
 

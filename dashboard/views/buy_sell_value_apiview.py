@@ -76,7 +76,7 @@ class BuySellValueAPIView(APIView):
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
         if date == today_date:
-            chart_title = "ارزش سفارش‌های خرید و فروش امروز (غیر صندوق‌ها)"
+            chart_title = "ارزش سفارش‌های خرید و فروش (غیر صندوق‌ها)"
         else:
             chart_title = f"ارزش سفارش‌های خرید و فروش {date} (غیر صندوق‌ها)"
 

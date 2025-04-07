@@ -22,20 +22,28 @@ def update_top_options():
         base_equity_last_price = int(
             base_equity_df.iloc[0].get("base_equity_last_price")
         )
-        new_option["symbol"] = f"{base_equity_symbol} ({base_equity_last_price})"
+        new_option["symbol"] = f"{base_equity_symbol} {base_equity_last_price}"
         new_option["total_value"] = int(
             (base_equity_df["call_value"].sum() + base_equity_df["put_value"].sum())
             / RIAL_TO_BILLION_TOMAN
         )
 
         base_equity_df = base_equity_df.sort_values(by="call_value", ascending=False)
-        new_option["best_call"] = base_equity_df.iloc[0].get("call_name")
+        new_option["best_call"] = (
+            f"{base_equity_df.iloc[0].get("call_symbol")}-"
+            f"{base_equity_df.iloc[0].get("strike_price")}-"
+            f"{base_equity_df.iloc[0].get("remained_day")}روز"
+        )
         new_option["call_value"] = (
             base_equity_df.iloc[0].get("call_value") / RIAL_TO_BILLION_TOMAN
         )
 
         base_equity_df = base_equity_df.sort_values(by="put_value", ascending=False)
-        new_option["best_put"] = base_equity_df.iloc[0].get("put_name")
+        new_option["best_put"] = (
+            f"{base_equity_df.iloc[0].get("put_symbol")}-"
+            f"{base_equity_df.iloc[0].get("strike_price")}-"
+            f"{base_equity_df.iloc[0].get("remained_day")}روز"
+        )
         new_option["put_value"] = (
             base_equity_df.iloc[0].get("put_value") / RIAL_TO_BILLION_TOMAN
         )

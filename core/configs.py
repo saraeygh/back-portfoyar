@@ -27,7 +27,7 @@ MGT_FOR_PREIODIC_TASKS = 10  # 10 Seconds
 FIVE_DAYS_WEEK = "sat, sun, mon, tue, wed"
 SIX_DAYS_WEEK = "sat, sun, mon, tue, wed, thu"
 TSETMC_MARKET_HOURS = "9-13"
-DERIVATIVE_MARKET_HOURS = "11-17"
+DERIVATIVE_MARKET_HOURS = "11-18"
 
 ######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"

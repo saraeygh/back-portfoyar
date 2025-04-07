@@ -73,9 +73,9 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
                 "commodity": transit_last_trade.commodity.name,
                 "transit": transit_last_trade.transit.transit_type,
                 "global_mean": float(global_mean),
-                "last_price_date": str(
+                "last_price_date": (
                     jdt.date.fromgregorian(date=transit_last_trade.trade_date)
-                ),
+                ).strftime("%Y/%m/%d"),
                 "global_last_price": float(transit_last_trade.price),
                 "deviation": float(deviation),
                 "chart": {

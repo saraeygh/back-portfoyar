@@ -33,7 +33,7 @@ class DollarPriceAPIView(APIView):
             "x_title": "تاریخ",
             "y_1_title": "دلار آزاد",
             "y_2_title": "دلار نیما",
-            "chart_title": "قیمت دلار",
+            "chart_title": "دلار",
             "history": dollar_prices.to_dict(orient="records"),
         }
 

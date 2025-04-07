@@ -31,11 +31,16 @@ class UnweightedIndexDailyAPIView(APIView):
         date = jdt.date.fromgregorian(date=date.date()).strftime("%Y/%m/%d")
 
         today_date = jdt.date.today().strftime("%Y/%m/%d")
-        change_percent = f"{round(unweighted_index.iloc[-1].get("change_percent"), 2)}٪"
-        if date == today_date:
-            chart_title = f"شاخص هم‌وزن ({change_percent})"
+        change_percent = round(unweighted_index.iloc[-1].get("change_percent"), 2)
+        if change_percent < 0:
+            change_percent = f"٪{abs(change_percent)}-"
         else:
-            chart_title = f"شاخص هم‌وزن ({change_percent}) - {date}"
+            change_percent = f"٪{abs(change_percent)}"
+
+        if date == today_date:
+            chart_title = f"شاخص هم‌وزن {change_percent}"
+        else:
+            chart_title = f"شاخص هم‌وزن {date}"
 
         unweighted_index.drop(columns=["date", "change_percent"], axis=1, inplace=True)
         unweighted_index.rename(
