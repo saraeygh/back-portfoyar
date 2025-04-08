@@ -491,7 +491,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         coalesce=True,
         trigger="cron",
-        hour="14",
+        hour="18",
         minute="35",
     )
 
