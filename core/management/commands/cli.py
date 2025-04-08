@@ -206,7 +206,7 @@ def stock_cli(clear_cmd):
         print(
             Style.BRIGHT + "Stock market commands:",
             "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Update market watch",
+            Fore.BLUE + "1) Update market watch & indices",
             "2) Update stock daily history",
             "3) Update instrument info",
             "4) Update instrument ROI",
@@ -237,6 +237,7 @@ def stock_cli(clear_cmd):
                 get_monthly_activity_report_letter()
             case "1":
                 update_market_watch(MANUAL_MODE)
+                update_market_watch_indices(MANUAL_MODE)
             case "2":
                 update_stock_daily_history()
             case "3":

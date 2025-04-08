@@ -29,6 +29,10 @@ SIX_DAYS_WEEK = "sat, sun, mon, tue, wed, thu"
 TSETMC_MARKET_HOURS = "9-13"
 DERIVATIVE_MARKET_HOURS = "11-18"
 
+######################################################## DASHBOARD APP
+PERCENT_MIN_RANGE = -5
+PERCENT_MAX_RANGE = 5
+
 ######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"
 REDIS_EMAIL_VERIFY_PREFIX = "email_verify_code_"

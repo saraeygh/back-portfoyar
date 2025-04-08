@@ -2,7 +2,13 @@ import math
 import jdatetime as jdt
 
 from core.utils import MongodbInterface
-from core.configs import DASHBOARD_MONGO_DB, CHANGE_PERCENT_RANGES, TEHRAN_TZ
+from core.configs import (
+    DASHBOARD_MONGO_DB,
+    CHANGE_PERCENT_RANGES,
+    TEHRAN_TZ,
+    PERCENT_MIN_RANGE,
+    PERCENT_MAX_RANGE,
+)
 
 from stock_market.utils import (
     STOCK_PAPER,
@@ -72,11 +78,20 @@ def change_percent_ranges_count():
             )
         ]
 
-        range_min = math.floor(percent_ranges["daily_roi"].min())
-        range_max = math.floor(percent_ranges["daily_roi"].max()) + 1
+        result = []
+        result.append(
+            {
+                "range": f"({get_correct_sign(PERCENT_MIN_RANGE)}, -∞٪)",
+                "count": len(
+                    percent_ranges[(percent_ranges["daily_roi"] < PERCENT_MIN_RANGE)]
+                ),
+            }
+        )
+
+        range_min = PERCENT_MIN_RANGE
+        range_max = PERCENT_MAX_RANGE
 
         range_left = range_min
-        result = []
         for _ in range(abs(range_max - range_min)):
             range_right = range_left + 1
 
@@ -98,6 +113,15 @@ def change_percent_ranges_count():
 
             if range_right == range_max:
                 break
+
+        result.append(
+            {
+                "range": f"(∞٪, {get_correct_sign(PERCENT_MAX_RANGE)})",
+                "count": len(
+                    percent_ranges[(percent_ranges["daily_roi"] >= PERCENT_MAX_RANGE)]
+                ),
+            }
+        )
 
         date, time = get_date_time()
         doc = [
