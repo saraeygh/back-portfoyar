@@ -33,6 +33,7 @@ from dashboard.tasks import (
     dashboard_unweighted_index,
     dashboard_option_value_analysis,
     dashboard_change_percent_ranges_count,
+    dashboard_market_money_flow,
 )
 
 from domestic_market.tasks import (
@@ -224,7 +225,19 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/1",
+        minute="*/2",
+    )
+
+    scheduler.add_job(
+        func=dashboard_market_money_flow,
+        id="dashboard_market_money_flow_task",
+        misfire_grace_time=MGT_FOR_PREIODIC_TASKS,
+        replace_existing=True,
+        coalesce=True,
+        trigger="cron",
+        day_of_week=FIVE_DAYS_WEEK,
+        hour=TSETMC_MARKET_HOURS,
+        minute="*/3",
     )
 
     return scheduler

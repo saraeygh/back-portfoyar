@@ -6,5 +6,6 @@ from .fund_type_model import (
     IN_STOCK_PARTIAL_FUND,
     IN_STOCK_LEVERAGE_FUND,
     IN_STOCK_INDEX_FUND,
+    VENTURE_CAPITAL_FUND,
 )
 from .fund_info_model import FundInfo, UNKNOWN

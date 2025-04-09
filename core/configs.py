@@ -12,14 +12,6 @@ SIX_HOURS_CACHE = 60 * 60 * 6  # 6 hours
 KEY_WITH_EX_REDIS_DB = 1  # CORE
 
 ######################################################## CORE APP
-DASHBOARD_MONGO_DB = "dashboard"
-TOTAL_INDEX_DAILY_COLLECTION = "total_index_daily"
-UNWEIGHTED_INDEX_DAILY_COLLECTION = "unweighted_index_daily"
-BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
-CHANGE_PERCENT_RANGES = "change_percent_ranges"
-LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
-OPTION_VALUE_ANALYSIS_COLLECTION = "option_value_analysis"
-TOP_OPTIONS_COLLECTION = "top_options"
 AUTO_MODE = "auto"
 MANUAL_MODE = "manual"
 MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
@@ -32,6 +24,15 @@ DERIVATIVE_MARKET_HOURS = "11-18"
 ######################################################## DASHBOARD APP
 PERCENT_MIN_RANGE = -5
 PERCENT_MAX_RANGE = 5
+DASHBOARD_MONGO_DB = "dashboard"
+TOTAL_INDEX_DAILY_COLLECTION = "total_index_daily"
+UNWEIGHTED_INDEX_DAILY_COLLECTION = "unweighted_index_daily"
+BUY_SELL_ORDERS_COLLECTION = "buy_sell_orders"
+CHANGE_PERCENT_RANGES = "change_percent_ranges"
+LAST_CLOSE_PRICE_COLLECTION = "last_close_price"
+OPTION_VALUE_ANALYSIS_COLLECTION = "option_value_analysis"
+TOP_OPTIONS_COLLECTION = "top_options"
+MARKET_MONEY_FLOW_COLLECTION = "market_money_flow"
 
 ######################################################## ACCOUNT APP
 REDIS_SIGNUP_PREFIX = "username_verify_code_"
@@ -91,6 +92,7 @@ RIAL_TO_BILLION_TOMAN = 10_000_000_000
 RIAL_TO_MILLION_TOMAN = 10_000_000
 MILLION_TO_BILLION_TOMAN = 1_000
 TO_MILLION = 1_000_000
+TO_BILLION = 1_000_000_000
 
 # PERSIAN TO ENGLISH NUMBER CONVERTER
 PERSIAN_DIGITS = "۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠"

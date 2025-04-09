@@ -6,3 +6,4 @@ from .dashboard_option_value_analysis_task import dashboard_option_value_analysi
 from .dashboard_change_percent_ranges_count_task import (
     dashboard_change_percent_ranges_count,
 )
+from .dashboard_market_money_flow_task import dashboard_market_money_flow

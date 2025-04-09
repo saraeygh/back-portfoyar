@@ -1,5 +1,3 @@
-from pytz import timezone
-
 import pandas as pd
 import jdatetime as jdt
 

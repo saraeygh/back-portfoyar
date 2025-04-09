@@ -60,6 +60,7 @@ from dashboard.tasks import (
     dashboard_unweighted_index,
     dashboard_option_value_analysis,
     dashboard_change_percent_ranges_count,
+    dashboard_market_money_flow,
 )
 
 TASKS = {
@@ -105,6 +106,7 @@ TASKS = {
     "64": (dashboard_unweighted_index, True),
     "65": (dashboard_option_value_analysis, True),
     "66": (dashboard_change_percent_ranges_count, True),
+    "67": (dashboard_market_money_flow, True),
     # FUND
     "71": (get_all_fund_detail, False),
     "72": (update_fund_info, False),
