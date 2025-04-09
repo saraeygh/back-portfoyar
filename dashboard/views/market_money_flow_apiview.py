@@ -16,7 +16,7 @@ from core.configs import (
     MARKET_MONEY_FLOW_COLLECTION,
 )
 
-MARKET_MONEY_FLOW_TABLE_HEADERS = {
+MARKET_MONEY_FLOW_TABLE_COLS = {
     "name": "نام",
     "money_flow": "جریان پول (BT)",
     "value": "ارزش معاملات (BT)",
@@ -42,9 +42,9 @@ class MarketMoneyFlowAPIView(APIView):
             table_title = f"جریان پول در بازار {date}"
 
         table = {
-            "table_title": table_title,
-            "table_headers": MARKET_MONEY_FLOW_TABLE_HEADERS,
-            "table": latest_money_flow["result"],
+            "title": table_title,
+            "cols": MARKET_MONEY_FLOW_TABLE_COLS,
+            "data": latest_money_flow["result"],
         }
 
         return Response(table, status=status.HTTP_200_OK)
