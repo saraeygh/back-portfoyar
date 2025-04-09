@@ -17,7 +17,7 @@ from core.configs import (
 )
 
 MARKET_MONEY_FLOW_TABLE_COLS = {
-    "name": "نام",
+    "name": " ",
     "money_flow": "جریان پول (BT)",
     "value": "ارزش معاملات (BT)",
     "volume": "حجم معاملات (B)",
