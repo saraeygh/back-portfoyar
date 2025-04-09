@@ -80,8 +80,9 @@ class CartesianProduct:
         return new_df
 
     def get_cartesian_product(self):
-        self.dataframe["strike_price_0"] = self.dataframe["strike_price"]
         dataframe = self.dataframe.copy(deep=True)
+        dataframe["strike_price_0"] = dataframe["strike_price"]
+        self.dataframe = dataframe.copy(deep=True)
 
         result_list = []
         for iter_number in range(self.iterations):
