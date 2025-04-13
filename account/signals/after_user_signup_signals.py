@@ -4,11 +4,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
+from core.models import FeatureToggle
+from core.utils import NEW_USER_FREE_DURATION
 from account.models import Profile, Subscription, Feature, ALL_FEATURE
 
 NEW_USER_FREE_FEATURES = [ALL_FEATURE]
-
-NEW_USER_FREE_DURATION = 1
 
 
 @receiver(post_save, sender=User)
@@ -28,7 +28,11 @@ def create_free_subscription(sender, instance: User, created, **kwargs):
             )
             if free_feature:
                 start_at = dt.datetime.now().date()
-                end_at = start_at + dt.timedelta(days=NEW_USER_FREE_DURATION)
+
+                free_sub = FeatureToggle.objects.filter(
+                    name=NEW_USER_FREE_DURATION["name"]
+                ).first()
+                end_at = start_at + dt.timedelta(days=int(free_sub.value))
 
                 Subscription.objects.create(
                     user=instance,

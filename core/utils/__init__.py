@@ -21,6 +21,7 @@ from .create_default_feature_toggle_util import (
     DAILY_SIGNUP_TRY_LIMITATION,
     SEND_CHANGE_USERNAME_SMS,
     SEND_RESET_PASSWORD_SMS,
+    NEW_USER_FREE_DURATION,
 )
 from .create_profile_for_users_with_no_profile_util import (
     create_profile_for_users_with_no_profile,

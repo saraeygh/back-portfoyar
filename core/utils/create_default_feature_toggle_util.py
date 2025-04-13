@@ -44,6 +44,13 @@ DAILY_SIGNUP_TRY_LIMITATION = {
     "value": "3",
 }
 
+NEW_USER_FREE_DURATION = {
+    "name": "new_user_free_duration",
+    "desc": "مدت اشتراک رایگان برای کاربران جدید بر حسب روز",
+    "state": ACTIVE,
+    "value": "1",
+}
+
 
 def create_toggle(feature_name, feature_attr):
     if not FeatureToggle.objects.filter(name=feature_name).exists():
@@ -65,3 +72,4 @@ def create_default_feature_toggle():
     create_toggle(SEND_RESET_PASSWORD_SMS["name"], SEND_RESET_PASSWORD_SMS)
     create_toggle(SEND_CHANGE_USERNAME_SMS["name"], SEND_CHANGE_USERNAME_SMS)
     create_toggle(DAILY_SIGNUP_TRY_LIMITATION["name"], DAILY_SIGNUP_TRY_LIMITATION)
+    create_toggle(NEW_USER_FREE_DURATION["name"], NEW_USER_FREE_DURATION)

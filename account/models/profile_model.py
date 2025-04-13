@@ -75,3 +75,46 @@ class Profile(TimeStampMixin, models.Model):
     class Meta:
         verbose_name = "پروفایل"
         verbose_name_plural = "۱) پروفایل‌ها"
+
+
+class LoginCount(TimeStampMixin, models.Model):
+    user = models.OneToOneField(
+        verbose_name="کاربر",
+        to=User,
+        on_delete=models.CASCADE,
+        related_name="logincount",
+    )
+
+    count = models.IntegerField(verbose_name="تعداد لاگین", default=1)
+
+    note = models.CharField(verbose_name="توضیحات", max_length=32, default="-")
+
+    @admin.display(description="نام")
+    def first_name(self):
+        return self.user.first_name
+
+    @admin.display(description="نام خانوادگی")
+    def last_name(self):
+        return self.user.last_name
+
+    @admin.display(description="ایجاد")
+    def created_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.created_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        return shamsi
+
+    @admin.display(description="به‌روزرسانی")
+    def updated_at_shamsi(self):
+        shamsi = (
+            JalaliDateTime(self.updated_at, tzinfo=pytz.UTC)
+            + jdatetime.timedelta(hours=3, minutes=30)
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        return shamsi
+
+    class Meta:
+        verbose_name = "تعداد لاگین"
+        verbose_name_plural = "۶) تعداد لاگین‌ها"

@@ -1,4 +1,4 @@
-from .profile_model import Profile
+from .profile_model import Profile, LoginCount
 
 from .feature_model import (
     Feature,

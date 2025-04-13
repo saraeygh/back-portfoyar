@@ -4,8 +4,9 @@ from rest_framework.authtoken import views
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
+
 from core.utils import persian_numbers_to_english
-from account.models import Profile
+from account.models import Profile, LoginCount
 
 ACCOUNT_BANNED = "ACCOUNT_BANNED"
 
@@ -44,6 +45,17 @@ def get_full_name(user: User):
     return full_name
 
 
+def change_login_count(user: User):
+    try:
+        login_count = LoginCount.objects.get(user=user)
+        login_count.count += 1
+        login_count.save()
+    except LoginCount.DoesNotExist:
+        login_count = LoginCount.objects.create(user=user, count=1)
+
+    return login_count
+
+
 class CustomObtainAuthToken(views.ObtainAuthToken):
     def post(self, request, *args, **kwargs) -> Response:
         user, response = get_user(request)
@@ -60,6 +72,8 @@ class CustomObtainAuthToken(views.ObtainAuthToken):
         response = super().post(request, *args, **kwargs)
         token = response.data.get("token")
         full_name = get_full_name(user)
+
+        change_login_count(user)
 
         return Response(
             data={"token": token, "full_name": full_name}, status=status.HTTP_200_OK
