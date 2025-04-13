@@ -50,6 +50,7 @@ COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
 # RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "-r", "/code/requirements.txt"]
+RUN ["playwright", "install"]
 
 # COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/

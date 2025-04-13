@@ -1,47 +1,40 @@
-# GET BASE IMAGE
-FROM docker.arvancloud.ir/python:3.12.3-alpine3.20
+FROM docker.arvancloud.ir/python:3.12.3-slim
 
-# INSTALL REQUIRED PACKAGES ON ALPINE
-RUN echo "https://mirrors.gigenet.com/alpinelinux/v3.20/main/" > /etc/apk/repositories && \
-echo "https://mirrors.gigenet.com/alpinelinux/v3.20/community/" >> /etc/apk/repositories
-RUN ["apk", "update"]
-RUN apk add \
-  gcc \
-  python3-dev \
-  musl-dev \
-  linux-headers \
-  curl \
-  libxml2-dev \
-  libxslt-dev \
-  build-base \
-  cairo \
-  cairo-dev \
-  cargo \
-  freetype-dev \
-  gcc \
-  gdk-pixbuf-dev \
-  gettext \
-  jpeg-dev \
-  lcms2-dev \
-  libffi-dev \
-  openjpeg-dev \
-  openssl-dev \
-  pango-dev \
-  poppler-utils \
-  postgresql-client \
-  postgresql-dev \
-  py-cffi \
-  python3-dev \
-  rust \
-  tcl-dev \
-  tiff-dev \
-  tk-dev \
-  zlib-dev \
-  build-base
+RUN ["apt", "update"]
+RUN ["apt", "upgrade", "-y"]
+
+RUN apt install -y --no-install-recommends \
+build-essential \        
+python3-dev \             
+curl \                   
+libxml2-dev \            
+libxslt1-dev \           
+libcairo2 \              
+libcairo2-dev \          
+freetype2-demos \        
+libfreetype6-dev \       
+libgdk-pixbuf2.0-dev \   
+gettext \                
+libjpeg-dev \            
+liblcms2-dev \           
+libffi-dev \             
+libopenjp2-7-dev \       
+libssl-dev \             
+libpango1.0-dev \        
+poppler-utils \          
+postgresql-client \      
+libpq-dev \              
+python3-cffi \           
+cargo \                  
+rustc \                  
+tcl-dev \                
+libtiff-dev \            
+tk-dev \                 
+zlib1g-dev               
+
 
 WORKDIR /code
 
-# INSTALL PDM AND DEPENDENCIES
 RUN ["pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
 RUN ["pip", "install", "pdm"]
 RUN ["pdm", "self", "update"]
@@ -50,29 +43,25 @@ COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
 # RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "-r", "/code/requirements.txt"]
+RUN ["playwright", "install"]
+RUN ["playwright", "install-deps"]
 
-# COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/
 
 RUN ["mkdir", "-p", "logs"]
 
-# GRANT EXCUTE PERMISSSION TO ENTRYPOINTS FILES
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 
-# PYTHON CONFIGS
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# DJANGO CONFIGS
 ENV DJANGO_SETTINGS_MODULE=samaneh.settings
 
-# MONGODB & REDIS SERVICE NAMES
 ENV REDIS_SERVICE_NAME=redis_test
 ENV MONGODB_SERVICE_NAME=mongodb_test
 ENV POSTGRES_SERVICE_NAME=postgres_test
 
-# SMTP EMAIL CONFIGS
 ENV EMAIL_HOST=smtp.gmail.com
 ENV EMAIL_PORT=587
 ENV EMAIL_HOST_USER=armansmtptest@gmail.com

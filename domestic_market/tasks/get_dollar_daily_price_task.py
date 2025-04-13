@@ -1,10 +1,10 @@
-import random
+import time
 from datetime import datetime
 import jdatetime
 
-from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
-from core.utils import run_main_task, get_http_response
+from core.utils import run_main_task
 from domestic_market.models import DomesticDollarPrice
 
 
@@ -12,15 +12,25 @@ def get_last_dollar_price():
     return DomesticDollarPrice.objects.last()
 
 
-TGJU_API_LIST = [1, 2, 3, 4]
-
-
 def update_azad_price(last_dollar, today_price_date):
-    TGJU_MAIN_URL = f"https://call{random.choice(TGJU_API_LIST)}.tgju.org/ajax.json"
-    response = get_http_response(req_url=TGJU_MAIN_URL)
-    response = response.json()
-    last_price_value = response.get("current").get("price_dollar_rl").get("p")
+    with sync_playwright() as pr:
+        browser = pr.chromium.launch(headless=True)
+        context = browser.new_context()
+        page = context.new_page()
+
+        page.goto("https://www.tgju.org/")
+
+        time.sleep(5)
+
+        element = page.query_selector(
+            "xpath=/html/body/main/div[1]/div[2]/div/ul/li[6]/span[1]/span"
+        )
+
+        last_price_value = element.inner_text()
+        browser.close()
+
     last_price_value = int((last_price_value).replace(",", ""))
+
     try:
         last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
         last_dollar_price.azad = last_price_value
@@ -38,30 +48,38 @@ def update_azad_price(last_dollar, today_price_date):
         )
 
 
-def get_dollar_price_bs(URL: str, last_dollar: DomesticDollarPrice):
-    last_price_value = last_dollar.nima
-
-    response = get_http_response(req_url=URL)
-    response = response.text
-    soup = BeautifulSoup(response, "html.parser")
-    soup = soup.find_all("td")
-
-    for index, td in enumerate(soup):
-        if td.string == "نرخ فعلی":
-            last_price_value = soup[index + 1]
-            last_price_value = int((last_price_value.string).replace(",", ""))
-            break
-
-    return last_price_value
-
-
 def update_nima_price(last_dollar, today_price_date):
-    NIMA_URL = "https://www.tgju.org/profile/nima_sell_usd"
-    nima_usd_price = get_dollar_price_bs(NIMA_URL, last_dollar)
+    with sync_playwright() as pr:
+        browser = pr.chromium.launch(headless=True)
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 800},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+        )
+        page = context.new_page()
+
+        page.goto(
+            "https://ice.ir/market-view/%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1-%D8%A7%D8%B1%D8%B2"
+        )
+
+        element = page.locator('a.market-view-currency[data-value="حواله"]')
+        element.wait_for(state="visible", timeout=20000)
+        element.scroll_into_view_if_needed()
+        element.click()
+
+        time.sleep(5)
+
+        cell = page.query_selector(
+            "xpath=/html/body/div/div/section/div[3]/div/div/table/tbody/tr[1]/td[2]"
+        )
+        last_price_value = cell.inner_text()
+
+        browser.close()
+
+    last_price_value = int((last_price_value).replace(",", ""))
 
     try:
         last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
-        last_dollar_price.nima = nima_usd_price
+        last_dollar_price.nima = last_price_value
         last_dollar_price.save()
     except DomesticDollarPrice.DoesNotExist:
         today_price_date_shamsi = str(
@@ -72,7 +90,7 @@ def update_nima_price(last_dollar, today_price_date):
             date=today_price_date,
             date_shamsi=today_price_date_shamsi,
             azad=last_dollar.azad,
-            nima=nima_usd_price,
+            nima=last_price_value,
         )
 
 

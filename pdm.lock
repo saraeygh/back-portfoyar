@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:d5bf647a3cc06d59f31735ca45f6f90a5b1f4e7fc57dcd0d2d15be5fc59dee03"
+content_hash = "sha256:611dacb6f3a84373327d028a8413d1b60fcd211cb1657e01a5557c25c6cb6550"
 
 [[metadata.targets]]
 requires_python = "==3.12.3"
@@ -57,21 +57,6 @@ dependencies = [
 files = [
     {file = "attrs-24.2.0-py3-none-any.whl", hash = "sha256:81921eb96de3191c8258c199618104dd27ac608d9366f5e35d011eae1867ede2"},
     {file = "attrs-24.2.0.tar.gz", hash = "sha256:5cfb1b9148b5b086569baec03f20d7b6bf3bcacc9a42bebf87ffaaca362f6346"},
-]
-
-[[package]]
-name = "beautifulsoup4"
-version = "4.12.3"
-requires_python = ">=3.6.0"
-summary = "Screen-scraping library"
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "soupsieve>1.2",
-]
-files = [
-    {file = "beautifulsoup4-4.12.3-py3-none-any.whl", hash = "sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed"},
-    {file = "beautifulsoup4-4.12.3.tar.gz", hash = "sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051"},
 ]
 
 [[package]]
@@ -498,22 +483,15 @@ files = [
 
 [[package]]
 name = "greenlet"
-version = "3.0.3"
+version = "3.1.1"
 requires_python = ">=3.7"
 summary = "Lightweight in-process concurrent programming"
 groups = ["default"]
-marker = "(platform_machine == \"win32\" or platform_machine == \"WIN32\" or platform_machine == \"AMD64\" or platform_machine == \"amd64\" or platform_machine == \"x86_64\" or platform_machine == \"ppc64le\" or platform_machine == \"aarch64\") and python_full_version == \"3.12.3\" or platform_python_implementation == \"CPython\" and python_full_version == \"3.12.3\""
+marker = "python_full_version == \"3.12.3\""
 files = [
-    {file = "greenlet-3.0.3-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:70fb482fdf2c707765ab5f0b6655e9cfcf3780d8d87355a063547b41177599be"},
-    {file = "greenlet-3.0.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d4d1ac74f5c0c0524e4a24335350edad7e5f03b9532da7ea4d3c54d527784f2e"},
-    {file = "greenlet-3.0.3-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:149e94a2dd82d19838fe4b2259f1b6b9957d5ba1b25640d2380bea9c5df37676"},
-    {file = "greenlet-3.0.3-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:15d79dd26056573940fcb8c7413d84118086f2ec1a8acdfa854631084393efcc"},
-    {file = "greenlet-3.0.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:881b7db1ebff4ba09aaaeae6aa491daeb226c8150fc20e836ad00041bcb11230"},
-    {file = "greenlet-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fcd2469d6a2cf298f198f0487e0a5b1a47a42ca0fa4dfd1b6862c999f018ebbf"},
-    {file = "greenlet-3.0.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:1f672519db1796ca0d8753f9e78ec02355e862d0998193038c7073045899f305"},
-    {file = "greenlet-3.0.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:2516a9957eed41dd8f1ec0c604f1cdc86758b587d964668b5b196a9db5bfcde6"},
-    {file = "greenlet-3.0.3-cp312-cp312-win_amd64.whl", hash = "sha256:bba5387a6975598857d86de9eac14210a49d554a77eb8261cc68b7d082f78ce2"},
-    {file = "greenlet-3.0.3.tar.gz", hash = "sha256:43374442353259554ce33599da8b692d5aa96f8976d567d4badf263371fbe491"},
+    {file = "greenlet-3.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99cfaa2110534e2cf3ba31a7abcac9d328d1d9f1b95beede58294a60348fba36"},
+    {file = "greenlet-3.1.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1443279c19fca463fc33e65ef2a935a5b09bb90f978beab37729e1c3c6c25fe9"},
+    {file = "greenlet-3.1.1.tar.gz", hash = "sha256:4ce3ac6cdb6adf7946475d7ef31777c26d94bccc377e070a7986bd2d5c515467"},
 ]
 
 [[package]]
@@ -902,6 +880,21 @@ files = [
 ]
 
 [[package]]
+name = "playwright"
+version = "1.51.0"
+requires_python = ">=3.9"
+summary = "A high-level API to automate web browsers"
+groups = ["default"]
+marker = "python_full_version == \"3.12.3\""
+dependencies = [
+    "greenlet<4.0.0,>=3.1.1",
+    "pyee<13,>=12",
+]
+files = [
+    {file = "playwright-1.51.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:d5c9f67bc6ef49094618991c78a1466c5bac5ed09157660d78b8510b77f92746"},
+]
+
+[[package]]
 name = "prometheus-client"
 version = "0.21.0"
 requires_python = ">=3.8"
@@ -935,6 +928,21 @@ marker = "python_full_version == \"3.12.3\""
 files = [
     {file = "psycopg2-binary-2.9.9.tar.gz", hash = "sha256:7f01846810177d829c7692f1f5ada8096762d9172af1b1a28d4ab5b77c923c1c"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e6f98446430fdf41bd36d4faa6cb409f5140c1c2cf58ce0bbdaf16af7d3f119"},
+]
+
+[[package]]
+name = "pyee"
+version = "12.1.1"
+requires_python = ">=3.8"
+summary = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
+groups = ["default"]
+marker = "python_full_version == \"3.12.3\""
+dependencies = [
+    "typing-extensions",
+]
+files = [
+    {file = "pyee-12.1.1-py3-none-any.whl", hash = "sha256:18a19c650556bb6b32b406d7f017c8f513aceed1ef7ca618fb65de7bd2d347ef"},
+    {file = "pyee-12.1.1.tar.gz", hash = "sha256:bbc33c09e2ff827f74191e3e5bbc6be7da02f627b7ec30d86f5ce1a6fb2424a3"},
 ]
 
 [[package]]
@@ -1133,18 +1141,6 @@ marker = "python_full_version == \"3.12.3\""
 files = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
-]
-
-[[package]]
-name = "soupsieve"
-version = "2.5"
-requires_python = ">=3.8"
-summary = "A modern CSS selector implementation for Beautiful Soup."
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-files = [
-    {file = "soupsieve-2.5-py3-none-any.whl", hash = "sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7"},
-    {file = "soupsieve-2.5.tar.gz", hash = "sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690"},
 ]
 
 [[package]]

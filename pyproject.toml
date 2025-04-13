@@ -7,7 +7,6 @@ authors = [
 ]
 dependencies = [
     "Django==5.0.1",
-    "beautifulsoup4==4.12.3",
     "django-cors-headers==4.3.1",
     "django-extensions==3.2.3",
     "django-jalali==6.0.1",
@@ -30,6 +29,7 @@ dependencies = [
     "SQLAlchemy>=2.0.36",
     "apscheduler>=3.11.0",
     "pandas==2.0.3",
+    "playwright>=1.51.0",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
