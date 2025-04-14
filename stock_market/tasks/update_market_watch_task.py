@@ -22,7 +22,7 @@ from stock_market.models import StockInstrument
 from stock_market.utils import (
     MARKET_WATCH_COLS,
     INDIVIDUAL_LEGAL_COLS,
-    is_market_open,
+    is_in_schedule,
 )
 
 
@@ -65,7 +65,7 @@ def get_additional_info():
 
 
 def update_market_watch_main(run_mode):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 45, 0, 12, 35, 0):
         additional_info = get_additional_info()
         market_watch = get_market_watch()
         market_watch = pd.merge(

@@ -33,6 +33,7 @@ class PercentRangesAPIView(APIView):
 
         percent_ranges = percent_ranges.get("change_percent_ranges")
         percent_ranges = pd.DataFrame(percent_ranges)
+        percent_ranges = percent_ranges[percent_ranges["count"] > 0]
         percent_ranges.rename(columns={"range": "x", "count": "y"}, inplace=True)
 
         chart = {

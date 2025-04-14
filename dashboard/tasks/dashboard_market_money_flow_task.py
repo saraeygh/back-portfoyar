@@ -23,13 +23,12 @@ from fund.models import (
     IN_STOCK_PARTIAL_FUND,
     IN_STOCK_LEVERAGE_FUND,
     IN_STOCK_INDEX_FUND,
-    VENTURE_CAPITAL_FUND,
 )
 
 from stock_market.utils import (
     STOCK_PAPER,
     PRIORITY_PAPER,
-    is_market_open,
+    is_in_schedule,
     get_market_watch_data_from_mongo,
 )
 
@@ -140,8 +139,7 @@ def check_date():
 
 
 def dashboard_market_money_flow_main(run_mode: str):
-    if run_mode == MANUAL_MODE or is_market_open():
-
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 59, 0, 12, 40, 0):
         market_watch = get_market_watch_data_from_mongo()
         market_watch["money_flow"] = (
             (

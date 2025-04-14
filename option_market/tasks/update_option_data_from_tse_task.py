@@ -10,7 +10,7 @@ from core.utils import (
 )
 from core.configs import AUTO_MODE, MANUAL_MODE, OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 
-from stock_market.utils import get_last_market_watch_data, is_market_open
+from stock_market.utils import get_last_market_watch_data, is_in_schedule
 
 from option_market.utils import (
     COMMON_OPTION_COLUMN,
@@ -41,7 +41,7 @@ def rename_order_book_cols(row):
 
 
 def update_option_data_from_tse_main(run_mode):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 59, 30, 12, 35, 0):
 
         URL = "https://cdn.tsetmc.com/api/Instrument/GetInstrumentOptionMarketWatch/0"
 

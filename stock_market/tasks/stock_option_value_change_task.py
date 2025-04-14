@@ -17,7 +17,7 @@ from stock_market.utils import (
     PUT_OPTION,
     FUND_PAPER,
     get_market_watch_data_from_mongo,
-    is_market_open,
+    is_in_schedule,
 )
 
 
@@ -177,7 +177,7 @@ def add_last_update(row):
 
 
 def stock_option_value_change_main(run_mode):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 55, 0, 12, 40, 0):
         instrument_info = get_instrument_info()
         instrument_info = instrument_info[
             [

@@ -7,13 +7,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.configs import FIVE_MINUTES_CACHE
+from core.configs import SIXTY_SECONDS_CACHE
 
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.serializers import GetDollarPriceSerializer
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+@method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 class DollarPriceAPIView(APIView):
     def get(self, request):
         dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")[0:60]

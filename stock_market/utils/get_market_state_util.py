@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from core.utils import MARKET_STATE, TSETMC_REQUEST_HEADERS, get_http_response
+from core.configs import TEHRAN_TZ
 from core.models import FeatureToggle, ACTIVE
 
 from . import MAIN_MARKET_TYPE_DICT
@@ -31,4 +34,22 @@ def is_market_open():
         if market_state == check_market.value:
             return True
 
+    return False
+
+
+def is_in_schedule(
+    s_hour: int = 0,
+    s_minute: int = 0,
+    s_second: int = 0,
+    e_hour: int = 0,
+    e_minute: int = 0,
+    e_second: int = 0,
+):
+    now = datetime.now(tz=TEHRAN_TZ)
+
+    start = now.replace(hour=s_hour, minute=s_minute, second=s_second, microsecond=0)
+    end = now.replace(hour=e_hour, minute=e_minute, second=e_second, microsecond=0)
+
+    if start <= now <= end:
+        return True
     return False

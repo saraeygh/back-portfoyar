@@ -3,11 +3,11 @@ from core.utils import run_main_task
 
 from dashboard.utils import change_percent_ranges_count
 
-from stock_market.utils import is_market_open
+from stock_market.utils import is_in_schedule
 
 
 def dashboard_change_percent_ranges_count_main(run_mode: str):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 59, 0, 12, 35, 0):
         change_percent_ranges_count()
 
 

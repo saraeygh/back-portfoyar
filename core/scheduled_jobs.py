@@ -22,6 +22,7 @@ from core.configs import (
     SIX_DAYS_WEEK,
     TSETMC_MARKET_HOURS,
     DERIVATIVE_MARKET_HOURS,
+    TSE_PLUS_DERIVATIVE_MARKET_HOURS,
 )
 
 from account.tasks import disable_expired_subscription
@@ -324,8 +325,8 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         coalesce=True,
         trigger="cron",
-        hour="20",
-        minute="10",
+        hour="23",
+        minute="30",
     )
 
     scheduler.add_job(
@@ -336,7 +337,7 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=SIX_DAYS_WEEK,
-        hour=DERIVATIVE_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/15",
     )
 
@@ -527,7 +528,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         hour=TSETMC_MARKET_HOURS,
-        minute="*/45",
+        minute="*/30",
     )
 
     scheduler.add_job(

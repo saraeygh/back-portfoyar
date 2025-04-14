@@ -12,12 +12,11 @@ from core.configs import (
     TEHRAN_TZ,
 )
 
-from fund.models import FundInfo, UNKNOWN, FIXED_INCOME_FUND, MIXED_FUND
 
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_mongo,
-    is_market_open,
+    is_in_schedule,
     remove_fixed_income_mixed,
 )
 
@@ -179,7 +178,7 @@ def get_history(row, index_name):
 
 
 def update_market_watch_indices_main(run_mode):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 45, 0, 12, 40, 0):
         mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB)
 
         market_watch = get_market_watch_data_from_mongo()

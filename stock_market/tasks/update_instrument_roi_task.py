@@ -12,7 +12,7 @@ from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,
     get_market_watch_data_from_mongo,
-    is_market_open,
+    is_in_schedule,
 )
 
 
@@ -139,7 +139,7 @@ def calculate_industry_duration_roi(durations: dict):
 
 
 def update_instrument_roi_main(run_mode):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 13, 0, 0):
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )

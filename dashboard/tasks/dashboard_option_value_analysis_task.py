@@ -3,11 +3,11 @@ from core.utils import run_main_task
 
 from dashboard.utils import option_value_analysis, update_top_options
 
-from stock_market.utils import is_market_open
+from stock_market.utils import is_in_schedule
 
 
 def dashboard_option_value_analysis_main(run_mode: str):
-    if run_mode == MANUAL_MODE or is_market_open():
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 40, 0, 12, 40, 0):
         option_value_analysis()
         update_top_options()
 

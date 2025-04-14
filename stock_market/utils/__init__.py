@@ -35,7 +35,7 @@ from .update_stock_raw_history_util import update_stock_raw_history
 from .update_stock_adjsuted_history_util import (
     update_stock_adjusted_history,
 )
-from .get_market_state_util import get_market_state, is_market_open
+from .get_market_state_util import get_market_state, is_market_open, is_in_schedule
 from .get_last_market_watch_data_util import (
     get_last_market_watch_data,
     get_market_watch_data_from_mongo,

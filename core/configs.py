@@ -18,8 +18,9 @@ MGT_FOR_DAILY_TASKS = 50 * 60  # 50 Minutes
 MGT_FOR_PREIODIC_TASKS = 10  # 10 Seconds
 FIVE_DAYS_WEEK = "sat, sun, mon, tue, wed"
 SIX_DAYS_WEEK = "sat, sun, mon, tue, wed, thu"
-TSETMC_MARKET_HOURS = "9-13"
+TSETMC_MARKET_HOURS = "8-13"
 DERIVATIVE_MARKET_HOURS = "11-18"
+TSE_PLUS_DERIVATIVE_MARKET_HOURS = "8-18"
 
 ######################################################## DASHBOARD APP
 PERCENT_MIN_RANGE = -5
