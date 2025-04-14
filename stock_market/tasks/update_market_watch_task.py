@@ -65,7 +65,7 @@ def get_additional_info():
 
 
 def update_market_watch_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 45, 0, 12, 35, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(8, 45, 0, 18, 0, 0):
         additional_info = get_additional_info()
         market_watch = get_market_watch()
         market_watch = pd.merge(

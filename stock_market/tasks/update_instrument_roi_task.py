@@ -139,7 +139,7 @@ def calculate_industry_duration_roi(durations: dict):
 
 
 def update_instrument_roi_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 13, 0, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 18, 0, 0):
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )

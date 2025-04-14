@@ -482,7 +482,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         second="*/45",
     )
 
@@ -494,7 +494,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -527,7 +527,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         coalesce=True,
         trigger="cron",
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/30",
     )
 
@@ -550,7 +550,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/5",
     )
 
@@ -573,7 +573,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/5",
     )
 

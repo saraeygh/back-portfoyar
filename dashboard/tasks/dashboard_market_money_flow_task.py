@@ -139,7 +139,7 @@ def check_date():
 
 
 def dashboard_market_money_flow_main(run_mode: str):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 59, 0, 12, 40, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 12, 40, 0):
         market_watch = get_market_watch_data_from_mongo()
         market_watch["money_flow"] = (
             (

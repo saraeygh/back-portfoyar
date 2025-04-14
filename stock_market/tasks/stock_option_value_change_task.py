@@ -177,7 +177,7 @@ def add_last_update(row):
 
 
 def stock_option_value_change_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 55, 0, 12, 40, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 18, 0, 0):
         instrument_info = get_instrument_info()
         instrument_info = instrument_info[
             [

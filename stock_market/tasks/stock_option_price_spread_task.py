@@ -321,7 +321,7 @@ def add_spread_history(mongo_client, last_spreads):
 
 
 def stock_option_price_spread_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 55, 0, 12, 40, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 12, 40, 0):
         spreads = get_last_options()
         last_spreads = pd.DataFrame()
         if not spreads.empty:

@@ -7,7 +7,7 @@ from stock_market.utils import is_in_schedule
 
 
 def dashboard_change_percent_ranges_count_main(run_mode: str):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 59, 0, 12, 35, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 12, 40, 0):
         change_percent_ranges_count()
 
 
