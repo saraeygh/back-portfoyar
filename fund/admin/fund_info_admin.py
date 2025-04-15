@@ -13,7 +13,7 @@ class FundInfoAdmin(admin.ModelAdmin):
         "last_date",
         "ins_code",
     )
-    list_display_links = ("name",)
+    list_display_links = ("id",)
     ordering = ("-created_at",)
 
     search_fields = (
