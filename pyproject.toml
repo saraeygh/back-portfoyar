@@ -31,6 +31,7 @@ dependencies = [
     "pandas==2.0.3",
     "playwright>=1.51.0",
     "plotly>=6.0.1",
+    "django-apscheduler>=0.7.0",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

@@ -5,14 +5,7 @@ from colorama import Fore, Style
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-
-from samaneh.settings import (
-    POSTGRES_DB,
-    POSTGRES_USER,
-    POSTGRES_PASSWORD,
-    POSTGRES_SERVICE_NAME,
-)
+from django_apscheduler.jobstores import DjangoJobStore
 
 from core.configs import (
     TEHRAN_TZ,
@@ -94,16 +87,6 @@ def get_cores_threads():
     return used_cores, total_threads
 
 
-def get_job_stores():
-    jobstores = {
-        "default": SQLAlchemyJobStore(
-            url=f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVICE_NAME}:5432/{POSTGRES_DB}"
-        )
-    }
-
-    return jobstores
-
-
 def get_executors(used_cores, total_threads):
     executors = {
         "default": ThreadPoolExecutor(total_threads),
@@ -115,14 +98,10 @@ def get_executors(used_cores, total_threads):
 
 def get_scheduler():
     used_cores, total_threads = get_cores_threads()
-    jobstores = get_job_stores()
     executors = get_executors(used_cores, total_threads)
 
-    scheduler = BlockingScheduler(
-        jobstores=jobstores,
-        executors=executors,
-        timezone=TEHRAN_TZ,
-    )
+    scheduler = BlockingScheduler(executors=executors, timezone=TEHRAN_TZ)
+    scheduler.add_jobstore(DjangoJobStore(), "default")
 
     return scheduler
 

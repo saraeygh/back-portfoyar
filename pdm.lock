@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:5072be646e7d11922fa63c1ea4860092173699fee38852eb4c8c19ceb2c7c95a"
+content_hash = "sha256:4a23affa93ca1840367bae8c1ab6e32e5e918dcc65c4d0e1fa9fc3d9979dcc68"
 
 [[metadata.targets]]
 requires_python = "==3.12.3"
@@ -226,6 +226,21 @@ dependencies = [
 files = [
     {file = "Django-5.0.1-py3-none-any.whl", hash = "sha256:f47a37a90b9bbe2c8ec360235192c7fddfdc832206fcf618bb849b39256affc1"},
     {file = "Django-5.0.1.tar.gz", hash = "sha256:8c8659665bc6e3a44fefe1ab0a291e5a3fb3979f9a8230be29de975e57e8f854"},
+]
+
+[[package]]
+name = "django-apscheduler"
+version = "0.7.0"
+summary = "APScheduler for Django"
+groups = ["default"]
+marker = "python_full_version == \"3.12.3\""
+dependencies = [
+    "apscheduler<4.0,>=3.2",
+    "django>=4.2",
+]
+files = [
+    {file = "django_apscheduler-0.7.0-py3-none-any.whl", hash = "sha256:869d489775420245c9455d55e35f663c856a33ebfc996d92938f786ffb8730ce"},
+    {file = "django_apscheduler-0.7.0.tar.gz", hash = "sha256:30d61a2ba98615922fc2c9782f84bba342ec0c5ed63384d686d71ea90a1a4318"},
 ]
 
 [[package]]

@@ -55,6 +55,7 @@ THIRD_PARTY_INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_extensions",
     "django_prometheus",
+    "django_apscheduler",
 ]
 
 
