@@ -13,7 +13,7 @@ from core.configs import STOCK_MONGO_DB, THIRTY_MINUTES_CACHE, DASHBOARD_TOP_5_L
 from stock_market.serializers import DashboardIndustryROISerailizer
 
 
-@method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
 class IndustryROIAPIView(APIView):
     def get(self, request):
 

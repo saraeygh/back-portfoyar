@@ -17,7 +17,7 @@ from core.configs import (
 )
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class UnweightedIndexDailyAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(

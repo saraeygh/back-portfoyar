@@ -109,7 +109,7 @@ def calculate_daily_option_value_task_main():
         current_date = last_date
         bulk_create_list = []
         bulk_update_list = []
-        for _ in trange(history_len, desc="Calculting Option Value", ncols=10):
+        for _ in trange(history_len, desc="Calculating Option Value", ncols=10):
             option_value_obj, created = calculate_option_value(current_date)
 
             if created and option_value_obj:

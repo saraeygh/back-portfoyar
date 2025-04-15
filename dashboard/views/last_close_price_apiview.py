@@ -48,7 +48,7 @@ def add_last_close_price(row, industrial_group: int = None, paper_type: int = No
     return pd.Series([last_price_change, closing_price_change])
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class LastClosePriceAPIView(APIView):
     def get(self, request):
         try:

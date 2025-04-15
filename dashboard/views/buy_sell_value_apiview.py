@@ -51,7 +51,7 @@ def add_buy_sell_values(row, industrial_group: int = None, paper_type: int = Non
     return pd.Series([buy_value, sell_value])
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class BuySellValueAPIView(APIView):
     def get(self, request):
         try:

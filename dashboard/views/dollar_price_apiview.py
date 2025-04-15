@@ -13,7 +13,7 @@ from domestic_market.models import DomesticDollarPrice
 from domestic_market.serializers import GetDollarPriceSerializer
 
 
-@method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
+# @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 class DollarPriceAPIView(APIView):
     def get(self, request):
         dollar_prices = DomesticDollarPrice.objects.all().order_by("-date")[0:60]

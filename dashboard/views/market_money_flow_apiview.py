@@ -24,7 +24,7 @@ MARKET_MONEY_FLOW_TABLE_COLS = {
 }
 
 
-@method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
+# @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 class MarketMoneyFlowAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(

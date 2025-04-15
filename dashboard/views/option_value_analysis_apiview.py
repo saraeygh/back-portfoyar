@@ -17,7 +17,7 @@ from core.configs import (
 )
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -39,7 +39,7 @@ class OptionValueAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class CallValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -62,7 +62,7 @@ class CallValueAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutValueAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -85,7 +85,7 @@ class PutValueAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class PutToCallAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -108,7 +108,7 @@ class PutToCallAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class OptionToMarketAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
@@ -133,7 +133,7 @@ class OptionToMarketAPIView(APIView):
         return Response(chart, status=status.HTTP_200_OK)
 
 
-@method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
 class TopOptionsAPIView(APIView):
     def get(self, request):
 

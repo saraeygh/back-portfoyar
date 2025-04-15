@@ -16,7 +16,7 @@ from core.configs import (
 )
 
 
-@method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
+# @method_decorator(cache_page(SIXTY_SECONDS_CACHE), name="dispatch")
 class PercentRangesAPIView(APIView):
     def get(self, request):
         mongo_conn = MongodbInterface(
