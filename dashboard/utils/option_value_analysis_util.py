@@ -1,13 +1,15 @@
 from datetime import datetime as dt
 import jdatetime as jdt
 import pandas as pd
-from core.utils import MongodbInterface
+
 from core.configs import (
     DASHBOARD_MONGO_DB,
     OPTION_VALUE_ANALYSIS_COLLECTION,
     RIAL_TO_BILLION_TOMAN,
     MILLION_TO_BILLION_TOMAN,
+    OPTION_VALUE_ANALYSIS_DURATION,
 )
+from core.utils import MongodbInterface
 
 from option_market.utils import get_option_data_from_mongo
 from option_market.models import OptionValue
@@ -68,7 +70,7 @@ def option_value_analysis():
             "option_value",
             "put_to_call",
             "option_to_market",
-        )[0:30]
+        )[0:OPTION_VALUE_ANALYSIS_DURATION]
     )
     data_history = data_history.sort_values(by="date")
 

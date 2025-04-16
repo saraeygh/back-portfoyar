@@ -4,22 +4,13 @@ from tqdm import trange
 
 
 from core.utils import run_main_task
-from core.configs import RIAL_TO_MILLION_TOMAN
+from core.configs import RIAL_TO_MILLION_TOMAN, OPTION_VALUE_ANALYSIS_DURATION
 
 
 from stock_market.models import StockRawHistory
 from stock_market.utils import STOCK_PAPER, INITIAL_MARKET_PAPER, PRIORITY_PAPER
 
 from option_market.models import OptionValue
-
-
-def get_last_date():
-    if OptionValue.objects.exists():
-        last_date = OptionValue.objects.order_by("date").last().date
-    else:
-        last_date = StockRawHistory.objects.order_by("trade_date").first().trade_date
-
-    return last_date
 
 
 def calculate_option_value(current_date):
@@ -101,27 +92,28 @@ def update_database(bulk_create_list, bulk_update_list):
 
 
 def calculate_daily_option_value_task_main():
-    last_date = get_last_date()
-
     today_date = dt.today().date()
-    history_len = (today_date - last_date).days
-    if history_len >= 1:
-        current_date = last_date
-        bulk_create_list = []
-        bulk_update_list = []
-        for _ in trange(history_len, desc="Calculating Option Value", ncols=10):
-            option_value_obj, created = calculate_option_value(current_date)
+    start_date = today_date - td(days=OPTION_VALUE_ANALYSIS_DURATION)
 
-            if created and option_value_obj:
-                bulk_create_list.append(option_value_obj)
-            elif not created and option_value_obj:
-                bulk_update_list.append(option_value_obj)
-            else:
-                pass
+    bulk_create_list = []
+    bulk_update_list = []
 
-            current_date = current_date + td(days=1)
+    current_date = start_date
+    for _ in trange(
+        (OPTION_VALUE_ANALYSIS_DURATION + 1), desc="Calculating Option Value", ncols=10
+    ):
+        option_value_obj, created = calculate_option_value(current_date)
 
-        update_database(bulk_create_list, bulk_update_list)
+        if created and option_value_obj:
+            bulk_create_list.append(option_value_obj)
+        elif not created and option_value_obj:
+            bulk_update_list.append(option_value_obj)
+        else:
+            pass
+
+        current_date = current_date + td(days=1)
+
+    update_database(bulk_create_list, bulk_update_list)
 
 
 def calculate_daily_option_value():
