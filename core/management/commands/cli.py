@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
+from core.tasks import remove_django_job_execution_history
 from account.tasks import disable_expired_subscription
 from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
 
@@ -412,6 +413,7 @@ def other_cli(clear_cmd):
             "all) Run all commands" + Style.RESET_ALL,
             Fore.BLUE + "1) Clear redis cache",
             "2) Relpace all arabic letters",
+            "3) remove_django_job_execution_history",
             Fore.RED + "0) Back" + Style.RESET_ALL,
             sep="\n",
         )
@@ -421,10 +423,13 @@ def other_cli(clear_cmd):
             case "all":
                 clear_redis_cache()
                 replace_all_arabic_letters_in_db()
+                remove_django_job_execution_history()
             case "1":
                 clear_redis_cache()
             case "2":
                 replace_all_arabic_letters_in_db()
+            case "3":
+                remove_django_job_execution_history()
             case "0":
                 break
 

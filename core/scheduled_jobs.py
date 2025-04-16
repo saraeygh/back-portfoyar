@@ -18,6 +18,7 @@ from core.configs import (
     TSE_PLUS_DERIVATIVE_MARKET_HOURS,
 )
 
+from core.tasks import remove_django_job_execution_history
 from account.tasks import disable_expired_subscription
 
 from dashboard.tasks import (
@@ -102,6 +103,21 @@ def get_scheduler():
 
     scheduler = BlockingScheduler(executors=executors, timezone=TEHRAN_TZ)
     scheduler.add_jobstore(DjangoJobStore(), "default")
+
+    return scheduler
+
+
+def add_core_app_jobs(scheduler: BlockingScheduler):
+    scheduler.add_job(
+        func=remove_django_job_execution_history,
+        id="remove_django_job_execution_history_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+        replace_existing=True,
+        coalesce=True,
+        trigger="cron",
+        hour="1",
+        minute="20",
+    )
 
     return scheduler
 
@@ -586,6 +602,7 @@ def blocking_scheduler():
 
     scheduler = get_scheduler()
 
+    scheduler = add_core_app_jobs(scheduler)
     scheduler = add_account_app_jobs(scheduler)
     scheduler = add_dashboard_app_jobs(scheduler)
     scheduler = add_domestic_market_app_jobs(scheduler)
