@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
-from core.tasks import remove_django_job_execution_history
+from core.tasks import remove_django_job_execution_history, is_market_open_today
 
 from account.tasks import disable_expired_subscription
 from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
@@ -119,6 +119,7 @@ TASKS = {
     "101": (clear_redis_cache, False),
     "102": (replace_all_arabic_letters_in_db, False),
     "103": (remove_django_job_execution_history, False),
+    "104": (is_market_open_today, False),
 }
 
 

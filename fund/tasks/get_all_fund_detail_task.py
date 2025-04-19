@@ -8,7 +8,7 @@ from fund.utils import FIPIRAN_HEADERS
 
 
 def get_all_fund_detail_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(8, 45, 0, 18, 0, 0):
+    if run_mode == MANUAL_MODE or is_in_schedule(9, 2, 0, 18, 0, 0):
         FUND_COMPARE_URL = "https://fund.fipiran.ir/api/v1/fund/fundcompare"
 
         funds = get_http_response(req_url=FUND_COMPARE_URL, req_headers=FIPIRAN_HEADERS)

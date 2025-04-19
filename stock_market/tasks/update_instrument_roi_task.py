@@ -7,7 +7,7 @@ from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
 )
-from core.utils import MongodbInterface, run_main_task
+from core.utils import MongodbInterface, run_main_task, was_market_open_today
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     FUND_PAPER,
@@ -139,7 +139,9 @@ def calculate_industry_duration_roi(durations: dict):
 
 
 def update_instrument_roi_main(run_mode):
-    if run_mode == MANUAL_MODE or is_in_schedule(9, 0, 0, 18, 0, 0):
+    if (
+        is_in_schedule(9, 2, 0, 18, 0, 0) and was_market_open_today()
+    ) or run_mode == MANUAL_MODE:
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name="instrument_info"
         )

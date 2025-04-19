@@ -18,7 +18,7 @@ from core.configs import (
     TSE_PLUS_DERIVATIVE_MARKET_HOURS,
 )
 
-from core.tasks import remove_django_job_execution_history
+from core.tasks import remove_django_job_execution_history, is_market_open_today
 from account.tasks import disable_expired_subscription
 
 from dashboard.tasks import (
@@ -117,6 +117,17 @@ def add_core_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         hour="1",
         minute="20",
+    )
+
+    scheduler.add_job(
+        func=is_market_open_today,
+        id="is_market_open_today_task",
+        misfire_grace_time=MGT_FOR_DAILY_TASKS,
+        replace_existing=True,
+        coalesce=True,
+        trigger="cron",
+        hour="9",
+        minute="1",
     )
 
     return scheduler

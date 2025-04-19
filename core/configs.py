@@ -21,6 +21,9 @@ SIX_DAYS_WEEK = "sat, sun, mon, tue, wed, thu"
 TSETMC_MARKET_HOURS = "8-13"
 DERIVATIVE_MARKET_HOURS = "11-18"
 TSE_PLUS_DERIVATIVE_MARKET_HOURS = "8-18"
+CORE_MONGO_DB = "core"
+CORE_MARKET_STATE_COLLECTION = "market_state"
+CORE_MARKET_STATE_KEY = "is_market_open_today"
 
 ######################################################## DASHBOARD APP
 PERCENT_MIN_RANGE = -5
