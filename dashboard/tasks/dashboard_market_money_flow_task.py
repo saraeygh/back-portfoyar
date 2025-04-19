@@ -107,7 +107,7 @@ def get_fund_money_flow(fund_type_code, fund_type_name, market_watch):
 def funds_money_flow(market_watch):
     fund_types = {
         FIXED_INCOME_FUND: "صندوق‌های درآمد ثابت",
-        MIXED_FUND: "صنذوق‌های مختلط",
+        MIXED_FUND: "صندوق‌های مختلط",
         IN_STOCK_FUND: "صندوق‌های سهامی",
         IN_STOCK_PARTIAL_FUND: "صندوق‌های بخشی",
         IN_STOCK_LEVERAGE_FUND: "صندوق‌های اهرمی",
