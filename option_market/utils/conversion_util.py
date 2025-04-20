@@ -79,6 +79,7 @@ def conversion(option_data, mongo_db: str):
         & (option_data["call_last_update"] > 90000)
         & (option_data["put_last_update"] > 90000)
         & (option_data["base_equity_last_update"] > 90000)
+        & (option_data["base_equity_last_price"] > 0)
     ]
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options

@@ -2,64 +2,58 @@ from option_market.models import StrategyOption
 from colorama import Fore, Style
 
 COVERED_CALL_SEQ = 1
-COVERED_CALL_DESC = "خرید سهم و فروش آپشن خرید همان سهم"
+COVERED_CALL_DESC = "خرید سهم و فروش کال"
 
 CONVERSION_SEQ = 2
-CONVERSION_DESC = (
-    "خرید سهم و فروش آپشن خرید و خرید آپشن فروش با قیمت اعمال یکسان همان سهم"
-)
+CONVERSION_DESC = "خرید سهم و فروش کال و خرید پوت با قیمت اعمال یکسان"
 
 MARRIED_PUT_SEQ = 3
-MARRIED_PUT_DESC = "خرید سهم و خرید آپشن فروش با قیمت اعمال کمتر از قیمت سهم"
+MARRIED_PUT_DESC = "خرید سهم و خرید پوت با قیمت اعمال کمتر از قیمت سهم"
 
 LONG_CALL_SEQ = 4
-LONG_CALL_DESC = "خرید آپشن خرید"
+LONG_CALL_DESC = "خرید کال"
 
 SHORT_CALL_SEQ = 5
-SHORT_CALL_DESC = "فروش آپشن خرید"
+SHORT_CALL_DESC = "فروش کال"
 
 LONG_PUT_SEQ = 6
-LONG_PUT_DESC = "خرید آپشن فروش"
+LONG_PUT_DESC = "خرید پوت"
 
 SHORT_PUT_SEQ = 7
-SHORT_PUT_DESC = "فروش آپشن فروش"
+SHORT_PUT_DESC = "فروش پوت"
 
 LONG_STRADDLE_SEQ = 8
-LONG_STRADDLE_DESC = (
-    "خرید همزمان آپشن خرید و آپشن فروش با قیمت اعمال برابر مربوط به یک سهم"
-)
+LONG_STRADDLE_DESC = "خرید همزمان کال و پوت با قیمت اعمال یکسان"
 
 SHORT_STRADDLE_SEQ = 9
-SHORT_STRADDLE_DESC = (
-    "فروش همزمان آپشن خرید و آپشن فروش با قیمت اعمال برابر مربوط به یک سهم"
-)
+SHORT_STRADDLE_DESC = "فروش همزمان کال و پوت با قیمت اعمال یکسان"
 
 BULL_CALL_SPREAD_SEQ = 10
-BULL_CALL_SPREAD_DESC = "خرید آپشن خرید با قیمت اعمال پایین‌تر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
+BULL_CALL_SPREAD_DESC = "خرید کال با قیمت اعمال پایین‌تر و فروش کال با قیمت اعمال بالاتر"
 
 BEAR_CALL_SPREAD_SEQ = 11
-BEAR_CALL_SPREAD_DESC = "خرید آپشن خرید با قیمت اعمال بالاتر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
+BEAR_CALL_SPREAD_DESC = "خرید کال با قیمت اعمال بالاتر و فروش کال با قیمت اعمال پایین‌تر"
 
 BULL_PUT_SPREAD_SEQ = 12
-BULL_PUT_SPREAD_DESC = "خرید آپشن فروش با قیمت اعمال پایین‌تر و فروش آپشن فروش با قیمت اعمال بالاتر مربوط به یک سهم"
+BULL_PUT_SPREAD_DESC = "خرید پوت با قیمت اعمال پایین‌تر و فروش پوت با قیمت اعمال بالاتر"
 
 BEAR_PUT_SPREAD_SEQ = 13
-BEAR_PUT_SPREAD_DESC = "خرید آپشن فروش با قیمت اعمال بالاتر و فروش آپشن فروش با قیمت اعمال پایین‌تر مربوط به یک سهم"
+BEAR_PUT_SPREAD_DESC = "خرید پوت با قیمت اعمال بالاتر و فروش پوت با قیمت اعمال پایین‌تر"
 
 LONG_STRANGLE_SEQ = 14
-LONG_STRANGLE_DESC = "خرید آپشن فروش با قیمت اعمال پایین‌تر و خرید آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
+LONG_STRANGLE_DESC = "خرید پوت با قیمت اعمال پایین‌تر و خرید کال با قیمت اعمال بالاتر"
 
 SHORT_STRANGLE_SEQ = 15
-SHORT_STRANGLE_DESC = "فروش آپشن فروش با قیمت اعمال پایین‌تر و فروش آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
+SHORT_STRANGLE_DESC = "فروش پوت با قیمت اعمال پایین‌تر و فروش کال با قیمت اعمال بالاتر"
 
 LONG_BUTTERFLY_SEQ = 16
-LONG_BUTTERFLY_DESC = "خرید آپشن خرید با قیمت اعمال پایین‌ و دو بار فروش آپشن خرید با قیمت اعمال میانه و خرید آپشن خرید با قیمت اعمال بالای مربوط به یک سهم"
+LONG_BUTTERFLY_DESC = "خرید کال با قیمت اعمال پایین‌ و دو بار فروش کال با قیمت اعمال میانه و خرید کال با قیمت اعمال بالا"
 
 SHORT_BUTTERFLY_SEQ = 17
-SHORT_BUTTERFLY_DESC = "فروش آپشن خرید با قیمت اعمال پایین‌ و دو بار خرید آپشن خرید با قیمت اعمال میانه و فروش آپشن خرید با قیمت اعمال بالای مربوط به یک سهم"
+SHORT_BUTTERFLY_DESC = "فروش کال با قیمت اعمال پایین‌ و دو بار خرید کال با قیمت اعمال میانه و فروش کال با قیمت اعمال بالا"
 
 COLLAR_SEQ = 18
-COLLAR_DESC = "فروش آپشن خرید با قیمت اعمال پایین‌تر و دو بار خرید آپشن خرید با قیمت اعمال بالاتر مربوط به یک سهم"
+COLLAR_DESC = "فروش کال با قیمت اعمال پایین‌تر و دو بار خرید کال با قیمت اعمال بالاتر"
 
 STRATEGIES = {
     "covered_call": {
