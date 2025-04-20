@@ -160,7 +160,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/5",
+        minute="*/2",
     )
 
     scheduler.add_job(
@@ -172,7 +172,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/5",
+        minute="*/2",
     )
 
     scheduler.add_job(
@@ -184,7 +184,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/6",
+        minute="*/2",
     )
 
     scheduler.add_job(
@@ -196,7 +196,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/6",
+        minute="*/2",
     )
 
     scheduler.add_job(
@@ -220,7 +220,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/5",
+        minute="*/2",
     )
 
     scheduler.add_job(
@@ -244,7 +244,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/3",
+        minute="*/2",
     )
 
     return scheduler
@@ -501,7 +501,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
-        minute="*/5",
+        minute="*/3",
     )
 
     scheduler.add_job(
@@ -557,7 +557,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
-        minute="*/5",
+        minute="*/3",
     )
 
     scheduler.add_job(
@@ -580,7 +580,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
-        minute="*/5",
+        minute="*/3",
     )
 
     scheduler.add_job(
@@ -592,7 +592,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
         hour=TSETMC_MARKET_HOURS,
-        minute="*/5",
+        minute="*/3",
     )
 
     scheduler.add_job(
