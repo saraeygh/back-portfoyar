@@ -132,22 +132,6 @@ services:
         max-size: "24m"
         max-file: "10"
 
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx.prod
-    image: nginx_test
-    container_name: nginx_test
-    ports:
-      - "80:80"
-    restart: always
-    depends_on:
-      - api_test
-    networks:
-      - test
-    volumes:
-      - nginx_logs:/var/log/nginx/
-
 networks:
   test:
     external: true
@@ -159,4 +143,3 @@ volumes:
   mongodb_test:
   ticket_appendix:
   django_logs:
-  nginx_logs:
