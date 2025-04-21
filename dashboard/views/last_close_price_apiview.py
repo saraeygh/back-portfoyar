@@ -12,6 +12,7 @@ from core.configs import (
     FIVE_MINUTES_CACHE,
     DASHBOARD_MONGO_DB,
     LAST_CLOSE_PRICE_COLLECTION,
+    PERCENT_UNIT_IDENTIFIER,
 )
 from stock_market.utils import (
     STOCK_PAPER,
@@ -90,8 +91,8 @@ class LastClosePriceAPIView(APIView):
 
         chart = {
             "x_title": "زمان",
-            "y_1_title": "درصد قیمت آخرین",
-            "y_2_title": "درصد قیمت پایانی",
+            "y_1_title": f"آخرین ({PERCENT_UNIT_IDENTIFIER})",
+            "y_2_title": f"پایانی ({PERCENT_UNIT_IDENTIFIER})",
             "chart_title": chart_title,
             "history": history_df.to_dict(orient="records"),
         }

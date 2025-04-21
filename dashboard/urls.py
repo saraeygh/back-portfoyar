@@ -9,8 +9,6 @@ from dashboard.views import (
     TotalIndexDailyAPIView,
     UnweightedIndexDailyAPIView,
     OptionValueAPIView,
-    CallValueAPIView,
-    PutValueAPIView,
     PutToCallAPIView,
     OptionToMarketAPIView,
     TopOptionsAPIView,
@@ -42,8 +40,6 @@ dollar_urls = [
 ]
 option_urls = [
     path("option-value", OptionValueAPIView.as_view()),
-    path("call-value", CallValueAPIView.as_view()),
-    path("put-value", PutValueAPIView.as_view()),
     path("put-to-call", PutToCallAPIView.as_view()),
     path("option-to-market", OptionToMarketAPIView.as_view()),
     path("top-options", TopOptionsAPIView.as_view()),

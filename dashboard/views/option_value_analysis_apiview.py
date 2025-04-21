@@ -14,6 +14,7 @@ from core.configs import (
     OPTION_VALUE_ANALYSIS_COLLECTION,
     TOP_OPTIONS_COLLECTION,
     DASHBOARD_TOP_5_LIMIT,
+    BILLION_TOMAN_UNIT_IDENTIFIER,
 )
 
 
@@ -24,61 +25,21 @@ class OptionValueAPIView(APIView):
             db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
         )
         option_value = pd.DataFrame(
-            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "option_value": 1})
+            mongo_conn.collection.find(
+                {}, {"_id": 0, "date": 1, "call_value": 1, "put_value": 1}
+            )
         )
-        option_value.rename(columns={"date": "x", "option_value": "y"}, inplace=True)
+        option_value.rename(
+            columns={"date": "x", "call_value": "y_1", "put_value": "y_2"},
+            inplace=True,
+        )
         history = option_value.to_dict(orient="records")
 
         chart = {
             "x_title": "زمان",
-            "y_title": "ارزش آپشن‌ها (میلیارد تومان)",
-            "chart_title": f"ارزش آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
-            "history": history,
-        }
-
-        return Response(chart, status=status.HTTP_200_OK)
-
-
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
-class CallValueAPIView(APIView):
-    def get(self, request):
-        mongo_conn = MongodbInterface(
-            db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
-        )
-        call_value = pd.DataFrame(
-            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "call_value": 1})
-        )
-
-        call_value.rename(columns={"date": "x", "call_value": "y"}, inplace=True)
-        history = call_value.to_dict(orient="records")
-
-        chart = {
-            "x_title": "زمان",
-            "y_title": "ارز کال آپشن‌ها (میلیارد تومان)",
-            "chart_title": f"ارزش کال آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
-            "history": history,
-        }
-
-        return Response(chart, status=status.HTTP_200_OK)
-
-
-# @method_decorator(cache_page(FIVE_MINUTES_CACHE), name="dispatch")
-class PutValueAPIView(APIView):
-    def get(self, request):
-        mongo_conn = MongodbInterface(
-            db_name=DASHBOARD_MONGO_DB, collection_name=OPTION_VALUE_ANALYSIS_COLLECTION
-        )
-        put_value = pd.DataFrame(
-            mongo_conn.collection.find({}, {"_id": 0, "date": 1, "put_value": 1})
-        )
-
-        put_value.rename(columns={"date": "x", "put_value": "y"}, inplace=True)
-        history = put_value.to_dict(orient="records")
-
-        chart = {
-            "x_title": "زمان",
-            "y_title": "ارزش پوت آشپن‌ها (میلیارد تومان)",
-            "chart_title": f"ارزش پوت آپشن‌ها ({history[-1]["y"]} میلیارد تومان)",
+            "y_1_title": f"ارزش کال‌ها ({BILLION_TOMAN_UNIT_IDENTIFIER})",
+            "y_2_title": f"ارزش پوت‌ها ({BILLION_TOMAN_UNIT_IDENTIFIER})",
+            "chart_title": f"ارزش آپشن‌ها ({round((history[-1]["y_1"] + history[-1]["y_2"]), 3)} {BILLION_TOMAN_UNIT_IDENTIFIER})",
             "history": history,
         }
 

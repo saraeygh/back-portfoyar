@@ -6,8 +6,6 @@ from .total_index_daily_apiview import TotalIndexDailyAPIView
 from .unweighted_index_daily_apiview import UnweightedIndexDailyAPIView
 from .option_value_analysis_apiview import (
     OptionValueAPIView,
-    CallValueAPIView,
-    PutValueAPIView,
     PutToCallAPIView,
     OptionToMarketAPIView,
     TopOptionsAPIView,

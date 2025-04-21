@@ -14,6 +14,7 @@ from core.configs import (
     DASHBOARD_MONGO_DB,
     BUY_SELL_ORDERS_COLLECTION,
     RIAL_TO_BILLION_TOMAN,
+    BILLION_TOMAN_UNIT_IDENTIFIER,
 )
 
 from stock_market.utils import (
@@ -88,8 +89,8 @@ class BuySellValueAPIView(APIView):
 
         chart = {
             "x_title": "زمان",
-            "y_1_title": "سفارش‌های خرید (میلیارد تومان)",
-            "y_2_title": "سفارش‌های فروش (میلیارد تومان)",
+            "y_1_title": f"سفارش‌های خرید ({BILLION_TOMAN_UNIT_IDENTIFIER})",
+            "y_2_title": f"سفارش‌های فروش ({BILLION_TOMAN_UNIT_IDENTIFIER})",
             "chart_title": chart_title,
             "history": history_df.to_dict(orient="records"),
         }

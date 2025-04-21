@@ -1,6 +1,11 @@
 import os
 from zoneinfo import ZoneInfo
 
+######################################################## GENERAL
+BILLION_TOMAN_UNIT_IDENTIFIER = "BT"
+TOMAN_UNIT_IDENTIFIER = "T"
+PERCENT_UNIT_IDENTIFIER = "٪"
+
 ######################################################## CACHE
 SIXTY_SECONDS_CACHE = 60  # 60 seconds
 FIVE_MINUTES_CACHE = 60 * 5  # 5 minutes

@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.configs import SIXTY_SECONDS_CACHE
+from core.configs import SIXTY_SECONDS_CACHE, TOMAN_UNIT_IDENTIFIER
 
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.serializers import GetDollarPriceSerializer
@@ -31,8 +31,8 @@ class DollarPriceAPIView(APIView):
 
         chart = {
             "x_title": "تاریخ",
-            "y_1_title": "دلار آزاد",
-            "y_2_title": "دلار نیما",
+            "y_1_title": f"دلار آزاد ({TOMAN_UNIT_IDENTIFIER})",
+            "y_2_title": f"دلار توافقی ({TOMAN_UNIT_IDENTIFIER})",
             "chart_title": "دلار",
             "history": dollar_prices.to_dict(orient="records"),
         }
