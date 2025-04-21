@@ -8,7 +8,7 @@ from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
 )
-from core.utils import MongodbInterface, run_main_task, was_market_open_today
+from core.utils import MongodbInterface, run_main_task, is_market_open_today
 from stock_market.utils import (
     MAIN_PAPER_TYPE_DICT,
     get_market_watch_data_from_mongo,
@@ -43,7 +43,7 @@ def add_link(row):
 
 def stock_value_change_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 18, 0, 0) and was_market_open_today()
+        is_in_schedule(9, 2, 0, 18, 0, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         value_change = get_market_watch_data_from_mongo()
         value_change = value_change[

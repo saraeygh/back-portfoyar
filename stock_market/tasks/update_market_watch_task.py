@@ -10,7 +10,7 @@ from core.utils import (
     get_http_response,
     replace_arabic_letters_pd,
     run_main_task,
-    was_market_open_today,
+    is_market_open_today,
 )
 from core.configs import (
     AUTO_MODE,
@@ -67,7 +67,7 @@ def get_additional_info():
 
 def update_market_watch_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 18, 0, 0) and was_market_open_today()
+        is_in_schedule(8, 30, 0, 18, 0, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         additional_info = get_additional_info()
         market_watch = get_market_watch()

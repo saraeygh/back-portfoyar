@@ -45,6 +45,6 @@ class LoginCountAdmin(admin.ModelAdmin):
         "note",
     )
     list_display_links = ("user", "first_name", "last_name")
-    ordering = ("-created_at",)
+    ordering = ("-updated_at",)
 
     search_fields = ("id", "user__username", "user__first_name", "user__last_name")

@@ -243,7 +243,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSETMC_MARKET_HOURS,
+        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
         minute="*/2",
     )
 
@@ -579,7 +579,7 @@ def add_stock_market_app_jobs(scheduler: BlockingScheduler):
         coalesce=True,
         trigger="cron",
         day_of_week=FIVE_DAYS_WEEK,
-        hour=TSE_PLUS_DERIVATIVE_MARKET_HOURS,
+        hour=TSETMC_MARKET_HOURS,
         minute="*/3",
     )
 

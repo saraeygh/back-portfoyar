@@ -6,7 +6,7 @@ from core.configs import (
 from core.utils import MongodbInterface
 
 
-def was_market_open_today():
+def is_market_open_today():
     mongo_conn = MongodbInterface(
         db_name=CORE_MONGO_DB, collection_name=CORE_MARKET_STATE_COLLECTION
     )

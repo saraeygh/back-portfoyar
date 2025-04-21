@@ -2,7 +2,7 @@ import pandas as pd
 import jdatetime as jdt
 from tqdm import tqdm
 
-from core.utils import MongodbInterface, run_main_task, was_market_open_today
+from core.utils import MongodbInterface, run_main_task, is_market_open_today
 from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
@@ -179,7 +179,7 @@ def get_history(row, index_name):
 
 def update_market_watch_indices_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 18, 0, 0) and was_market_open_today()
+        is_in_schedule(9, 2, 0, 18, 0, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         mongo_conn = MongodbInterface(db_name=STOCK_MONGO_DB)
 

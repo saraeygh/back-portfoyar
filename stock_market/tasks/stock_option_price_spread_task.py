@@ -14,7 +14,7 @@ from core.utils import (
     MongodbInterface,
     get_deviation_percent,
     run_main_task,
-    was_market_open_today,
+    is_market_open_today,
 )
 
 from option_market.utils import (
@@ -323,7 +323,7 @@ def add_spread_history(mongo_client, last_spreads):
 
 def stock_option_price_spread_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 12, 40, 0) and was_market_open_today()
+        is_in_schedule(9, 2, 0, 12, 40, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         spreads = get_last_options()
         last_spreads = pd.DataFrame()

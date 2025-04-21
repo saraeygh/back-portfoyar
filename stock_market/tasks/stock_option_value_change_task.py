@@ -1,6 +1,6 @@
 import pandas as pd
 import jdatetime as jdt
-from core.utils import MongodbInterface, run_main_task, was_market_open_today
+from core.utils import MongodbInterface, run_main_task, is_market_open_today
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -178,7 +178,7 @@ def add_last_update(row):
 
 def stock_option_value_change_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 12, 40, 0) and was_market_open_today()
+        is_in_schedule(9, 2, 0, 12, 40, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         instrument_info = get_instrument_info()
         instrument_info = instrument_info[
