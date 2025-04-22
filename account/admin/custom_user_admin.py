@@ -42,7 +42,7 @@ class CustomUserAdmin(UserAdmin):
         shamsi = (
             jdt.datetime.fromgregorian(datetime=obj.date_joined, tzinfo=TEHRAN_TZ)
             + jdt.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
         return shamsi
 
 

@@ -73,12 +73,12 @@ class Subscription(TimeStampMixin, models.Model):
 
     @admin.display(description="تاریخ شروع")
     def start_at_shamsi(self):
-        shamsi = JalaliDate(self.start_at).strftime("%Y-%m-%d")
+        shamsi = JalaliDate(self.start_at).strftime("%Y/%m/%d")
         return shamsi
 
     @admin.display(description="تاریخ پایان")
     def end_at_shamsi(self):
-        shamsi = JalaliDate(self.end_at).strftime("%Y-%m-%d")
+        shamsi = JalaliDate(self.end_at).strftime("%Y/%m/%d")
         return shamsi
 
     @admin.display(description="نام کاربر")
@@ -146,7 +146,7 @@ class UserDiscount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.start_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
         return shamsi
 
     @admin.display(description="تاریخ پایان")
@@ -154,7 +154,7 @@ class UserDiscount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.expire_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
         return shamsi
 
     @admin.display(description="نام کاربر")

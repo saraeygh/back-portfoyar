@@ -125,7 +125,7 @@ class FeatureDiscount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.start_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
         return shamsi
 
     @admin.display(description="تاریخ پایان")
@@ -133,7 +133,7 @@ class FeatureDiscount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.expire_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
         return shamsi
 
     def __str__(self) -> str:

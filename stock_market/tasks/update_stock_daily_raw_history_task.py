@@ -22,7 +22,7 @@ def add_today_history(today_history: pd.DataFrame):
     raw_history_bulk = []
     for history in tqdm(today_history, desc="Daily history", ncols=10):
         instrument = StockInstrument.objects.get(ins_code=history["ins_code"])
-        trade_date = datetime.strptime(history["last_date"], "%Y-%m-%d").date()
+        trade_date = datetime.strptime(history["last_date"], "%Y/%m/%d").date()
 
         prev_history = StockRawHistory.objects.filter(
             instrument=instrument, trade_date=trade_date
@@ -76,7 +76,7 @@ def update_stock_daily_history_main():
         print(Fore.BLUE + "remove_expired_instruments" + Style.RESET_ALL)
         remove_expired_instruments()
 
-        today_date = date.today().strftime("%Y-%m-%d")
+        today_date = date.today().strftime("%Y/%m/%d")
         last_history = get_market_watch_data_from_mongo()
         last_open_market_date = last_history.iloc[0].get("last_date", "no_date")
 

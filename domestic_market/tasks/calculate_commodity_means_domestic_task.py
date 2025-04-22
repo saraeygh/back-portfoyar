@@ -13,7 +13,7 @@ from domestic_market.models import DomesticProducer, DomesticTrade, DomesticRela
 
 def date_obj_to_str(row):
     trade_date = row.get("trade_date")
-    trade_date = jdt.date.fromgregorian(date=trade_date).strftime("%Y-%m-%d")
+    trade_date = jdt.date.fromgregorian(date=trade_date).strftime("%Y/%m/%d")
 
     return trade_date
 

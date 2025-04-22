@@ -33,7 +33,7 @@ class GetReceiptSerailizer(serializers.ModelSerializer):
         shamsi = (
             jdt.datetime.fromgregorian(datetime=instance.updated_at, tzinfo=TEHRAN_TZ)
             + jdt.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         representation = super().to_representation(instance)
         representation["updated_at"] = shamsi

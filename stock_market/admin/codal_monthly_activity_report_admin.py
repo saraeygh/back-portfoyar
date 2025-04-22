@@ -52,7 +52,7 @@ class StockMonthlyActivityReportAdmin(admin.ModelAdmin):
     @admin.display(description="زمان انتشار شمسی")
     def publish_date_time_shamsi(self, obj: CodalMonthlyActivityReport):
         shamsi = (JalaliDateTime(obj.publish_date_time, tzinfo=pytz.UTC)).strftime(
-            "%Y-%m-%d %H:%M:%S"
+            "%Y/%m/%d %H:%M:%S"
         )
 
         return shamsi
@@ -62,7 +62,7 @@ class StockMonthlyActivityReportAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.created_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -71,6 +71,6 @@ class StockMonthlyActivityReportAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.updated_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi

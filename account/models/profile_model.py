@@ -59,7 +59,7 @@ class Profile(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.created_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -68,7 +68,7 @@ class Profile(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.updated_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -102,7 +102,7 @@ class LoginCount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.created_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -111,7 +111,7 @@ class LoginCount(TimeStampMixin, models.Model):
         shamsi = (
             JalaliDateTime(self.updated_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 

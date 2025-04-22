@@ -25,7 +25,6 @@ class SubscriptionAPIView(APIView):
         if subscriptions:
             return Response(subscriptions, status=status.HTTP_200_OK)
 
-        today_date = jdt.date.today().strftime("%Y-%m-%d")
         NO_SUB_DEFAULT = [
             {
                 "id": 0,
@@ -33,8 +32,8 @@ class SubscriptionAPIView(APIView):
                 "is_active": False,
                 "remained_days": 0,
                 "total_days": 0,
-                "start_at_shamsi": today_date,
-                "end_at_shamsi": today_date,
+                "start_at_shamsi": "-",
+                "end_at_shamsi": "-",
             }
         ]
 

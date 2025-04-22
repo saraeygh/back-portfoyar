@@ -28,7 +28,7 @@ class BourseViewCookieAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.created_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -37,6 +37,6 @@ class BourseViewCookieAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.updated_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi

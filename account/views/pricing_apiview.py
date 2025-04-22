@@ -66,14 +66,14 @@ def get_discount_info(plan, discount: FeatureDiscount | UserDiscount):
         "has_start": discount.has_start,
         "start_date": jdatetime.datetime.fromgregorian(
             datetime=discount.start_at, tzinfo=TEHRAN_TZ
-        ).strftime("%Y-%m-%d"),
+        ).strftime("%Y/%m/%d"),
         "start_time": jdatetime.datetime.fromgregorian(
             datetime=discount.start_at, tzinfo=TEHRAN_TZ
         ).strftime("%H:%M:%S"),
         "has_expiry": discount.has_expiry,
         "expiry_date": jdatetime.datetime.fromgregorian(
             datetime=discount.expire_at, tzinfo=TEHRAN_TZ
-        ).strftime("%Y-%m-%d"),
+        ).strftime("%Y/%m/%d"),
         "expiry_time": jdatetime.datetime.fromgregorian(
             datetime=discount.expire_at, tzinfo=TEHRAN_TZ
         ).strftime("%H:%M:%S"),

@@ -146,7 +146,7 @@ def update_market_watch_data(market_watch: pd.DataFrame):
 def check_date(mongo_conn):
 
     today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
-    today_date = today_datetime.strftime("%Y-%m-%d")
+    today_date = today_datetime.strftime("%Y/%m/%d")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
     if one_doc and one_doc["last_date"] != today_date:

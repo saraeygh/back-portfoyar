@@ -98,12 +98,12 @@ class DomesticMonthlySellAdmin(admin.ModelAdmin):
 
     @admin.display(description="شروع ماه")
     def start_date_shamsi(self, obj: DomesticMonthlySell):
-        shamsi = (JalaliDate(obj.start_date)).strftime("%Y-%m-%d")
+        shamsi = (JalaliDate(obj.start_date)).strftime("%Y/%m/%d")
 
         return shamsi
 
     @admin.display(description="پایان ماه")
     def end_date_shamsi(self, obj: DomesticMonthlySell):
-        shamsi = (JalaliDate(obj.end_date)).strftime("%Y-%m-%d")
+        shamsi = (JalaliDate(obj.end_date)).strftime("%Y/%m/%d")
 
         return shamsi

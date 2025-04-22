@@ -42,6 +42,6 @@ class StockHistoryAdmin(admin.ModelAdmin):
 
     @admin.display(description="تاریخ شمسی")
     def trade_date_shamsi(self, obj: StockRawHistory):
-        shamsi = (JalaliDate(obj.trade_date)).strftime("%Y-%m-%d")
+        shamsi = (JalaliDate(obj.trade_date)).strftime("%Y/%m/%d")
 
         return shamsi

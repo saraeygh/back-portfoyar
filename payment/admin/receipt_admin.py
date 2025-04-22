@@ -50,7 +50,7 @@ class ReceiptAdmin(admin.ModelAdmin):
     def created_at_shamsi(self, obj: Receipt):
         shamsi = jdt.datetime.fromgregorian(
             datetime=obj.created_at, tzinfo=TEHRAN_TZ
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -58,7 +58,7 @@ class ReceiptAdmin(admin.ModelAdmin):
     def updated_at_shamsi(self, obj: Receipt):
         shamsi = jdt.datetime.fromgregorian(
             datetime=obj.updated_at, tzinfo=TEHRAN_TZ
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 

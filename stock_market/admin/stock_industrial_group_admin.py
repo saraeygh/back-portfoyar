@@ -8,7 +8,14 @@ from stock_market.models import StockIndustrialGroup
 
 @admin.register(StockIndustrialGroup)
 class StockIndustrialGroupAdmin(admin.ModelAdmin):
-    list_display = ("id", "code", "name", "priority", "created_at_shamsi", "updated_at_shamsi")
+    list_display = (
+        "id",
+        "code",
+        "name",
+        "priority",
+        "created_at_shamsi",
+        "updated_at_shamsi",
+    )
 
     list_display_links = ("id", "code", "name")
 
@@ -21,7 +28,7 @@ class StockIndustrialGroupAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.created_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi
 
@@ -30,6 +37,6 @@ class StockIndustrialGroupAdmin(admin.ModelAdmin):
         shamsi = (
             JalaliDateTime(obj.updated_at, tzinfo=pytz.UTC)
             + jdatetime.timedelta(hours=3, minutes=30)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        ).strftime("%Y/%m/%d %H:%M:%S")
 
         return shamsi

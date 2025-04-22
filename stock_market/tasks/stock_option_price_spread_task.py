@@ -259,7 +259,7 @@ def get_put_spreads(spreads):
 
 def check_date(mongo_conn):
     today_datetime = jdt.datetime.now(tz=TEHRAN_TZ)
-    date = today_datetime.strftime("%Y-%m-%d")
+    date = today_datetime.strftime("%Y/%m/%d")
     time = today_datetime.strftime("%H:%M")
 
     one_doc = mongo_conn.collection.find_one({}, {"_id": 0})
