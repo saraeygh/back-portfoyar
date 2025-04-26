@@ -75,7 +75,7 @@ def update_market_watch_data(market_watch: pd.DataFrame):
     ]
     market_watch = market_watch.copy()
     market_watch["last_time"] = market_watch.apply(get_time, axis=1)
-    market_watch["last_date"] = str(jdt.date.today())
+    market_watch["last_date"] = str(jdt.date.today().strftime("%Y/%m/%d"))
 
     market_watch["link"] = market_watch.apply(add_link, axis=1)
 
