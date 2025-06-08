@@ -27,8 +27,11 @@ def calculate_mean(duration: int, collection_name: str, commodity_id_list):
         commodity_id_list, desc=f"Global ({collection_name})", ncols=10
     ):
         commodity_trades_in_range = GlobalTrade.objects.filter(
-            commodity_id=commodity_id
+            commodity_id=commodity_id, price__gte=0
         ).filter(trade_date__range=(start_date, end_date))
+
+        if not commodity_trades_in_range.exists():
+            continue
 
         transit_id_list = list(
             commodity_trades_in_range.distinct("transit").values_list(
