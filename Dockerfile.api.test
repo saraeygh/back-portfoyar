@@ -74,6 +74,7 @@ ENV EMAIL_HOST_USER=armansmtptest@gmail.com
 ENV EMAIL_TO=saraey.gholamreza@gmail.com
 
 ENV POSTGRES_SERVICE_NAME=postgres_test
+ENV POSTGRES_PORT=5432
 
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_FIRST_NAME=ادمین

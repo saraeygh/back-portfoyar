@@ -15,6 +15,7 @@ POSTGRES_DB = os.environ.get("POSTGRES_DB")
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_SERVICE_NAME = os.environ.get("POSTGRES_SERVICE_NAME")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -22,7 +23,7 @@ DATABASES = {
         "USER": POSTGRES_USER,
         "PASSWORD": POSTGRES_PASSWORD,
         "HOST": POSTGRES_SERVICE_NAME,
-        "PORT": "5432",
+        "PORT": POSTGRES_PORT,
     }
 }
 
