@@ -41,6 +41,8 @@ def get_range_result(collection_name, price_changes):
     else:
         range_result = range_result.sort_values(by="deviation", ascending=True)
 
+    range_result = range_result[(range_result["commodity_type"] != "گالوانیزه")]
+
     range_result = range_result.drop_duplicates(subset="commodity_type", keep="first")
     range_result = range_result.head(DASHBOARD_TOP_5_LIMIT)
     range_result["deviation"] = range_result["deviation"].abs()
@@ -63,7 +65,7 @@ def get_range_result(collection_name, price_changes):
 COLLECTION_NAME = "one_month_mean"
 
 
-@method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
+# @method_decorator(cache_page(THIRTY_MINUTES_CACHE), name="dispatch")
 class GlobalMeanDeviationAPIView(APIView):
     def get(self, request):
         price_changes = request.query_params.get("price_changes", PRICE_CHANGES_POS)

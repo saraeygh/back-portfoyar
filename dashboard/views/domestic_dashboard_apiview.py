@@ -37,7 +37,9 @@ def get_range_result(collection_name, price_changes):
         return default_range_result
 
     range_result = range_result[
-        (range_result["symbol"] != "") & (range_result["commodity_sell_percent"] >= 50)
+        (range_result["symbol"] != "")
+        & (range_result["commodity_sell_percent"] >= 50)
+        & (range_result["commodity"] != "اسید نیتریک")
     ]
 
     if price_changes == PRICE_CHANGES_POS:
