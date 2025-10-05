@@ -57,19 +57,12 @@ def update_nima_price(last_dollar, today_price_date):
         )
         page = context.new_page()
 
-        page.goto(
-            "https://ice.ir/market-view/%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1-%D8%A7%D8%B1%D8%B2"
-        )
-
-        element = page.locator('a.market-view-currency[data-value="حواله"]')
-        element.wait_for(state="visible", timeout=20000)
-        element.scroll_into_view_if_needed()
-        element.click()
+        page.goto("https://ice.ir/market-view/currency/")
 
         time.sleep(5)
 
         cell = page.query_selector(
-            "xpath=/html/body/div/div/section/div[3]/div/div/table/tbody/tr[1]/td[2]"
+            "xpath=/html/body/div[2]/main/div/div/div[2]/div[1]/div/div[1]/div/div[2]/div/div[2]/div[2]/div/div[1]/div[4]/div/p"
         )
         last_price_value = cell.inner_text()
 
