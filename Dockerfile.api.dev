@@ -65,7 +65,7 @@ ENV POSTGRES_PORT=5432
 
 ENV EMAIL_HOST=smtp.gmail.com
 ENV EMAIL_PORT=587
-ENV EMAIL_HOST_USER=armansmtptest@gmail.com
+ENV EMAIL_HOST_USER=arman.it.team@gmail.com
 ENV EMAIL_TO=saraey.gholamreza@gmail.com
 
 ENV DEBUG=True
