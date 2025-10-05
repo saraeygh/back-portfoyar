@@ -317,7 +317,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
         replace_existing=True,
         coalesce=True,
         trigger="cron",
-        minute="*/2",
+        minute="*/5",
     )
 
     return scheduler
