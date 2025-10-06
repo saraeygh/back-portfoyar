@@ -12,15 +12,19 @@ def get_last_dollar_price():
     return DomesticDollarPrice.objects.last()
 
 
-def update_azad_price(last_dollar, today_price_date):
+def update_azad_price(last_dollar: DomesticDollarPrice, today_price_date):
     with sync_playwright() as pr:
         browser = pr.chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
 
-        page.goto("https://www.tgju.org/")
+        page.goto("https://www.tgju.org/", wait_until="networkidle")
 
-        time.sleep(5)
+        page.wait_for_selector(
+            "xpath=/html/body/main/div[1]/div[2]/div/ul/li[6]/span[1]/span"
+        )
+
+        time.sleep(15)
 
         element = page.query_selector(
             "xpath=/html/body/main/div[1]/div[2]/div/ul/li[6]/span[1]/span"
@@ -57,18 +61,23 @@ def update_nima_price(last_dollar, today_price_date):
         )
         page = context.new_page()
 
-        page.goto("https://ice.ir/market-view/currency/")
+        page.goto("https://ice.ir/", wait_until="networkidle")
 
-        time.sleep(5)
+        page.wait_for_selector(
+            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]/div[1]/p[3]"
+        )
+
+        time.sleep(15)
 
         cell = page.query_selector(
-            "xpath=/html/body/div[2]/main/div/div/div[2]/div[1]/div/div[1]/div/div[2]/div/div[2]/div[2]/div/div[1]/div[4]/div/p"
+            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]/div[1]/p[3]"
         )
+
         last_price_value = cell.inner_text()
 
         browser.close()
 
-    last_price_value = int((last_price_value).replace(",", ""))
+    last_price_value = int((last_price_value).replace("ریال", "").replace(",", ""))
 
     try:
         last_dollar_price = DomesticDollarPrice.objects.get(date=today_price_date)
@@ -92,8 +101,10 @@ def get_dollar_daily_price_main():
     last_dollar = get_last_dollar_price()
     today_price_date = datetime.now().date()
 
-    update_azad_price(last_dollar, today_price_date)
-    update_nima_price(last_dollar, today_price_date)
+    try:
+        update_azad_price(last_dollar, today_price_date)
+    except Exception:
+        update_nima_price(last_dollar, today_price_date)
 
 
 def get_dollar_daily_price():
