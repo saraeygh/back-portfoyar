@@ -64,16 +64,27 @@ def update_nima_price(last_dollar, today_price_date):
         page.goto("https://ice.ir/", wait_until="networkidle")
 
         page.wait_for_selector(
-            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]/div[1]/p[3]"
+            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]"
         )
 
         time.sleep(15)
 
-        cell = page.query_selector(
-            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]/div[1]/p[3]"
+        table = page.query_selector(
+            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]"
         )
 
-        last_price_value = cell.inner_text()
+        child_divs = table.query_selector_all("div")
+
+        for _, child in enumerate(child_divs):
+            p_elements = child.query_selector_all("p")
+            p_texts = [p.inner_text() for p in p_elements]
+            if "دلار آمریکا" in p_texts:
+                for p_text in p_texts:
+                    if "ریال" in p_text:
+                        last_price_value = p_text
+                break
+            else:
+                continue
 
         browser.close()
 
