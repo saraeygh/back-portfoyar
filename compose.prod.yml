@@ -49,7 +49,7 @@ services:
       - .env.prod
     build:
       context: .
-      dockerfile: Dockerfile.api.prod
+      dockerfile: dockerfile.api.prod
     image: api_test
     container_name: api_test
     entrypoint: ["/code/infra/entrypoints/api_test.sh"]
@@ -75,7 +75,7 @@ services:
       - .env.prod
     build:
       context: .
-      dockerfile: Dockerfile.api.prod
+      dockerfile: dockerfile.api.prod
     image: apscheduler_test
     container_name: apscheduler_test
     entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]

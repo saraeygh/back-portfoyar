@@ -36,40 +36,50 @@ zlib1g-dev
 WORKDIR /code
 
 RUN ["pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
+#RUN ["pip", "install", "pdm", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "pdm"]
 RUN ["pdm", "self", "update"]
+
 COPY ./pdm.lock /code/
 COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
+
 # RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "-r", "/code/requirements.txt"]
 
 RUN ["playwright", "install", "--only-shell", "--with-deps", "chromium"]
 
+# COPY SOURCE CODE INTO DOCKER IMAGE
 COPY . /code/
 
 RUN ["mkdir", "-p", "logs"]
 
+# GRANT EXCUTE PERMISSSION TO ENTRYPOINTS FILES
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
 RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 
+# PYTHON CONFIGS
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# DJANGO CONFIGS
 ENV DJANGO_SETTINGS_MODULE=samaneh.settings
 ENV DEBUG=False
 
+# MONGODB & REDIS SERVICE NAMES
 ENV REDIS_SERVICE_NAME=redis_test
 ENV MONGODB_SERVICE_NAME=mongodb_test
-ENV POSTGRES_SERVICE_NAME=postgres_test
-ENV POSTGRES_PORT=5432
 
+# SMTP EMAIL CONFIGS
 ENV EMAIL_HOST=smtp.gmail.com
 ENV EMAIL_PORT=587
 ENV EMAIL_HOST_USER=arman.it.team@gmail.com
 ENV EMAIL_TO=saraey.gholamreza@gmail.com
 
+ENV POSTGRES_SERVICE_NAME=postgres_test
+ENV POSTGRES_PORT=5432
+
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_FIRST_NAME=ادمین
 
-ENV SERVER_NAME=PROD
+ENV SERVER_NAME=TEST

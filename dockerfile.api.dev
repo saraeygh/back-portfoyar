@@ -36,11 +36,14 @@ zlib1g-dev
 WORKDIR /code
 
 RUN ["pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
+#RUN ["pip", "install", "pdm", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "pdm"]
 RUN ["pdm", "self", "update"]
+
 COPY ./pdm.lock /code/
 COPY ./pyproject.toml /code/
 RUN pdm export -o requirements.txt
+
 # RUN ["pip", "install", "-r", "/code/requirements.txt", "-i" , "https://mirror-pypi.runflare.com/simple/"]
 RUN ["pip", "install", "-r", "/code/requirements.txt"]
 
