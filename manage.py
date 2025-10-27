@@ -14,8 +14,7 @@ def load_env_file(env_file_path=".env.local"):
                     key, value = line.split("=", 1)
                     os.environ[key] = value
     except Exception as e:
-        print("Loading env vars:")
-        print(e)
+        print(e, ", you are not in DEV env.")
 
 
 def main():

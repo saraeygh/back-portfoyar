@@ -1,0 +1,106 @@
+services:
+  postgres_test:
+    image: docker.arvancloud.ir/postgres:16
+    container_name: postgres_test
+    env_file:
+      - .env.prod
+    volumes:
+      - postgres_test:/var/lib/postgresql/data
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+  redis_test:
+    image: docker.arvancloud.ir/redis:7.2
+    container_name: redis_test
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+  mongodb_test:
+    container_name: mongodb_test
+    image: docker.arvancloud.ir/mongo:7.0.5
+    volumes:
+      - mongodb_test:/data/db
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+  api_test:
+    mem_limit: 6g
+    env_file:
+      - .env.prod
+    build:
+      context: .
+      dockerfile: Dockerfile.api.prod
+    image: api_test
+    container_name: api_test
+    entrypoint: ["/code/infra/entrypoints/api_test.sh"]
+    volumes:
+      - ticket_appendix:/code/media/tickets/
+      - django_logs:/code/logs/
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+  apscheduler_test:
+    mem_limit: 6g
+    env_file:
+      - .env.prod
+    build:
+      context: .
+      dockerfile: Dockerfile.api.prod
+    image: apscheduler_test
+    container_name: apscheduler_test
+    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+      - api_test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+networks:
+  test:
+    external: true
+    driver: bridge
+    name: test
+
+volumes:
+  postgres_test:
+  mongodb_test:
+  ticket_appendix:
+  django_logs:

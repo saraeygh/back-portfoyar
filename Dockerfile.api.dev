@@ -4,33 +4,33 @@ RUN ["apt", "update"]
 RUN ["apt", "upgrade", "-y"]
 
 RUN apt install -y --no-install-recommends \
-build-essential \        
-python3-dev \             
-curl \                   
-libxml2-dev \            
-libxslt1-dev \           
-libcairo2 \              
-libcairo2-dev \          
-freetype2-demos \        
-libfreetype6-dev \       
-libgdk-pixbuf2.0-dev \   
-gettext \                
-libjpeg-dev \            
-liblcms2-dev \           
-libffi-dev \             
-libopenjp2-7-dev \       
-libssl-dev \             
-libpango1.0-dev \        
-poppler-utils \          
-postgresql-client \      
-libpq-dev \              
-python3-cffi \           
-cargo \                  
-rustc \                  
-tcl-dev \                
-libtiff-dev \            
-tk-dev \                 
-zlib1g-dev               
+build-essential \
+python3-dev \
+curl \
+libxml2-dev \
+libxslt1-dev \
+libcairo2 \
+libcairo2-dev \
+freetype2-demos \
+libfreetype6-dev \
+libgdk-pixbuf2.0-dev \
+gettext \
+libjpeg-dev \
+liblcms2-dev \
+libffi-dev \
+libopenjp2-7-dev \
+libssl-dev \
+libpango1.0-dev \
+poppler-utils \
+postgresql-client \
+libpq-dev \ 
+python3-cffi \
+cargo \
+rustc \
+tcl-dev \
+libtiff-dev \
+tk-dev \
+zlib1g-dev
 
 
 WORKDIR /code
@@ -73,4 +73,4 @@ ENV DEBUG=True
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_FIRST_NAME=ادمین
 
-ENV SERVER_NAME=LOCAL
+ENV SERVER_NAME=DEV_DOCKER

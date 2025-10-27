@@ -1,0 +1,85 @@
+services:
+  postgres_test:
+    image: docker.arvancloud.ir/postgres:16
+    container_name: postgres_test
+    env_file:
+      - .env.dev
+    volumes:
+      - postgres_test:/var/lib/postgresql/data
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "5433:5432"
+
+  redis_test:
+    image: docker.arvancloud.ir/redis:7.2
+    container_name: redis_test
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "6379:6379"
+
+  mongodb_test:
+    image: docker.arvancloud.ir/mongo:7.0.5
+    container_name: mongodb_test
+    volumes:
+      - mongodb_test:/data/db
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+    ports:
+      - "27017:27017"
+
+  apscheduler_test:
+    mem_limit: 8g
+    env_file:
+      - .env.dev
+    build:
+      context: .
+      dockerfile: Dockerfile.api.dev
+    image: apscheduler_test
+    container_name: apscheduler_test
+    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    networks:
+      - test
+    depends_on:
+      - postgres_test
+      - redis_test
+      - mongodb_test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "24m"
+        max-file: "10"
+
+networks:
+  test:
+    external: true
+    driver: bridge
+    name: test
+
+volumes:
+  postgres_test:
+  mongodb_test:
+  ticket_appendix:
+  django_logs:
