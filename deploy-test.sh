@@ -16,7 +16,9 @@ sudo docker compose -f compose.test.yml up --build -d \
     redis_test \
     mongodb_test \
     api_test \
-    apscheduler_test
+    worker_test \
+    beat_test \
+    flower_test
 
 sudo docker container restart nginx_test
 

@@ -30,8 +30,8 @@ services:
         max-file: "10"
 
   mongodb_test:
-    container_name: mongodb_test
     image: docker.arvancloud.ir/mongo:7.0.5
+    container_name: mongodb_test
     volumes:
       - mongodb_test:/data/db
     networks:
@@ -69,29 +69,59 @@ services:
         max-size: "24m"
         max-file: "10"
 
-  apscheduler_test:
-    mem_limit: 6g
-    env_file:
-      - .env.prod
+  worker_test:
     build:
       context: .
       dockerfile: dockerfile.api.prod
-    image: apscheduler_test
-    container_name: apscheduler_test
-    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    image: worker_test
+    container_name: worker_test
+    env_file:
+      - .env.prod
+    entrypoint: ["/code/infra/entrypoints/worker_test.sh"]
     networks:
       - test
-    depends_on:
-      - postgres_test
-      - redis_test
-      - mongodb_test
-      - api_test
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
-        max-size: "24m"
-        max-file: "10"
+        max-size: "12m"
+        max-file: "5"
+
+  beat_test:
+    build:
+      context: .
+      dockerfile: dockerfile.api.prod
+    image: beat_test
+    container_name: beat_test
+    env_file:
+      - .env.prod
+    entrypoint: ["/code/infra/entrypoints/beat_test.sh"]
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "12m"
+        max-file: "5"
+
+  flower_test:
+    build:
+      context: .
+      dockerfile: dockerfile.api.prod
+    image: flower_test
+    container_name: flower_test
+    env_file:
+      - .env.dev
+    entrypoint: ["/code/infra/entrypoints/flower_test.sh"]
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "12m"
+        max-file: "5"
 
 networks:
   test:
