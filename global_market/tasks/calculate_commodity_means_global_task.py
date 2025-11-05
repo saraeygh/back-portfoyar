@@ -1,9 +1,13 @@
+from celery_singleton import Singleton
+
 from datetime import datetime, timedelta
 import pandas as pd
 import jdatetime as jdt
 from tqdm import tqdm
 
 from django.db.models import Avg
+
+from samaneh.celery import app
 
 from core.utils import MongodbInterface, get_deviation_percent, run_main_task
 from core.configs import GLOBAL_MONGO_DB
@@ -115,6 +119,7 @@ def calculate_commodity_means_global_main():
         calculate_mean(duration, collection_name, commodity_id_list)
 
 
+@app.task(base=Singleton, name="calculate_commodity_means_global_task")
 def calculate_commodity_means_global():
 
     run_main_task(

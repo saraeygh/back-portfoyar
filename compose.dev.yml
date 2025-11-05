@@ -49,28 +49,59 @@ services:
     ports:
       - "27017:27017"
 
-  apscheduler_test:
-    mem_limit: 8g
-    env_file:
-      - .env.dev
+  worker_test:
     build:
       context: .
       dockerfile: dockerfile.api.dev
-    image: apscheduler_test
-    container_name: apscheduler_test
-    entrypoint: ["/code/infra/entrypoints/apscheduler_test.sh"]
+    image: worker_test
+    container_name: worker_test
+    env_file:
+      - .env.dev
+    entrypoint: ["/code/infra/entrypoints/worker_test.sh"]
     networks:
       - test
-    depends_on:
-      - postgres_test
-      - redis_test
-      - mongodb_test
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
-        max-size: "24m"
-        max-file: "10"
+        max-size: "12m"
+        max-file: "5"
+
+  beat_test:
+    build:
+      context: .
+      dockerfile: dockerfile.api.dev
+    image: beat_test
+    container_name: beat_test
+    env_file:
+      - .env.dev
+    entrypoint: ["/code/infra/entrypoints/beat_test.sh"]
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "12m"
+        max-file: "5"
+
+  flower_test:
+    build:
+      context: .
+      dockerfile: dockerfile.api.dev
+    image: flower_test
+    container_name: flower_test
+    env_file:
+      - .env.dev
+    entrypoint: ["/code/infra/entrypoints/flower_test.sh"]
+    networks:
+      - test
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "12m"
+        max-file: "5"
 
 networks:
   test:

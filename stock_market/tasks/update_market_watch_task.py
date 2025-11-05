@@ -1,6 +1,10 @@
+from celery_singleton import Singleton
+
 from datetime import date
 import pandas as pd
 from colorama import Fore, Style
+
+from samaneh.celery import app
 
 from core.utils import (
     MongodbInterface,
@@ -104,6 +108,7 @@ def update_market_watch_main(run_mode):
         mongo_conn.insert_docs_into_collection(market_watch)
 
 
+@app.task(base=Singleton, name="update_market_watch_task", expires=10)
 def update_market_watch(run_mode: str = AUTO_MODE):
 
     run_main_task(

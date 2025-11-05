@@ -1,9 +1,12 @@
+from celery_singleton import Singleton
+
 from datetime import datetime, timedelta
 from tqdm import tqdm
 import pandas as pd
 
 from django.db.models import Sum
 
+from samaneh.celery import app
 from core.utils import MongodbInterface, run_main_task
 from core.configs import RIAL_TO_BILLION_TOMAN, DOMESTIC_MONGO_DB
 
@@ -52,6 +55,7 @@ def calculate_producers_yearly_value_main():
     mongo_conn.insert_docs_into_collection(documents=yearly_values)
 
 
+@app.task(base=Singleton, name="calculate_producers_yearly_value_task")
 def calculate_producers_yearly_value():
 
     run_main_task(

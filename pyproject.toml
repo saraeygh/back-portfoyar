@@ -19,7 +19,7 @@ dependencies = [
     "persiantools==3.0.1",
     "psycopg2-binary==2.9.9",
     "pymongo==4.6.1",
-    "redis==5.0.1",
+    "redis>=7.0.1",
     "requests==2.31.0",
     "tqdm==2.2.3",
     "mymelipayamak>=1.0.0",
@@ -32,6 +32,11 @@ dependencies = [
     "playwright>=1.51.0",
     "plotly>=6.0.1",
     "django-apscheduler>=0.7.0",
+    "celery>=5.5.3",
+    "django-celery-beat>=2.8.1",
+    "celery-singleton>=0.3.1",
+    "flower>=2.0.1",
+    "django-celery-results>=2.6.0",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

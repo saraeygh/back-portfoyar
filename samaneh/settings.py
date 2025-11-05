@@ -27,15 +27,13 @@ DATABASES = {
     }
 }
 
-DEFAULT_INSTALLED_APPS = [
+INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-]
-MANUALLY_INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "account.apps.AccountConfig",
     "dashboard.apps.DashboardConfig",
@@ -48,8 +46,6 @@ MANUALLY_INSTALLED_APPS = [
     "payment.apps.PaymentConfig",
     "stock_market.apps.StockMarketConfig",
     "support.apps.SupportConfig",
-]
-THIRD_PARTY_INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_jalali",
@@ -57,12 +53,9 @@ THIRD_PARTY_INSTALLED_APPS = [
     "django_extensions",
     "django_prometheus",
     "django_apscheduler",
+    "django_celery_beat",
+    "django_celery_results",
 ]
-
-
-INSTALLED_APPS = (
-    DEFAULT_INSTALLED_APPS + MANUALLY_INSTALLED_APPS + THIRD_PARTY_INSTALLED_APPS
-)
 
 MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
@@ -226,3 +219,23 @@ LOGGING = {
 }
 
 APPEND_SLASH = False
+
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379/13"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379/13"
+
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+CELERY_TIMEZONE = "Asia/Tehran"
+CELERY_ENABLE_UTC = False
+
+CELERY_RESULT_EXPIRES = 3600  # 1 hour
+
+CELERY_TASK_SOFT_TIME_LIMIT = 300  # 5 minutes soft limit
+CELERY_TASK_TIME_LIMIT = 600  # 10 minutes hard limit
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_SEND_SENT_EVENT = True
+
+CELERY_SINGLETON_BACKEND_URL = f"redis://{REDIS_HOST}:6379/13"

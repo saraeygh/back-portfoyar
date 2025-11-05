@@ -1,5 +1,9 @@
+from celery_singleton import Singleton
+
 import pandas as pd
 import jdatetime
+
+from samaneh.celery import app
 
 from core.configs import FUTURE_MONGO_DB
 from core.utils import MongodbInterface, run_main_task
@@ -271,6 +275,7 @@ def update_option_result_main():
     # populate_all_strategy_sync(option_data)
 
 
+@app.task(base=Singleton, name="update_option_result_task", expires=30)
 def update_option_result():
 
     run_main_task(

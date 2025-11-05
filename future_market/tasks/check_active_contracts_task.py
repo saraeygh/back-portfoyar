@@ -1,6 +1,11 @@
+from celery_singleton import Singleton
+
 import pandas as pd
 
+from samaneh.celery import app
+
 from core.utils import get_http_response, run_main_task
+
 from future_market.models import FutureBaseEquity, OptionBaseEquity
 
 ACTIVE_STATUS = "active_status"
@@ -42,6 +47,7 @@ def check_future_active_contracts_main():
         raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
 
 
+@app.task(base=Singleton, name="check_future_active_contracts_task")
 def check_future_active_contracts():
 
     run_main_task(
@@ -77,6 +83,7 @@ def check_option_active_contracts_main():
         raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
 
 
+@app.task(base=Singleton, name="check_option_active_contracts_task")
 def check_option_active_contracts():
 
     run_main_task(

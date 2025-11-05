@@ -1,8 +1,13 @@
+from celery_singleton import Singleton
+
 import json
 import jdatetime
 from tqdm import trange
 
 from django.utils import timezone
+
+from samaneh.celery import app
+
 from core.utils import get_http_response, run_main_task
 from core.configs import FA_TO_EN_TRANSLATION_TABLE
 
@@ -135,6 +140,7 @@ def get_monthly_activity_report_letter_main():
             break
 
 
+@app.task(base=Singleton, name="get_monthly_activity_report_letter_task")
 def get_monthly_activity_report_letter():
 
     run_main_task(

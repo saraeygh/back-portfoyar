@@ -1,6 +1,10 @@
+from celery_singleton import Singleton
+
 import pandas as pd
 
 from colorama import Fore, Style
+
+from samaneh.celery import app
 
 from core.utils import MongodbInterface, run_main_task
 from core.configs import FUTURE_MONGO_DB
@@ -114,6 +118,7 @@ def update_option_base_equity_main():
     )
 
 
+@app.task(base=Singleton, name="update_option_base_equity_task")
 def update_option_base_equity():
 
     run_main_task(

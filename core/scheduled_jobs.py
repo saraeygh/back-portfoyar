@@ -222,7 +222,6 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
         hour=TSETMC_MARKET_HOURS,
         minute="*/2",
     )
-
     scheduler.add_job(
         func=dashboard_change_percent_ranges_count,
         id="dashboard_change_percent_ranges_count_task",
@@ -251,6 +250,7 @@ def add_dashboard_app_jobs(scheduler: BlockingScheduler):
 
 
 def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
+
     scheduler.add_job(
         func=populate_domestic_market_db,
         id="populate_domestic_market_db_task",
@@ -324,6 +324,7 @@ def add_domestic_market_app_jobs(scheduler: BlockingScheduler):
 
 
 def add_fund_app_jobs(scheduler: BlockingScheduler):
+
     scheduler.add_job(
         func=update_fund_info,
         id="get_fund_detail_task",
@@ -351,6 +352,7 @@ def add_fund_app_jobs(scheduler: BlockingScheduler):
 
 
 def add_future_market_app_jobs(scheduler: BlockingScheduler):
+
     scheduler.add_job(
         func=update_derivative_info,
         id="update_derivative_info_task",
@@ -437,6 +439,7 @@ def add_future_market_app_jobs(scheduler: BlockingScheduler):
 
 
 def add_global_market_app_jobs(scheduler: BlockingScheduler):
+
     scheduler.add_job(
         func=calculate_commodity_means_global,
         id="calculate_commodity_means_global_task",
@@ -452,6 +455,7 @@ def add_global_market_app_jobs(scheduler: BlockingScheduler):
 
 
 def add_option_market_app_jobs(scheduler: BlockingScheduler):
+
     scheduler.add_job(
         func=update_option_data_from_tse,
         id="update_option_data_from_tse_task",

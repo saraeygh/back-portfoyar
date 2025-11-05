@@ -1,5 +1,9 @@
+from celery_singleton import Singleton
+
 import pandas as pd
 import jdatetime
+
+from samaneh.celery import app
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -93,6 +97,7 @@ def stock_value_change_main(run_mode):
         mongo_conn.insert_docs_into_collection(documents=value_change)
 
 
+@app.task(base=Singleton, name="stock_value_change_task", expires=60)
 def stock_value_change(run_mode: str = AUTO_MODE):
 
     run_main_task(

@@ -1,5 +1,10 @@
+from celery_singleton import Singleton
+
 import pandas as pd
 import jdatetime as jdt
+
+from samaneh.celery import app
+
 from core.utils import MongodbInterface, run_main_task, is_market_open_today
 
 from core.configs import (
@@ -281,6 +286,7 @@ def stock_option_value_change_main(run_mode):
                 mongo_conn.insert_docs_into_collection(documents=options)
 
 
+@app.task(base=Singleton, name="stock_option_value_change_task", expires=60)
 def stock_option_value_change(run_mode: str = AUTO_MODE):
 
     run_main_task(

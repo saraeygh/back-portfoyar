@@ -1,8 +1,11 @@
+from celery_singleton import Singleton
+
 from datetime import datetime
 import json
 import requests
 from colorama import Fore, Style
 
+from samaneh.celery import app
 from core.utils import RedisInterface, MongodbInterface, run_main_task
 from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB
 
@@ -107,6 +110,7 @@ def update_derivative_info_main():
         update_info()
 
 
+@app.task(base=Singleton, name="update_derivative_info_task", expires=60)
 def update_derivative_info():
 
     run_main_task(

@@ -1,8 +1,12 @@
+from celery_singleton import Singleton
+
 from datetime import datetime
 
 import pandas as pd
 import jdatetime
 from tqdm import tqdm
+
+from samaneh.celery import app
 
 from core.utils import (
     MONTHLY_INTEREST_RATE,
@@ -270,6 +274,7 @@ def update_future_main():
             mongo_conn.insert_docs_into_collection(strategy_result)
 
 
+@app.task(base=Singleton, name="update_future_task", expires=200)
 def update_future():
 
     run_main_task(

@@ -1,7 +1,10 @@
+from celery_singleton import Singleton
 from datetime import datetime as dt, timedelta as td
 import pandas as pd
 from tqdm import trange
 
+
+from samaneh.celery import app
 
 from core.utils import run_main_task
 from core.configs import RIAL_TO_MILLION_TOMAN, OPTION_VALUE_ANALYSIS_DURATION
@@ -116,6 +119,7 @@ def calculate_daily_option_value_task_main():
     update_database(bulk_create_list, bulk_update_list)
 
 
+@app.task(base=Singleton, name="calculate_daily_option_value_task", expires=60)
 def calculate_daily_option_value():
     run_main_task(
         main_task=calculate_daily_option_value_task_main,
