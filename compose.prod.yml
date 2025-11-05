@@ -112,7 +112,7 @@ services:
     image: flower_test
     container_name: flower_test
     env_file:
-      - .env.dev
+      - .env.prod
     entrypoint: ["/code/infra/entrypoints/flower_test.sh"]
     networks:
       - test
