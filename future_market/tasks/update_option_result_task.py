@@ -12,8 +12,8 @@ from future_market.models import OPTION_MARKET
 from future_market.utils import (
     OPTION_COLUMNS,
     get_options_base_equity_info,
-    # populate_all_strategy_sync,
-    populate_all_strategy_async,
+    populate_all_strategy_sync,
+    # populate_all_strategy_async,
 )
 
 
@@ -271,8 +271,8 @@ def update_option_result_main():
     )
 
     option_data = option_data[option_data["base_equity_last_price"] > 0]
-    populate_all_strategy_async(option_data)
-    # populate_all_strategy_sync(option_data)
+    # populate_all_strategy_async(option_data)
+    populate_all_strategy_sync(option_data)
 
 
 @app.task(base=Singleton, name="update_option_result_task", expires=30)
