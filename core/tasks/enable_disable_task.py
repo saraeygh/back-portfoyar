@@ -36,25 +36,25 @@ def disable_task(task_name: str):
 @app.task(base=Singleton, name="enable_tasks_for_specific_time_task")
 def enable_tasks_for_specific_time(time: str):
     if time == AT_0830_AM:
-        print(f"Enabling tasks at {AT_0830_AM}")
+        print(f"Enabling tasks {AT_0830_AM}")
         enable_task(frequency=45, task_name="update_market_watch_task")
 
     if time == AT_0900_AM:
-        print(f"Enabling tasks at {AT_0900_AM}")
+        print(f"Enabling tasks {AT_0900_AM}")
         enable_task(frequency=40, task_name="update_option_data_from_tse_task")
 
     if time == AT_1100_AM:
-        print(f"Enabling tasks at {AT_1100_AM}")
+        print(f"Enabling tasks {AT_1100_AM}")
         enable_task(frequency=55, task_name="update_future_task")
 
 
 @app.task(base=Singleton, name="disable_tasks_for_specific_time_task")
 def disable_tasks_for_specific_time(time: str):
     if time == AT_1230_PM:
-        print(f"Disabling tasks at {AT_1230_PM}")
+        print(f"Disabling tasks {AT_1230_PM}")
         disable_task(task_name="update_option_data_from_tse_task")
 
     if time == AT_1800_PM:
-        print(f"Disabling tasks at {AT_1800_PM}")
+        print(f"Disabling tasks {AT_1800_PM}")
         disable_task(task_name="update_future_task")
         disable_task(task_name="update_market_watch_task")
