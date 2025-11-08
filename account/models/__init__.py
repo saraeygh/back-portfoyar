@@ -13,6 +13,7 @@ from .feature_model import (
     GLOBAL_FEATURE,
     OPTION_FEATURE,
     STOCK_FEATURE,
+    ONE_MONTH,
 )
 
 from .subscription_model import (
@@ -21,3 +22,4 @@ from .subscription_model import (
     UserDiscount,
     DisabledUserDiscount,
 )
+from .first_login_model import FirstLogin

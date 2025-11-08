@@ -10,3 +10,4 @@ from .token_code_util import (
 )
 from .validate_password_util import password_is_valid
 from .subscription_cli_util import create_sub_for_all_no_sub_users, add_days_to_subs
+from .first_login_util import new_user_subscription, apply_kish_expo_gift

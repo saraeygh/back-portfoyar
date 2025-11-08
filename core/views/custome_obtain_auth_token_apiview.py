@@ -1,12 +1,14 @@
-from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken import views
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from celery import shared_task
 
+from django.contrib.auth.models import User
 
 from core.utils import persian_numbers_to_english
-from account.models import Profile, LoginCount
+from account.models import Profile, LoginCount, FirstLogin
+from account.utils import new_user_subscription, apply_kish_expo_gift
 
 ACCOUNT_BANNED = "ACCOUNT_BANNED"
 
@@ -45,15 +47,29 @@ def get_full_name(user: User):
     return full_name
 
 
-def change_login_count(user: User):
+@shared_task
+def change_login_count(username: str):
     try:
-        login_count = LoginCount.objects.get(user=user)
+        login_count = LoginCount.objects.get(user__username=username)
         login_count.count += 1
         login_count.save()
     except LoginCount.DoesNotExist:
+        user = User.objects.get(username=username)
         login_count = LoginCount.objects.create(user=user, count=1)
 
-    return login_count
+
+@shared_task
+def apply_first_login_tasks(username: str):
+    user = User.objects.get(username=username)
+    first_login, _ = FirstLogin.objects.get_or_create(user=user)
+
+    apply_kish_expo_gift(user, first_login)
+
+    new_user_subscription(user, first_login)
+
+    if not first_login.has_logged_in:
+        first_login.has_logged_in = True
+        first_login.save()
 
 
 class CustomObtainAuthToken(views.ObtainAuthToken):
@@ -73,7 +89,8 @@ class CustomObtainAuthToken(views.ObtainAuthToken):
         token = response.data.get("token")
         full_name = get_full_name(user)
 
-        change_login_count(user)
+        change_login_count.delay(user.username)
+        apply_first_login_tasks.delay(user.username)
 
         return Response(
             data={"token": token, "full_name": full_name}, status=status.HTTP_200_OK

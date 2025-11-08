@@ -48,7 +48,7 @@ NEW_USER_FREE_DURATION = {
     "name": "new_user_free_duration",
     "desc": "مدت اشتراک رایگان برای کاربران جدید بر حسب روز",
     "state": ACTIVE,
-    "value": "1",
+    "value": "7",
 }
 
 

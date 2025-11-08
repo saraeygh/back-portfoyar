@@ -134,3 +134,5 @@ ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 ADMIN_FIRST_NAME = os.environ.get("ADMIN_FIRST_NAME")
 ADMIN_LAST_NAME = os.environ.get("ADMIN_LAST_NAME", "!")
+
+YYYY_MM_DD_HH_MM_SS = "%Y/%m/%d %H:%M:%S"
