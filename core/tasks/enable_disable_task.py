@@ -1,14 +1,14 @@
 from celery_singleton import Singleton
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
-from samaneh.celery import (
-    app,
-    AT_0830_AM,
-    AT_0900_AM,
-    AT_1100_AM,
-    AT_1230_PM,
-    AT_1800_PM,
-)
+from samaneh.celery import app
+
+# ENABLE & DISABLE TIMES
+AT_0830_AM = "AT08:30AM"
+AT_0900_AM = "AT09:00AM"
+AT_1100_AM = "AT11:00AM"
+AT_1230_PM = "AT12:30PM"
+AT_1800_PM = "AT18:00PM"
 
 
 def enable_task(frequency: int, task_name: str):
