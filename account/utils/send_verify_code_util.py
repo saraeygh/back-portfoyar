@@ -18,8 +18,6 @@ from core.configs import (
 
 from melipayamak.melipayamak import Api
 
-from colorama import Fore, Style
-
 
 def send_sms_verify_code(to, code, sms_type):
     send_sms = FeatureToggle.objects.filter(name=sms_type).first()
@@ -72,5 +70,5 @@ def send_email_verify_code(username: str, email: str, code: str):
             server.sendmail(EMAIL_HOST_USER, email, text)
         return True
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")
         return False

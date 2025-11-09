@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-from colorama import Fore, Style
+
 
 import pandas as pd
 
@@ -107,7 +107,7 @@ def send_upload_error_file_email(
     if error_df.empty:
         return
 
-    print(Fore.BLUE + "Sending invalid records email" + Style.RESET_ALL)
+    print("Sending invalid records email")
 
     save_dir = f"{BASE_DIR}/media/uploaded_files/"
     is_dir = os.path.isdir(save_dir)
@@ -161,9 +161,9 @@ def send_upload_error_file_email(
             server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
             server.sendmail(EMAIL_HOST_USER, EMAIL_TO, text)
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")
 
     try:
         os.remove(file_path)
     except Exception:
-        print(Fore.RED + f"Error removing file: {e}" + Style.RESET_ALL)
+        print(f"Error removing file: {e}")

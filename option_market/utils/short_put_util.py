@@ -14,8 +14,6 @@ from . import (
     get_link_str,
 )
 
-from colorama import Fore, Style
-
 
 REQUIRED_COLUMNS = [
     "strike_price",
@@ -99,7 +97,7 @@ def short_put(option_data, mongo_db: str):
 
             result.append(document)
 
-    print(Fore.GREEN + f"short_put, {len(result)} records." + Style.RESET_ALL)
+    print(f"short_put, {len(result)} records.")
     if result:
         list_key = "short_put"
         mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)

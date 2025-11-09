@@ -1,7 +1,7 @@
 from celery_singleton import Singleton
 
 import pandas as pd
-from colorama import Fore, Style
+
 
 from samaneh.celery import app
 
@@ -169,11 +169,7 @@ def update_option_data_from_tse_main(run_mode):
         )
         mongo_conn.insert_docs_into_collection(option_data_dict)
 
-        print(
-            Fore.BLUE
-            + f"option_data, {len(option_data_dict)} records."
-            + Style.RESET_ALL
-        )
+        print(f"option_data, {len(option_data_dict)} records.")
 
         option_data = option_data[option_data["base_equity_last_price"] > 0]
         # populate_all_option_strategy_async(option_data)

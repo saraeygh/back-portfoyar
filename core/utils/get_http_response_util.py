@@ -1,8 +1,6 @@
 import time
 import requests
 
-from colorama import Fore, Style
-
 
 def get_http_response(
     req_method: str = "GET",
@@ -44,16 +42,10 @@ def get_http_response(
             if response.status_code == 200:
                 return response
             else:
-                print(
-                    Fore.RED
-                    + f"ERROR: Status code {response.status_code}, url: {req_url}"
-                    + Style.RESET_ALL
-                )
+                print(f"ERROR: Status code {response.status_code}, url: {req_url}")
 
         except Exception as e:
-            print(Fore.RED)
             print(e)
-            print(Style.RESET_ALL)
         time.sleep(2 * retry)
 
     return response

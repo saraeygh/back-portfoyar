@@ -1,5 +1,5 @@
 from option_market.models import StrategyOption
-from colorama import Fore, Style
+
 
 COVERED_CALL_SEQ = 1
 COVERED_CALL_DESC = "خرید سهم و فروش کال"
@@ -282,7 +282,7 @@ def create_or_update(
 
 
 def populate_strategy_option():
-    print(Fore.BLUE + "Creating pre-defined strategies ..." + Style.RESET_ALL)
+    print("Creating pre-defined strategies ...")
     for strategy_key, strategy_properties in STRATEGIES.items():
         name = strategy_properties.get("name")
         profit_status = strategy_properties.get("profit_status")
@@ -294,4 +294,4 @@ def populate_strategy_option():
                 strategy_key, profit_status, risk_level, name, sequence, desc
             )
 
-    print(Fore.GREEN + "Created strategies." + Style.RESET_ALL)
+    print("Created strategies.")

@@ -1,6 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from colorama import Fore, Style
+
 
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface, get_deviation_percent
@@ -133,7 +133,7 @@ def short_straddle(option_data, mongo_db: str):
 
             result.append(document)
 
-    print(Fore.GREEN + f"short_straddle, {len(result)} records." + Style.RESET_ALL)
+    print(f"short_straddle, {len(result)} records.")
 
     if result:
         list_key = "short_straddle"

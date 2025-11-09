@@ -6,7 +6,6 @@ from core.utils import send_upload_error_file_email
 from domestic_market.models import DomesticDollarPrice
 from domestic_market.serializers import UploadDollarPriceSerializer
 from samaneh.settings import BASE_DIR
-from colorama import Fore, Style
 
 
 def upload_dollar_price(dollar_prices_list_of_dicts) -> None:
@@ -14,7 +13,7 @@ def upload_dollar_price(dollar_prices_list_of_dicts) -> None:
     dollar_prices_bulk_list = []
 
     for dollar_price in dollar_prices_list_of_dicts:
-        print(Fore.BLUE + f"Dollar price: {dollar_price}" + Style.RESET_ALL, end="\r")
+        print(f"Dollar price: {dollar_price}", end="\r")
 
         dollar_price_srz = UploadDollarPriceSerializer(data=dollar_price)
         if dollar_price_srz.is_valid():

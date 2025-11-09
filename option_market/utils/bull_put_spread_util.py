@@ -1,6 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from colorama import Fore, Style
+
 
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface, get_deviation_percent
@@ -159,7 +159,7 @@ def bull_put_spread(option_data, mongo_db: str):
 
                 result.append(document)
 
-    print(Fore.GREEN + f"bull_put_spread, {len(result)} records." + Style.RESET_ALL)
+    print(f"bull_put_spread, {len(result)} records.")
     if result:
         list_key = "bull_put_spread"
         mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from colorama import Fore, Style
+
 
 from core.configs import (
     ADMIN_USERNAME,
@@ -19,6 +19,6 @@ def create_admin_user():
             first_name=ADMIN_FIRST_NAME,
             last_name=ADMIN_LAST_NAME,
         )
-        print(Fore.GREEN + "Admin user created." + Style.RESET_ALL)
+        print("Admin user created.")
     else:
-        print(Fore.YELLOW + "Admin user already exists." + Style.RESET_ALL)
+        print("Admin user already exists.")

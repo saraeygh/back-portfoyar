@@ -3,8 +3,6 @@ from celery_singleton import Singleton
 import pandas as pd
 
 
-from colorama import Fore, Style
-
 from samaneh.celery import app
 
 from core.utils import MongodbInterface, run_main_task
@@ -86,9 +84,7 @@ BASE_EQUITY_KEYS = {
 
 
 def update_future_base_equity_main():
-    print(
-        Fore.BLUE + "Updating base equity list for future market ..." + Style.RESET_ALL
-    )
+    print("Updating base equity list for future market ...")
 
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     for base_equity_key, properties in BASE_EQUITY_KEYS.items():
@@ -115,9 +111,7 @@ def update_future_base_equity_main():
                     unique_identifier=row.get(properties.get(UNIQUE_IDENTIFIER)),
                 )
 
-    print(
-        Fore.GREEN + "All base equity list for future market updated" + Style.RESET_ALL
-    )
+    print("All base equity list for future market updated")
 
 
 @app.task(base=Singleton, name="update_future_base_equity_task")

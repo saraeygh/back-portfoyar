@@ -1,13 +1,25 @@
 import time
 import os
 import platform
-from colorama import Fore, Style
+
 
 from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
-from core.tasks import remove_django_job_execution_history, is_market_open_today
+from core.tasks import (
+    remove_django_job_execution_history,
+    is_market_open_today,
+    enable_tasks_for_specific_time,
+    disable_tasks_for_specific_time,
+)
+from core.tasks.enable_disable_task import (
+    AT_0830_AM,
+    AT_0900_AM,
+    AT_1100_AM,
+    AT_1230_PM,
+    AT_1800_PM,
+)
 from account.tasks import disable_expired_subscription
 from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
 
@@ -78,8 +90,8 @@ def get_clear_cmd():
 
 def main_cli(clear_cmd):
     print(
-        Style.BRIGHT + "Choose app:",
-        Fore.BLUE + "1) Account app",
+        "Choose app:",
+        "1) Account app",
         "2) Dashboard app",
         "3) Domestic market",
         "4) Fund app",
@@ -87,12 +99,11 @@ def main_cli(clear_cmd):
         "6) Global market",
         "7) Option market",
         "8) Stock market",
-        ################################
-        Fore.RED + "10) Others",
-        Fore.RED + "0) Exit" + Style.RESET_ALL,
+        "10) Others",
+        "0) Exit",
         sep="\n",
     )
-    cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+    cmd = input("Enter command: ")
     os.system(clear_cmd)
 
     return cmd
@@ -101,19 +112,19 @@ def main_cli(clear_cmd):
 def domestic_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Domestic market commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Get trades",
+            "Domestic market commands:",
+            "all) Run all commands",
+            "1) Get trades",
             "2) Calculate means",
             "3) Get dollar price",
             "4) Calculate monthly sell",
             "5) Calculate production sell",
             "6) Get dollar price history",
             "7) Calculate producers yearly value",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -141,7 +152,7 @@ def domestic_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -149,13 +160,13 @@ def domestic_cli(clear_cmd):
 def global_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Global market commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Calculate means",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "Global market commands:",
+            "all) Run all commands",
+            "1) Calculate means",
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -166,7 +177,7 @@ def global_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -174,15 +185,15 @@ def global_cli(clear_cmd):
 def option_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Option market commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Update option data",
+            "Option market commands:",
+            "all) Run all commands",
+            "1) Update option data",
             "2) Get option history",
             "3) calculate_daily_option_value",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -198,7 +209,7 @@ def option_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -206,9 +217,9 @@ def option_cli(clear_cmd):
 def stock_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Stock market commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Update market watch & indices",
+            "Stock market commands:",
+            "all) Run all commands",
+            "1) Update market watch & indices",
             "2) Update stock daily history",
             "3) Update instrument info",
             "4) Update instrument ROI",
@@ -220,10 +231,10 @@ def stock_cli(clear_cmd):
             "10) Update stock adjusted history",
             "11) Get monthly activity",
             ##############################
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -264,7 +275,7 @@ def stock_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -272,17 +283,17 @@ def stock_cli(clear_cmd):
 def future_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Future market commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Update derivative info",
+            "Future market commands:",
+            "all) Run all commands",
+            "1) Update derivative info",
             "2) Update base equity",
             "3) Update future result",
             "4) Update option result",
             "5) Check active contracts",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -308,7 +319,7 @@ def future_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -316,20 +327,20 @@ def future_cli(clear_cmd):
 def dashboard_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Dashboard APP commands:",
+            "Dashboard APP commands:",
             "all) Run all dashboard tasks",
-            Fore.CYAN + "Following tasks will be run:" + Style.RESET_ALL,
-            Fore.BLUE + "- dashboard_total_index",
-            Fore.BLUE + "- dashboard_unweighted_index",
-            Fore.BLUE + "- dashboard_buy_sell_orders_value",
-            Fore.BLUE + "- dashboard_last_close_price",
-            Fore.BLUE + "- dashboard_option_value_analysis",
-            Fore.BLUE + "- dashboard_change_percent_ranges_count",
-            Fore.BLUE + "- dashboard_market_money_flow",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "Following tasks will be run:",
+            "- dashboard_total_index",
+            "- dashboard_unweighted_index",
+            "- dashboard_buy_sell_orders_value",
+            "- dashboard_last_close_price",
+            "- dashboard_option_value_analysis",
+            "- dashboard_change_percent_ranges_count",
+            "- dashboard_market_money_flow",
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -344,7 +355,7 @@ def dashboard_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -352,14 +363,14 @@ def dashboard_cli(clear_cmd):
 def fund_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Fund APP commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Get all fund detail",
+            "Fund APP commands:",
+            "all) Run all commands",
+            "1) Get all fund detail",
             "2) Update fund info",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -373,7 +384,7 @@ def fund_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -381,14 +392,14 @@ def fund_cli(clear_cmd):
 def account_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Account commands:" + Style.RESET_ALL,
-            Fore.BLUE + "1) Disable expired subscriptions",
+            "Account commands:",
+            "1) Disable expired subscriptions",
             "2) create_sub_for_all_no_sub_users",
             "3) add_days_to_subs",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "0) Back",
             sep="\n",
         )
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "1":
@@ -401,7 +412,7 @@ def account_cli(clear_cmd):
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
@@ -409,17 +420,17 @@ def account_cli(clear_cmd):
 def other_cli(clear_cmd):
     while True:
         print(
-            Style.BRIGHT + "Other commands:",
-            "all) Run all commands" + Style.RESET_ALL,
-            Fore.BLUE + "1) Clear redis cache",
+            "Other commands:",
+            "all) Run all commands",
+            "1) Clear redis cache",
             "2) Relpace all arabic letters",
             "3) remove_django_job_execution_history",
             "4) is_market_open_today",
-            Fore.RED + "0) Back" + Style.RESET_ALL,
+            "5) enable_disable_tasks",
+            "0) Back",
             sep="\n",
         )
-        is_market_open_today
-        cmd = input(Style.BRIGHT + "Enter command: " + Style.RESET_ALL)
+        cmd = input("Enter command: ")
         os.system(clear_cmd)
         match cmd:
             case "all":
@@ -434,17 +445,51 @@ def other_cli(clear_cmd):
                 remove_django_job_execution_history()
             case "4":
                 is_market_open_today()
+            case "5":
+                TIME_DICT = {
+                    "1": AT_0830_AM,
+                    "2": AT_0900_AM,
+                    "3": AT_1100_AM,
+                    "4": AT_1230_PM,
+                    "5": AT_1800_PM,
+                }
+
+                print(
+                    "Select time:",
+                    "1) Enable tasks AT08:30AM",
+                    "2) Enable tasks AT09:00AM",
+                    "3) Enable tasks AT11:00AM",
+                    "4) Disable tasks AT12:30PM",
+                    "5) Disable tasks AT18:00PM",
+                    "0) Back",
+                    sep="\n",
+                )
+                selected_time = input("Enter number: ")
+                os.system(clear_cmd)
+                print("Selected time is: ", TIME_DICT.get(selected_time, "--"))
+
+                match selected_time:
+                    case "1" | "2" | "3":
+                        enable_tasks_for_specific_time(TIME_DICT[selected_time])
+                    case "4" | "5":
+                        disable_tasks_for_specific_time(TIME_DICT[selected_time])
+                    case "0":
+                        break
+                    case _:
+                        print("Wrong choice!")
+                        time.sleep(0.5)
+                        continue
             case "0":
                 break
 
             case _:
-                print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                print("Wrong choice!")
                 time.sleep(0.5)
                 continue
 
 
 def night_tasks_cli():
-    print(Fore.BLUE + "Running night tasks." + Style.RESET_ALL)
+    print("Running night tasks.")
 
     # ACCOUNT APP
     disable_expired_subscription()
@@ -471,7 +516,7 @@ def night_tasks_cli():
     get_monthly_activity_report_letter()
     calculate_commodity_means_global()
 
-    print(Fore.GREEN + "Night tasks done!" + Style.RESET_ALL)
+    print("Night tasks done!")
 
 
 class Command(BaseCommand):
@@ -520,6 +565,6 @@ class Command(BaseCommand):
                     night_tasks_cli()
 
                 case _:
-                    print(Style.BRIGHT + Fore.RED + "Wrong choice!" + Style.RESET_ALL)
+                    print("Wrong choice!")
                     time.sleep(0.5)
                     continue

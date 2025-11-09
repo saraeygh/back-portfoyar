@@ -3,7 +3,7 @@ from celery_singleton import Singleton
 import pandas as pd
 import jdatetime
 from tqdm import tqdm
-from colorama import Fore, Style
+
 
 from samaneh.celery import app
 
@@ -123,7 +123,7 @@ def get_update_history(instrument, instrument_type):
         )
 
     except Exception as e:
-        print(Fore.RED + f"{e}" + Style.RESET_ALL)
+        print(f"{e}")
         return
 
 

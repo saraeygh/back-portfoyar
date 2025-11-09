@@ -21,8 +21,6 @@ from core.configs import (
 from support.models import Ticket, TicketResponse
 from support.views import TICKET_APPENDIX_FILES_DIR
 
-from colorama import Fore, Style
-
 
 RECIPIENTS = [
     EMAIL_TO,
@@ -144,4 +142,4 @@ def send_email(
                 msg=text,
             )
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")

@@ -1,7 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
 
-from colorama import Fore, Style
 
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface, get_deviation_percent
@@ -125,7 +124,7 @@ def long_call(option_data, mongo_db: str):
 
             result.append(document)
 
-    print(Fore.GREEN + f"long_call, {len(result)} records." + Style.RESET_ALL)
+    print(f"long_call, {len(result)} records.")
     if result:
         list_key = "long_call"
         mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)

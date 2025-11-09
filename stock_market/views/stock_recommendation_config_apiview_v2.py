@@ -32,7 +32,6 @@ from stock_market.models.recommendation_config_model import (
     DomesticPositiveRange,
     DomesticNegativeRange,
 )
-from colorama import Fore, Style
 
 
 SIX_ATTR_INDICES = ["roi", "global"]
@@ -179,9 +178,7 @@ def update_default_config_setting(default_config: RecommendationConfig, config_d
                     setting_obj.save()
 
         except Exception as e:
-            print(Fore.RED)
             print(e)
-            print(Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است"}, status=status.HTTP_400_BAD_REQUEST
             )

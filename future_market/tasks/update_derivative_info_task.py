@@ -3,7 +3,7 @@ from celery_singleton import Singleton
 from datetime import datetime
 import json
 import requests
-from colorama import Fore, Style
+
 
 from samaneh.celery import app
 from core.utils import RedisInterface, MongodbInterface, run_main_task
@@ -26,7 +26,7 @@ def negotiate_connection():
         "_": get_now_timestamp_as_str(),
     }
     response = requests.get(url=negotiate_url, params=params, timeout=59)
-    print(Fore.GREEN + "Negotiation completed!", Style.RESET_ALL)
+    print("Negotiation completed!")
     return response.json()
 
 
@@ -41,7 +41,7 @@ def start_connection(connection_token):
     }
     response = requests.get(url=start_url, params=params, timeout=59)
 
-    print(Fore.GREEN + "Got connectionToken!", Style.RESET_ALL)
+    print("Got connectionToken!")
     return response.text
 
 
@@ -55,7 +55,7 @@ def connect_to_events(connection_token):
         "tid": "0",
     }
     response = requests.get(url=sse_url, params=params, stream=True, timeout=59)
-    print(Fore.GREEN + "Waiting for event responses...", Style.RESET_ALL)
+    print("Waiting for event responses...")
     return response.iter_lines()
 
 
@@ -87,18 +87,11 @@ def update_info():
                     if data_list:
                         mongo_conn.insert_docs_into_collection(data_list)
 
-                    print(
-                        Fore.YELLOW
-                        + "New event ->> "
-                        + Fore.GREEN
-                        + "SET:"
-                        + f" {data_key}"
-                        + Style.RESET_ALL,
-                    )
+                    print(f"New event ->> SET: {data_key}")
         except (json.decoder.JSONDecodeError, IndexError):
             continue
         except Exception as e:
-            print(Fore.RED + f"{e}" + Style.RESET_ALL)
+            print(f"{e}")
             raise e
 
 

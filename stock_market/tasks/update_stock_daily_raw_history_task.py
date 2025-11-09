@@ -3,7 +3,7 @@ from celery_singleton import Singleton
 from datetime import datetime, date
 from tqdm import tqdm
 import pandas as pd
-from colorama import Fore, Style
+
 
 from samaneh.celery import app
 
@@ -71,13 +71,13 @@ def add_today_history(today_history: pd.DataFrame):
 
 def update_stock_daily_history_main():
     if not is_market_open():
-        print(Fore.BLUE + "update_get_existing_industrial_group" + Style.RESET_ALL)
+        print("update_get_existing_industrial_group")
         update_get_existing_industrial_group()
 
-        print(Fore.BLUE + "update_get_existing_instrument" + Style.RESET_ALL)
+        print("update_get_existing_instrument")
         update_get_existing_instrument()
 
-        print(Fore.BLUE + "remove_expired_instruments" + Style.RESET_ALL)
+        print("remove_expired_instruments")
         remove_expired_instruments()
 
         today_date = date.today().strftime("%Y/%m/%d")

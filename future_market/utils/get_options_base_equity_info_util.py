@@ -1,6 +1,5 @@
 import pandas as pd
 
-from colorama import Fore, Style
 
 from core.configs import FUTURE_MONGO_DB
 from core.utils import MongodbInterface
@@ -153,7 +152,7 @@ BASE_EQUITY_KEYS = {
 
 
 def get_options_base_equity_info():
-    print(Fore.BLUE + "Updating options base equity info ..." + Style.RESET_ALL)
+    print("Updating options base equity info ...")
     base_equities = pd.DataFrame(
         OptionBaseEquity.objects.values(
             "base_equity_key",

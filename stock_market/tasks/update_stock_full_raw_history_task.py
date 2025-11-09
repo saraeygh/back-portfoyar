@@ -1,7 +1,7 @@
 from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
-from colorama import Fore, Style
+
 
 from core.utils import TSETMC_REQUEST_HEADERS, get_http_response, run_main_task
 
@@ -22,9 +22,9 @@ def convert_date_str_to_obj(row):
 
 
 def update_stock_full_raw_history_main():
-    print(Fore.BLUE + "update_get_existing_industrial_group" + Style.RESET_ALL)
+    print("update_get_existing_industrial_group")
     update_get_existing_industrial_group()
-    print(Fore.BLUE + "update_get_existing_instrument" + Style.RESET_ALL)
+    print("update_get_existing_instrument")
     update_get_existing_instrument()
 
     all_instruments = remove_expired_instruments()

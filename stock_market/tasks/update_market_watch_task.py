@@ -2,7 +2,7 @@ from celery_singleton import Singleton
 
 from datetime import date
 import pandas as pd
-from colorama import Fore, Style
+
 
 from samaneh.celery import app
 
@@ -88,7 +88,7 @@ def update_market_watch_main(run_mode):
         market_watch.dropna(inplace=True)
 
         if market_watch.empty:
-            print(Fore.RED + "No market watch data!" + Style.RESET_ALL)
+            print("No market watch data!")
             return
 
         market_watch["name"] = market_watch.apply(

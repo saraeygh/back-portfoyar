@@ -16,7 +16,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from colorama import Fore, Style
 
 from core.configs import (
     EMAIL_HOST,
@@ -73,7 +72,7 @@ class UploadUsersAPIView(APIView):
 
             user_obj: User = User.objects.filter(username=username)
             if user_obj.exists():
-                print(Fore.RED + f"Existing user: [{username}]" + Style.RESET_ALL)
+                print(f"Existing user: [{username}]")
                 continue
             else:
                 new_user = User(username=username)
@@ -86,7 +85,7 @@ class UploadUsersAPIView(APIView):
 
                 new_user.set_password(password)
                 new_user.save()
-                print(Fore.GREEN + f"Created user: [{username}]" + Style.RESET_ALL)
+                print(f"Created user: [{username}]")
 
         if not_valid_users:
             error_users_df = pd.DataFrame(not_valid_users)
@@ -150,9 +149,9 @@ def send_upload_excel_error_file_email(filename: str, task_name: str):
             server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
             server.sendmail(EMAIL_HOST_USER, EMAIL_TO, text)
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")
 
     try:
         os.remove(filepath)
     except Exception:
-        print(Fore.RED + f"Error removing file: {e}" + Style.RESET_ALL)
+        print(f"Error removing file: {e}")

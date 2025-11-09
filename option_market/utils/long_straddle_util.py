@@ -1,6 +1,6 @@
 from uuid import uuid4
 from tqdm import tqdm
-from colorama import Fore, Style
+
 
 from core.configs import RIAL_TO_BILLION_TOMAN
 from core.utils import MongodbInterface
@@ -98,7 +98,7 @@ def long_straddle(option_data, mongo_db: str):
 
             result.append(document)
 
-    print(Fore.GREEN + f"long_straddle, {len(result)} records." + Style.RESET_ALL)
+    print(f"long_straddle, {len(result)} records.")
     if result:
         list_key = "long_straddle"
         mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)

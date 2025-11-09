@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 
 
 import jdatetime
-from colorama import Fore, Style
+
 
 from core.configs import (
     EMAIL_HOST,
@@ -28,11 +28,11 @@ RED = "RED"
 def print_task_info(color: str = BLUE, name: str = ""):
     now = f"⏰ [{jdatetime.datetime.now(tz=TEHRAN_TZ).strftime("%Y/%m/%d %H:%M:%S")}]"
     if color == GREEN:
-        print(Fore.GREEN + now + " - " + name + " - Done" + Style.RESET_ALL)
+        print(now + " - " + name + " - Done")
     elif color == RED:
-        print(Fore.RED + now + " - " + name + " - ERROR" + Style.RESET_ALL)
+        print(now + " - " + name + " - ERROR")
     else:
-        print(Fore.BLUE + now + " - " + name + " - Running" + Style.RESET_ALL)
+        print(now + " - " + name + " - Running")
 
     return
 
@@ -100,11 +100,11 @@ def send_task_fail_success_email(task_name: str = "", exception: str = SUCCESS):
             server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
             server.sendmail(from_addr=EMAIL_HOST_USER, to_addrs=EMAIL_TO, msg=text)
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")
 
 
 def send_exception_detail_email(task_name, exception):
-    print(Fore.RED + f"{exception}" + Style.RESET_ALL)
+    print(f"{exception}")
     send_email_thread = threading.Thread(
         target=send_task_fail_success_email,
         kwargs={"task_name": task_name, "exception": exception},

@@ -26,7 +26,7 @@ from support.serializers import (
 from django.http import HttpResponse
 
 from . import TICKET_APPENDIX_FILES_DIR
-from colorama import Fore, Style
+
 
 FILE_SIZE_LIMIT = 10_000_000
 
@@ -174,9 +174,7 @@ class TicketingAPIView(APIView):
                 "text": ticket.get("text"),
             }
         except Exception as e:
-            print(Fore.RED)
             print(e)
-            print(Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -217,9 +215,7 @@ class GetTicketDetailAPIView(APIView):
                 "text": response.get("text"),
             }
         except Exception as e:
-            print(Fore.RED)
             print(e)
-            print(Style.RESET_ALL)
             return Response(
                 {"message": "مشکلی پیش آمده است."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -259,9 +255,7 @@ class GetTicketAppendixAPIView(APIView):
             response["Content-Disposition"] = f'attachment; filename="{file_name}"'
             return response
         except Exception as e:
-            print(Fore.RED)
             print(e)
-            print(Style.RESET_ALL)
             return Response(
                 {"message": "فایل پیدا نشد."}, status=status.HTTP_404_NOT_FOUND
             )

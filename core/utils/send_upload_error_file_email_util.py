@@ -1,6 +1,6 @@
 import os
 import smtplib
-from colorama import Fore, Style
+
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -61,9 +61,9 @@ def send_upload_error_file_email(file_path: str, task_name: str, filename: str):
             server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
             server.sendmail(EMAIL_HOST_USER, EMAIL_TO, text)
     except Exception as e:
-        print(Fore.RED + f"Error sending email: {e}" + Style.RESET_ALL)
+        print(f"Error sending email: {e}")
 
     try:
         os.remove(file_path)
     except Exception:
-        print(Fore.RED + f"Error removing file: {e}" + Style.RESET_ALL)
+        print(f"Error removing file: {e}")

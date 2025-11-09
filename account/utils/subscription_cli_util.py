@@ -4,8 +4,6 @@ import datetime as dt
 from django.db.models import F
 from django.contrib.auth.models import User
 
-from colorama import Fore, Style
-
 from account.models import Feature, Subscription, SUBSCRIPTION_FEATURE_CHOICES
 
 FEATURES = {feature[0]: feature[1] for feature in SUBSCRIPTION_FEATURE_CHOICES}
@@ -56,7 +54,7 @@ def create_sub_for_all_no_sub_users():
         print(f"Created - {len(new_subs)} - subs")
 
     except Exception:
-        print(Fore.RED + "Something happend! Try again..." + Style.RESET_ALL)
+        print("Something happend! Try again...")
         time.sleep(0.5)
 
 
@@ -86,5 +84,5 @@ def add_days_to_subs():
         )
 
     except Exception:
-        print(Fore.RED + "Something happend! Try again..." + Style.RESET_ALL)
+        print("Something happend! Try again...")
         time.sleep(0.5)

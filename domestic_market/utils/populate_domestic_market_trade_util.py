@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from tqdm import tqdm
 import jdatetime as jdt
-from colorama import Fore, Style
+
 
 from core.utils import get_http_response, get_deviation_percent
 
@@ -79,9 +79,7 @@ def get_trades_between_dates(start_date: str, end_date: str):
     }
 
     print(
-        Fore.BLUE
-        + f"Getting trades data ({start_date} to {end_date}) ..."
-        + Style.RESET_ALL,
+        f"Getting trades data ({start_date} to {end_date}) ...",
         end="\r",
     )
     response = get_http_response(
@@ -191,9 +189,7 @@ def populate_trades_between_dates(start_date: str, end_date: str):
         new_trade_history.number_of_populated_trades = len(bulk_created_list)
         new_trade_history.save()
         print(
-            Fore.BLUE
-            + f"Populated trades from {start_date} to {end_date}, {len(trades_bulk_list)} records."
-            + Style.RESET_ALL
+            f"Populated trades from {start_date} to {end_date}, {len(trades_bulk_list)} records."
         )
 
 

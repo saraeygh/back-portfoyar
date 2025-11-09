@@ -1,5 +1,5 @@
 from core.models import FeatureToggle, ACTIVE, DEACTIVE
-from colorama import Fore, Style
+
 
 MARKET_STATE = {
     "name": "market_state",
@@ -55,13 +55,9 @@ NEW_USER_FREE_DURATION = {
 def create_toggle(feature_name, feature_attr):
     if not FeatureToggle.objects.filter(name=feature_name).exists():
         FeatureToggle.objects.create(**feature_attr)
-        print(Fore.GREEN + f"{feature_name} feature toggle created." + Style.RESET_ALL)
+        print(f"{feature_name} feature toggle created.")
     else:
-        print(
-            Fore.YELLOW
-            + f"{feature_name} feature toggle already exists."
-            + Style.RESET_ALL
-        )
+        print(f"{feature_name} feature toggle already exists.")
 
 
 def create_default_feature_toggle():

@@ -15,8 +15,6 @@ from . import (
     get_link_str,
 )
 
-from colorama import Fore, Style
-
 
 REQUIRED_COLUMNS = [
     "strike_price",
@@ -127,7 +125,7 @@ def long_strangle(option_data, mongo_db: str):
 
                 result.append(document)
 
-    print(Fore.GREEN + f"long_strangle, {len(result)} records." + Style.RESET_ALL)
+    print(f"long_strangle, {len(result)} records.")
     if result:
         list_key = "long_strangle"
         mongo_conn = MongodbInterface(db_name=mongo_db, collection_name=list_key)

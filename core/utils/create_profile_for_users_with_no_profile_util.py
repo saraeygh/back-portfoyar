@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from account.models import Profile
-from colorama import Fore, Style
 
 
 def create_profile_for_users_with_no_profile():
@@ -10,10 +9,6 @@ def create_profile_for_users_with_no_profile():
         try:
             profile = Profile(user=user)
             profile.save()
-            print(Fore.GREEN + f"Created profile for {user}" + Style.RESET_ALL)
+            print(f"Created profile for {user}")
         except Exception as e:
-            print(
-                Fore.RED
-                + f"Error creating profile for {user}: {str(e)}"
-                + Style.RESET_ALL
-            )
+            print(f"Error creating profile for {user}: {str(e)}")

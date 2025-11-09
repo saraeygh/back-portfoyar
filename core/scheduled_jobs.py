@@ -1,8 +1,6 @@
 import os
 import psutil
 
-from colorama import Fore, Style
-
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from django_apscheduler.jobstores import DjangoJobStore
@@ -78,12 +76,10 @@ from global_market.tasks import calculate_commodity_means_global
 def get_cores_threads():
     total_cores = os.cpu_count()
     used_cores = total_cores // 2
-    print(Fore.BLUE + f"Cores: {total_cores}, Used: {used_cores}" + Style.RESET_ALL)
+    print(f"Cores: {total_cores}, Used: {used_cores}")
 
     total_threads = psutil.Process().num_threads()
-    print(
-        Fore.BLUE + f"Threads: {total_threads}, Used: {total_threads}" + Style.RESET_ALL
-    )
+    print(f"Threads: {total_threads}, Used: {total_threads}")
 
     return used_cores, total_threads
 
@@ -629,6 +625,6 @@ def blocking_scheduler():
 
     print(f"RUN_MAIN is >>>>>>>>>>>>>>>>>> {os.environ.get("RUN_MAIN", None)}")
     if os.environ.get("RUN_MAIN", None) != "true":
-        print(Fore.GREEN + "APScheduler started successfully" + Style.RESET_ALL)
+        print("APScheduler started successfully")
         scheduler.start()
-    print(Fore.RED + "Another instance of APScheduler running" + Style.RESET_ALL)
+    print("Another instance of APScheduler running")
