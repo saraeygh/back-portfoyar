@@ -44,7 +44,7 @@ def rename_order_book_cols(row):
 
 def update_option_data_from_tse_main(run_mode):
     if (
-        is_in_schedule(9, 2, 0, 12, 32, 0) and is_market_open_today()
+        is_in_schedule(9, 1, 0, 12, 32, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
 
         URL = "https://cdn.tsetmc.com/api/Instrument/GetInstrumentOptionMarketWatch/0"

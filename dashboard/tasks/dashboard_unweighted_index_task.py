@@ -10,7 +10,7 @@ from stock_market.utils import is_in_schedule
 
 def dashboard_unweighted_index_main(run_mode: str):
     if (
-        is_in_schedule(9, 2, 0, 12, 32, 0) and is_market_open_today()
+        is_in_schedule(9, 1, 0, 12, 32, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         get_unweighted_index_from_tse()
 

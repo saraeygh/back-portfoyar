@@ -10,7 +10,7 @@ from stock_market.utils import is_in_schedule
 
 def dashboard_option_value_analysis_main(run_mode: str):
     if (
-        is_in_schedule(9, 2, 0, 12, 40, 0) and is_market_open_today()
+        is_in_schedule(9, 1, 0, 12, 40, 0) and is_market_open_today()
     ) or run_mode == MANUAL_MODE:
         option_value_analysis()
         update_top_options()
