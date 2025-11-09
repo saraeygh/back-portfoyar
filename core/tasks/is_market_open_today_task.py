@@ -18,7 +18,7 @@ def is_market_open_today_main():
         db_name=CORE_MONGO_DB, collection_name=CORE_MARKET_STATE_COLLECTION
     )
 
-    time.sleep(10)
+    time.sleep(30)
 
     market_state = is_market_open()
 
