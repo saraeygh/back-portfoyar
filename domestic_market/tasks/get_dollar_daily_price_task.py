@@ -118,7 +118,7 @@ def get_dollar_daily_price_main():
         update_nima_price(last_dollar, today_price_date)
 
 
-@shared_task(name="get_dollar_daily_price_task", expires=120)
+@shared_task(name="get_dollar_daily_price_task", expires=600)
 def get_dollar_daily_price():
 
     run_main_task(
