@@ -7,19 +7,7 @@ from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
-from core.tasks import (
-    remove_django_job_execution_history,
-    is_market_open_today,
-    enable_tasks_for_specific_time,
-    disable_tasks_for_specific_time,
-)
-from core.tasks.enable_disable_task import (
-    AT_0830_AM,
-    AT_0900_AM,
-    AT_1100_AM,
-    AT_1230_PM,
-    AT_1800_PM,
-)
+from core.tasks import remove_django_job_execution_history, is_market_open_today
 from account.tasks import disable_expired_subscription
 from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
 
@@ -426,7 +414,6 @@ def other_cli(clear_cmd):
             "2) Relpace all arabic letters",
             "3) remove_django_job_execution_history",
             "4) is_market_open_today",
-            "5) enable_disable_tasks",
             "0) Back",
             sep="\n",
         )
@@ -445,40 +432,6 @@ def other_cli(clear_cmd):
                 remove_django_job_execution_history()
             case "4":
                 is_market_open_today()
-            case "5":
-                TIME_DICT = {
-                    "1": AT_0830_AM,
-                    "2": AT_0900_AM,
-                    "3": AT_1100_AM,
-                    "4": AT_1230_PM,
-                    "5": AT_1800_PM,
-                }
-
-                print(
-                    "Select time:",
-                    "1) Enable tasks AT08:30AM",
-                    "2) Enable tasks AT09:00AM",
-                    "3) Enable tasks AT11:00AM",
-                    "4) Disable tasks AT12:30PM",
-                    "5) Disable tasks AT18:00PM",
-                    "0) Back",
-                    sep="\n",
-                )
-                selected_time = input("Enter number: ")
-                os.system(clear_cmd)
-                print("Selected time is: ", TIME_DICT.get(selected_time, "--"))
-
-                match selected_time:
-                    case "1" | "2" | "3":
-                        enable_tasks_for_specific_time(TIME_DICT[selected_time])
-                    case "4" | "5":
-                        disable_tasks_for_specific_time(TIME_DICT[selected_time])
-                    case "0":
-                        break
-                    case _:
-                        print("Wrong choice!")
-                        time.sleep(0.5)
-                        continue
             case "0":
                 break
 
