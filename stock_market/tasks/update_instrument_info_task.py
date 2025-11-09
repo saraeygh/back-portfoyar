@@ -1,10 +1,8 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime, timedelta
 import pandas as pd
 from tqdm import tqdm
-
-from samaneh.celery import app
 
 from core.configs import STOCK_MONGO_DB, STOCK_NA_ROI
 from core.utils import (
@@ -144,7 +142,7 @@ def update_instrument_info_main():
         raise Exception("BELOW INSTRUMENTS ENCOUNTERED ERROR" f"{error_instruments}")
 
 
-@app.task(base=Singleton, name="update_instrument_info_task")
+@shared_task(name="update_instrument_info_task")
 def update_instrument_info():
 
     run_main_task(

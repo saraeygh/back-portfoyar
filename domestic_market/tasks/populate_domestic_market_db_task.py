@@ -1,5 +1,4 @@
-from celery_singleton import Singleton
-from samaneh.celery import app
+from celery import shared_task
 
 from core.utils import run_main_task
 
@@ -17,7 +16,7 @@ def populate_domestic_market_db_main():
     populate_domestic_market_trade()
 
 
-@app.task(base=Singleton, name="populate_domestic_market_db_task")
+@shared_task(name="populate_domestic_market_db_task")
 def populate_domestic_market_db():
 
     run_main_task(

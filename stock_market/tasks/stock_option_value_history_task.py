@@ -1,4 +1,4 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime, timedelta
 
@@ -6,8 +6,6 @@ import pandas as pd
 import jdatetime as jdt
 
 from django.db.models import Q
-
-from samaneh.celery import app
 
 from core.utils import MongodbInterface, run_main_task
 from core.configs import (
@@ -115,7 +113,7 @@ def stock_option_value_history_main():
     stock_option_value_change()
 
 
-@app.task(base=Singleton, name="stock_option_value_history_task")
+@shared_task(name="stock_option_value_history_task")
 def stock_option_value_history():
 
     run_main_task(

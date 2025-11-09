@@ -1,9 +1,8 @@
 from datetime import datetime
 import jdatetime
-from celery_singleton import Singleton
-from playwright.sync_api import sync_playwright
+from celery import shared_task
 
-from samaneh.celery import app
+from playwright.sync_api import sync_playwright
 
 from core.utils import run_main_task
 from domestic_market.models import DomesticDollarPrice
@@ -21,10 +20,11 @@ def update_azad_price(last_dollar: DomesticDollarPrice, today_price_date):
         context = browser.new_context()
         page = context.new_page()
 
-        page.goto("https://www.tgju.org/", wait_until="networkidle")
+        page.goto("https://www.tgju.org/", wait_until="networkidle", timeout=60000)
 
         page.wait_for_selector(
-            "xpath=/html/body/main/div[1]/div[2]/div/ul/li[6]/span[1]/span"
+            "xpath=/html/body/main/div[1]/div[2]/div/ul/li[6]/span[1]/span",
+            timeout=30000,
         )
 
         element = page.query_selector(
@@ -62,10 +62,11 @@ def update_nima_price(last_dollar, today_price_date):
         )
         page = context.new_page()
 
-        page.goto("https://ice.ir/", wait_until="networkidle")
+        page.goto("https://ice.ir/", wait_until="networkidle", timeout=60000)
 
         page.wait_for_selector(
-            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]"
+            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]",
+            timeout=30000,
         )
 
         table = page.query_selector(
@@ -117,7 +118,7 @@ def get_dollar_daily_price_main():
         update_nima_price(last_dollar, today_price_date)
 
 
-@app.task(base=Singleton, name="get_dollar_daily_price_task", expires=120)
+@shared_task(name="get_dollar_daily_price_task", expires=120)
 def get_dollar_daily_price():
 
     run_main_task(

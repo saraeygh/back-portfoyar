@@ -1,11 +1,10 @@
-from celery_singleton import Singleton
+from celery import shared_task
+
 
 from uuid import uuid4
 
 import jdatetime as jdt
 
-
-from samaneh.celery import app
 from core.configs import (
     AUTO_MODE,
     MANUAL_MODE,
@@ -180,7 +179,7 @@ def dashboard_market_money_flow_main(run_mode: str):
         mongo_conn.collection.insert_one(doc)
 
 
-@app.task(base=Singleton, name="dashboard_market_money_flow_task", expires=60)
+@shared_task(name="dashboard_market_money_flow_task", expires=60)
 def dashboard_market_money_flow(run_mode: str = AUTO_MODE):
 
     run_main_task(

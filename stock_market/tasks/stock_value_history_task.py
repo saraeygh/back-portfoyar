@@ -1,11 +1,9 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime, timedelta
 import jdatetime
 from tqdm import tqdm
 from django.db.models import Avg
-
-from samaneh.celery import app
 
 from core.utils import MongodbInterface, run_main_task
 from core.configs import (
@@ -67,7 +65,7 @@ def stock_value_history_main():
     stock_value_change()
 
 
-@app.task(base=Singleton, name="stock_value_history_task")
+@shared_task(name="stock_value_history_task")
 def stock_value_history():
 
     run_main_task(

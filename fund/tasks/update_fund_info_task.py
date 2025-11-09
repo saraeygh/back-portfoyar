@@ -1,9 +1,8 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime as dt
 from tqdm import tqdm
 
-from samaneh.celery import app
 from core.configs import FUND_MONGO_DB, FUND_ALL_DATA_COLLECTION
 from core.utils import MongodbInterface, run_main_task
 
@@ -69,7 +68,7 @@ def update_fund_info_main():
         )
 
 
-@app.task(base=Singleton, name="update_fund_info_task")
+@shared_task(name="update_fund_info_task")
 def update_fund_info():
 
     run_main_task(

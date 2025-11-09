@@ -1,11 +1,8 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
 import jdatetime
 from tqdm import tqdm
-
-
-from samaneh.celery import app
 
 from core.configs import OPTION_MONGO_DB, OPTION_DATA_COLLECTION
 from core.utils import (
@@ -164,7 +161,7 @@ def get_option_history_main():
     remove_expired_options_history()
 
 
-@app.task(base=Singleton, name="get_option_history_task")
+@shared_task(name="get_option_history_task")
 def get_option_history():
 
     run_main_task(

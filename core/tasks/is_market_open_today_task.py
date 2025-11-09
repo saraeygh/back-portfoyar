@@ -1,6 +1,5 @@
 import time
-from celery_singleton import Singleton
-from samaneh.celery import app
+from celery import shared_task
 
 from core.configs import (
     CORE_MONGO_DB,
@@ -18,7 +17,7 @@ def is_market_open_today_main():
         db_name=CORE_MONGO_DB, collection_name=CORE_MARKET_STATE_COLLECTION
     )
 
-    time.sleep(30)
+    time.sleep(15)
 
     market_state = is_market_open()
 
@@ -30,7 +29,7 @@ def is_market_open_today_main():
     )
 
 
-@app.task(base=Singleton, name="is_market_open_today_task")
+@shared_task(name="is_market_open_today_task")
 def is_market_open_today():
     run_main_task(
         main_task=is_market_open_today_main,

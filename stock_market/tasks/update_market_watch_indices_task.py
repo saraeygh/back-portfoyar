@@ -1,10 +1,8 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
 import jdatetime as jdt
 from tqdm import tqdm
-
-from samaneh.celery import app
 
 from core.utils import MongodbInterface, run_main_task, is_market_open_today
 from core.configs import (
@@ -248,7 +246,7 @@ def update_market_watch_indices_main(run_mode):
             mongo_conn.insert_docs_into_collection(documents=index_df)
 
 
-@app.task(base=Singleton, name="update_market_watch_indices_task", expires=20)
+@shared_task(name="update_market_watch_indices_task", expires=20)
 def update_market_watch_indices(run_mode: str = AUTO_MODE):
 
     run_main_task(

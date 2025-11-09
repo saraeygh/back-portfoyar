@@ -1,5 +1,4 @@
-from celery_singleton import Singleton
-from samaneh.celery import app
+from celery import shared_task
 
 from core.configs import AUTO_MODE, MANUAL_MODE
 from core.utils import run_main_task, is_market_open_today
@@ -16,7 +15,7 @@ def dashboard_change_percent_ranges_count_main(run_mode: str):
         change_percent_ranges_count()
 
 
-@app.task(base=Singleton, name="dashboard_change_percent_ranges_count_task", expires=60)
+@shared_task(name="dashboard_change_percent_ranges_count_task", expires=60)
 def dashboard_change_percent_ranges_count(run_mode: str = AUTO_MODE):
 
     run_main_task(

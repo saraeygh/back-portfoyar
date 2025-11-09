@@ -33,7 +33,6 @@ dependencies = [
     "django-apscheduler>=0.7.0",
     "celery>=5.5.3",
     "django-celery-beat>=2.8.1",
-    "celery-singleton>=0.3.1",
     "flower>=2.0.1",
     "django-celery-results>=2.6.0",
 ]

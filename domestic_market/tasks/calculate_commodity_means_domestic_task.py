@@ -1,4 +1,4 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
 from datetime import datetime, timedelta
@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 from django.db.models import Sum
 
-from samaneh.celery import app
 from core.utils import MongodbInterface, get_deviation_percent, run_main_task
 from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_MILLION_TOMAN
 
@@ -153,7 +152,7 @@ def calculate_commodity_mean_domestic_main():
         calculate_mean(duration, collection_name, producer_id_list)
 
 
-@app.task(base=Singleton, name="calculate_commodity_mean_domestic_task")
+@shared_task(name="calculate_commodity_mean_domestic_task")
 def calculate_commodity_mean_domestic():
 
     run_main_task(

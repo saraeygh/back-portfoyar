@@ -1,9 +1,6 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
-
-
-from samaneh.celery import app
 
 from core.utils import (
     TSETMC_REQUEST_HEADERS,
@@ -176,7 +173,7 @@ def update_option_data_from_tse_main(run_mode):
         populate_all_option_strategy_sync(option_data)
 
 
-@app.task(base=Singleton, name="update_option_data_from_tse_task", expires=15)
+@shared_task(name="update_option_data_from_tse_task", expires=15)
 def update_option_data_from_tse(run_mode: str = AUTO_MODE):
 
     run_main_task(

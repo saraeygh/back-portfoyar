@@ -1,5 +1,4 @@
-from celery_singleton import Singleton
-from samaneh.celery import app
+from celery import shared_task
 
 from core.configs import FUND_MONGO_DB, FUND_ALL_DATA_COLLECTION, MANUAL_MODE, AUTO_MODE
 
@@ -24,7 +23,7 @@ def get_all_fund_detail_main(run_mode):
             mongo_conn.insert_docs_into_collection(documents=funds)
 
 
-@app.task(base=Singleton, name="get_all_fund_detail_task", expires=300)
+@shared_task(name="get_all_fund_detail_task", expires=300)
 def get_all_fund_detail(run_mode: str = AUTO_MODE):
 
     run_main_task(

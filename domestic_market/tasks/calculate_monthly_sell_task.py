@@ -1,11 +1,10 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import jdatetime as jdt
 from tqdm import trange
 
 from django.db.models import Avg, Sum, Min, Max
 
-from samaneh.celery import app
 from core.utils import run_main_task
 
 from domestic_market.models import (
@@ -262,7 +261,7 @@ def calculate_monthly_sell_domestic_main():
         start_date = end_date + jdt.timedelta(days=1)
 
 
-@app.task(base=Singleton, name="calculate_monthly_sell_domestic_task")
+@shared_task(name="calculate_monthly_sell_domestic_task")
 def calculate_monthly_sell_domestic():
 
     run_main_task(

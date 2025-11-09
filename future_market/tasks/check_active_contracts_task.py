@@ -1,8 +1,6 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
-
-from samaneh.celery import app
 
 from core.utils import get_http_response, run_main_task
 
@@ -47,7 +45,7 @@ def check_future_active_contracts_main():
         raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
 
 
-@app.task(base=Singleton, name="check_future_active_contracts_task")
+@shared_task(name="check_future_active_contracts_task")
 def check_future_active_contracts():
 
     run_main_task(
@@ -83,7 +81,7 @@ def check_option_active_contracts_main():
         raise ValueError(f"deactivated_contracts = {deactivated_contracts}")
 
 
-@app.task(base=Singleton, name="check_option_active_contracts_task")
+@shared_task(name="check_option_active_contracts_task")
 def check_option_active_contracts():
 
     run_main_task(

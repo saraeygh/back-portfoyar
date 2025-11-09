@@ -1,8 +1,6 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import pandas as pd
-
-from samaneh.celery import app
 
 from core.configs import (
     STOCK_MONGO_DB,
@@ -177,7 +175,7 @@ def update_instrument_roi_main(run_mode):
         calculate_industry_duration_roi(durations=durations)
 
 
-@app.task(base=Singleton, name="update_instrument_roi_task", expires=300)
+@shared_task(name="update_instrument_roi_task", expires=300)
 def update_instrument_roi(run_mode: str = AUTO_MODE):
 
     run_main_task(

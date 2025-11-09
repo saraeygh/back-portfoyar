@@ -1,11 +1,8 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime, date
 from tqdm import tqdm
 import pandas as pd
-
-
-from samaneh.celery import app
 
 from core.utils import run_main_task
 
@@ -96,7 +93,7 @@ def update_stock_daily_history_main():
         raise Exception("MARKET WAS NOT OPEN TODAY!!!")
 
 
-@app.task(base=Singleton, name="update_stock_daily_history_task")
+@shared_task(name="update_stock_daily_history_task")
 def update_stock_daily_history():
 
     run_main_task(

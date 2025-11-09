@@ -1,5 +1,4 @@
-from celery_singleton import Singleton
-from samaneh.celery import app
+from celery import shared_task
 
 from core.configs import AUTO_MODE, MANUAL_MODE
 from core.utils import run_main_task, is_market_open_today
@@ -16,7 +15,7 @@ def dashboard_last_close_price_main(run_mode: str):
         last_close_price()
 
 
-@app.task(base=Singleton, name="dashboard_last_close_price_task", expires=60)
+@shared_task(name="dashboard_last_close_price_task", expires=60)
 def dashboard_last_close_price(run_mode: str = AUTO_MODE):
 
     run_main_task(

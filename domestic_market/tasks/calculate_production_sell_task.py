@@ -1,11 +1,10 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from tqdm import tqdm
 import jdatetime as jdt
 
 from django.db.models import Sum
 
-from samaneh.celery import app
 from core.utils import MongodbInterface, run_main_task
 from core.configs import DOMESTIC_MONGO_DB, HEZAR_RIAL_TO_BILLION_TOMAN
 
@@ -87,7 +86,7 @@ def calculate_production_sell_domestic_main():
     mongo_conn.insert_docs_into_collection(documents=production_sell_list)
 
 
-@app.task(base=Singleton, name="calculate_production_sell_domestic_task")
+@shared_task(name="calculate_production_sell_domestic_task")
 def calculate_production_sell_domestic():
 
     run_main_task(

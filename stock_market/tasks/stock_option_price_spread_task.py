@@ -1,9 +1,7 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 import jdatetime as jdt
 import pandas as pd
-
-from samaneh.celery import app
 
 from core.configs import (
     STOCK_OPTION_STRIKE_DEVIATION,
@@ -348,7 +346,7 @@ def stock_option_price_spread_main(run_mode):
             mongo_conn.insert_docs_into_collection(documents=last_spreads)
 
 
-@app.task(base=Singleton, name="stock_option_price_spread_task", expires=60)
+@shared_task(name="stock_option_price_spread_task", expires=60)
 def stock_option_price_spread(run_mode: str = AUTO_MODE):
 
     run_main_task(

@@ -1,11 +1,9 @@
-from celery_singleton import Singleton
+from celery import shared_task
 
 from datetime import datetime
 import json
 import requests
 
-
-from samaneh.celery import app
 from core.utils import RedisInterface, MongodbInterface, run_main_task
 from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB
 
@@ -103,7 +101,7 @@ def update_derivative_info_main():
         update_info()
 
 
-@app.task(base=Singleton, name="update_derivative_info_task", expires=60)
+@shared_task(name="update_derivative_info_task", expires=60)
 def update_derivative_info():
 
     run_main_task(
