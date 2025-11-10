@@ -116,8 +116,6 @@ services:
     entrypoint: ["/code/infra/entrypoints/flower_test.sh"]
     networks:
       - test
-    ports:
-      - "5555:5555"
     restart: unless-stopped
     logging:
       driver: "json-file"

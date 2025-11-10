@@ -67,14 +67,14 @@ def top_stocks_money_flow(market_watch):
     money_flow = [
         {
             "id": uuid4().hex,
-            "name": "۱۰۰ نماد بزرگ",
+            "name": "صد نماد بزرگ",
             "money_flow": round(upper_stocks["money_flow"].sum(), 2),
             "value": round(upper_stocks["value"].sum() / RIAL_TO_BILLION_TOMAN, 2),
             "volume": round(upper_stocks["volume"].sum() / TO_BILLION, 2),
         },
         {
             "id": uuid4().hex,
-            "name": "۱۰۰ نماد کوچک",
+            "name": "صد نماد کوچک",
             "money_flow": round(lower_stocks["money_flow"].sum(), 2),
             "value": round(lower_stocks["value"].sum() / RIAL_TO_BILLION_TOMAN, 2),
             "volume": round(lower_stocks["volume"].sum() / TO_BILLION, 2),
