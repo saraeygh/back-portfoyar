@@ -56,7 +56,6 @@ RUN ["mkdir", "-p", "logs"]
 
 # GRANT EXCUTE PERMISSSION TO ENTRYPOINTS FILES
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
-RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 
 # PYTHON CONFIGS
 ENV PYTHONDONTWRITEBYTECODE=1

@@ -54,7 +54,6 @@ COPY . /code/
 RUN ["mkdir", "-p", "logs"]
 
 RUN ["chmod", "+x", "./infra/entrypoints/api_test.sh"]
-RUN ["chmod", "+x", "./infra/entrypoints/apscheduler_test.sh"]
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

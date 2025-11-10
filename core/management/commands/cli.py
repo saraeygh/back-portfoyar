@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from core.utils import clear_redis_cache, replace_all_arabic_letters_in_db
 from core.configs import MANUAL_MODE
 
-from core.tasks import remove_django_job_execution_history, is_market_open_today
+from core.tasks import is_market_open_today
 from account.tasks import disable_expired_subscription
 from account.utils import create_sub_for_all_no_sub_users, add_days_to_subs
 
@@ -412,8 +412,7 @@ def other_cli(clear_cmd):
             "all) Run all commands",
             "1) Clear redis cache",
             "2) Relpace all arabic letters",
-            "3) remove_django_job_execution_history",
-            "4) is_market_open_today",
+            "3) is_market_open_today",
             "0) Back",
             sep="\n",
         )
@@ -423,14 +422,11 @@ def other_cli(clear_cmd):
             case "all":
                 clear_redis_cache()
                 replace_all_arabic_letters_in_db()
-                remove_django_job_execution_history()
             case "1":
                 clear_redis_cache()
             case "2":
                 replace_all_arabic_letters_in_db()
             case "3":
-                remove_django_job_execution_history()
-            case "4":
                 is_market_open_today()
             case "0":
                 break

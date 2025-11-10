@@ -17,5 +17,4 @@ urlpatterns = [
     path("api/payment/", include("payment.urls")),
     path("api/stock-market/", include("stock_market.urls")),
     path("api/support/", include("support.urls")),
-    path("", include("django_prometheus.urls")),
 ]

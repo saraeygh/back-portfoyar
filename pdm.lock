@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:31b1d0d6791b02cef93fd3a28cd832605e31ed127d7ebb2ad6291fd7517ef18a"
+content_hash = "sha256:f353c9877b98c85287e01c30f2ba306fb0cbbe8113fabe1e3a9c61c86ca9e09d"
 
 [[metadata.targets]]
 requires_python = "==3.12.3"
@@ -26,22 +26,6 @@ dependencies = [
 files = [
     {file = "amqp-5.3.1-py3-none-any.whl", hash = "sha256:43b3319e1b4e7d1251833a93d672b4af1e40f3d632d479b98661a95f117880a2"},
     {file = "amqp-5.3.1.tar.gz", hash = "sha256:cddc00c725449522023bad949f70fff7b48f0b1ade74d170a6f10ab044739432"},
-]
-
-[[package]]
-name = "apscheduler"
-version = "3.11.1"
-requires_python = ">=3.8"
-summary = "In-process task scheduler with Cron-like capabilities"
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "backports-zoneinfo; python_version < \"3.9\"",
-    "tzlocal>=3.0",
-]
-files = [
-    {file = "apscheduler-3.11.1-py3-none-any.whl", hash = "sha256:6162cb5683cb09923654fa9bdd3130c4be4bfda6ad8990971c9597ecd52965d2"},
-    {file = "apscheduler-3.11.1.tar.gz", hash = "sha256:0db77af6400c84d1747fe98a04b8b58f0080c77d11d338c4f507a9752880f221"},
 ]
 
 [[package]]
@@ -286,21 +270,6 @@ files = [
 ]
 
 [[package]]
-name = "django-apscheduler"
-version = "0.7.0"
-summary = "APScheduler for Django"
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "apscheduler<4.0,>=3.2",
-    "django>=4.2",
-]
-files = [
-    {file = "django_apscheduler-0.7.0-py3-none-any.whl", hash = "sha256:869d489775420245c9455d55e35f663c856a33ebfc996d92938f786ffb8730ce"},
-    {file = "django_apscheduler-0.7.0.tar.gz", hash = "sha256:30d61a2ba98615922fc2c9782f84bba342ec0c5ed63384d686d71ea90a1a4318"},
-]
-
-[[package]]
 name = "django-celery-beat"
 version = "2.8.1"
 requires_python = ">=3.8"
@@ -381,21 +350,6 @@ dependencies = [
 files = [
     {file = "django-jalali-6.0.1.tar.gz", hash = "sha256:eff215be352ccee074c4b6b7217dba8ff878c1aeff038b77d46975e4969a4a63"},
     {file = "django_jalali-6.0.1-py3-none-any.whl", hash = "sha256:d5c98d88e410b4a86d1de2377f07a49beb8b76ca9f9f94348e6f9b5302474fb3"},
-]
-
-[[package]]
-name = "django-prometheus"
-version = "2.4.1"
-summary = "Django middlewares to monitor your application with Prometheus.io."
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "Django<6.0,>=4.2",
-    "prometheus-client>=0.7",
-]
-files = [
-    {file = "django_prometheus-2.4.1-py2.py3-none-any.whl", hash = "sha256:7fe5af7f7c9ad9cd8a429fe0f3f1bf651f0e244f77162147869eab7ec09cc5e7"},
-    {file = "django_prometheus-2.4.1.tar.gz", hash = "sha256:073628243d2a6de6a8a8c20e5b512872dfb85d66e1b60b28bcf1eca0155dad95"},
 ]
 
 [[package]]
@@ -1270,21 +1224,6 @@ marker = "python_full_version == \"3.12.3\""
 files = [
     {file = "tzdata-2025.2-py2.py3-none-any.whl", hash = "sha256:1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8"},
     {file = "tzdata-2025.2.tar.gz", hash = "sha256:b60a638fcc0daffadf82fe0f57e53d06bdec2f36c4df66280ae79bce6bd6f2b9"},
-]
-
-[[package]]
-name = "tzlocal"
-version = "5.3.1"
-requires_python = ">=3.9"
-summary = "tzinfo object for the local timezone"
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "tzdata; platform_system == \"Windows\"",
-]
-files = [
-    {file = "tzlocal-5.3.1-py3-none-any.whl", hash = "sha256:eb1a66c3ef5847adf7a834f1be0800581b683b5608e74f86ecbcef8ab91bb85d"},
-    {file = "tzlocal-5.3.1.tar.gz", hash = "sha256:cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd"},
 ]
 
 [[package]]
