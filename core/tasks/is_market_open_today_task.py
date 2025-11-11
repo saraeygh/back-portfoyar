@@ -31,7 +31,4 @@ def is_market_open_today_main():
 
 @shared_task(name="is_market_open_today_task")
 def is_market_open_today():
-    run_main_task(
-        main_task=is_market_open_today_main,
-        daily=True,
-    )
+    run_main_task(main_task=is_market_open_today_main)
