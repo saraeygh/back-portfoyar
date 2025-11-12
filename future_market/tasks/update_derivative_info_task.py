@@ -1,11 +1,13 @@
-from celery import shared_task
-
-from datetime import datetime
 import json
 import requests
 
+from celery import shared_task
+
+from datetime import datetime
+import jdatetime as jdt
+
 from core.utils import RedisInterface, MongodbInterface, run_main_task
-from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB
+from core.configs import KEY_WITH_EX_REDIS_DB, FUTURE_MONGO_DB, TEHRAN_TZ
 
 
 IS_RUNNING = "derivatives_is_running"
@@ -65,6 +67,9 @@ def update_info():
     redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
     mongo_conn = MongodbInterface(db_name=FUTURE_MONGO_DB)
     for data in event_stream:
+        if jdt.datetime.now(tz=TEHRAN_TZ).hour >= 18:
+            break
+
         redis_conn.client.set(name=IS_RUNNING, value=0, ex=60)
         try:
             data = json.loads(data.decode("utf-8").split("data:")[1])
