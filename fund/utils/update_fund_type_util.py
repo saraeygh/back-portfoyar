@@ -7,7 +7,7 @@ from . import FIPIRAN_HEADERS
 
 
 def update_fund_type():
-    FUND_TYPE_URL = "https://fund.fipiran.ir/api/v1/fund/fundtype"
+    FUND_TYPE_URL = "https://fipiran.ir/services/fund/fundtype"
 
     fund_types = get_http_response(req_url=FUND_TYPE_URL, req_headers=FIPIRAN_HEADERS)
     fund_types = fund_types.json().get("items")
