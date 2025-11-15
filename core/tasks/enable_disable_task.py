@@ -1,30 +1,24 @@
 import jdatetime as jdt
 
 from celery import shared_task
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from django_celery_beat.models import PeriodicTask
 
 from core.configs import TEHRAN_TZ
 
 
-def enable_task(frequency: int, task_name: str):
-    schedule, _ = IntervalSchedule.objects.get_or_create(
-        every=frequency,
-        period=IntervalSchedule.SECONDS,
-    )
-
-    task, _ = PeriodicTask.objects.get_or_create(
-        name=task_name, defaults={"task": task_name, "interval": schedule}
-    )
-    task.enabled = True
-    task.save()
+def enable_task(task_name: str):
+    try:
+        task = PeriodicTask.objects.filter(name=task_name)
+        task.update(enabled=True)
+    except Exception:
+        pass
 
 
 def disable_task(task_name: str):
     try:
-        task = PeriodicTask.objects.get(name=task_name)
-        task.enabled = False
-        task.save()
-    except PeriodicTask.DoesNotExist:
+        task = PeriodicTask.objects.filter(name=task_name)
+        task.update(enabled=False)
+    except Exception:
         pass
 
 
@@ -34,17 +28,19 @@ def enable_tasks_for_specific_time():
     hour = now.hour
     minute = now.minute
 
+    enable_task(task_name="update_option_data_from_tse_task")
+
     if hour == 8 and minute == 30:
         print(f"Enabling tasks at {hour}:{minute} AM")
-        enable_task(frequency=45, task_name="update_market_watch_task")
+        enable_task(task_name="update_market_watch_task")
 
     if hour == 9 and minute == 0:
         print(f"Enabling tasks at {hour}:{minute} AM")
-        enable_task(frequency=40, task_name="update_option_data_from_tse_task")
+        enable_task(task_name="update_option_data_from_tse_task")
 
     if hour == 11 and minute == 0:
         print(f"Enabling tasks at {hour}:{minute} AM")
-        enable_task(frequency=55, task_name="update_future_task")
+        enable_task(task_name="update_future_task")
 
 
 @shared_task(name="disable_tasks_for_specific_time_task")
