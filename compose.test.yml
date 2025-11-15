@@ -56,6 +56,7 @@ services:
     volumes:
       - ticket_appendix:/code/media/tickets/
       - django_logs:/code/logs/
+      - por_static:/code/static
     networks:
       - test
     depends_on:
@@ -134,3 +135,5 @@ volumes:
   mongodb_test:
   ticket_appendix:
   django_logs:
+  por_static:
+    name: por_static
