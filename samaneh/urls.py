@@ -17,4 +17,6 @@ urlpatterns = [
     path("api/payment/", include("payment.urls")),
     path("api/stock-market/", include("stock_market.urls")),
     path("api/support/", include("support.urls")),
+    # DJANGO SILK
+    path("silk/", include("silk.urls", namespace="silk")),
 ]
