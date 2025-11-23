@@ -46,6 +46,12 @@ STRATEGIES = [
 ]
 
 
+def populate_all_option_strategy_sync(option_data):
+
+    for strategy in STRATEGIES:
+        strategy(option_data, OPTION_MONGO_DB)
+
+
 def populate_all_option_strategy_async(option_data):
     total_cores = os.cpu_count()
     used_cores = total_cores // 2
@@ -55,9 +61,3 @@ def populate_all_option_strategy_async(option_data):
 
         pool.close()
         pool.join()
-
-
-def populate_all_option_strategy_sync(option_data):
-
-    for strategy in STRATEGIES:
-        strategy(option_data, OPTION_MONGO_DB)

@@ -829,3 +829,103 @@ class MarriedPut:
         )
 
         return results
+
+
+class Collar:
+    def __init__(
+        self,
+        put_strike,
+        put_best_sell_price,
+        call_strike,
+        call_best_buy_price,
+        asset_price,
+    ) -> None:
+        self.put_strike = put_strike
+        self.put_best_sell_price = put_best_sell_price
+        self.call_strike = call_strike
+        self.call_best_buy_price = call_best_buy_price
+        self.asset_price = asset_price
+        self.name = "collar"
+        STRATEGY_NAME_LIST.append(self.name)
+        self.interval = [
+            (-np.inf, put_strike),
+            (put_strike, call_strike),
+            (call_strike, np.inf),
+        ]
+
+    def get_slop(self):
+        return {
+            str((-np.inf, self.put_strike)): 0,
+            str((self.put_strike, self.call_strike)): 1,
+            str((self.call_strike, np.inf)): 0,
+        }
+
+    def is_profit_unlimited(self):
+        return False
+
+    def is_loss_unlimited(self):
+        return False
+
+    def is_limited(self):
+        return True
+
+    def get_max_loss(self):
+        return (self.put_strike - self.asset_price) + (
+            self.call_best_buy_price - self.put_best_sell_price
+        )
+
+    def get_max_profit(self):
+        return (self.asset_price - self.call_strike) + (
+            self.call_best_buy_price - self.put_best_sell_price
+        )
+
+    def get_break_even(self):
+        return self.asset_price - self.put_best_sell_price + self.call_best_buy_price
+
+    def get_break_even_points(self):
+        return [
+            {
+                "x": self.get_break_even(),
+                "y": 0,
+            }
+        ]
+
+    def get_profit_loss_ranges(self):
+        return [
+            ((-np.inf, self.get_break_even()), "negative"),
+            ((self.get_break_even(), np.inf), "positive"),
+        ]
+
+    def get_coordinate(self):
+        results = []
+        results.append(
+            {
+                "x_1": 0,
+                "y_1": self.get_max_loss(),
+                "x_2": self.put_strike,
+                "y_2": self.get_max_loss(),
+                "slope": 0,
+            }
+        )
+
+        results.append(
+            {
+                "x_1": self.put_strike,
+                "y_1": self.get_max_loss(),
+                "x_2": self.call_strike,
+                "y_2": self.get_max_profit(),
+                "slope": 1,
+            }
+        )
+
+        results.append(
+            {
+                "x_1": self.call_strike,
+                "y_1": self.get_max_profit(),
+                "x_2": self.call_strike * EXTEND_POSITIVE_RANGE_COEFFICIENT,
+                "y_2": self.get_max_profit(),
+                "slope": 0,
+            }
+        )
+
+        return results

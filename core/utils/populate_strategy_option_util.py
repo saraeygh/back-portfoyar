@@ -53,7 +53,9 @@ SHORT_BUTTERFLY_SEQ = 17
 SHORT_BUTTERFLY_DESC = "فروش کال با قیمت اعمال پایین‌ و دو بار خرید کال با قیمت اعمال میانه و فروش کال با قیمت اعمال بالا"
 
 COLLAR_SEQ = 18
-COLLAR_DESC = "فروش کال با قیمت اعمال پایین‌تر و دو بار خرید کال با قیمت اعمال بالاتر"
+COLLAR_DESC = (
+    "خرید سهم و خرید پوت با قیمت اعمال پایین‌تر و فروش کال با قیمت اعمال بالاتر"
+)
 
 STRATEGIES = {
     "covered_call": {
@@ -245,7 +247,7 @@ STRATEGIES = {
     #
     "collar": {
         "name": "کولار",
-        "profit_status": "unlimited_profit",
+        "profit_status": "limited_profit",
         "risk_levels": ["low_risk", "high_risk"],
         "sequence": COLLAR_SEQ,
         "desc": COLLAR_DESC,

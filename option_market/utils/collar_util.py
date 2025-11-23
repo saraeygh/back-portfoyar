@@ -1,18 +1,28 @@
 from uuid import uuid4
+from itertools import pairwise
+
 from tqdm import tqdm
+
 from core.configs import RIAL_TO_BILLION_TOMAN
-from core.utils import MongodbInterface
+from core.utils import MongodbInterface, get_deviation_percent
 
 from . import (
-    AddOption,
-    Strategy,
-    CartesianProduct,
-    CALL_BUY_COLUMN_MAPPING,
+    Collar,
+    PUT_BUY_COLUMN_MAPPING,
     CALL_SELL_COLUMN_MAPPING,
+    BASE_EQUITY_BUY_COLUMN_MAPPING,
+    BUY,
+    PUT,
+    SELL,
+    CALL,
     get_distinc_end_date_options,
     add_details,
     filter_rows_with_nan_values,
     get_link_str,
+    add_option_fee,
+    add_base_equity_fee,
+    get_profits,
+    get_fee_percent,
 )
 
 
@@ -23,18 +33,70 @@ REQUIRED_COLUMNS = [
     #
     "call_value",
     *list(CALL_SELL_COLUMN_MAPPING.values()),
-    *list(CALL_BUY_COLUMN_MAPPING.values()),
+    #
+    "put_value",
+    *list(PUT_BUY_COLUMN_MAPPING.values()),
     #
     "base_equity_symbol",
     "base_equity_last_price",
 ]
 
 
+def add_profits_with_fee(
+    remained_day,
+    call_strike,
+    call_best_buy_price,
+    put_strike,
+    put_best_sell_price,
+    base_equity_last_price,
+):
+    profits = {
+        "final_profit": 0,
+        "required_change": 0,
+        "remained_day": remained_day,
+        "monthly_profit": 0,
+        "yearly_profit": 0,
+        "fee": 0,
+    }
+
+    if base_equity_last_price != 0 and base_equity_last_price < call_strike:
+        profits["required_change"] = get_deviation_percent(
+            call_strike, base_equity_last_price
+        )
+
+    n_base_equity_price = add_base_equity_fee(base_equity_last_price, BUY)
+
+    _, n_put_premium = add_option_fee(put_strike, put_best_sell_price, BUY, PUT)
+
+    n_call_strike, n_call_premium = add_option_fee(
+        call_strike, call_best_buy_price, SELL, CALL
+    )
+
+    net_profit = (n_base_equity_price - n_call_strike) + (
+        n_call_premium - n_put_premium
+    )
+    net_pay = abs(n_call_premium - (n_base_equity_price + n_put_premium))
+
+    profits = get_profits(profits, net_profit, net_pay, remained_day)
+    profits = get_fee_percent(
+        profits,
+        strike_sum=sum([put_strike, call_strike]),
+        premium_sum=sum([put_best_sell_price, call_best_buy_price]),
+        net_pay=net_pay,
+    )
+
+    return profits
+
+
 def collar(option_data, mongo_db: str):
     distinct_end_date_options = option_data.loc[
         (option_data["call_best_buy_price"] > 0)
-        & (option_data["call_best_sell_price"] > 0)
         & (option_data["call_last_update"] > 90000)
+        & (option_data["put_best_sell_price"] > 0)
+        & (option_data["put_last_update"] > 90000)
+        & (option_data["base_equity_last_update"] > 90000)
+        & (option_data["base_equity_last_price"] > 0)
+        & (option_data["base_equity_best_sell_price"] > 0)
     ]
     distinct_end_date_options = get_distinc_end_date_options(
         option_data=distinct_end_date_options
@@ -46,85 +108,77 @@ def collar(option_data, mongo_db: str):
         if end_date_option.empty:
             continue
 
-        cartesians = CartesianProduct(dataframe=end_date_option)
-        cartesians = cartesians.get_cartesian_product()
-        if cartesians:
-            for _, row in cartesians[0].iterrows():
-                add_option = AddOption()
+        for current_row, next_row in pairwise(end_date_option.itertuples(index=False)):
+            put_strike = current_row.strike_price
+            put_best_sell_price = current_row.put_best_sell_price
 
-                low_strike = float(row.get("strike_price_1"))
-                low_premium = end_date_option[
-                    end_date_option["strike_price"] == low_strike
-                ]
-                low_premium = float(low_premium.get("call_best_buy_price").iloc[0])
-                add_option.add_call_sell(strike=low_strike, premium=low_premium)
+            call_strike = next_row.strike_price
+            call_best_buy_price = current_row.call_best_buy_price
 
-                high_strike = float(row.get("strike_price_0"))
-                high_premium = end_date_option[
-                    end_date_option["strike_price"] == high_strike
-                ]
-                high_premium = float(high_premium.get("call_best_sell_price").iloc[0])
-                add_option.add_call_buy(strike=high_strike, premium=high_premium)
-                add_option.add_call_buy(strike=high_strike, premium=high_premium)
+            base_equity_last_price = current_row.base_equity_last_price
 
-                option_list = add_option.get_option_list
-                strategy = Strategy(option_list=option_list, name="collar")
+            collar_strategy = Collar(
+                put_strike=put_strike,
+                put_best_sell_price=put_best_sell_price,
+                call_strike=call_strike,
+                call_best_buy_price=call_best_buy_price,
+                asset_price=base_equity_last_price,
+            )
+            coordinates = collar_strategy.get_coordinate()
 
-                coordinates = strategy.get_coordinate()
+            profit_factor = (
+                call_best_buy_price - put_best_sell_price
+            ) - base_equity_last_price
 
-                low_call_sell = end_date_option.loc[
-                    end_date_option["strike_price"] == low_strike
-                ].iloc[0]
+            document = {
+                "id": uuid4().hex,
+                "base_equity_symbol": current_row.base_equity_symbol,
+                "base_equity_last_price": base_equity_last_price,
+                "base_equity_best_sell_price": current_row.base_equity_best_sell_price,
+                "base_equity_order_book": current_row.base_equity_order_book,
+                "put_buy_symbol": current_row.put_symbol,
+                "put_best_sell_price": current_row.put_best_sell_price,
+                "put_buy_strike": put_strike,
+                "put_value": current_row.put_value / RIAL_TO_BILLION_TOMAN,
+                "call_sell_symbol": next_row.call_symbol,
+                "call_best_buy_price": next_row.call_best_buy_price,
+                "call_sell_strike": call_strike,
+                "call_value": next_row.call_value / RIAL_TO_BILLION_TOMAN,
+                **add_profits_with_fee(
+                    current_row.remained_day,
+                    call_strike,
+                    call_best_buy_price,
+                    put_strike,
+                    put_best_sell_price,
+                    base_equity_last_price,
+                ),
+                "end_date": current_row.end_date,
+                "profit_factor": profit_factor,
+                "strike_price_deviation": max(
+                    ((put_strike / base_equity_last_price) - 1),
+                    ((call_strike / base_equity_last_price) - 1),
+                ),
+                "coordinates": coordinates,
+                "actions": [
+                    {
+                        "link": get_link_str(current_row, "base_equity_ins_code"),
+                        "action": "خرید",
+                        **add_details(current_row, BASE_EQUITY_BUY_COLUMN_MAPPING),
+                    },
+                    {
+                        "link": get_link_str(current_row, "put_ins_code"),
+                        "action": "خرید",
+                        **add_details(current_row, PUT_BUY_COLUMN_MAPPING),
+                    },
+                    {
+                        "link": get_link_str(next_row, "call_ins_code"),
+                        "action": "فروش",
+                        **add_details(next_row, CALL_SELL_COLUMN_MAPPING),
+                    },
+                ],
+            }
 
-                high_call_buy = end_date_option.loc[
-                    end_date_option["strike_price"] == high_strike
-                ].iloc[0]
-
-                profit_factor = low_premium + -2 * high_premium
-                base_equity_last_price = row.get("base_equity_last_price")
-                document = {
-                    "id": uuid4().hex,
-                    "base_equity_symbol": row.get("base_equity_symbol"),
-                    "base_equity_last_price": base_equity_last_price,
-                    "base_equity_order_book": row.get("base_equity_order_book"),
-                    "call_sell_symbol_low": low_call_sell.get("call_symbol"),
-                    "call_best_buy_price_low": low_premium,
-                    "call_sell_strike_low": low_strike,
-                    "call_sell_value_low": low_call_sell.get("call_value")
-                    / RIAL_TO_BILLION_TOMAN,
-                    "call_buy_symbol_high": high_call_buy.get("call_symbol"),
-                    "call_best_sell_price_high": high_premium,
-                    "call_buy_strike_high": high_strike,
-                    "call_buy_value_low": high_call_buy.get("call_value")
-                    / RIAL_TO_BILLION_TOMAN,
-                    "remained_day": row.get("remained_day"),
-                    "end_date": row.get("end_date"),
-                    "profit_factor": profit_factor,
-                    "strike_price_deviation": max(
-                        ((low_strike / base_equity_last_price) - 1),
-                        ((high_strike / base_equity_last_price) - 1),
-                    ),
-                    "coordinates": coordinates,
-                    "actions": [
-                        {
-                            "action": "فروش",
-                            "link": get_link_str(low_call_sell, "call_ins_code"),
-                            **add_details(low_call_sell, CALL_SELL_COLUMN_MAPPING),
-                        },
-                        {
-                            "action": "خرید",
-                            "link": get_link_str(high_call_buy, "call_ins_code"),
-                            **add_details(high_call_buy, CALL_BUY_COLUMN_MAPPING),
-                        },
-                        {
-                            "action": "خرید",
-                            "link": get_link_str(high_call_buy, "call_ins_code"),
-                            **add_details(high_call_buy, CALL_BUY_COLUMN_MAPPING),
-                        },
-                    ],
-                }
-
-                result.append(document)
+            result.append(document)
 
     print(f"collar, {len(result)} records.")
     if result:

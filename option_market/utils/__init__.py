@@ -21,6 +21,7 @@ from .option_strategy_class_util import (
     AddOption,
     CoveredCall,
     Conversion,
+    Collar,
     MarriedPut,
     get_profit_range,
     get_distinc_end_date_options,
