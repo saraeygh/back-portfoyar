@@ -321,7 +321,8 @@ def get_low_risk_collar(strategy_key, table):
     strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
-            strategy_result["call_strike"] < strategy_result["base_equity_last_price"]
+            strategy_result["call_sell_strike"]
+            < strategy_result["base_equity_last_price"]
         ]
     strategy_result = strategy_result.to_dict(orient="records")
 
@@ -332,7 +333,8 @@ def get_high_risk_collar(strategy_key, table):
     strategy_result = get_strategy_result_from_mongo(strategy_key, table)
     if not strategy_result.empty:
         strategy_result = strategy_result[
-            strategy_result["call_strike"] > strategy_result["base_equity_last_price"]
+            strategy_result["call_sell_strike"]
+            > strategy_result["base_equity_last_price"]
         ]
     strategy_result = strategy_result.to_dict(orient="records")
 
