@@ -251,7 +251,7 @@ STRATEGIES = {
         "risk_levels": ["low_risk", "high_risk"],
         "sequence": COLLAR_SEQ,
         "desc": COLLAR_DESC,
-        "drop_cols": ["end_date", "call_sell_value_low", "call_buy_value_low"],
+        "drop_cols": ["end_date"],
     },
 }
 
