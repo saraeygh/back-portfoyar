@@ -59,7 +59,7 @@ def add_profits_with_fee(
         "fee": 0,
     }
 
-    if base_equity_last_price != 0 and base_equity_last_price < call_strike:
+    if base_equity_last_price < call_strike:
         profits["required_change"] = get_deviation_percent(
             call_strike, base_equity_last_price
         )
@@ -72,9 +72,10 @@ def add_profits_with_fee(
         call_strike, call_best_buy_price, SELL, CALL
     )
 
-    net_profit = (n_base_equity_price - n_call_strike) + (
+    net_profit = (n_call_strike - n_base_equity_price) + (
         n_call_premium - n_put_premium
     )
+
     net_pay = abs(n_call_premium - (n_base_equity_price + n_put_premium))
 
     profits = get_profits(profits, net_profit, net_pay, remained_day)
@@ -82,6 +83,7 @@ def add_profits_with_fee(
         profits,
         strike_sum=sum([put_strike, call_strike]),
         premium_sum=sum([put_best_sell_price, call_best_buy_price]),
+        base_equity=[BUY, base_equity_last_price],
         net_pay=net_pay,
     )
 
@@ -113,7 +115,7 @@ def collar(option_data, mongo_db: str):
             put_best_sell_price = current_row.put_best_sell_price
 
             call_strike = next_row.strike_price
-            call_best_buy_price = current_row.call_best_buy_price
+            call_best_buy_price = next_row.call_best_buy_price
 
             base_equity_last_price = current_row.base_equity_last_price
 
@@ -127,8 +129,8 @@ def collar(option_data, mongo_db: str):
             coordinates = collar_strategy.get_coordinate()
 
             profit_factor = (
-                call_best_buy_price - put_best_sell_price
-            ) - base_equity_last_price
+                call_best_buy_price - base_equity_last_price - put_best_sell_price
+            )
 
             document = {
                 "id": uuid4().hex,

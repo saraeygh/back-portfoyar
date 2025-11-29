@@ -880,15 +880,7 @@ class Collar:
         )
 
     def get_break_even(self):
-        return self.asset_price - self.put_best_sell_price + self.call_best_buy_price
-
-    def get_break_even_points(self):
-        return [
-            {
-                "x": self.get_break_even(),
-                "y": 0,
-            }
-        ]
+        return self.asset_price + self.put_best_sell_price - self.call_best_buy_price
 
     def get_profit_loss_ranges(self):
         return [
@@ -908,15 +900,36 @@ class Collar:
             }
         )
 
-        results.append(
-            {
-                "x_1": self.put_strike,
-                "y_1": self.get_max_loss(),
-                "x_2": self.call_strike,
-                "y_2": self.get_max_profit(),
-                "slope": 1,
-            }
-        )
+        if self.get_max_loss() * self.get_max_profit() > 0:
+            results.append(
+                {
+                    "x_1": self.put_strike,
+                    "y_1": self.get_max_loss(),
+                    "x_2": self.call_strike,
+                    "y_2": self.get_max_profit(),
+                    "slope": 1,
+                }
+            )
+        else:
+            results.append(
+                {
+                    "x_1": self.put_strike,
+                    "y_1": self.get_max_loss(),
+                    "x_2": self.get_break_even(),
+                    "y_2": 0,
+                    "slope": 1,
+                }
+            )
+
+            results.append(
+                {
+                    "x_1": self.get_break_even(),
+                    "y_1": 0,
+                    "x_2": self.call_strike,
+                    "y_2": self.get_max_profit(),
+                    "slope": 1,
+                }
+            )
 
         results.append(
             {
