@@ -870,13 +870,19 @@ class Collar:
         return True
 
     def get_max_loss(self):
-        return (self.put_strike - self.asset_price) + (
-            self.call_best_buy_price - self.put_best_sell_price
+        return -1 * (
+            self.asset_price
+            - self.put_strike
+            + self.put_best_sell_price
+            - self.call_best_buy_price
         )
 
     def get_max_profit(self):
-        return (self.asset_price - self.call_strike) + (
-            self.call_best_buy_price - self.put_best_sell_price
+        return (
+            self.call_strike
+            - self.asset_price
+            + self.call_best_buy_price
+            - self.put_best_sell_price
         )
 
     def get_break_even(self):
