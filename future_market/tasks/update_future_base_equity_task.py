@@ -50,9 +50,9 @@ BASE_EQUITY_KEYS = {
         UNIQUE_IDENTIFIER: ID,
         FILTER: filter_sandoq_base_equities,
         SYMBOLS: {
-            "LOTF": "ETC",  # LOTUS
-            "ROBA": "KB",  # KAHROBA
-            "JAVA": "JZ",  # JAVAHER
+            "LOTF": "ETC",  # LOTUS (TALA)
+            "ROBA": "KB",  # KAHROBA (KAHROBA)
+            "JAVA": "JZ",  # DENAYE ZAGROS (JAVAHER)
         },
     },
     #
@@ -63,7 +63,7 @@ BASE_EQUITY_KEYS = {
         FILTER: filter_gavahi_base_equities,
         SYMBOLS: {
             "IRK1A": "SAF",  # SAFFRON
-            "IRK1K": "GC",  # GOLD COIN
+            # "IRK1K": "GC",  # GOLD COIN
         },
     },
     #
@@ -73,8 +73,9 @@ BASE_EQUITY_KEYS = {
         UNIQUE_IDENTIFIER: CONTRACT_CODE,
         FILTER: filter_cdc_base_equities,
         SYMBOLS: {
-            "CD1GOB": "GB",  # GOLD BAR
-            "CD1SIB": "SIL",  # SILVER BAR
+            "GoldBar": "GB",  # GOLD BAR
+            "SilverBar": "SIL",  # SILVER BAR
+            "CopperCthd": "COP",  # Copper Cathode
         },
     },
 }
