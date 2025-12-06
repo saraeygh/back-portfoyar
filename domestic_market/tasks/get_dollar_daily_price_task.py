@@ -65,12 +65,12 @@ def update_nima_price(last_dollar, today_price_date):
         page.goto("https://ice.ir/", wait_until="networkidle", timeout=60000)
 
         page.wait_for_selector(
-            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]",
+            'xpath=//*[@id="root__layout"]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]',
             timeout=30000,
         )
 
         table = page.query_selector(
-            "xpath=/html/body/div[2]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]"
+            'xpath=//*[@id="root__layout"]/main/div/div[1]/div[1]/section/div[4]/div/div[1]/div[1]/div[2]/div/div/div[2]/div[2]'
         )
 
         child_divs = table.query_selector_all("div")
@@ -115,7 +115,12 @@ def get_dollar_daily_price_main():
     try:
         update_azad_price(last_dollar, today_price_date)
     except Exception:
+        pass
+
+    try:
         update_nima_price(last_dollar, today_price_date)
+    except Exception:
+        pass
 
 
 @shared_task(name="get_dollar_daily_price_task", expires=600)
