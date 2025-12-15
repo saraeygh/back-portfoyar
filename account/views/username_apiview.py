@@ -66,8 +66,9 @@ class UsernameAPIView(APIView):
                 {"message": "بعد از گذشت ۵ دقیقه دوباره تلاش کنید"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        sms_text = f"کد تایید پرتفویار \n {code}"
+        sms_text = (
+            f"کاربر گرامی پرتفویار، کد تایید شما: {code}\n@my.portfoyar.com #{code}"
+        )
         response = sms_online_send_sms(
             [new_username], sms_text, SEND_CHANGE_USERNAME_SMS
         )

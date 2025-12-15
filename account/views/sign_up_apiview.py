@@ -73,7 +73,9 @@ class SignUpAPIView(APIView):
         if not generated:
             return result
 
-        sms_text = f"کد تایید پرتفویار \n {code}"
+        sms_text = (
+            f"کاربر گرامی پرتفویار، کد تایید شما: {code}\n@my.portfoyar.com #{code}"
+        )
         response = sms_online_send_sms([username], sms_text, SEND_SIGNUP_SMS["name"])
         if response == SMS_ONLINE_SUCCESS_STATUS:
             return Response(
