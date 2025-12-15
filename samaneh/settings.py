@@ -174,7 +174,7 @@ if not DEBUG:
     REST_FRAMEWORK["DEFAULT_THROTTLE_CLASSES"] = [
         "rest_framework.throttling.AnonRateThrottle",
     ]
-    REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {"anon": "30/m"}
+    REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {"anon": "240/m"}
 
 
 DRF_EXCEL_DATE_FORMAT = "yyyy-mm-dd"

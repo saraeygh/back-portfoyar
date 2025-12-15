@@ -10,11 +10,11 @@ from rest_framework.throttling import AnonRateThrottle
 from core.utils import SEND_SIGNUP_SMS, persian_numbers_to_english
 from core.configs import (
     REDIS_SIGNUP_PREFIX,
-    MELIPAYAMAK_OK_RESPONSE,
+    SMS_ONLINE_SUCCESS_STATUS,
     SIGNUP_CODE_EXPIRY,
 )
 from account.utils import (
-    send_sms_verify_code,
+    sms_online_send_sms,
     check_daily_limitation,
     is_valid_username,
     code_token_generated_saved,
@@ -73,8 +73,9 @@ class SignUpAPIView(APIView):
         if not generated:
             return result
 
-        response = send_sms_verify_code(username, code, SEND_SIGNUP_SMS["name"])
-        if response == MELIPAYAMAK_OK_RESPONSE:
+        sms_text = f"کد تایید پرتفویار \n {code}"
+        response = sms_online_send_sms([username], sms_text, SEND_SIGNUP_SMS["name"])
+        if response == SMS_ONLINE_SUCCESS_STATUS:
             return Response(
                 {"message": "کد تایید ارسال شد", "token": token},
                 status=status.HTTP_200_OK,

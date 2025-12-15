@@ -1,4 +1,4 @@
-from .send_verify_code_util import send_sms_verify_code, send_email_verify_code
+from .send_verify_code_util import sms_online_send_sms, send_email_verify_code
 from .check_daily_limitation_util import check_daily_limitation
 from .validate_username_util import is_valid_username, is_valid_phone
 from .check_code_expiry_util import check_code_expiry

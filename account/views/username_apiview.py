@@ -13,8 +13,13 @@ from rest_framework.decorators import authentication_classes, permission_classes
 
 
 from core.utils import RedisInterface, SEND_CHANGE_USERNAME_SMS
-from core.configs import KEY_WITH_EX_REDIS_DB, CODE_RANGE_MIN, CODE_RANGE_MAX
-from account.utils import send_sms_verify_code, is_valid_username
+from core.configs import (
+    KEY_WITH_EX_REDIS_DB,
+    CODE_RANGE_MIN,
+    CODE_RANGE_MAX,
+    SMS_ONLINE_SUCCESS_STATUS,
+)
+from account.utils import sms_online_send_sms, is_valid_username
 
 redis_conn = RedisInterface(db=KEY_WITH_EX_REDIS_DB)
 
@@ -62,8 +67,11 @@ class UsernameAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        response = send_sms_verify_code(new_username, code, SEND_CHANGE_USERNAME_SMS)
-        if response == "Ok":
+        sms_text = f"کد تایید پرتفویار \n {code}"
+        response = sms_online_send_sms(
+            [new_username], sms_text, SEND_CHANGE_USERNAME_SMS
+        )
+        if response == SMS_ONLINE_SUCCESS_STATUS:
             return Response({"message": "کد تایید ارسال شد"}, status=status.HTTP_200_OK)
         return Response(
             {"message": "متاسفانه کد ارسال نشد، بعد از ۵ دقیقه دوباره تلاش کنید"},

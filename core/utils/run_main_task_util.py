@@ -38,9 +38,6 @@ def print_task_info(color: str = BLUE, name: str = ""):
 
 
 SERVERS = {
-    # "178.252.141.50": "LOCAL",
-    # "185.105.185.188": "TEST",
-    # "188.121.98.119": "PROD",
     "LOCAL": "178.252.141.50",
     "TEST": "185.105.185.188",
     "PROD": "188.121.98.119",
@@ -88,7 +85,7 @@ def send_task_fail_success_email(task_name: str = "", exception: str = SUCCESS):
     message = MIMEMultipart()
     message["From"] = EMAIL_HOST_USER
     message["To"] = EMAIL_TO
-    message["Subject"] = status + f" ({host_name}): " + task_name
+    message["Subject"] = "POR" + f" ({host_name}) - " + status + task_name
 
     html_body = get_exception_detail(exception, host_name, host_ip)
     message.attach(MIMEText(html_body, "html", "utf-8"))

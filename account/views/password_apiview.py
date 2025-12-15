@@ -18,12 +18,12 @@ from core.utils import (
 from core.configs import (
     REDIS_RESET_PASSWORD_PREFIX,
     RESET_PASSWORD_CODE_EXPIRY,
-    MELIPAYAMAK_OK_RESPONSE,
+    SMS_ONLINE_SUCCESS_STATUS,
 )
 
 from account.utils import (
     check_daily_limitation,
-    send_sms_verify_code,
+    sms_online_send_sms,
     code_token_generated_saved,
     check_code_expiry,
     check_token_match,
@@ -137,8 +137,11 @@ class ResetPasswordAPIView(APIView):
         if not generated:
             return result
 
-        response = send_sms_verify_code(username, code, SEND_RESET_PASSWORD_SMS["name"])
-        if response == MELIPAYAMAK_OK_RESPONSE:
+        sms_text = f"کد تایید پرتفویار \n {code}"
+        response = sms_online_send_sms(
+            [username], sms_text, SEND_RESET_PASSWORD_SMS["name"]
+        )
+        if response == SMS_ONLINE_SUCCESS_STATUS:
             return Response(
                 {"message": "کد تایید ارسال شد", "token": token},
                 status=status.HTTP_200_OK,

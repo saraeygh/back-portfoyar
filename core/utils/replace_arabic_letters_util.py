@@ -1,6 +1,5 @@
 from tqdm import tqdm
 
-# from favorite.models import OptionsFavoriteSymbol
 from stock_market.models import StockIndustrialGroup, StockInstrument
 
 
@@ -12,12 +11,6 @@ def replace_arabic_letters(string):
 
 
 def replace_all_arabic_letters_in_db():
-    # fo_bulk_list = []
-    # favorite_options = OptionsFavoriteSymbol.objects.all()
-    # for favorite_option in tqdm(favorite_options, desc="Favorite options", ncols=10):
-    #     favorite_option.symbol = replace_arabic_letters(favorite_option.symbol)
-    #     fo_bulk_list.append(favorite_option)
-    # OptionsFavoriteSymbol.objects.bulk_update(objs=fo_bulk_list, fields=["symbol"])
 
     ig_bulk_list = []
     industrial_groups = StockIndustrialGroup.objects.all()
