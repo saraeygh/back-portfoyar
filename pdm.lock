@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:b58643ccc4ea5adb228a17b94da3e08377e9b01c831b9963e40141b20015967d"
+content_hash = "sha256:c6f1b12a850fb5a2369e1151b095fda889b02dc029f744a07f617c67a4c7d9d9"
 
 [[metadata.targets]]
 requires_python = "==3.12.3"
@@ -794,20 +794,6 @@ marker = "python_full_version == \"3.12.3\""
 files = [
     {file = "msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:372839311ccf6bdaf39b00b61288e0557916c3729529b301c52c2d88842add42"},
     {file = "msgpack-1.1.2.tar.gz", hash = "sha256:3b60763c1373dd60f398488069bcdc703cd08a711477b5d480eecc9f9626f47e"},
-]
-
-[[package]]
-name = "mymelipayamak"
-version = "1.0.0"
-summary = "MeliPayamak Python library"
-groups = ["default"]
-marker = "python_full_version == \"3.12.3\""
-dependencies = [
-    "requests",
-    "zeep",
-]
-files = [
-    {file = "mymelipayamak-1.0.0.tar.gz", hash = "sha256:ec9bb230083959e23e044f6ae8ff708c7dbe28775c294d426f5d34284c7e9c5b"},
 ]
 
 [[package]]

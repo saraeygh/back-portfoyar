@@ -85,7 +85,7 @@ def send_task_fail_success_email(task_name: str = "", exception: str = SUCCESS):
     message = MIMEMultipart()
     message["From"] = EMAIL_HOST_USER
     message["To"] = EMAIL_TO
-    message["Subject"] = "POR" + f" ({host_name}) - " + status + task_name
+    message["Subject"] = "POR" + f" ({host_name}) - " + f"{status}: " + task_name
 
     html_body = get_exception_detail(exception, host_name, host_ip)
     message.attach(MIMEText(html_body, "html", "utf-8"))
