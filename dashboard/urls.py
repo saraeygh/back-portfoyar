@@ -18,6 +18,7 @@ from dashboard.views import (
     MinimumPEAPIView,
     PercentRangesAPIView,
     MarketMoneyFlowAPIView,
+    BigMoneyAPIView,
 )
 
 dashboard_menu_urls = [
@@ -58,6 +59,7 @@ stock_urls = [
     path("pe", MinimumPEAPIView.as_view()),
     path("percent-ranges", PercentRangesAPIView.as_view()),
     path("market-money-flow", MarketMoneyFlowAPIView.as_view()),
+    path("big-money", BigMoneyAPIView.as_view()),
 ]
 
 urlpatterns = (

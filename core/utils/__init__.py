@@ -29,6 +29,7 @@ from .create_profile_for_users_with_no_profile_util import (
 from .get_deviation_percent_util import get_deviation_percent
 from .persian_numbers_to_english_util import persian_numbers_to_english
 from .was_market_open_today_util import is_market_open_today
+from .get_relative_datetime_util import get_relative_datetime
 
 TABLE_COLS_QP = "table"
 ALL_TABLE_COLS = "all"

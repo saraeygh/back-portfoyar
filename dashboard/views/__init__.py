@@ -16,3 +16,4 @@ from .indusry_roi_apiview import IndustryROIAPIView
 from .minimum_pe_apiview import MinimumPEAPIView
 from .percent_ranges_apiview import PercentRangesAPIView
 from .market_money_flow_apiview import MarketMoneyFlowAPIView
+from .monitor_big_money_apiview import BigMoneyAPIView

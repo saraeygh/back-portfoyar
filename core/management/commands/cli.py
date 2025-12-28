@@ -52,6 +52,7 @@ from stock_market.tasks import (
     stock_option_value_change,
     stock_option_price_spread,
     update_stock_daily_history,
+    monitor_big_money,
 )
 from stock_market.utils import update_stock_adjusted_history
 
@@ -207,17 +208,18 @@ def stock_cli(clear_cmd):
         print(
             "Stock market commands:",
             "all) Run all commands",
-            "1) Update market watch & indices",
-            "2) Update stock daily history",
-            "3) Update instrument info",
-            "4) Update instrument ROI",
-            "5) Stock option price spread",
-            "6) Stock value history & change",
-            "7) Stock option value history",
-            "8) Stock option value change",
-            "9) update_stock_full_raw_history",
-            "10) Update stock adjusted history",
-            "11) Get monthly activity",
+            "10) Update market watch & indices",
+            "11) Update stock daily history",
+            "12) Update instrument info",
+            "13) Update instrument ROI",
+            "14) Stock option price spread",
+            "15) Stock value history & change",
+            "16) Stock option value history",
+            "17) Stock option value change",
+            "18) update_stock_full_raw_history",
+            "19) Update stock adjusted history",
+            "20) Get monthly activity",
+            "21) monitor_individual_influx",
             ##############################
             "0) Back",
             sep="\n",
@@ -235,30 +237,33 @@ def stock_cli(clear_cmd):
                 stock_value_history()
                 stock_option_value_change(MANUAL_MODE)
                 stock_option_price_spread(MANUAL_MODE)
+                monitor_big_money(MANUAL_MODE)
                 get_monthly_activity_report_letter()
-            case "1":
+            case "10":
                 update_market_watch(MANUAL_MODE)
                 update_market_watch_indices(MANUAL_MODE)
-            case "2":
-                update_stock_daily_history()
-            case "3":
-                update_instrument_info()
-            case "4":
-                update_instrument_roi(MANUAL_MODE)
-            case "5":
-                stock_option_price_spread(MANUAL_MODE)
-            case "6":
-                stock_value_history()
-            case "7":
-                stock_option_value_history()
-            case "8":
-                stock_option_value_change(MANUAL_MODE)
-            case "9":
-                update_stock_full_raw_history()
-            case "10":
-                update_stock_adjusted_history()
             case "11":
+                update_stock_daily_history()
+            case "12":
+                update_instrument_info()
+            case "13":
+                update_instrument_roi(MANUAL_MODE)
+            case "14":
+                stock_option_price_spread(MANUAL_MODE)
+            case "15":
+                stock_value_history()
+            case "16":
+                stock_option_value_history()
+            case "17":
+                stock_option_value_change(MANUAL_MODE)
+            case "18":
+                update_stock_full_raw_history()
+            case "19":
+                update_stock_adjusted_history()
+            case "20":
                 get_monthly_activity_report_letter()
+            case "21":
+                monitor_big_money(MANUAL_MODE)
             case "0":
                 break
 
