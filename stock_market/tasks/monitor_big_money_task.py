@@ -80,10 +80,19 @@ def monitor_big_money_main(run_mode):
             merged["individual_sell_count"] - merged["individual_sell_count_prev"]
         )
 
-        #  Detect Huge Influxes (> 5 Billion Toman)
-        buy_alerts = merged[merged["buy_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION]
+        #  Detect Huge Influxes
+        buy_alerts = merged[
+            (merged["buy_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION)
+            & (merged["buy_count_diff"] >= 1)
+            & (merged["buy_count_diff"] <= 5)
+        ]
         buy_alerts["side"] = "buy"
-        sell_alerts = merged[merged["sell_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION]
+
+        sell_alerts = merged[
+            (merged["sell_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION)
+            & (merged["sell_count_diff"] >= 1)
+            & (merged["sell_count_diff"] <= 5)
+        ]
         sell_alerts["side"] = "sell"
 
         new_alerts = pd.concat([buy_alerts, sell_alerts], ignore_index=True)
