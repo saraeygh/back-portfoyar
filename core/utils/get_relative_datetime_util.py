@@ -1,11 +1,12 @@
 from datetime import datetime
 import pytz
+from core.configs import TEHRAN_TZ
 
 
 def get_relative_datetime(datetime_obj):
 
-    datetime_obj = datetime_obj.replace(tzinfo=pytz.UTC)
-    now = datetime.now(pytz.UTC)
+    datetime_obj = datetime_obj.replace(tzinfo=TEHRAN_TZ)
+    now = datetime.now(tz=TEHRAN_TZ)
 
     diff = now - datetime_obj
     seconds = int(diff.total_seconds())
