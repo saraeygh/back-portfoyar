@@ -13,6 +13,7 @@ from core.configs import (
     BIG_MONEY_THRESHOLD_BILLION,
 )
 from stock_market.utils import (
+    STOCK_PAPER,
     get_market_watch_data_from_mongo,
     is_in_schedule,
 )
@@ -24,6 +25,7 @@ def monitor_big_money_main(run_mode):
     ) or run_mode == MANUAL_MODE:
 
         current_df = get_market_watch_data_from_mongo()
+        current_df = current_df[current_df["paper_type"] == STOCK_PAPER]
         current_df = current_df[
             [
                 "ins_code",
