@@ -1,2 +1,3 @@
 from .minimum_pe_srz import MinimumPESerailizer
 from .industrial_group_srz import IndustrialGroupSerailizer
+from .big_money_srz import BigMoneySerailizer

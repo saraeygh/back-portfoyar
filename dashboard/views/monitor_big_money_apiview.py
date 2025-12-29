@@ -17,6 +17,8 @@ from core.configs import (
     BIG_MONEY_ALERTS_COLLECTION,
 )
 
+from dashboard.serializers import BigMoneySerailizer
+
 
 def relative_datetime(row):
     date = row.get("last_date")
@@ -49,19 +51,21 @@ class BigMoneyAPIView(APIView):
             )
         )
 
+        latest_big_money = latest_big_money[
+            ~latest_big_money["symbol"].str.contains(r"\d", regex=True)
+        ]
         latest_big_money["time"] = latest_big_money.apply(relative_datetime, axis=1)
         latest_big_money = latest_big_money[
             [
                 "symbol",
                 "name",
-                "buy_value_diff",
-                "sell_value_diff",
-                "buy_count_diff",
-                "sell_count_diff",
+                "value_mean",
+                "count_diff",
                 "side",
                 "time",
             ]
         ]
         latest_big_money = latest_big_money.to_dict(orient="records")
+        latest_big_money = BigMoneySerailizer(latest_big_money, many=True)
 
-        return Response(latest_big_money, status=status.HTTP_200_OK)
+        return Response(latest_big_money.data, status=status.HTTP_200_OK)

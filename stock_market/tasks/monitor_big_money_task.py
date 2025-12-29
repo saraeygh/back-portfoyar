@@ -66,49 +66,41 @@ def monitor_big_money_main(run_mode):
             suffixes=("", "_prev"),  # Adds _prev to the old data
         ).fillna(0)
 
-        #  Calculate Differences (Current - 5 Minutes Ago)
-        merged["buy_value_diff"] = (
+        #  BUY SIDE
+        merged["value_diff"] = (
             merged["individual_buy_value"] - merged["individual_buy_value_prev"]
         ) / RIAL_TO_BILLION_TOMAN
-        merged["sell_value_diff"] = (
-            merged["individual_sell_value"] - merged["individual_sell_value_prev"]
-        ) / RIAL_TO_BILLION_TOMAN
-
-        # Difference in count of people (individuals)
-        merged["buy_count_diff"] = (
+        merged["count_diff"] = (
             merged["individual_buy_count"] - merged["individual_buy_count_prev"]
         )
-        merged["sell_count_diff"] = (
-            merged["individual_sell_count"] - merged["individual_sell_count_prev"]
+        merged["value_mean"] = (merged["value_diff"] / merged["count_diff"]).fillna(0)
+        buy_alerts = merged[(merged["value_mean"]) >= BIG_MONEY_THRESHOLD_BILLION].copy(
+            deep=True
         )
-
-        #  Detect Huge Influxes
-        buy_alerts = merged[
-            (merged["buy_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION)
-            & (merged["buy_count_diff"] >= 1)
-            & (merged["buy_count_diff"] <= 5)
-        ]
         buy_alerts["side"] = "buy"
 
+        # SELL SIDE
+        merged["value_diff"] = (
+            merged["individual_sell_value"] - merged["individual_sell_value_prev"]
+        ) / RIAL_TO_BILLION_TOMAN
+        merged["count_diff"] = (
+            merged["individual_sell_count"] - merged["individual_sell_count_prev"]
+        )
+        merged["value_mean"] = (merged["value_diff"] / merged["count_diff"]).fillna(0)
         sell_alerts = merged[
-            (merged["sell_value_diff"] >= BIG_MONEY_THRESHOLD_BILLION)
-            & (merged["sell_count_diff"] >= 1)
-            & (merged["sell_count_diff"] <= 5)
-        ]
+            (merged["value_mean"]) >= BIG_MONEY_THRESHOLD_BILLION
+        ].copy(deep=True)
         sell_alerts["side"] = "sell"
 
         new_alerts = pd.concat([buy_alerts, sell_alerts], ignore_index=True)
         new_alerts = new_alerts[
             [
-                "ins_code",
                 "symbol",
                 "name",
                 "last_date",
                 "last_time",
-                "buy_value_diff",
-                "sell_value_diff",
-                "buy_count_diff",
-                "sell_count_diff",
+                "value_mean",
+                "count_diff",
                 "side",
             ]
         ]
