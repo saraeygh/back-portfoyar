@@ -25,23 +25,23 @@ from . import (
 )
 
 STRATEGIES = [
-    covered_call,  # 1
-    conversion,  # 2
-    married_put,  # 3
-    long_call,  # 4
-    short_call,  # 5
-    long_put,  # 6
-    short_put,  # 7
-    bull_call_spread,  # 8
-    bear_call_spread,  # 9
-    bull_put_spread,  # 10
-    bear_put_spread,  # 11
-    long_straddle,  # 12
-    short_straddle,  # 13
-    long_strangle,  # 14
-    short_strangle,  # 15
-    long_butterfly,  # 16
-    short_butterfly,  # 17
+    # covered_call,  # 1
+    # conversion,  # 2
+    # married_put,  # 3
+    # long_call,  # 4
+    # short_call,  # 5
+    # long_put,  # 6
+    # short_put,  # 7
+    # bull_call_spread,  # 8
+    # bear_call_spread,  # 9
+    # bull_put_spread,  # 10
+    # bear_put_spread,  # 11
+    # long_straddle,  # 12
+    # short_straddle,  # 13
+    # long_strangle,  # 14
+    # short_strangle,  # 15
+    # long_butterfly,  # 16
+    # short_butterfly,  # 17
     collar,  # 18
 ]
 

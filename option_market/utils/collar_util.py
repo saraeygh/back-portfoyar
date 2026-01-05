@@ -1,5 +1,5 @@
 from uuid import uuid4
-from itertools import pairwise
+from itertools import combinations, pairwise
 
 from tqdm import tqdm
 
@@ -110,7 +110,9 @@ def collar(option_data, mongo_db: str):
         if end_date_option.empty:
             continue
 
-        for current_row, next_row in pairwise(end_date_option.itertuples(index=False)):
+        for current_row, next_row in combinations(
+            end_date_option.itertuples(index=False), 2
+        ):
             put_strike = current_row.strike_price
             put_best_sell_price = current_row.put_best_sell_price
 
