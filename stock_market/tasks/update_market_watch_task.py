@@ -25,6 +25,7 @@ from stock_market.utils import (
     MARKET_WATCH_COLS,
     INDIVIDUAL_LEGAL_COLS,
     is_in_schedule,
+    monitor_big_money,
 )
 
 
@@ -98,6 +99,7 @@ def update_market_watch_main(run_mode):
         market_watch["market_type"] = market_watch["market_type"].astype(int)
         market_watch["paper_type"] = market_watch["paper_type"].astype(int)
         market_watch["last_date"] = date.today().strftime("%Y/%m/%d")
+        monitor_big_money(market_watch)
         market_watch = market_watch.to_dict(orient="records")
         mongo_conn = MongodbInterface(
             db_name=STOCK_MONGO_DB, collection_name=MARKET_WATCH_COLLECTION
