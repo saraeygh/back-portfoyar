@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from core.utils import MongodbInterface
 from core.configs import (
@@ -81,6 +82,8 @@ def monitor_big_money(current_df):
     new_alerts = new_alerts[
         ["symbol", "name", "last_date", "last_time", "value_mean", "count_diff", "side"]
     ]
+    new_alerts.replace([np.inf, -np.inf], np.nan, inplace=True)
+    new_alerts.dropna(inplace=True)
     new_alerts = new_alerts.to_dict(orient="records")
 
     if new_alerts:
